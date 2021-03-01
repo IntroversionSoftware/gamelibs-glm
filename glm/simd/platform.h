@@ -331,7 +331,7 @@
 #		define GLM_ARCH (GLM_ARCH_X86)
 #	elif defined(__ARM_ARCH) && (__ARM_ARCH >= 8)
 #		define GLM_ARCH (GLM_ARCH_ARMV8)
-#	elif defined(__ARM_NEON)
+#	elif defined(__ARM_NEON) && !defined(_MSC_VER)
 #		define GLM_ARCH (GLM_ARCH_ARM | GLM_ARCH_NEON)
 #	elif defined(__arm__ ) || defined(_M_ARM)
 #		define GLM_ARCH (GLM_ARCH_ARM)
