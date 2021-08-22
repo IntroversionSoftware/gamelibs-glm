@@ -655,6 +655,38 @@ namespace glm
 		return Result;
 	}
 
+#ifdef GLM_DARWINIA_EXTENSIONS
+	template<>
+	GLM_FUNC_QUALIFIER mat<4, 4, float, defaultp> operator*(mat<4, 4, float, defaultp> const& m1, mat<4, 4, float, defaultp> const& m2)
+	{
+		mat<4, 4, float, defaultp> Result;
+		const float * __restrict A = (const float *)&m2;
+		const float * __restrict B = (const float *)&m1;
+		float * __restrict C = (float *)&Result;
+
+		simde__m128 row1 = simde_mm_load_ps(&B[0]);
+		simde__m128 row2 = simde_mm_load_ps(&B[4]);
+		simde__m128 row3 = simde_mm_load_ps(&B[8]);
+		simde__m128 row4 = simde_mm_load_ps(&B[12]);
+		for (int i = 0; i < 4; i++) {
+			simde__m128 brod1 = simde_mm_set1_ps(A[4 * i + 0]);
+			simde__m128 brod2 = simde_mm_set1_ps(A[4 * i + 1]);
+			simde__m128 brod3 = simde_mm_set1_ps(A[4 * i + 2]);
+			simde__m128 brod4 = simde_mm_set1_ps(A[4 * i + 3]);
+			simde__m128 row = simde_mm_add_ps(
+				simde_mm_add_ps(
+					simde_mm_mul_ps(brod1, row1),
+					simde_mm_mul_ps(brod2, row2)),
+				simde_mm_add_ps(
+					simde_mm_mul_ps(brod3, row3),
+					simde_mm_mul_ps(brod4, row4)));
+			simde_mm_store_ps(&C[4 * i], row);
+		}
+
+		return Result;
+	}
+#endif
+
 	template<typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER mat<4, 4, T, Q> operator/(mat<4, 4, T, Q> const& m, T const& s)
 	{
