@@ -637,6 +637,19 @@ namespace glm
 		return Result;
 	}
 
+#ifdef GLM_DARWINIA_EXTENSIONS
+	template<>
+	GLM_FUNC_QUALIFIER mat<4, 4, float, defaultp> operator*(mat<4, 4, float, defaultp> const& m1, mat<4, 4, float, defaultp> const& m2)
+	{
+		mat<4, 4, float, defaultp> Result;
+		vectorial::mat4f mat1; mat1.load((const float *)&m1);
+		vectorial::mat4f mat2; mat2.load((const float *)&m2);
+		vectorial::mat4f matr = mat1 * mat2;
+		matr.store((float *)&Result);
+		return Result;
+	}
+#endif
+
 	template<typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER mat<4, 4, T, Q> operator/(mat<4, 4, T, Q> const& m, T const& s)
 	{
