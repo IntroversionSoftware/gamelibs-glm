@@ -14,7 +14,7 @@
 namespace glm
 {
 	template<typename T, qualifier Q>
-	struct vec<4, T, Q>
+	struct DARWINIA_ALIGNED vec<4, T, Q>
 	{
 		// -- Implementation detail --
 
