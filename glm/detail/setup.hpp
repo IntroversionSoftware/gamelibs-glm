@@ -520,6 +520,13 @@
 #	define GLM_ALIGNED_TYPEDEF(type, name, alignment) typedef type name
 #endif
 
+#ifdef GLM_DARWINIA_EXTENSIONS
+#   define DARWINIA_ALIGNED alignas(16)
+#   include <vectorial/vectorial.h>
+#else
+#   define DARWINIA_ALIGNED
+#endif
+
 ///////////////////////////////////////////////////////////////////////////////////
 
 #ifdef GLM_FORCE_EXPLICIT_CTOR

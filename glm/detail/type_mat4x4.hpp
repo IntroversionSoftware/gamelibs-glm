@@ -10,7 +10,7 @@
 namespace glm
 {
 	template<typename T, qualifier Q>
-	struct mat<4, 4, T, Q>
+	struct DARWINIA_ALIGNED mat<4, 4, T, Q>
 	{
 		typedef vec<4, T, Q> col_type;
 		typedef vec<4, T, Q> row_type;
