@@ -539,25 +539,6 @@ namespace glm
 		typename mat<4, 4, T, Q>::row_type const& v
 	)
 	{
-/*
-		__m128 v0 = _mm_shuffle_ps(v.data, v.data, _MM_SHUFFLE(0, 0, 0, 0));
-		__m128 v1 = _mm_shuffle_ps(v.data, v.data, _MM_SHUFFLE(1, 1, 1, 1));
-		__m128 v2 = _mm_shuffle_ps(v.data, v.data, _MM_SHUFFLE(2, 2, 2, 2));
-		__m128 v3 = _mm_shuffle_ps(v.data, v.data, _MM_SHUFFLE(3, 3, 3, 3));
-
-		__m128 m0 = _mm_mul_ps(m[0].data, v0);
-		__m128 m1 = _mm_mul_ps(m[1].data, v1);
-		__m128 a0 = _mm_add_ps(m0, m1);
-
-		__m128 m2 = _mm_mul_ps(m[2].data, v2);
-		__m128 m3 = _mm_mul_ps(m[3].data, v3);
-		__m128 a1 = _mm_add_ps(m2, m3);
-
-		__m128 a2 = _mm_add_ps(a0, a1);
-
-		return typename mat<4, 4, T, Q>::col_type(a2);
-*/
-
 		typename mat<4, 4, T, Q>::col_type const Mov0(v[0]);
 		typename mat<4, 4, T, Q>::col_type const Mov1(v[1]);
 		typename mat<4, 4, T, Q>::col_type const Mul0 = m[0] * Mov0;
@@ -570,15 +551,42 @@ namespace glm
 		typename mat<4, 4, T, Q>::col_type const Add1 = Mul2 + Mul3;
 		typename mat<4, 4, T, Q>::col_type const Add2 = Add0 + Add1;
 		return Add2;
-
-/*
-		return typename mat<4, 4, T, Q>::col_type(
-			m[0][0] * v[0] + m[1][0] * v[1] + m[2][0] * v[2] + m[3][0] * v[3],
-			m[0][1] * v[0] + m[1][1] * v[1] + m[2][1] * v[2] + m[3][1] * v[3],
-			m[0][2] * v[0] + m[1][2] * v[1] + m[2][2] * v[2] + m[3][2] * v[3],
-			m[0][3] * v[0] + m[1][3] * v[1] + m[2][3] * v[2] + m[3][3] * v[3]);
-*/
 	}
+
+#ifdef GLM_DARWINIA_EXTENSIONS
+	template<>
+	GLM_FUNC_QUALIFIER typename mat<4, 4, float, defaultp>::col_type operator*
+	(
+		mat<4, 4, float, defaultp> const& m,
+		typename mat<4, 4, float, defaultp>::row_type const& v
+	)
+	{
+		simde__m128 v_simd = simde_mm_load_ps((const float *)&v);
+		simde__m128 m0_simd = simde_mm_load_ps((const float *)&m[0]);
+		simde__m128 m1_simd = simde_mm_load_ps((const float *)&m[1]);
+		simde__m128 m2_simd = simde_mm_load_ps((const float *)&m[2]);
+		simde__m128 m3_simd = simde_mm_load_ps((const float *)&m[3]);
+
+		simde__m128 v0 = simde_mm_shuffle_ps(v_simd, v_simd, SIMDE_MM_SHUFFLE(0, 0, 0, 0));
+		simde__m128 v1 = simde_mm_shuffle_ps(v_simd, v_simd, SIMDE_MM_SHUFFLE(1, 1, 1, 1));
+		simde__m128 v2 = simde_mm_shuffle_ps(v_simd, v_simd, SIMDE_MM_SHUFFLE(2, 2, 2, 2));
+		simde__m128 v3 = simde_mm_shuffle_ps(v_simd, v_simd, SIMDE_MM_SHUFFLE(3, 3, 3, 3));
+
+		simde__m128 m0 = simde_mm_mul_ps(m0_simd, v0);
+		simde__m128 m1 = simde_mm_mul_ps(m1_simd, v1);
+		simde__m128 a0 = simde_mm_add_ps(m0, m1);
+
+		simde__m128 m2 = simde_mm_mul_ps(m2_simd, v2);
+		simde__m128 m3 = simde_mm_mul_ps(m3_simd, v3);
+		simde__m128 a1 = simde_mm_add_ps(m2, m3);
+
+		simde__m128 a2 = simde_mm_add_ps(a0, a1);
+
+		typename mat<4, 4, float, defaultp>::col_type result;
+		simde_mm_store_ps((float *)&result, a2);
+		return result;
+	}
+#endif
 
 	template<typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER typename mat<4, 4, T, Q>::row_type operator*
