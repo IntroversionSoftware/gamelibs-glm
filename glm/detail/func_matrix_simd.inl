@@ -144,7 +144,7 @@ namespace detail
 				float32x4_t w1 = neon::copy_lane(neon::dupq_lane(m3, 3), 3, m2, 3);
 				float32x4_t w2 = neon::copy_lane(neon::dupq_lane(m3, 2), 3, m2, 2);
 				float32x4_t w3 = vcombine_f32(neon::dup_lane(m2, 3), neon::dup_lane(m1, 3));
-				Fac0 = w0 * w1 -  w2 * w3;
+				Fac0 = vsubq_f32(vmulq_f32(w0, w1), vmulq_f32(w2, w3));
 			}
 
 			// m[2][1] * m[3][3] - m[3][1] * m[2][3];
@@ -158,7 +158,7 @@ namespace detail
 				float32x4_t w1 = neon::copy_lane(neon::dupq_lane(m3, 3), 3, m2, 3);
 				float32x4_t w2 = neon::copy_lane(neon::dupq_lane(m3, 1), 3, m2, 1);
 				float32x4_t w3 = vcombine_f32(neon::dup_lane(m2, 3), neon::dup_lane(m1, 3));
-				Fac1 = w0 * w1 - w2 * w3;
+				Fac1 = vsubq_f32(vmulq_f32(w0, w1), vmulq_f32(w2, w3));
 			}
 
 			// m[2][1] * m[3][2] - m[3][1] * m[2][2];
@@ -172,7 +172,7 @@ namespace detail
 				float32x4_t w1 = neon::copy_lane(neon::dupq_lane(m3, 2), 3, m2, 2);
 				float32x4_t w2 = neon::copy_lane(neon::dupq_lane(m3, 1), 3, m2, 1);
 				float32x4_t w3 = vcombine_f32(neon::dup_lane(m2, 2), neon::dup_lane(m1, 2));
-				Fac2 = w0 * w1 - w2 * w3;
+				Fac2 = vsubq_f32(vmulq_f32(w0, w1), vmulq_f32(w2, w3));
 			}
 
 			// m[2][0] * m[3][3] - m[3][0] * m[2][3];
@@ -186,7 +186,7 @@ namespace detail
 				float32x4_t w1 = neon::copy_lane(neon::dupq_lane(m3, 3), 3, m2, 3);
 				float32x4_t w2 = neon::copy_lane(neon::dupq_lane(m3, 0), 3, m2, 0);
 				float32x4_t w3 = vcombine_f32(neon::dup_lane(m2, 3), neon::dup_lane(m1, 3));
-				Fac3 = w0 * w1 - w2 * w3;
+				Fac3 = vsubq_f32(vmulq_f32(w0, w1), vmulq_f32(w2, w3));
 			}
 
 			// m[2][0] * m[3][2] - m[3][0] * m[2][2];
@@ -200,7 +200,7 @@ namespace detail
 				float32x4_t w1 = neon::copy_lane(neon::dupq_lane(m3, 2), 3, m2, 2);
 				float32x4_t w2 = neon::copy_lane(neon::dupq_lane(m3, 0), 3, m2, 0);
 				float32x4_t w3 = vcombine_f32(neon::dup_lane(m2, 2), neon::dup_lane(m1, 2));
-				Fac4 = w0 * w1 - w2 * w3;
+				Fac4 = vsubq_f32(vmulq_f32(w0, w1), vmulq_f32(w2, w3));
 			}
 
 			// m[2][0] * m[3][1] - m[3][0] * m[2][1];
@@ -214,7 +214,7 @@ namespace detail
 				float32x4_t w1 = neon::copy_lane(neon::dupq_lane(m3, 1), 3, m2, 1);
 				float32x4_t w2 = neon::copy_lane(neon::dupq_lane(m3, 0), 3, m2, 0);
 				float32x4_t w3 = vcombine_f32(neon::dup_lane(m2, 1), neon::dup_lane(m1, 1));
-				Fac5 = w0 * w1 - w2 * w3;
+				Fac5 = vsubq_f32(vmulq_f32(w0, w1), vmulq_f32(w2, w3));
 			}
 
 			float32x4_t Vec0 = neon::copy_lane(neon::dupq_lane(m0, 0), 0, m1, 0); // (m[1][0], m[0][0], m[0][0], m[0][0]);
@@ -222,15 +222,18 @@ namespace detail
 			float32x4_t Vec2 = neon::copy_lane(neon::dupq_lane(m0, 2), 0, m1, 2); // (m[1][2], m[0][2], m[0][2], m[0][2]);
 			float32x4_t Vec3 = neon::copy_lane(neon::dupq_lane(m0, 3), 0, m1, 3); // (m[1][3], m[0][3], m[0][3], m[0][3]);
 
-			float32x4_t Inv0 = Vec1 * Fac0 - Vec2 * Fac1 + Vec3 * Fac2;
-			float32x4_t Inv1 = Vec0 * Fac0 - Vec2 * Fac3 + Vec3 * Fac4;
-			float32x4_t Inv2 = Vec0 * Fac1 - Vec1 * Fac3 + Vec3 * Fac5;
-			float32x4_t Inv3 = Vec0 * Fac2 - Vec1 * Fac4 + Vec2 * Fac5;
+			float32x4_t Inv0 = vaddq_f32(vsubq_f32(vmulq_f32(Vec1, Fac0), vmulq_f32(Vec2, Fac1)), vmulq_f32(Vec3, Fac2));
+			float32x4_t Inv1 = vaddq_f32(vsubq_f32(vmulq_f32(Vec0, Fac0), vmulq_f32(Vec2, Fac3)), vmulq_f32(Vec3, Fac4));
+			float32x4_t Inv2 = vaddq_f32(vsubq_f32(vmulq_f32(Vec0, Fac1), vmulq_f32(Vec1, Fac3)), vmulq_f32(Vec3, Fac5));
+			float32x4_t Inv3 = vaddq_f32(vsubq_f32(vmulq_f32(Vec0, Fac2), vmulq_f32(Vec1, Fac4)), vmulq_f32(Vec2, Fac5));
 
-			float32x4_t r0 = float32x4_t{-1, +1, -1, +1} * Inv0;
-			float32x4_t r1 = float32x4_t{+1, -1, +1, -1} * Inv1;
-			float32x4_t r2 = float32x4_t{-1, +1, -1, +1} * Inv2;
-			float32x4_t r3 = float32x4_t{+1, -1, +1, -1} * Inv3;
+			constexpr float mr0[4] = {-1.0f, +1.0f, -1.0f, +1.0f};
+			constexpr float mr1[4] = {+1.0f, -1.0f, +1.0f, -1.0f};
+
+			float32x4_t r0 = vmulq_f32(vld1q_f32(mr0), Inv0);
+			float32x4_t r1 = vmulq_f32(vld1q_f32(mr1), Inv1);
+			float32x4_t r2 = vmulq_f32(vld1q_f32(mr0), Inv2);
+			float32x4_t r3 = vmulq_f32(vld1q_f32(mr1), Inv3);
 
 			float32x4_t det = neon::mul_lane(r0, m0, 0);
 			det = neon::madd_lane(det, r1, m0, 1);
