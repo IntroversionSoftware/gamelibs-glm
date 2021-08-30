@@ -748,38 +748,38 @@ namespace glm {
 	template<>
 	template<>
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<4, float, aligned_lowp>::vec(int _x, int _y, int _z, int _w) :
-		data(vcvtq_f32_s32(vec<4, int, aligned_lowp>(_x, _y, _z, _w).data))
+		data(vcvtq_f32_s32((vec<4, int, aligned_lowp>(_x, _y, _z, _w).data)))
 	{}
 
 	template<>
 	template<>
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<4, float, aligned_mediump>::vec(int _x, int _y, int _z, int _w) :
-		data(vcvtq_f32_s32(vec<4, int, aligned_mediump>(_x, _y, _z, _w).data))
+		data(vcvtq_f32_s32((vec<4, int, aligned_mediump>(_x, _y, _z, _w).data)))
 	{}
 
 	template<>
 	template<>
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<4, float, aligned_highp>::vec(int _x, int _y, int _z, int _w) :
-		data(vcvtq_f32_s32(vec<4, int, aligned_highp>(_x, _y, _z, _w).data))
+		data(vcvtq_f32_s32((vec<4, int, aligned_highp>(_x, _y, _z, _w).data)))
 	{}
 
 	template<>
 	template<>
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<4, float, aligned_lowp>::vec(uint _x, uint _y, uint _z, uint _w) :
-		data(vcvtq_f32_u32(vec<4, uint, aligned_lowp>(_x, _y, _z, _w).data))
+		data(vcvtq_f32_u32((vec<4, uint, aligned_lowp>(_x, _y, _z, _w).data)))
 	{}
 
 	template<>
 	template<>
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<4, float, aligned_mediump>::vec(uint _x, uint _y, uint _z, uint _w) :
-		data(vcvtq_f32_u32(vec<4, uint, aligned_mediump>(_x, _y, _z, _w).data))
+		data(vcvtq_f32_u32((vec<4, uint, aligned_mediump>(_x, _y, _z, _w).data)))
 	{}
 
 
 	template<>
 	template<>
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<4, float, aligned_highp>::vec(uint _x, uint _y, uint _z, uint _w) :
-		data(vcvtq_f32_u32(vec<4, uint, aligned_highp>(_x, _y, _z, _w).data))
+		data(vcvtq_f32_u32((vec<4, uint, aligned_highp>(_x, _y, _z, _w).data)))
 	{}
 
 #endif
