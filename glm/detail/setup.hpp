@@ -453,6 +453,13 @@
 #define GLM_FUNC_DECL GLM_CUDA_FUNC_DECL
 #define GLM_FUNC_QUALIFIER GLM_CUDA_FUNC_DEF GLM_INLINE
 
+#if GLM_COMPILER & GLM_COMPILER_VC
+#define GLM_CDECL __cdecl
+#define GLM_VECTORCALL __vectorcall
+#else
+#define GLM_CDECL
+#endif
+
 ///////////////////////////////////////////////////////////////////////////////////
 // Swizzle operators
 
