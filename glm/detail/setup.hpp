@@ -493,7 +493,10 @@ namespace detail
 #	define GLM_FORCE_ALIGNED_GENTYPES
 #endif
 
-#if (GLM_LANG & GLM_LANG_CXXMS_FLAG) && (defined(GLM_FORCE_ALIGNED_GENTYPES) || (GLM_CONFIG_SIMD == GLM_ENABLE))
+// Aligned gentypes are built from anonymous structs, which MSVC rejects without language
+// extensions (/Za); other compilers accept them as an extension.
+#if (defined(GLM_FORCE_ALIGNED_GENTYPES) || (GLM_CONFIG_SIMD == GLM_ENABLE)) && \
+	!((GLM_COMPILER & GLM_COMPILER_VC) && !(GLM_LANG & GLM_LANG_CXXMS_FLAG))
 #	define GLM_CONFIG_ALIGNED_GENTYPES GLM_ENABLE
 #else
 #	define GLM_CONFIG_ALIGNED_GENTYPES GLM_DISABLE
