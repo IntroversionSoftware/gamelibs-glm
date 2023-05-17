@@ -48,22 +48,6 @@ namespace detail
 			return static_cast<T>(1) / sqrt(x);
 		}
 	};
-
-	template<length_t L, bool Aligned>
-	struct compute_inversesqrt<L, float, lowp, Aligned>
-	{
-		GLM_FUNC_QUALIFIER static vec<L, float, lowp> call(vec<L, float, lowp> const& x)
-		{
-			vec<L, float, lowp> tmp(x);
-			vec<L, float, lowp> xhalf(tmp * 0.5f);
-			vec<L, uint, lowp>* p = reinterpret_cast<vec<L, uint, lowp>*>(const_cast<vec<L, float, lowp>*>(&x));
-			vec<L, uint, lowp> i = vec<L, uint, lowp>(0x5f375a86) - (*p >> vec<L, uint, lowp>(1));
-			vec<L, float, lowp>* ptmp = reinterpret_cast<vec<L, float, lowp>*>(&i);
-			tmp = *ptmp;
-			tmp = tmp * (1.5f - xhalf * tmp * tmp);
-			return tmp;
-		}
-	};
 }//namespace detail
 
 	// pow
