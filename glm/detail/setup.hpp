@@ -295,9 +295,14 @@
 		((GLM_COMPILER & GLM_COMPILER_HIP))))
 #endif
 
+// User override for disabling use of constexpr
+#if !defined(GLM_FORCE_NO_CONSTEXPR)
+#define GLM_FORCE_NO_CONSTEXPR 0
+#endif
+
 // N2235 Generalized Constant Expressions http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2007/n2235.pdf
 // N3652 Extended Constant Expressions http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2013/n3652.html
-#if (GLM_ARCH & GLM_ARCH_SIMD_BIT) // Compiler SIMD intrinsics don't support constexpr...
+#if (GLM_FORCE_NO_CONSTEXPR) || (GLM_ARCH & GLM_ARCH_SIMD_BIT) // Compiler SIMD intrinsics don't support constexpr...
 #	define GLM_HAS_CONSTEXPR 0
 #elif (GLM_COMPILER & GLM_COMPILER_CLANG)
 #	define GLM_HAS_CONSTEXPR __has_feature(cxx_relaxed_constexpr)
