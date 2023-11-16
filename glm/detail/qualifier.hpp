@@ -303,7 +303,7 @@ namespace detail
 	{
 		GLM_FUNC_QUALIFIER GLM_CONSTEXPR static genType identity()
 		{
-			return genType(1, 0, 0, 0);
+			return genType::wxyz(1, 0, 0, 0);
 		}
 	};
 
