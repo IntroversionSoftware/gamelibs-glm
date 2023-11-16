@@ -150,7 +150,7 @@ static int test_mat4xR() {
 
 template<glm::length_t R>
 static int test_const_mat4xR() {
-	typedef glm::mat<4,R,float> Mat; 
+	typedef glm::mat<4,R,float> Mat;
 	Mat const m(0);
 	typename Mat::col_type const& c1 = glm::get<0>(m);
 	typename Mat::col_type const& c2 = glm::get<1>(m);
@@ -317,7 +317,7 @@ int main()
 
 	Error += test_mat4xR<4>();
 	Error += test_const_mat4xR<4>();
-	
+
 #ifdef __cpp_structured_bindings
 #if __cpp_structured_bindings >= 201606L
 	Error += test_structured_vec1();

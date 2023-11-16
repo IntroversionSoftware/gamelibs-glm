@@ -57,9 +57,9 @@ static int test_ctr()
 		glm::vec2(0, 1),
 		glm::vec2(2, 3),
 		glm::vec2(4, 5));
-	
+
 	glm::mat3x2 m1{0, 1, 2, 3, 4, 5};
-	
+
 	glm::mat3x2 m2{
 		{0, 1},
 		{2, 3},
@@ -72,7 +72,7 @@ static int test_ctr()
 		{0, 1, 2, 3, 4, 5},
 		{0, 1, 2, 3, 4, 5}
 	};
-	
+
 	std::vector<glm::mat3x2> v2{
 		{
 			{ 0, 1},
@@ -85,9 +85,9 @@ static int test_ctr()
 			{ 4, 5}
 		}
 	};
-	
+
 #endif//GLM_HAS_INITIALIZER_LISTS
-	
+
 	return Error;
 }
 
@@ -110,7 +110,7 @@ namespace cast
 	static int test()
 	{
 		int Error = 0;
-		
+
 		Error += entry<glm::mat2x2>();
 		Error += entry<glm::mat2x3>();
 		Error += entry<glm::mat2x4>();

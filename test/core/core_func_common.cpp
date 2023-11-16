@@ -199,7 +199,7 @@ namespace floatBitsToInt
 	static int test()
 	{
 		int Error = 0;
-	
+
 		{
 			float A = 1.0f;
 			int B = glm::floatBitsToInt(A);
@@ -220,14 +220,14 @@ namespace floatBitsToInt
 			glm::vec3 C = glm::intBitsToFloat(B);
 			Error += glm::all(glm::equal(A, C, 0.0001f)) ? 0 : 1;
 		}
-	
+
 		{
 			glm::vec4 A(1.0f, 2.0f, 3.0f, 4.0f);
 			glm::ivec4 B = glm::floatBitsToInt(A);
 			glm::vec4 C = glm::intBitsToFloat(B);
 			Error += glm::all(glm::equal(A, C, 0.0001f)) ? 0 : 1;
 		}
-	
+
 		return Error;
 	}
 }//namespace floatBitsToInt
@@ -237,35 +237,35 @@ namespace floatBitsToUint
 	static int test()
 	{
 		int Error = 0;
-	
+
 		{
 			float A = 1.0f;
 			glm::uint B = glm::floatBitsToUint(A);
 			float C = glm::uintBitsToFloat(B);
 			Error += glm::equal(A, C, 0.0001f) ? 0 : 1;
 		}
-	
+
 		{
 			glm::vec2 A(1.0f, 2.0f);
 			glm::uvec2 B = glm::floatBitsToUint(A);
 			glm::vec2 C = glm::uintBitsToFloat(B);
 			Error += glm::all(glm::equal(A, C, 0.0001f)) ? 0 : 1;
 		}
-	
+
 		{
 			glm::vec3 A(1.0f, 2.0f, 3.0f);
 			glm::uvec3 B = glm::floatBitsToUint(A);
 			glm::vec3 C = glm::uintBitsToFloat(B);
 			Error += glm::all(glm::equal(A, C, 0.0001f)) ? 0 : 1;
 		}
-	
+
 		{
 			glm::vec4 A(1.0f, 2.0f, 3.0f, 4.0f);
 			glm::uvec4 B = glm::floatBitsToUint(A);
 			glm::vec4 C = glm::uintBitsToFloat(B);
 			Error += glm::all(glm::equal(A, C, 0.0001f)) ? 0 : 1;
 		}
-	
+
 		return Error;
 	}
 }//namespace floatBitsToUint
@@ -305,7 +305,7 @@ namespace min_
 
 	static int min_int(int x, int y)
 	{
-		return y ^ ((x ^ y) & -(x < y)); 
+		return y ^ ((x ^ y) & -(x < y));
 	}
 
 	static int perf(std::size_t Count)
@@ -715,7 +715,7 @@ namespace round_
 			float G = glm::round(1.9f);
 			Error += glm::equal(G, 2.0f, glm::epsilon<float>()) ? 0 : 1;
 		}
-	
+
 		{
 			float A = glm::round(-0.0f);
 			Error += glm::equal(A, 0.0f, glm::epsilon<float>()) ? 0 : 1;
@@ -732,7 +732,7 @@ namespace round_
 			float G = glm::round(-1.9f);
 			Error += glm::equal(G, -2.0f, glm::epsilon<float>()) ? 0 : 1;
 		}
-	
+
 		return Error;
 	}
 }//namespace round_
@@ -861,7 +861,7 @@ namespace roundEven
 			float G = glm::roundEven(7.5f);
 			Error += glm::equal(G, 8.0f, glm::epsilon<float>()) ? 0 : 1;
 		}
-	
+
 		{
 			float A = glm::roundEven(-1.5f);
 			Error += glm::equal(A, -2.0f, glm::epsilon<float>()) ? 0 : 1;
@@ -947,7 +947,7 @@ namespace isinf_
 
 namespace sign
 {
-	template<typename genFIType> 
+	template<typename genFIType>
 	GLM_FUNC_QUALIFIER genFIType sign_if(genFIType x)
 	{
 		GLM_STATIC_ASSERT(
@@ -969,11 +969,11 @@ namespace sign
 #	pragma clang diagnostic ignored "-Wsign-conversion"
 #endif
 
-	template<typename genFIType> 
+	template<typename genFIType>
 	GLM_FUNC_QUALIFIER genFIType sign_alu1(genFIType x)
 	{
 		GLM_STATIC_ASSERT(
-			std::numeric_limits<genFIType>::is_signed && std::numeric_limits<genFIType>::is_integer, 
+			std::numeric_limits<genFIType>::is_signed && std::numeric_limits<genFIType>::is_integer,
 			"'sign' only accept integer inputs");
 
 		return (x >> 31) | (static_cast<unsigned>(-x) >> 31);
@@ -999,21 +999,21 @@ namespace sign
 #		endif
 	}
 
-	template<typename genFIType> 
+	template<typename genFIType>
 	GLM_FUNC_QUALIFIER genFIType sign_sub(genFIType x)
 	{
 		GLM_STATIC_ASSERT(
-			std::numeric_limits<genFIType>::is_signed && std::numeric_limits<genFIType>::is_integer, 
+			std::numeric_limits<genFIType>::is_signed && std::numeric_limits<genFIType>::is_integer,
 			"'sign' only accept integer inputs");
 
 		return (static_cast<unsigned>(-x) >> 31) - (static_cast<unsigned>(x) >> 31);
 	}
 
-	template<typename genFIType> 
+	template<typename genFIType>
 	GLM_FUNC_QUALIFIER genFIType sign_cmp(genFIType x)
 	{
 		GLM_STATIC_ASSERT(
-			std::numeric_limits<genFIType>::is_signed && std::numeric_limits<genFIType>::is_integer, 
+			std::numeric_limits<genFIType>::is_signed && std::numeric_limits<genFIType>::is_integer,
 			"'sign' only accept integer inputs");
 
 		return (x > 0) - (x < 0);
