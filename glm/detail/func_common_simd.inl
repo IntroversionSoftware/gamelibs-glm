@@ -611,3 +611,177 @@ namespace glm {
 }//namespace detail
 }//namespace glm
 #endif //GLM_ARCH & GLM_ARCH_NEON_BIT
+
+#if GLM_ARCH & GLM_ARCH_CLANG_BIT
+
+namespace glm{
+namespace detail
+{
+	template<length_t L, typename T, qualifier Q>
+	struct compute_abs_vector<L, T, Q, true>
+	{
+		GLM_FUNC_QUALIFIER static vec<L, T, Q> call(vec<L, T, Q> const& v)
+		{
+			vec<L, T, Q> result;
+			result.data = __builtin_elementwise_abs(v.data);
+			return result;
+		}
+	};
+
+	template<length_t L, typename T, qualifier Q>
+	struct compute_floor<L, T, Q, true>
+	{
+		GLM_FUNC_QUALIFIER static vec<L, T, Q> call(vec<L, T, Q> const& v)
+		{
+			vec<L, T, Q> result;
+			result.data = __builtin_elementwise_floor(v.data);
+			return result;
+		}
+	};
+
+	template<length_t L, typename T, qualifier Q>
+	struct compute_ceil<L, T, Q, true>
+	{
+		GLM_FUNC_QUALIFIER static vec<L, T, Q> call(vec<L, T, Q> const& v)
+		{
+			vec<L, T, Q> result;
+			result.data = __builtin_elementwise_ceil(v.data);
+			return result;
+		}
+	};
+
+	template<length_t L, typename T, qualifier Q>
+	struct compute_fract<L, T, Q, true>
+	{
+		GLM_FUNC_QUALIFIER static vec<L, T, Q> call(vec<L, T, Q> const& v)
+		{
+			vec<L, T, Q> result;
+			result.data = v.data - __builtin_elementwise_trunc(v.data);
+			return result;
+		}
+	};
+
+	template<length_t L, typename T, qualifier Q>
+	struct compute_round<L, T, Q, true>
+	{
+		GLM_FUNC_QUALIFIER static vec<L, T, Q> call(vec<L, T, Q> const& v)
+		{
+			vec<L, T, Q> result;
+#if GLM_HAS_BUILTIN(__builtin_elementwise_round)
+			result.data = __builtin_elementwise_round(v.data);
+#else
+			for (int i = 0; i < L; i++)
+				result.data[i] = round(v.data[i]);
+#endif
+			return result;
+		}
+	};
+
+	template<length_t L, typename T, qualifier Q>
+	struct compute_min_vector<L, T, Q, true>
+	{
+		GLM_FUNC_QUALIFIER static vec<L, T, Q> call(vec<L, T, Q> const& v1, vec<L, T, Q> const& v2)
+		{
+			vec<L, T, Q> result;
+			result.data = __builtin_elementwise_min(v1.data, v2.data);
+			return result;
+		}
+	};
+
+	template<length_t L, typename T, qualifier Q>
+	struct compute_max_vector<L, T, Q, true>
+	{
+		GLM_FUNC_QUALIFIER static vec<L, T, Q> call(vec<L, T, Q> const& v1, vec<L, T, Q> const& v2)
+		{
+			vec<L, T, Q> result;
+			result.data = __builtin_elementwise_max(v1.data, v2.data);
+			return result;
+		}
+	};
+
+	template<length_t L, typename T, qualifier Q>
+	struct compute_clamp_vector<L, T, Q, true>
+	{
+		GLM_FUNC_QUALIFIER static vec<L, T, Q> call(vec<L, T, Q> const& x, vec<L, T, Q> const& minVal, vec<L, T, Q> const& maxVal)
+		{
+			vec<L, T, Q> result;
+			result.data = __builtin_elementwise_min(__builtin_elementwise_max(x.data, minVal.data), maxVal.data);
+			return result;
+		}
+	};
+
+	template<length_t L, typename T, qualifier Q>
+	struct compute_fma<L, T, Q, true>
+	{
+		GLM_FUNC_QUALIFIER static vec<L, T, Q> call(vec<L, T, Q> const& a, vec<L, T, Q> const& b, vec<L, T, Q> const& c)
+		{
+			vec<L, T, Q> Result;
+			Result.data = (a.data * b.data) + c.data;
+			return Result;
+		}
+	};
+
+	// copy vec3 to vec4 and set w to 0
+	template<typename T, qualifier Q>
+	struct convert_vec3_to_vec4W0<T, Q, true>
+	{
+		GLM_FUNC_QUALIFIER static vec<4, T, Q> call(vec<3, T, Q> const& a)
+		{
+			vec<4, T, Q> v;
+			v.data.xyz = a.data.xyz;
+			v.data.w = static_cast<T>(0);
+			return v;
+		}
+	};
+
+	// copy vec3 to vec4 and set w to 1
+	template<typename T, qualifier Q>
+	struct convert_vec3_to_vec4W1<T, Q, true>
+	{
+		GLM_FUNC_QUALIFIER static vec<4, T, Q> call(vec<3, T, Q> const& a)
+		{
+			vec<4, T, Q> v;
+			v.data.xyz = a.data.xyz;
+			v.data.w = static_cast<T>(1);
+			return v;
+		}
+	};
+
+	// copy vec3 to vec4 and set w to vec3.z
+	template<typename T, qualifier Q>
+	struct convert_vec3_to_vec4WZ<T, Q, true>
+	{
+		GLM_FUNC_QUALIFIER static vec<4, T, Q> call(vec<3, T, Q> const& a)
+		{
+			vec<4, T, Q> v;
+			v.data.xyz = a.data.xyz;
+			v.data.w = a.data.z;
+			return v;
+		}
+	};
+
+	template<typename T, qualifier Q>
+	struct convert_vec4_to_vec3<T, Q, true> {
+		GLM_FUNC_QUALIFIER static vec<3, T, Q> call(vec<4, T, Q> const& a)
+		{
+			vec<3, T, Q> v;
+			v.data = a.data.xyz;
+			return v;
+		}
+	};
+
+	// set all coordinates to same value vec[c]
+	template<length_t L, typename T, qualifier Q>
+	struct convert_splat<L, T, Q, true> {
+		template<int c>
+		GLM_FUNC_QUALIFIER GLM_CONSTEXPR static vec<L, T, Q> call(vec<L, T, Q> const& a)
+		{
+			vec<L, T, Q> v;
+			v.data = a.data[c];
+			return v;
+		}
+	};
+
+}//namespace detail
+}//namespace glm
+#endif//GLM_ARCH & GLM_ARCH_CLANG_BIT

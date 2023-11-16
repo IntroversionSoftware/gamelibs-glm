@@ -487,7 +487,6 @@ namespace glm
 		template<typename T, qualifier Q, bool is_aligned>
 		struct mul3x3 {};
 
-#if GLM_CONFIG_SIMD == GLM_ENABLE
 		template<typename T, qualifier Q>
 		struct mul3x3<T, Q, true>
 		{
@@ -505,10 +504,10 @@ namespace glm
 				Result[0] = xyz(glm::fma(SrcA2, splatZ(SrcB0), glm::fma(SrcA1, splatY(SrcB0), SrcA0 * splatX(SrcB0))));
 				Result[1] = xyz(glm::fma(SrcA2, splatZ(SrcB1), glm::fma(SrcA1, splatY(SrcB1), SrcA0 * splatX(SrcB1))));
 				Result[2] = xyz(glm::fma(SrcA2, splatZ(SrcB2), glm::fma(SrcA1, splatY(SrcB2), SrcA0 * splatX(SrcB2))));
-				return mat<3, 3, T, Q>(Result);
+				return Result;
 			}
 		};
-#endif
+
 		template<typename T, qualifier Q>
 		struct mul3x3<T, Q, false>
 		{
