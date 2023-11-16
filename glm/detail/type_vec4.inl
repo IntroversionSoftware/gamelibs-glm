@@ -3,7 +3,8 @@
 #include "compute_vector_relational.hpp"
 #include "compute_vector_decl.hpp"
 
-namespace glm{
+namespace glm
+{
 namespace detail
 {
 
@@ -422,7 +423,7 @@ namespace detail
 	template<typename U>
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<4, T, Q> & vec<4, T, Q>::operator+=(U scalar)
 	{
-		return (*this = detail::compute_vec_add<4, T, Q, detail::is_aligned<Q>::value>::call(*this, vec<4, T, Q>(scalar)));
+		return (*this = detail::compute_vec_add<4, T, Q, detail::is_aligned<Q>::value>::call(*this, vec<4, T, Q>(static_cast<T>(scalar))));
 	}
 
 	template<typename T, qualifier Q>
@@ -443,7 +444,7 @@ namespace detail
 	template<typename U>
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<4, T, Q> & vec<4, T, Q>::operator-=(U scalar)
 	{
-		return (*this = detail::compute_vec_sub<4, T, Q, detail::is_aligned<Q>::value>::call(*this, vec<4, T, Q>(scalar)));
+		return (*this = detail::compute_vec_sub<4, T, Q, detail::is_aligned<Q>::value>::call(*this, vec<4, T, Q>(static_cast<T>(scalar))));
 	}
 
 	template<typename T, qualifier Q>
@@ -464,7 +465,7 @@ namespace detail
 	template<typename U>
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<4, T, Q> & vec<4, T, Q>::operator*=(U scalar)
 	{
-		return (*this = detail::compute_vec_mul<4,T, Q, detail::is_aligned<Q>::value>::call(*this, vec<4, T, Q>(scalar)));
+		return (*this = detail::compute_vec_mul<4,T, Q, detail::is_aligned<Q>::value>::call(*this, vec<4, T, Q>(static_cast<T>(scalar))));
 	}
 
 	template<typename T, qualifier Q>
@@ -485,7 +486,7 @@ namespace detail
 	template<typename U>
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<4, T, Q> & vec<4, T, Q>::operator/=(U scalar)
 	{
-		return (*this = detail::compute_vec_div<4, T, Q, detail::is_aligned<Q>::value>::call(*this, vec<4, T, Q>(scalar)));
+		return (*this = detail::compute_vec_div<4, T, Q, detail::is_aligned<Q>::value>::call(*this, vec<4, T, Q>(static_cast<T>(scalar))));
 	}
 
 	template<typename T, qualifier Q>
