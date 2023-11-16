@@ -1,9 +1,9 @@
 #include <glm/ext/matrix_int2x3_sized.hpp>
 
-static_assert(sizeof(glm::i8mat2x3) == 6, "int8 size isn't 1 byte on this platform");
-static_assert(sizeof(glm::i16mat2x3) == 12, "int16 size isn't 2 bytes on this platform");
-static_assert(sizeof(glm::i32mat2x3) == 24, "int32 size isn't 4 bytes on this platform");
-static_assert(sizeof(glm::i64mat2x3) == 48, "int64 size isn't 8 bytes on this platform");
+static_assert(sizeof(glm::mat<2, 3, glm::int8, glm::packed_highp>) == 6, "int8 size isn't 1 byte on this platform");
+static_assert(sizeof(glm::mat<2, 3, glm::int16, glm::packed_highp>) == 12, "int16 size isn't 2 bytes on this platform");
+static_assert(sizeof(glm::mat<2, 3, glm::int32, glm::packed_highp>) == 24, "int32 size isn't 4 bytes on this platform");
+static_assert(sizeof(glm::mat<2, 3, glm::int64, glm::packed_highp>) == 48, "int64 size isn't 8 bytes on this platform");
 
 static int test_comp()
 {

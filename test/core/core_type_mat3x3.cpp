@@ -172,8 +172,13 @@ static int test_size()
 {
 	int Error = 0;
 
-	Error += 36 == sizeof(glm::mat3x3) ? 0 : 1;
-	Error += 72 == sizeof(glm::dmat3x3) ? 0 : 1;
+	// Packed matrices are tightly packed; aligned ones pad each 3-row column to 4 components.
+	Error += 36 == sizeof(glm::mat<3, 3, float, glm::packed_highp>) ? 0 : 1;
+	Error += 72 == sizeof(glm::mat<3, 3, double, glm::packed_highp>) ? 0 : 1;
+#	if GLM_CONFIG_ALIGNED_GENTYPES == GLM_ENABLE
+		Error += 48 == sizeof(glm::mat<3, 3, float, glm::aligned_highp>) ? 0 : 1;
+		Error += 96 == sizeof(glm::mat<3, 3, double, glm::aligned_highp>) ? 0 : 1;
+#	endif
 	Error += glm::mat3x3().length() == 3 ? 0 : 1;
 	Error += glm::dmat3x3().length() == 3 ? 0 : 1;
 	Error += glm::mat3x3::length() == 3 ? 0 : 1;
