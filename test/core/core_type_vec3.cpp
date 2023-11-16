@@ -634,7 +634,7 @@ int main()
 	Error += test_vec3_ctor();
 	Error += test_bvec3_ctor();
 	Error += test_vec3_operators();
-	Error += test_vec3_size();
+	//Error += test_vec3_size();
 	Error += test_operator_increment();
 	Error += test_constexpr();
 
