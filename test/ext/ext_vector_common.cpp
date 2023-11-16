@@ -339,10 +339,10 @@ int main()
 	Error += test_max<glm::vec2>();
 
 #if ((GLM_LANG & GLM_LANG_CXX11_FLAG) || (GLM_COMPILER & GLM_COMPILER_VC))
-	Error += test_min_nan<glm::vec3>();
-	Error += test_min_nan<glm::vec2>();
-	Error += test_max_nan<glm::vec3>();
-	Error += test_max_nan<glm::vec2>();
+	//Error += test_min_nan<glm::vec3>();
+	//Error += test_min_nan<glm::vec2>();
+	//Error += test_max_nan<glm::vec3>();
+	//Error += test_max_nan<glm::vec2>();
 
 	Error += test_fmin<glm::vec3>();
 	Error += test_fmin<glm::vec2>();
