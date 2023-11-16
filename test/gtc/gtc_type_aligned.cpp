@@ -340,7 +340,7 @@ static int test_copy_vec4_vec3()
 		Error += glm::equal(v.x, u.x, glm::epsilon<double>()) ? 0 : 1;
 		Error += glm::equal(v.y, u.y, glm::epsilon<double>()) ? 0 : 1;
 		Error += glm::equal(v.z, u.z, glm::epsilon<double>()) ? 0 : 1;
-		Error += glm::equal(v.w, 0.0, glm::epsilon<double>()) ? 0 : 1;	
+		Error += glm::equal(v.w, 0.0, glm::epsilon<double>()) ? 0 : 1;
 	}
 
 	{

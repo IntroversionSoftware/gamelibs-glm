@@ -1,3 +1,5 @@
+#include "glm/matrix.hpp"
+
 namespace glm
 {
 	template<typename genType>
@@ -17,32 +19,7 @@ namespace glm
 	template<typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER mat<4, 4, T, Q> rotate(mat<4, 4, T, Q> const& m, T angle, vec<3, T, Q> const& v)
 	{
-		T const a = angle;
-		T const c = cos(a);
-		T const s = sin(a);
-
-		vec<3, T, Q> axis(normalize(v));
-		vec<3, T, Q> temp((T(1) - c) * axis);
-
-		mat<4, 4, T, Q> Rotate;
-		Rotate[0][0] = c + temp[0] * axis[0];
-		Rotate[0][1] = temp[0] * axis[1] + s * axis[2];
-		Rotate[0][2] = temp[0] * axis[2] - s * axis[1];
-
-		Rotate[1][0] = temp[1] * axis[0] - s * axis[2];
-		Rotate[1][1] = c + temp[1] * axis[1];
-		Rotate[1][2] = temp[1] * axis[2] + s * axis[0];
-
-		Rotate[2][0] = temp[2] * axis[0] + s * axis[1];
-		Rotate[2][1] = temp[2] * axis[1] - s * axis[0];
-		Rotate[2][2] = c + temp[2] * axis[2];
-
-		mat<4, 4, T, Q> Result;
-		Result[0] = m[0] * Rotate[0][0] + m[1] * Rotate[0][1] + m[2] * Rotate[0][2];
-		Result[1] = m[0] * Rotate[1][0] + m[1] * Rotate[1][1] + m[2] * Rotate[1][2];
-		Result[2] = m[0] * Rotate[2][0] + m[1] * Rotate[2][1] + m[2] * Rotate[2][2];
-		Result[3] = m[3];
-		return Result;
+		return m * detail::mat4_rotate(angle, v);
 	}
 
 	template<typename T, qualifier Q>
@@ -77,12 +54,7 @@ namespace glm
 	template<typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER mat<4, 4, T, Q> scale(mat<4, 4, T, Q> const& m, vec<3, T, Q> const& v)
 	{
-		mat<4, 4, T, Q> Result;
-		Result[0] = m[0] * v[0];
-		Result[1] = m[1] * v[1];
-		Result[2] = m[2] * v[2];
-		Result[3] = m[3];
-		return Result;
+		return m * detail::mat4_scale(v);
 	}
 
 	template<typename T, qualifier Q>
@@ -156,20 +128,12 @@ namespace glm
 		vec<3, T, Q> const s(normalize(cross(f, up)));
 		vec<3, T, Q> const u(cross(s, f));
 
-		mat<4, 4, T, Q> Result(1);
-		Result[0][0] = s.x;
-		Result[1][0] = s.y;
-		Result[2][0] = s.z;
-		Result[0][1] = u.x;
-		Result[1][1] = u.y;
-		Result[2][1] = u.z;
-		Result[0][2] =-f.x;
-		Result[1][2] =-f.y;
-		Result[2][2] =-f.z;
-		Result[3][0] =-dot(s, eye);
-		Result[3][1] =-dot(u, eye);
-		Result[3][2] = dot(f, eye);
-		return Result;
+		return mat<4, 4, T, Q>(
+			vec<4, T, Q>(s.x, u.x, -f.x, 0),
+			vec<4, T, Q>(s.y, u.y, -f.y, 0),
+			vec<4, T, Q>(s.z, u.z, -f.z, 0),
+			vec<4, T, Q>(-dot(s, eye), -dot(u, eye), dot(f, eye), 1)
+		);
 	}
 
 	template<typename T, qualifier Q>
@@ -179,20 +143,12 @@ namespace glm
 		vec<3, T, Q> const s(normalize(cross(up, f)));
 		vec<3, T, Q> const u(cross(f, s));
 
-		mat<4, 4, T, Q> Result(1);
-		Result[0][0] = s.x;
-		Result[1][0] = s.y;
-		Result[2][0] = s.z;
-		Result[0][1] = u.x;
-		Result[1][1] = u.y;
-		Result[2][1] = u.z;
-		Result[0][2] = f.x;
-		Result[1][2] = f.y;
-		Result[2][2] = f.z;
-		Result[3][0] = -dot(s, eye);
-		Result[3][1] = -dot(u, eye);
-		Result[3][2] = -dot(f, eye);
-		return Result;
+		return mat<4, 4, T, Q>(
+			vec<4, T, Q>(s.x, u.x, f.x, 0),
+			vec<4, T, Q>(s.y, u.y, f.y, 0),
+			vec<4, T, Q>(s.z, u.z, f.z, 0),
+			vec<4, T, Q>(-dot(s, eye), -dot(u, eye), -dot(f, eye), 1)
+		);
 	}
 
 	template<typename T, qualifier Q>
