@@ -389,7 +389,9 @@
 #	define GLM_ARCH (GLM_ARCH_SSE)
 #	define GLM_FORCE_INTRINSICS
 #elif defined(GLM_FORCE_INTRINSICS) && !defined(GLM_FORCE_XYZW_ONLY)
-#	if defined(__AVX2__)
+#	if defined(__clang__) && __clang_major__ >= 16 && GLM_HAS_ATTRIBUTE(ext_vector_type)
+#		define GLM_ARCH (GLM_ARCH_CLANG)
+#	elif defined(__AVX2__)
 #		define GLM_ARCH (GLM_ARCH_AVX2)
 #	elif defined(__AVX__)
 #		define GLM_ARCH (GLM_ARCH_AVX)
