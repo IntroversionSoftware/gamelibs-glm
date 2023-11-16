@@ -89,7 +89,7 @@ namespace detail
 		} type;
 	};
 
-#	if GLM_HAS_ALIGNOF
+#	if GLM_HAS_ALIGNOF && !(GLM_ARCH & GLM_ARCH_CLANG_BIT)
 		template<length_t L, typename T>
 		struct storage<L, T, true>
 		{
@@ -251,6 +251,24 @@ namespace detail
 #	endif//GLM_HAS_ALIGNOF
 
 #	endif
+
+#	if GLM_ARCH & GLM_ARCH_CLANG_BIT
+	template<length_t L, typename T>
+	struct storage<L, T, true>
+	{
+		using vec_type = T __attribute__((ext_vector_type(L)));
+		typedef vec_type type;
+	};
+
+	template<length_t L, typename T>
+	struct [[gnu::packed, gnu::aligned(4)]] storage<L, T, false>
+	{
+		using vec_type = T __attribute__((ext_vector_type(L), aligned(4)));
+		typedef vec_type type;
+	};
+#	endif
+
+
 
 	enum genTypeEnum
 	{
