@@ -1,8 +1,9 @@
+#include "../simd/matrix.h"
+
 #if GLM_ARCH & GLM_ARCH_SSE2_BIT
 
 #include "type_mat4x4.hpp"
 #include "../geometric.hpp"
-#include "../simd/matrix.h"
 #include <cstring>
 
 namespace glm{
@@ -263,4 +264,73 @@ namespace detail
 	};
 }//namespace detail
 }//namespace glm
+
+#elif GLM_ARCH & GLM_ARCH_CLANG_BIT
+
+namespace glm{
+namespace detail
+{
+	template<qualifier Q, typename = typename std::enable_if<is_aligned<Q>::value>::type>
+	GLM_FUNC_QUALIFIER mat<4, 4, float, Q> mat4_scale(vec<3, float, Q> const &scale)
+	{
+		mat<4, 4, float, Q> Result;
+		Result[0].data = {scale.data.x, 0.0f, 0.0f, 0.0f};
+		Result[1].data = {0.0f, scale.data.y, 0.0f, 0.0f};
+		Result[2].data = {0.0f, 0.0f, scale.data.z, 0.0f};
+		Result[3].data = {0.0f, 0.0f, 0.0f, 1.0f};
+		return Result;
+	}
+
+	template<qualifier Q, typename = typename std::enable_if<is_aligned<Q>::value>::type>
+	GLM_FUNC_QUALIFIER mat<4, 4, float, Q> mat4_translate(vec<3, float, Q> const &pos)
+	{
+		mat<4, 4, float, Q> Result;
+		Result[0].data = {1.0f, 0.0f, 0.0f, 0.0f};
+		Result[1].data = {0.0f, 1.0f, 0.0f, 0.0f};
+		Result[2].data = {0.0f, 0.0f, 1.0f, 0.0f};
+		Result[3].data = {pos.data.x, pos.data.y, pos.data.z, 1.0f};
+		return Result;
+	}
+
+	template<qualifier Q>
+	struct compute_inverse<4, 4, float, Q, true>
+	{
+		GLM_FUNC_QUALIFIER static mat<4, 4, float, Q> call(mat<4, 4, float, Q> const& m)
+		{
+			mat<4, 4, float, Q> Result;
+			glm_mat4_inverse(&m[0].data, &Result[0].data);
+			return Result;
+		}
+	};
+
+	template<qualifier Q>
+	struct compute_transpose<3, 3, float, Q, true>
+	{
+		GLM_FUNC_QUALIFIER static mat<3, 3, float, Q> call(mat<3, 3, float, Q> const &m)
+		{
+			mat<3, 3, float, Q> Result;
+			Result[0].data = { m[0].data.x, m[1].data.x, m[2].data.x };
+			Result[1].data = { m[0].data.y, m[1].data.y, m[2].data.y };
+			Result[2].data = { m[0].data.z, m[1].data.z, m[2].data.z };
+			return Result;
+		}
+	};
+
+	template<qualifier Q>
+	struct compute_transpose<4, 4, float, Q, true>
+	{
+		GLM_FUNC_QUALIFIER static mat<4, 4, float, Q> call(mat<4, 4, float, Q> const &m)
+		{
+			mat<4, 4, float, Q> Result;
+			Result[0].data = { m[0].data.x, m[1].data.x, m[2].data.x, m[3].data.x };
+			Result[1].data = { m[0].data.y, m[1].data.y, m[2].data.y, m[3].data.y };
+			Result[2].data = { m[0].data.z, m[1].data.z, m[2].data.z, m[3].data.z };
+			Result[3].data = { m[0].data.w, m[1].data.w, m[2].data.w, m[3].data.w };
+			return Result;
+		}
+	};
+
+}//namespace detail
+}//namespace glm
+
 #endif
