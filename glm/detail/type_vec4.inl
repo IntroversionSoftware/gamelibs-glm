@@ -3,7 +3,8 @@
 #include "compute_vector_relational.hpp"
 #include "compute_vector_decl.hpp"
 
-namespace glm{
+namespace glm
+{
 namespace detail
 {
 
@@ -423,7 +424,7 @@ namespace detail
 	template<typename U>
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<4, T, Q> & vec<4, T, Q>::operator+=(U scalar)
 	{
-		return (*this = detail::compute_vec_add<4, T, Q, detail::is_aligned<Q>::value>::call(*this, vec<4, T, Q>(scalar)));
+		return (*this = detail::compute_vec_add<4, T, Q, detail::is_aligned<Q>::value>::call(*this, vec<4, T, Q>(static_cast<T>(scalar))));
 	}
 
 	template<typename T, qualifier Q>
@@ -444,7 +445,7 @@ namespace detail
 	template<typename U>
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<4, T, Q> & vec<4, T, Q>::operator-=(U scalar)
 	{
-		return (*this = detail::compute_vec_sub<4, T, Q, detail::is_aligned<Q>::value>::call(*this, vec<4, T, Q>(scalar)));
+		return (*this = detail::compute_vec_sub<4, T, Q, detail::is_aligned<Q>::value>::call(*this, vec<4, T, Q>(static_cast<T>(scalar))));
 	}
 
 	template<typename T, qualifier Q>
@@ -465,7 +466,7 @@ namespace detail
 	template<typename U>
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<4, T, Q> & vec<4, T, Q>::operator*=(U scalar)
 	{
-		return (*this = detail::compute_vec_mul<4,T, Q, detail::is_aligned<Q>::value>::call(*this, vec<4, T, Q>(scalar)));
+		return (*this = detail::compute_vec_mul<4,T, Q, detail::is_aligned<Q>::value>::call(*this, vec<4, T, Q>(static_cast<T>(scalar))));
 	}
 
 	template<typename T, qualifier Q>
@@ -486,7 +487,7 @@ namespace detail
 	template<typename U>
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<4, T, Q> & vec<4, T, Q>::operator/=(U scalar)
 	{
-		return (*this = detail::compute_vec_div<4, T, Q, detail::is_aligned<Q>::value>::call(*this, vec<4, T, Q>(scalar)));
+		return (*this = detail::compute_vec_div<4, T, Q, detail::is_aligned<Q>::value>::call(*this, vec<4, T, Q>(static_cast<T>(scalar))));
 	}
 
 	template<typename T, qualifier Q>
@@ -1033,9 +1034,21 @@ namespace glm {
 	CTORSL(4, CTOR_VECF_VECF);
 	CTORSL(4, CTOR_VECF_VECI);
 	CTORSL(4, CTOR_VECF_VECU);
-
-
 #endif// GLM_ARCH & GLM_ARCH_NEON_BIT
+
+#if (GLM_ARCH & GLM_ARCH_CLANG_BIT) && !GLM_CONFIG_XYZW_ONLY
+	CTORSL(4, CTOR_FLOAT);
+	CTORSL(4, CTOR_FLOAT4);
+	CTORSL(4, CTOR_INT);
+	CTORSL(4, CTOR_UINT);
+	CTORSL(4, CTOR_VECF_INT4);
+	CTORSL(4, CTOR_VECF_UINT4);
+	CTORSL(4, CTOR_VECF_VECF);
+	CTORSL(4, CTOR_VECF_VECI);
+	CTORSL(4, CTOR_VECF_VECU);
+
+	CTORSLOT(CTOR_VECN_IMM1, 4, 3, xyz, w);
+#endif
 
 #if GLM_ARCH & GLM_ARCH_SSE2_BIT
 	CTORSL(4, CTOR_FLOAT);
