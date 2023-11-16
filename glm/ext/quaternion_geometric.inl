@@ -16,11 +16,10 @@ namespace glm
 	template<typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR qua<T, Q> normalize(qua<T, Q> const& q)
 	{
-		T len = length(q);
-		if(len <= static_cast<T>(0)) // Problem
+		T lenSq = dot(q, q);
+		if(lenSq <= std::numeric_limits<T>::epsilon()) // Problem
 			return qua<T, Q>::wxyz(static_cast<T>(1), static_cast<T>(0), static_cast<T>(0), static_cast<T>(0));
-		T oneOverLen = static_cast<T>(1) / len;
-		return qua<T, Q>::wxyz(q.w * oneOverLen, q.x * oneOverLen, q.y * oneOverLen, q.z * oneOverLen);
+		return detail::compute_quat_normalize<T, Q, detail::is_aligned<Q>::value>::call(q, lenSq);
 	}
 
 	template<typename T, qualifier Q>

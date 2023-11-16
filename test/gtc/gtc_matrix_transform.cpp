@@ -32,7 +32,7 @@ static int test_perspective()
 		Error += glm::notEqual(N.z, -1.f, Eps);
 		Error += glm::notEqual(F.z, 1.f, Eps);
 	}
-	
+
 	Projection = glm::perspectiveRH_ZO(glm::pi<float>() * 0.25f, 4.0f / 3.0f, Near, Far);
 	{
 		glm::vec4 N = Projection * glm::vec4(0.f, 0.f, -Near, 1.f);
