@@ -226,45 +226,20 @@ namespace glm
 	/// @see gtx_dual_quaternion
 	typedef tdualquat<double, highp>	highp_ddualquat;
 
-
-#if(!defined(GLM_PRECISION_HIGHP_FLOAT) && !defined(GLM_PRECISION_MEDIUMP_FLOAT) && !defined(GLM_PRECISION_LOWP_FLOAT))
 	/// Dual-quaternion of floating-point numbers.
 	///
 	/// @see gtx_dual_quaternion
-	typedef highp_fdualquat			dualquat;
+	typedef tdualquat<float, defaultp>	dualquat;
 
 	/// Dual-quaternion of single-qualifier floating-point numbers.
 	///
 	/// @see gtx_dual_quaternion
-	typedef highp_fdualquat			fdualquat;
-#elif(defined(GLM_PRECISION_HIGHP_FLOAT) && !defined(GLM_PRECISION_MEDIUMP_FLOAT) && !defined(GLM_PRECISION_LOWP_FLOAT))
-	typedef highp_fdualquat			dualquat;
-	typedef highp_fdualquat			fdualquat;
-#elif(!defined(GLM_PRECISION_HIGHP_FLOAT) && defined(GLM_PRECISION_MEDIUMP_FLOAT) && !defined(GLM_PRECISION_LOWP_FLOAT))
-	typedef mediump_fdualquat		dualquat;
-	typedef mediump_fdualquat		fdualquat;
-#elif(!defined(GLM_PRECISION_HIGHP_FLOAT) && !defined(GLM_PRECISION_MEDIUMP_FLOAT) && defined(GLM_PRECISION_LOWP_FLOAT))
-	typedef lowp_fdualquat			dualquat;
-	typedef lowp_fdualquat			fdualquat;
-#else
-#	error "GLM error: multiple default precision requested for single-precision floating-point types"
-#endif
+	typedef tdualquat<float, defaultp>	fdualquat;
 
-
-#if(!defined(GLM_PRECISION_HIGHP_DOUBLE) && !defined(GLM_PRECISION_MEDIUMP_DOUBLE) && !defined(GLM_PRECISION_LOWP_DOUBLE))
 	/// Dual-quaternion of default double-qualifier floating-point numbers.
 	///
 	/// @see gtx_dual_quaternion
-	typedef highp_ddualquat			ddualquat;
-#elif(defined(GLM_PRECISION_HIGHP_DOUBLE) && !defined(GLM_PRECISION_MEDIUMP_DOUBLE) && !defined(GLM_PRECISION_LOWP_DOUBLE))
-	typedef highp_ddualquat			ddualquat;
-#elif(!defined(GLM_PRECISION_HIGHP_DOUBLE) && defined(GLM_PRECISION_MEDIUMP_DOUBLE) && !defined(GLM_PRECISION_LOWP_DOUBLE))
-	typedef mediump_ddualquat		ddualquat;
-#elif(!defined(GLM_PRECISION_HIGHP_DOUBLE) && !defined(GLM_PRECISION_MEDIUMP_DOUBLE) && defined(GLM_PRECISION_LOWP_DOUBLE))
-	typedef lowp_ddualquat			ddualquat;
-#else
-#	error "GLM error: Multiple default precision requested for double-precision floating-point types"
-#endif
+	typedef tdualquat<double, defaultp>	ddualquat;
 
 	/// @}
 } //namespace glm
