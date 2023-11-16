@@ -229,3 +229,106 @@ namespace detail
 }//namespace glm
 
 #endif//GLM_ARCH & GLM_ARCH_SSE2_BIT
+
+#if GLM_ARCH & GLM_ARCH_CLANG_BIT
+
+namespace glm{
+namespace detail
+{
+	template<length_t L, typename T, qualifier Q>
+	struct compute_abs_vector<L, T, Q, true>
+	{
+		GLM_FUNC_QUALIFIER static vec<L, T, Q> call(vec<L, T, Q> const& v)
+		{
+			vec<L, T, Q> result;
+			result.data = __builtin_elementwise_abs(v.data);
+			return result;
+		}
+	};
+
+	template<length_t L, qualifier Q>
+	struct compute_floor<L, float, Q, true>
+	{
+		GLM_FUNC_QUALIFIER static vec<L, float, Q> call(vec<L, float, Q> const& v)
+		{
+			vec<L, float, Q> result;
+			result.data = __builtin_elementwise_floor(v.data);
+			return result;
+		}
+	};
+
+	template<length_t L, qualifier Q>
+	struct compute_ceil<L, float, Q, true>
+	{
+		GLM_FUNC_QUALIFIER static vec<L, float, Q> call(vec<L, float, Q> const& v)
+		{
+			vec<L, float, Q> result;
+			result.data = __builtin_elementwise_ceil(v.data);
+			return result;
+		}
+	};
+
+	template<length_t L, qualifier Q>
+	struct compute_fract<L, float, Q, true>
+	{
+		GLM_FUNC_QUALIFIER static vec<L, float, Q> call(vec<L, float, Q> const& v)
+		{
+			vec<L, float, Q> result;
+			result.data = v.data - __builtin_elementwise_trunc(v.data);
+			return result;
+		}
+	};
+
+	template<length_t L, qualifier Q>
+	struct compute_round<L, float, Q, true>
+	{
+		GLM_FUNC_QUALIFIER static vec<L, float, Q> call(vec<L, float, Q> const& v)
+		{
+			vec<L, float, Q> result;
+#if __has_builtin(__builtin_elementwise_round)
+			result.data = __builtin_elementwise_round(v.data);
+#else
+			for (int i = 0; i < L; i++)
+				result.data[i] = round(v.data[i]);
+#endif
+			return result;
+		}
+	};
+
+	template<length_t L, typename T, qualifier Q>
+	struct compute_min_vector<L, T, Q, true>
+	{
+		GLM_FUNC_QUALIFIER static vec<L, T, Q> call(vec<L, T, Q> const& v1, vec<L, T, Q> const& v2)
+		{
+			vec<L, T, Q> result;
+			result.data = __builtin_elementwise_min(v1.data, v2.data);
+			return result;
+		}
+	};
+
+	template<length_t L, typename T, qualifier Q>
+	struct compute_max_vector<L, T, Q, true>
+	{
+		GLM_FUNC_QUALIFIER static vec<L, T, Q> call(vec<L, T, Q> const& v1, vec<L, T, Q> const& v2)
+		{
+			vec<L, T, Q> result;
+			result.data = __builtin_elementwise_max(v1.data, v2.data);
+			return result;
+		}
+	};
+
+	template<length_t L, typename T, qualifier Q>
+	struct compute_clamp_vector<L, T, Q, true>
+	{
+		GLM_FUNC_QUALIFIER static vec<L, T, Q> call(vec<L, T, Q> const& x, vec<L, T, Q> const& minVal, vec<L, T, Q> const& maxVal)
+		{
+			vec<L, T, Q> result;
+			result.data = __builtin_elementwise_min(__builtin_elementwise_max(x.data, minVal.data), maxVal.data);
+			return result;
+		}
+	};
+
+}//namespace detail
+}//namespace glm
+
+#endif//GLM_ARCH & GLM_ARCH_CLANG_BIT
