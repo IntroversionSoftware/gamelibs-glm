@@ -51,19 +51,19 @@ static int test_vec3_cast()
 	glm::lowp_vec3 B(A);
 	glm::mediump_vec3 C(A);
 	glm::highp_vec3 D(A);
-	
+
 	glm::vec3 E = static_cast<glm::vec3>(A);
 	glm::lowp_vec3 F = static_cast<glm::lowp_vec3>(A);
 	glm::mediump_vec3 G = static_cast<glm::mediump_vec3>(A);
 	glm::highp_vec3 H = static_cast<glm::highp_vec3>(A);
-	
+
 	int Error(0);
-	
+
 	Error += glm::all(glm::equal(A, E, glm::epsilon<float>())) ? 0 : 1;
 	Error += glm::all(glm::equal(B, F, glm::epsilon<float>())) ? 0 : 1;
 	Error += glm::all(glm::equal(C, G, glm::epsilon<float>())) ? 0 : 1;
 	Error += glm::all(glm::equal(D, H, glm::epsilon<float>())) ? 0 : 1;
-	
+
 	return Error;
 }
 
@@ -73,19 +73,19 @@ static int test_vec4_cast()
 	glm::lowp_vec4 B(A);
 	glm::mediump_vec4 C(A);
 	glm::highp_vec4 D(A);
-	
+
 	glm::vec4 E = static_cast<glm::vec4>(A);
 	glm::lowp_vec4 F = static_cast<glm::lowp_vec4>(A);
 	glm::mediump_vec4 G = static_cast<glm::mediump_vec4>(A);
 	glm::highp_vec4 H = static_cast<glm::highp_vec4>(A);
-	
+
 	int Error(0);
-	
+
 	Error += glm::all(glm::equal(A, E, glm::epsilon<float>())) ? 0 : 1;
 	Error += glm::all(glm::equal(B, F, glm::epsilon<float>())) ? 0 : 1;
 	Error += glm::all(glm::equal(C, G, glm::epsilon<float>())) ? 0 : 1;
 	Error += glm::all(glm::equal(D, H, glm::epsilon<float>())) ? 0 : 1;
-	
+
 	return Error;
 }
 
@@ -97,7 +97,7 @@ static int test_std_copy()
 		std::vector<int> High;
 		High.resize(64);
 		std::vector<int> Medium(High.size());
-		
+
 		std::copy(High.begin(), High.end(), Medium.begin());
 
 		*Medium.begin() = *High.begin();
@@ -107,7 +107,7 @@ static int test_std_copy()
 		std::vector<glm::dvec4> High4;
 		High4.resize(64);
 		std::vector<glm::vec4> Medium4(High4.size());
-		
+
 		std::copy(High4.begin(), High4.end(), Medium4.begin());
 
 		*Medium4.begin() = *High4.begin();
