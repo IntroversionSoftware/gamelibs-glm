@@ -117,6 +117,7 @@ namespace detail
 		} type;
 	};
 
+#	if !(GLM_ARCH & GLM_ARCH_CLANG_BIT)
 	template<length_t L, typename T>
 	struct storage<L, T, true>
 	{
@@ -132,6 +133,7 @@ namespace detail
 			T data[4];
 		} type;
 	};
+#	endif
 
 #	if GLM_ARCH & GLM_ARCH_SSE2_BIT
 	template<>
@@ -275,6 +277,33 @@ namespace detail
 	};
 */
 #	endif
+
+#	if GLM_ARCH & GLM_ARCH_CLANG_BIT
+	template <length_t L>
+	struct storage<L, bool, true>
+	{
+		static constexpr std::size_t alignment = ((L < 3) ? 2 : ((L <= 4) ? 4 : ((L <= 8) ? 8 : L)));
+		typedef struct alignas(alignment) type {
+			bool data[L];
+		} type;
+	};
+
+	// 3-component vectors are stored as 4 lanes, like the SSE (__m128) and NEON (float32x4_t) paths.
+	// A 3-lane ext_vector takes 16 bytes anyway, but Clang stores it by widening to 4 lanes with a
+	// poison padding lane; LLVM then turns the whole vector poison when it's coerced to an integer
+	// (e.g. an i128 to return it in two registers on AArch64), so a copied vec3 with one component
+	// written comes back as garbage. Clang/LLVM 18-21 and Apple clang from Xcode 16.3 do this; LLVM
+	// 22 fills the lane with undef instead (llvm-project 5378584). Every store here writes all four
+	// lanes, so there is no poison lane to begin with.
+	template<length_t L, typename T>
+	struct storage<L, T, true>
+	{
+		using vec_type = T __attribute__((ext_vector_type(L == 3 ? 4 : L), aligned(4)));
+		typedef vec_type type;
+	};
+#	endif
+
+
 
 	enum genTypeEnum
 	{
