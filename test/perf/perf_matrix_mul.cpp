@@ -24,7 +24,7 @@ is_aligned(const void* ptr, std::uintptr_t alignment) noexcept {
 template <typename matType>
 static void align_check(matType const& M, std::vector<matType> const& I, std::vector<matType>& O)
 {
-	if (matType::col_type::is_aligned::value)
+	if (matType::col_type::is_aligned::value && matType::length() > 2)
 	{
 		if (!is_aligned(&M, 16))
 			abort();

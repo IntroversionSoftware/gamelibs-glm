@@ -40,6 +40,15 @@ namespace detail
 		}
 	};
 
+	template<typename T, qualifier Q>
+	struct compute_inversesqrt_scalar
+	{
+		GLM_FUNC_QUALIFIER static T call(T x)
+		{
+			return static_cast<T>(1) / std::sqrt(x);
+		}
+	};
+
 	template<length_t L, typename T, qualifier Q, bool Aligned>
 	struct compute_inversesqrt
 	{
@@ -119,7 +128,7 @@ namespace detail
 	template<typename genType>
 	GLM_FUNC_QUALIFIER genType inversesqrt(genType x)
 	{
-		return static_cast<genType>(1) / sqrt(x);
+		return detail::compute_inversesqrt_scalar<genType, highp>::call(x);
 	}
 
 	template<length_t L, typename T, qualifier Q>

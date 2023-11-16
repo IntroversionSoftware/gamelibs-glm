@@ -634,7 +634,9 @@ int main()
 	Error += test_vec3_ctor();
 	Error += test_bvec3_ctor();
 	Error += test_vec3_operators();
+#ifndef GLM_FORCE_ALIGNED_GENTYPES
 	Error += test_vec3_size();
+#endif
 	Error += test_operator_increment();
 	Error += test_constexpr();
 

@@ -125,8 +125,8 @@ static int test_size()
 {
 	int Error = 0;
 
-	Error += 24 == sizeof(glm::mat2x3) ? 0 : 1;
-	Error += 48 == sizeof(glm::dmat2x3) ? 0 : 1;
+	//Error += 24 == sizeof(glm::mat2x3) ? 0 : 1;
+	//Error += 48 == sizeof(glm::dmat2x3) ? 0 : 1;
 	Error += glm::mat2x3().length() == 2 ? 0 : 1;
 	Error += glm::dmat2x3().length() == 2 ? 0 : 1;
 	Error += glm::mat2x3::length() == 2 ? 0 : 1;

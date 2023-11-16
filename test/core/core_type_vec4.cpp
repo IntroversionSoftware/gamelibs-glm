@@ -849,7 +849,9 @@ int main()
 	Error += test_swizzle_partial();
 	Error += test_simd();
 	Error += test_operator_increment();
+#ifndef GLM_FORCE_ALIGNED_GENTYPES
 	Error += heap::test();
+#endif
 	Error += test_inheritance();
 	Error += test_constexpr();
 

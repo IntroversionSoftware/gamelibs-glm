@@ -1,7 +1,9 @@
 #ifndef GLM_FORCE_PURE
-#	define GLM_FORCE_PURE
+	#define GLM_FORCE_PURE
 #endif//GLM_FORCE_PURE
-//#define GLM_FORCE_DEFAULT_ALIGNED_GENTYPES
+#ifdef GLM_FORCE_DEFAULT_ALIGNED_GENTYPES
+	#undef GLM_FORCE_DEFAULT_ALIGNED_GENTYPES
+#endif
 #define GLM_FORCE_SWIZZLE
 #include <glm/ext/scalar_constants.hpp>
 #include <glm/ext/vector_relational.hpp>
