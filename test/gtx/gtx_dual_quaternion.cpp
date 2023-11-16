@@ -110,7 +110,7 @@ static int test_mul()
 
 	for (int j = 0; j < 100; ++j)
 	{
-		// generate random rotations and translations and compare transformed by matrix and dualquats random points 
+		// generate random rotations and translations and compare transformed by matrix and dualquats random points
 		glm::vec3 vt1 = glm::vec3(myfrand() * 10.0f, myfrand() * 10.0f, myfrand() * 10.0f);
 		glm::vec3 vt2 = glm::vec3(myfrand() * 10.0f, myfrand() * 10.0f, myfrand() * 10.0f);
 
@@ -132,8 +132,8 @@ static int test_mul()
 		for (int i = 0; i < 100; ++i)
 		{
 			glm::vec4 src_pt = glm::vec4(myfrand() * 4.0f, myfrand() * 5.0f, myfrand() * 3.0f,1.0f);
-			// test both multiplication orders        
-			glm::vec4 dst_pt_m3  = m3 * src_pt; 
+			// test both multiplication orders
+			glm::vec4 dst_pt_m3  = m3 * src_pt;
 			glm::vec4 dst_pt_dq3 = dq3 * src_pt;
 
 			glm::vec4 dst_pt_m3_i  = glm::inverse(m3) * src_pt;
@@ -150,7 +150,7 @@ static int test_mul()
 			Error += glm::all(glm::epsilonEqual(dst_pt_m3_i, dst_pt_dq3_i, Epsilon)) ? 0 : 1;
 			Error += glm::all(glm::epsilonEqual(dst_pt_m4_i, dst_pt_dq4_i, Epsilon)) ? 0 : 1;
 		}
-	} 
+	}
 
 	return Error;
 }

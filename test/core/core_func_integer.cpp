@@ -10,9 +10,12 @@
 #include <glm/ext/vector_uint4.hpp>
 #include <glm/ext/scalar_int_sized.hpp>
 #include <glm/ext/scalar_uint_sized.hpp>
-#include <vector>
-#include <ctime>
 #include <cstdio>
+#include <ctime>
+#include <iomanip>
+#include <iostream>
+#include <sstream>
+#include <vector>
 
 enum result
 {
@@ -21,6 +24,28 @@ enum result
 	ASSERT,
 	STATIC_ASSERT
 };
+
+// Helper for detailed logging
+#define LOG_TEST_START(test_name) \
+	std::cout << "\n=== RUNNING TEST: " << test_name << " ===" << std::endl
+
+#define LOG_TEST_RESULT(test_name, error_count) \
+	std::cout << "=== TEST " << test_name << ": " << \
+	(error_count > 0 ? "FAILED with " : "PASSED with ") << \
+	error_count << (error_count == 1 ? " error" : " errors") << " ===" << std::endl
+
+#define LOG_ERROR(expected, actual, message) \
+	std::cout << "ERROR: " << message << "\n" \
+	<< "  Expected: " << expected << "\n" \
+	<< "  Actual:   " << actual << std::endl
+
+// Helper for printing hex values
+template<typename T>
+std::string toHexString(T value) {
+	std::stringstream ss;
+	ss << "0x" << std::uppercase << std::hex << std::setw(sizeof(T)*2) << std::setfill('0') << value;
+	return ss.str();
+}
 
 namespace bitfieldInsert
 {
@@ -48,9 +73,10 @@ namespace bitfieldInsert
 
 	static int test()
 	{
+		LOG_TEST_START("bitfieldInsert");
 		int Error = 0;
 		glm::uint count = sizeof(Data32) / sizeof(typeU32);
-		
+
 		for(glm::uint i = 0; i < count; ++i)
 		{
 			glm::uint Return = glm::bitfieldInsert(
@@ -59,9 +85,19 @@ namespace bitfieldInsert
 				Data32[i].Offset,
 				Data32[i].Bits);
 
-			Error += Data32[i].Return == Return ? 0 : 1;
+			bool Success = (Data32[i].Return == Return);
+			if (!Success) {
+				LOG_ERROR(toHexString(Data32[i].Return), toHexString(Return),
+						  "bitfieldInsert failed for case " + std::to_string(i) + ":\n"
+						  "  Base: " + toHexString(Data32[i].Base) + "\n" +
+						  "  Insert: " + toHexString(Data32[i].Insert) + "\n" +
+						  "  Offset: " + std::to_string(Data32[i].Offset) + "\n" +
+						  "  Bits: " + std::to_string(Data32[i].Bits));
+				Error++;
+			}
 		}
-		
+
+		LOG_TEST_RESULT("bitfieldInsert", Error);
 		return Error;
 	}
 }//bitfieldInsert
@@ -99,13 +135,14 @@ namespace bitfieldExtract
 		{0xffff0000,16,16, 0x0000ffff, SUCCESS},
 		{0xfffffff0, 0, 8, 0x00000000, FAIL},
 		{0xffffffff,16,16, 0x00000000, FAIL},
-		//{0xffffffff,32, 1, 0x00000000, ASSERT}, // Throw an assert 
-		//{0xffffffff, 0,33, 0x00000000, ASSERT}, // Throw an assert 
-		//{0xffffffff,16,16, 0x00000000, ASSERT}, // Throw an assert 
+		//{0xffffffff,32, 1, 0x00000000, ASSERT}, // Throw an assert
+		//{0xffffffff, 0,33, 0x00000000, ASSERT}, // Throw an assert
+		//{0xffffffff,16,16, 0x00000000, ASSERT}, // Throw an assert
 	};
 
 	static int test()
 	{
+		LOG_TEST_START("bitfieldExtract");
 		int Error = 0;
 
 		glm::uint count = sizeof(Data32) / sizeof(typeU32);
@@ -113,53 +150,37 @@ namespace bitfieldExtract
 		for(glm::uint i = 0; i < count; ++i)
 		{
 			glm::uint Return = glm::bitfieldExtract(
-				Data32[i].Value, 
-				Data32[i].Offset, 
+				Data32[i].Value,
+				Data32[i].Offset,
 				Data32[i].Bits);
-			
+
 			bool Compare = Data32[i].Return == Return;
 
-			if(Data32[i].Result == SUCCESS && Compare)
-				continue;
-			else if(Data32[i].Result == FAIL && !Compare)
-				continue;
+			// For SUCCESS cases, Compare should be true
+			// For FAIL cases, Compare should be false
+			bool TestPassed = (Data32[i].Result == SUCCESS && Compare) ||
+							  (Data32[i].Result == FAIL && !Compare);
 
-			Error += 1;
+			if (!TestPassed) {
+				std::string expectedResult = (Data32[i].Result == SUCCESS) ? "match" : "not match";
+				LOG_ERROR(expectedResult, (Compare ? "match" : "not match"),
+						  "bitfieldExtract case " + std::to_string(i) + ":\n"
+						  "  Value: " + toHexString(Data32[i].Value) + "\n" +
+						  "  Offset: " + std::to_string(Data32[i].Offset) + "\n" +
+						  "  Bits: " + std::to_string(Data32[i].Bits) + "\n" +
+						  "  Expected: " + toHexString(Data32[i].Return) + "\n" +
+						  "  Expected result: " + (Data32[i].Result == SUCCESS ? "SUCCESS" : "FAIL"));
+				Error++;
+			}
 		}
 
+		LOG_TEST_RESULT("bitfieldExtract", Error);
 		return Error;
 	}
 }//extractField
 
 namespace bitfieldReverse
 {
-/*
-	GLM_FUNC_QUALIFIER unsigned int bitfieldReverseLoop(unsigned int v)
-	{
-		unsigned int Result(0);
-		unsigned int const BitSize = static_cast<unsigned int>(sizeof(unsigned int) * 8);
-		for(unsigned int i = 0; i < BitSize; ++i)
-		{
-			unsigned int const BitSet(v & (static_cast<unsigned int>(1) << i));
-			unsigned int const BitFirst(BitSet >> i);
-			Result |= BitFirst << (BitSize - 1 - i);
-		}
-		return Result;
-	}
-
-	GLM_FUNC_QUALIFIER glm::uint64_t bitfieldReverseLoop(glm::uint64_t v)
-	{
-		glm::uint64_t Result(0);
-		glm::uint64_t const BitSize = static_cast<glm::uint64_t>(sizeof(unsigned int) * 8);
-		for(glm::uint64_t i = 0; i < BitSize; ++i)
-		{
-			glm::uint64_t const BitSet(v & (static_cast<glm::uint64_t>(1) << i));
-			glm::uint64_t const BitFirst(BitSet >> i);
-			Result |= BitFirst << (BitSize - 1 - i);
-		}
-		return Result;
-	}
-*/
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	GLM_FUNC_QUALIFIER glm::vec<L, T, Q> bitfieldReverseLoop(glm::vec<L, T, Q> const& v)
 	{
@@ -296,19 +317,22 @@ namespace bitfieldReverse
 	{
 		int Error = 0;
 		std::size_t const Count = sizeof(Data32) / sizeof(typeU32);
-		
+
 		for(std::size_t i = 0; i < Count; ++i)
 		{
 			glm::uint Return = glm::bitfieldReverse(Data32[i].Value);
-			
+
 			bool Compare = Data32[i].Return == Return;
-			
-			if(Data32[i].Result == SUCCESS)
-				Error += Compare ? 0 : 1;
-			else
-				Error += Compare ? 1 : 0;
+
+			if((Data32[i].Result == SUCCESS && !Compare) || (Data32[i].Result != SUCCESS && Compare))
+			{
+				LOG_ERROR(toHexString(Data32[i].Return), toHexString(Return),
+						  "test32_bitfieldReverse case " + std::to_string(i) + ":\n"
+						  "  Value: " + toHexString(Data32[i].Value));
+				Error++;
+			}
 		}
-		
+
 		return Error;
 	}
 
@@ -316,19 +340,22 @@ namespace bitfieldReverse
 	{
 		int Error = 0;
 		std::size_t const Count = sizeof(Data32) / sizeof(typeU32);
-		
+
 		for(std::size_t i = 0; i < Count; ++i)
 		{
 			glm::uint Return = bitfieldReverseLoop(Data32[i].Value);
-			
+
 			bool Compare = Data32[i].Return == Return;
-			
-			if(Data32[i].Result == SUCCESS)
-				Error += Compare ? 0 : 1;
-			else
-				Error += Compare ? 1 : 0;
+
+			if((Data32[i].Result == SUCCESS && !Compare) || (Data32[i].Result != SUCCESS && Compare))
+			{
+				LOG_ERROR(toHexString(Data32[i].Return), toHexString(Return),
+						  "test32_bitfieldReverseLoop case " + std::to_string(i) + ":\n"
+						  "  Value: " + toHexString(Data32[i].Value));
+				Error++;
+			}
 		}
-		
+
 		return Error;
 	}
 
@@ -336,19 +363,22 @@ namespace bitfieldReverse
 	{
 		int Error = 0;
 		std::size_t const Count = sizeof(Data32) / sizeof(typeU32);
-		
+
 		for(std::size_t i = 0; i < Count; ++i)
 		{
 			glm::uint Return = bitfieldReverseUint32(Data32[i].Value);
-			
+
 			bool Compare = Data32[i].Return == Return;
-			
-			if(Data32[i].Result == SUCCESS)
-				Error += Compare ? 0 : 1;
-			else
-				Error += Compare ? 1 : 0;
+
+			if((Data32[i].Result == SUCCESS && !Compare) || (Data32[i].Result != SUCCESS && Compare))
+			{
+				LOG_ERROR(toHexString(Data32[i].Return), toHexString(Return),
+						  "test32_bitfieldReverseUint32 case " + std::to_string(i) + ":\n"
+						  "  Value: " + toHexString(Data32[i].Value));
+				Error++;
+			}
 		}
-		
+
 		return Error;
 	}
 
@@ -356,19 +386,22 @@ namespace bitfieldReverse
 	{
 		int Error = 0;
 		std::size_t const Count = sizeof(Data32) / sizeof(typeU32);
-		
+
 		for(std::size_t i = 0; i < Count; ++i)
 		{
 			glm::uint Return = bitfieldReverseOps(Data32[i].Value);
-			
+
 			bool Compare = Data32[i].Return == Return;
-			
-			if(Data32[i].Result == SUCCESS)
-				Error += Compare ? 0 : 1;
-			else
-				Error += Compare ? 1 : 0;
+
+			if((Data32[i].Result == SUCCESS && !Compare) || (Data32[i].Result != SUCCESS && Compare))
+			{
+				LOG_ERROR(toHexString(Data32[i].Return), toHexString(Return),
+						  "test32_bitfieldReverseOps case " + std::to_string(i) + ":\n"
+						  "  Value: " + toHexString(Data32[i].Value));
+				Error++;
+			}
 		}
-		
+
 		return Error;
 	}
 
@@ -376,19 +409,23 @@ namespace bitfieldReverse
 	{
 		int Error = 0;
 		std::size_t const Count = sizeof(Data64) / sizeof(typeU64);
-		
+
 		for(std::size_t i = 0; i < Count; ++i)
 		{
 			glm::uint64 Return = glm::bitfieldReverse(Data64[i].Value);
-			
+
 			bool Compare = Data64[i].Return == Return;
-			
-			if(Data64[i].Result == SUCCESS)
-				Error += Compare ? 0 : 1;
-			else
-				Error += Compare ? 1 : 0;
+
+			if((Data64[i].Result == SUCCESS && !Compare) || (Data64[i].Result != SUCCESS && Compare))
+			{
+				std::stringstream ss;
+				ss << "test64_bitfieldReverse case " << i << ":\n"
+				   << "  Value: 0x" << std::hex << Data64[i].Value;
+				LOG_ERROR("0x" + std::to_string(Data64[i].Return), "0x" + std::to_string(Return), ss.str());
+				Error++;
+			}
 		}
-		
+
 		return Error;
 	}
 
@@ -396,19 +433,23 @@ namespace bitfieldReverse
 	{
 		int Error = 0;
 		std::size_t const Count = sizeof(Data64) / sizeof(typeU64);
-		
+
 		for(std::size_t i = 0; i < Count; ++i)
 		{
 			glm::uint64 Return = bitfieldReverseLoop(Data64[i].Value);
-			
+
 			bool Compare = Data64[i].Return == Return;
-			
-			if(Data32[i].Result == SUCCESS)
-				Error += Compare ? 0 : 1;
-			else
-				Error += Compare ? 1 : 0;
+
+			if((Data64[i].Result == SUCCESS && !Compare) || (Data64[i].Result != SUCCESS && Compare))
+			{
+				std::stringstream ss;
+				ss << "test64_bitfieldReverseLoop case " << i << ":\n"
+				   << "  Value: 0x" << std::hex << Data64[i].Value;
+				LOG_ERROR("0x" + std::to_string(Data64[i].Return), "0x" + std::to_string(Return), ss.str());
+				Error++;
+			}
 		}
-		
+
 		return Error;
 	}
 
@@ -416,19 +457,23 @@ namespace bitfieldReverse
 	{
 		int Error = 0;
 		std::size_t const Count = sizeof(Data64) / sizeof(typeU64);
-		
+
 		for(std::size_t i = 0; i < Count; ++i)
 		{
 			glm::uint64 Return = bitfieldReverseUint64(Data64[i].Value);
-			
+
 			bool Compare = Data64[i].Return == Return;
-			
-			if(Data64[i].Result == SUCCESS)
-				Error += Compare ? 0 : 1;
-			else
-				Error += Compare ? 1 : 0;
+
+			if((Data64[i].Result == SUCCESS && !Compare) || (Data64[i].Result != SUCCESS && Compare))
+			{
+				std::stringstream ss;
+				ss << "test64_bitfieldReverseUint64 case " << i << ":\n"
+				   << "  Value: 0x" << std::hex << Data64[i].Value;
+				LOG_ERROR("0x" + std::to_string(Data64[i].Return), "0x" + std::to_string(Return), ss.str());
+				Error++;
+			}
 		}
-		
+
 		return Error;
 	}
 
@@ -436,24 +481,29 @@ namespace bitfieldReverse
 	{
 		int Error = 0;
 		std::size_t const Count = sizeof(Data64) / sizeof(typeU64);
-		
+
 		for(std::size_t i = 0; i < Count; ++i)
 		{
 			glm::uint64 Return = bitfieldReverseOps(Data64[i].Value);
-			
+
 			bool Compare = Data64[i].Return == Return;
-			
-			if(Data64[i].Result == SUCCESS)
-				Error += Compare ? 0 : 1;
-			else
-				Error += Compare ? 1 : 0;
+
+			if((Data64[i].Result == SUCCESS && !Compare) || (Data64[i].Result != SUCCESS && Compare))
+			{
+				std::stringstream ss;
+				ss << "test64_bitfieldReverseOps case " << i << ":\n"
+				   << "  Value: 0x" << std::hex << Data64[i].Value;
+				LOG_ERROR("0x" + std::to_string(Data64[i].Return), "0x" + std::to_string(Return), ss.str());
+				Error++;
+			}
 		}
-		
+
 		return Error;
 	}
 
 	static int test()
 	{
+		LOG_TEST_START("bitfieldReverse");
 		int Error = 0;
 
 		Error += test32_bitfieldReverse();
@@ -466,6 +516,7 @@ namespace bitfieldReverse
 		Error += test64_bitfieldReverseUint64();
 		Error += test64_bitfieldReverseOps();
 
+		LOG_TEST_RESULT("bitfieldReverse", Error);
 		return Error;
 	}
 
@@ -595,7 +646,7 @@ namespace findMSB
 	static int findMSB_095(genIUType Value)
 	{
 		static_assert(std::numeric_limits<genIUType>::is_integer, "'findMSB' only accept integer values");
-		
+
 		if(Value == genIUType(0) || Value == genIUType(-1))
 			return -1;
 		else if(Value > 0)
@@ -830,7 +881,26 @@ namespace findMSB
 		for(std::size_t i = 0; i < sizeof(Data) / sizeof(type<glm::ivec4, glm::ivec4>); ++i)
 		{
 			glm::ivec4 Result0 = glm::findMSB(Data[i].Value);
-			Error += glm::all(glm::equal(Data[i].Return, Result0)) ? 0 : 1;
+			bool Success = glm::all(glm::equal(Data[i].Return, Result0));
+
+			if (!Success) {
+				std::stringstream ss;
+				ss << "Test ivec4 case " << i << " failed:\n"
+				   << "  Input: " << toHexString(Data[i].Value.x) << " "
+				   << toHexString(Data[i].Value.y) << " "
+				   << toHexString(Data[i].Value.z) << " "
+				   << toHexString(Data[i].Value.w) << "\n"
+				   << "  Expected: " << Data[i].Return.x << " "
+				   << Data[i].Return.y << " "
+				   << Data[i].Return.z << " "
+				   << Data[i].Return.w << "\n"
+				   << "  Actual: " << Result0.x << " "
+				   << Result0.y << " "
+				   << Result0.z << " "
+				   << Result0.w;
+				std::cout << ss.str() << std::endl;
+				Error++;
+			}
 		}
 
 		return Error;
@@ -884,39 +954,68 @@ namespace findMSB
 		for(std::size_t i = 0; i < sizeof(Data) / sizeof(entry); ++i)
 		{
 			int Result0 = glm::findMSB(Data[i].Value);
-			Error += Data[i].Return == Result0 ? 0 : 1;
+			bool Success = Data[i].Return == Result0;
+
+			if (!Success) {
+				LOG_ERROR(Data[i].Return, Result0,
+					  "findMSB test_int() case " + std::to_string(i) + ":\n" +
+					  "  Value: " + toHexString(Data[i].Value));
+				Error++;
+			}
 		}
 
 		for(std::size_t i = 0; i < sizeof(Data) / sizeof(entry); ++i)
 		{
 			int Result0 = findMSB_nlz1(Data[i].Value);
-			Error += Data[i].Return == Result0 ? 0 : 1;
+			bool Success = Data[i].Return == Result0;
+
+			if (!Success) {
+				LOG_ERROR(Data[i].Return, Result0,
+					  "findMSB_nlz1 test_int() case " + std::to_string(i) + ":\n" +
+					  "  Value: " + toHexString(Data[i].Value));
+				Error++;
+			}
 		}
-/*
-		for(std::size_t i = 0; i < sizeof(Data) / sizeof(entry); ++i)
-		{
-			int Result0 = findMSB_nlz2(Data[i].Value);
-			Error += Data[i].Return == Result0 ? 0 : 1;
-		}
-*/
+
 		for(std::size_t i = 0; i < sizeof(Data) / sizeof(entry); ++i)
 		{
 			int Result0 = findMSB_095(Data[i].Value);
-			Error += Data[i].Return == Result0 ? 0 : 1;
+			bool Success = Data[i].Return == Result0;
+
+			if (!Success) {
+				LOG_ERROR(Data[i].Return, Result0,
+					  "findMSB_095 test_int() case " + std::to_string(i) + ":\n" +
+					  "  Value: " + toHexString(Data[i].Value));
+				Error++;
+			}
 		}
 
 #		if GLM_HAS_BITSCAN_WINDOWS
 			for(std::size_t i = 0; i < sizeof(Data) / sizeof(entry); ++i)
 			{
 				int Result0 = findMSB_intrinsic(Data[i].Value);
-				Error += Data[i].Return == Result0 ? 0 : 1;
+				bool Success = Data[i].Return == Result0;
+
+				if (!Success) {
+					LOG_ERROR(Data[i].Return, Result0,
+						  "findMSB_intrinsic test_int() case " + std::to_string(i) + ":\n" +
+						  "  Value: " + toHexString(Data[i].Value));
+					Error++;
+				}
 			}
 #		endif//GLM_HAS_BITSCAN_WINDOWS
 
 		for(std::size_t i = 0; i < sizeof(Data) / sizeof(entry); ++i)
 		{
 			int Result0 = findMSB_pop(Data[i].Value);
-			Error += Data[i].Return == Result0 ? 0 : 1;
+			bool Success = Data[i].Return == Result0;
+
+			if (!Success) {
+				LOG_ERROR(Data[i].Return, Result0,
+					  "findMSB_pop test_int() case " + std::to_string(i) + ":\n" +
+					  "  Value: " + toHexString(Data[i].Value));
+				Error++;
+			}
 		}
 
 		return Error;
@@ -924,11 +1023,13 @@ namespace findMSB
 
 	static int test()
 	{
+		LOG_TEST_START("findMSB");
 		int Error(0);
 
 		Error += test_ivec4();
 		Error += test_int();
 
+		LOG_TEST_RESULT("findMSB", Error);
 		return Error;
 	}
 
@@ -1019,33 +1120,68 @@ namespace findLSB
 		for(std::size_t i = 0; i < sizeof(DataI32) / sizeof(entry); ++i)
 		{
 			int Result = glm::findLSB(DataI32[i].Value);
-			Error += DataI32[i].Return == Result ? 0 : 1;
+			bool Success = DataI32[i].Return == Result;
+
+			if (!Success) {
+				LOG_ERROR(DataI32[i].Return, Result,
+					  "findLSB test_int() case " + std::to_string(i) + ":\n" +
+					  "  Value: " + toHexString(DataI32[i].Value));
+				Error++;
+			}
 		}
 
 		for(std::size_t i = 0; i < sizeof(DataI32) / sizeof(entry); ++i)
 		{
 			int Result = findLSB_095(DataI32[i].Value);
-			Error += DataI32[i].Return == Result ? 0 : 1;
+			bool Success = DataI32[i].Return == Result;
+
+			if (!Success) {
+				LOG_ERROR(DataI32[i].Return, Result,
+					  "findLSB_095 test_int() case " + std::to_string(i) + ":\n" +
+					  "  Value: " + toHexString(DataI32[i].Value));
+				Error++;
+			}
 		}
 
 #		if GLM_HAS_BITSCAN_WINDOWS
 			for(std::size_t i = 0; i < sizeof(DataI32) / sizeof(entry); ++i)
 			{
 				int Result = findLSB_intrinsic(DataI32[i].Value);
-				Error += DataI32[i].Return == Result ? 0 : 1;
+				bool Success = DataI32[i].Return == Result;
+
+				if (!Success) {
+					LOG_ERROR(DataI32[i].Return, Result,
+						  "findLSB_intrinsic test_int() case " + std::to_string(i) + ":\n" +
+						  "  Value: " + toHexString(DataI32[i].Value));
+					Error++;
+				}
 			}
 #		endif
 
 		for(std::size_t i = 0; i < sizeof(DataI32) / sizeof(entry); ++i)
 		{
 			int Result = findLSB_ntz2(DataI32[i].Value);
-			Error += DataI32[i].Return == Result ? 0 : 1;
+			bool Success = DataI32[i].Return == Result;
+
+			if (!Success) {
+				LOG_ERROR(DataI32[i].Return, Result,
+					  "findLSB_ntz2 test_int() case " + std::to_string(i) + ":\n" +
+					  "  Value: " + toHexString(DataI32[i].Value));
+				Error++;
+			}
 		}
 
 		for(std::size_t i = 0; i < sizeof(DataI32) / sizeof(entry); ++i)
 		{
 			int Result = findLSB_branchfree(DataI32[i].Value);
-			Error += DataI32[i].Return == Result ? 0 : 1;
+			bool Success = DataI32[i].Return == Result;
+
+			if (!Success) {
+				LOG_ERROR(DataI32[i].Return, Result,
+					  "findLSB_branchfree test_int() case " + std::to_string(i) + ":\n" +
+					  "  Value: " + toHexString(DataI32[i].Value));
+				Error++;
+			}
 		}
 
 		return Error;
@@ -1053,10 +1189,12 @@ namespace findLSB
 
 	static int test()
 	{
+		LOG_TEST_START("findLSB");
 		int Error(0);
 
 		Error += test_int();
 
+		LOG_TEST_RESULT("findLSB", Error);
 		return Error;
 	}
 
@@ -1134,22 +1272,30 @@ namespace findLSB
 
 		return Error;
 	}
-}//findLSB
+}//namespace findLSB
 
 namespace uaddCarry
 {
 	static int test()
 	{
+		LOG_TEST_START("uaddCarry");
 		int Error(0);
-		
+
 		{
 			glm::uint x = std::numeric_limits<glm::uint>::max();
 			glm::uint y = 0;
 			glm::uint Carry = 0;
 			glm::uint Result = glm::uaddCarry(x, y, Carry);
 
-			Error += Carry == 0 ? 0 : 1;
-			Error += Result == std::numeric_limits<glm::uint>::max() ? 0 : 1;
+			if (Carry != 0) {
+				LOG_ERROR(0, Carry, "uaddCarry: Expected Carry to be 0 when adding 0 to max uint");
+				Error++;
+			}
+			if (Result != std::numeric_limits<glm::uint>::max()) {
+				LOG_ERROR(std::numeric_limits<glm::uint>::max(), Result,
+					"uaddCarry: Expected Result to be max uint when adding 0 to max uint");
+				Error++;
+			}
 		}
 
 		{
@@ -1158,8 +1304,14 @@ namespace uaddCarry
 			glm::uint Carry = 0;
 			glm::uint Result = glm::uaddCarry(x, y, Carry);
 
-			Error += Carry == 1 ? 0 : 1;
-			Error += Result == 0 ? 0 : 1;
+			if (Carry != 1) {
+				LOG_ERROR(1, Carry, "uaddCarry: Expected Carry to be 1 when adding 1 to max uint");
+				Error++;
+			}
+			if (Result != 0) {
+				LOG_ERROR(0, Result, "uaddCarry: Expected Result to be 0 when adding 1 to max uint");
+				Error++;
+			}
 		}
 
 		{
@@ -1168,8 +1320,16 @@ namespace uaddCarry
 			glm::uvec1 Carry(0);
 			glm::uvec1 Result(glm::uaddCarry(x, y, Carry));
 
-			Error += glm::all(glm::equal(Carry, glm::uvec1(0))) ? 0 : 1;
-			Error += glm::all(glm::equal(Result, glm::uvec1(std::numeric_limits<glm::uint>::max()))) ? 0 : 1;
+			if (!glm::all(glm::equal(Carry, glm::uvec1(0)))) {
+				LOG_ERROR("uvec1(0)", "uvec1(" + std::to_string(Carry.x) + ")",
+					"uaddCarry: Expected Carry to be uvec1(0) when adding uvec1(0) to uvec1(max)");
+				Error++;
+			}
+			if (!glm::all(glm::equal(Result, glm::uvec1(std::numeric_limits<glm::uint>::max())))) {
+				LOG_ERROR("uvec1(max uint)", "uvec1(" + std::to_string(Result.x) + ")",
+					"uaddCarry: Expected Result to be uvec1(max) when adding uvec1(0) to uvec1(max)");
+				Error++;
+			}
 		}
 
 		{
@@ -1178,10 +1338,19 @@ namespace uaddCarry
 			glm::uvec1 Carry(0);
 			glm::uvec1 Result(glm::uaddCarry(x, y, Carry));
 
-			Error += glm::all(glm::equal(Carry, glm::uvec1(1))) ? 0 : 1;
-			Error += glm::all(glm::equal(Result, glm::uvec1(0))) ? 0 : 1;
+			if (!glm::all(glm::equal(Carry, glm::uvec1(1)))) {
+				LOG_ERROR("uvec1(1)", "uvec1(" + std::to_string(Carry.x) + ")",
+					"uaddCarry: Expected Carry to be uvec1(1) when adding uvec1(1) to uvec1(max)");
+				Error++;
+			}
+			if (!glm::all(glm::equal(Result, glm::uvec1(0)))) {
+				LOG_ERROR("uvec1(0)", "uvec1(" + std::to_string(Result.x) + ")",
+					"uaddCarry: Expected Result to be uvec1(0) when adding uvec1(1) to uvec1(max)");
+				Error++;
+			}
 		}
 
+		LOG_TEST_RESULT("uaddCarry", Error);
 		return Error;
 	}
 }//namespace uaddCarry
@@ -1190,16 +1359,23 @@ namespace usubBorrow
 {
 	static int test()
 	{
+		LOG_TEST_START("usubBorrow");
 		int Error(0);
-		
+
 		{
 			glm::uint x = 16;
 			glm::uint y = 17;
 			glm::uint Borrow = 0;
 			glm::uint Result = glm::usubBorrow(x, y, Borrow);
 
-			Error += Borrow == 1 ? 0 : 1;
-			Error += Result == glm::uint(x-y) ? 0 : 1;
+			if (Borrow != 1) {
+				LOG_ERROR(1, Borrow, "usubBorrow: Expected Borrow to be 1 when subtracting 17 from 16");
+				Error++;
+			}
+			if (Result != 1) {
+				LOG_ERROR(1, Result, "usubBorrow: Expected Result to be 1 when subtracting 17 from 16");
+				Error++;
+			}
 		}
 
 		{
@@ -1208,8 +1384,16 @@ namespace usubBorrow
 			glm::uvec1 Borrow(0);
 			glm::uvec1 Result(glm::usubBorrow(x, y, Borrow));
 
-			Error += glm::all(glm::equal(Borrow, glm::uvec1(1))) ? 0 : 1;
-			Error += glm::all(glm::equal(Result, glm::uvec1(x-y))) ? 0 : 1;
+			if (!glm::all(glm::equal(Borrow, glm::uvec1(1)))) {
+				LOG_ERROR("uvec1(1)", "uvec1(" + std::to_string(Borrow.x) + ")",
+					"usubBorrow: Expected Borrow to be uvec1(1) when subtracting uvec1(17) from uvec1(16)");
+				Error++;
+			}
+			if (!glm::all(glm::equal(Result, glm::uvec1(1)))) {
+				LOG_ERROR("uvec1(1)", "uvec1(" + std::to_string(Result.x) + ")",
+					"usubBorrow: Expected Result to be uvec1(1) when subtracting uvec1(17) from uvec1(16)");
+				Error++;
+			}
 		}
 
 		{
@@ -1218,8 +1402,20 @@ namespace usubBorrow
 			glm::uvec2 Borrow(0);
 			glm::uvec2 Result(glm::usubBorrow(x, y, Borrow));
 
-			Error += glm::all(glm::equal(Borrow, glm::uvec2(1))) ? 0 : 1;
-			Error += glm::all(glm::equal(Result, glm::uvec2(x-y))) ? 0 : 1;
+			if (!glm::all(glm::equal(Borrow, glm::uvec2(1)))) {
+				std::stringstream ss;
+				ss << "uvec2(1, 1) vs uvec2(" << Borrow.x << ", " << Borrow.y << ")";
+				LOG_ERROR("uvec2(1, 1)", ss.str(),
+					"usubBorrow: Expected Borrow to be uvec2(1, 1) when subtracting uvec2(17) from uvec2(16)");
+				Error++;
+			}
+			if (!glm::all(glm::equal(Result, glm::uvec2(1)))) {
+				std::stringstream ss;
+				ss << "uvec2(1, 1) vs uvec2(" << Result.x << ", " << Result.y << ")";
+				LOG_ERROR("uvec2(1, 1)", ss.str(),
+					"usubBorrow: Expected Result to be uvec2(1, 1) when subtracting uvec2(17) from uvec2(16)");
+				Error++;
+			}
 		}
 
 		{
@@ -1228,8 +1424,20 @@ namespace usubBorrow
 			glm::uvec3 Borrow(0);
 			glm::uvec3 Result(glm::usubBorrow(x, y, Borrow));
 
-			Error += glm::all(glm::equal(Borrow, glm::uvec3(1))) ? 0 : 1;
-			Error += glm::all(glm::equal(Result, glm::uvec3(x-y))) ? 0 : 1;
+			if (!glm::all(glm::equal(Borrow, glm::uvec3(1)))) {
+				std::stringstream ss;
+				ss << "uvec3(1, 1, 1) vs uvec3(" << Borrow.x << ", " << Borrow.y << ", " << Borrow.z << ")";
+				LOG_ERROR("uvec3(1, 1, 1)", ss.str(),
+					"usubBorrow: Expected Borrow to be uvec3(1, 1, 1) when subtracting uvec3(17) from uvec3(16)");
+				Error++;
+			}
+			if (!glm::all(glm::equal(Result, glm::uvec3(1)))) {
+				std::stringstream ss;
+				ss << "uvec3(1, 1, 1) vs uvec3(" << Result.x << ", " << Result.y << ", " << Result.z << ")";
+				LOG_ERROR("uvec3(1, 1, 1)", ss.str(),
+					"usubBorrow: Expected Result to be uvec3(1, 1, 1) when subtracting uvec3(17) from uvec3(16)");
+				Error++;
+			}
 		}
 
 		{
@@ -1238,10 +1446,25 @@ namespace usubBorrow
 			glm::uvec4 Borrow(0);
 			glm::uvec4 Result(glm::usubBorrow(x, y, Borrow));
 
-			Error += glm::all(glm::equal(Borrow, glm::uvec4(1))) ? 0 : 1;
-			Error += glm::all(glm::equal(Result, glm::uvec4(x-y))) ? 0 : 1;
+			if (!glm::all(glm::equal(Borrow, glm::uvec4(1)))) {
+				std::stringstream ss;
+				ss << "uvec4(1, 1, 1, 1) vs uvec4(" << Borrow.x << ", " << Borrow.y << ", "
+				   << Borrow.z << ", " << Borrow.w << ")";
+				LOG_ERROR("uvec4(1, 1, 1, 1)", ss.str(),
+					"usubBorrow: Expected Borrow to be uvec4(1) when subtracting uvec4(17) from uvec4(16)");
+				Error++;
+			}
+			if (!glm::all(glm::equal(Result, glm::uvec4(1)))) {
+				std::stringstream ss;
+				ss << "uvec4(1, 1, 1, 1) vs uvec4(" << Result.x << ", " << Result.y << ", "
+				   << Result.z << ", " << Result.w << ")";
+				LOG_ERROR("uvec4(1, 1, 1, 1)", ss.str(),
+					"usubBorrow: Expected Result to be uvec4(1) when subtracting uvec4(17) from uvec4(16)");
+				Error++;
+			}
 		}
 
+		LOG_TEST_RESULT("usubBorrow", Error);
 		return Error;
 	}
 }//namespace usubBorrow
@@ -1250,8 +1473,9 @@ namespace umulExtended
 {
 	static int test()
 	{
+		LOG_TEST_START("umulExtended");
 		int Error(0);
-		
+
 		{
 			glm::uint x = 2;
 			glm::uint y = 3;
@@ -1259,8 +1483,14 @@ namespace umulExtended
 			glm::uint lsb = 0;
 			glm::umulExtended(x, y, msb, lsb);
 
-			Error += msb == 0 ? 0 : 1;
-			Error += lsb == 6 ? 0 : 1;
+			if (msb != 0) {
+				LOG_ERROR(0, msb, "umulExtended: Expected MSB to be 0 when multiplying 2 by 3");
+				Error++;
+			}
+			if (lsb != 6) {
+				LOG_ERROR(6, lsb, "umulExtended: Expected LSB to be 6 when multiplying 2 by 3");
+				Error++;
+			}
 		}
 
 		{
@@ -1270,8 +1500,16 @@ namespace umulExtended
 			glm::uvec1 lsb(0);
 			glm::umulExtended(x, y, msb, lsb);
 
-			Error += glm::all(glm::equal(msb, glm::uvec1(0))) ? 0 : 1;
-			Error += glm::all(glm::equal(lsb, glm::uvec1(6))) ? 0 : 1;
+			if (!glm::all(glm::equal(msb, glm::uvec1(0)))) {
+				LOG_ERROR("uvec1(0)", "uvec1(" + std::to_string(msb.x) + ")",
+					"umulExtended: Expected MSB to be uvec1(0) when multiplying uvec1(2) by uvec1(3)");
+				Error++;
+			}
+			if (!glm::all(glm::equal(lsb, glm::uvec1(6)))) {
+				LOG_ERROR("uvec1(6)", "uvec1(" + std::to_string(lsb.x) + ")",
+					"umulExtended: Expected LSB to be uvec1(6) when multiplying uvec1(2) by uvec1(3)");
+				Error++;
+			}
 		}
 
 		{
@@ -1281,8 +1519,20 @@ namespace umulExtended
 			glm::uvec2 lsb(0);
 			glm::umulExtended(x, y, msb, lsb);
 
-			Error += glm::all(glm::equal(msb, glm::uvec2(0))) ? 0 : 1;
-			Error += glm::all(glm::equal(lsb, glm::uvec2(6))) ? 0 : 1;
+			if (!glm::all(glm::equal(msb, glm::uvec2(0)))) {
+				std::stringstream ss;
+				ss << "uvec2(0, 0) vs uvec2(" << msb.x << ", " << msb.y << ")";
+				LOG_ERROR("uvec2(0, 0)", ss.str(),
+					"umulExtended: Expected MSB to be uvec2(0) when multiplying uvec2(2) by uvec2(3)");
+				Error++;
+			}
+			if (!glm::all(glm::equal(lsb, glm::uvec2(6)))) {
+				std::stringstream ss;
+				ss << "uvec2(6, 6) vs uvec2(" << lsb.x << ", " << lsb.y << ")";
+				LOG_ERROR("uvec2(6, 6)", ss.str(),
+					"umulExtended: Expected LSB to be uvec2(6) when multiplying uvec2(2) by uvec2(3)");
+				Error++;
+			}
 		}
 
 		{
@@ -1292,8 +1542,20 @@ namespace umulExtended
 			glm::uvec3 lsb(0);
 			glm::umulExtended(x, y, msb, lsb);
 
-			Error += glm::all(glm::equal(msb, glm::uvec3(0))) ? 0 : 1;
-			Error += glm::all(glm::equal(lsb, glm::uvec3(6))) ? 0 : 1;
+			if (!glm::all(glm::equal(msb, glm::uvec3(0)))) {
+				std::stringstream ss;
+				ss << "uvec3(0, 0, 0) vs uvec3(" << msb.x << ", " << msb.y << ", " << msb.z << ")";
+				LOG_ERROR("uvec3(0, 0, 0)", ss.str(),
+					"umulExtended: Expected MSB to be uvec3(0) when multiplying uvec3(2) by uvec3(3)");
+				Error++;
+			}
+			if (!glm::all(glm::equal(lsb, glm::uvec3(6)))) {
+				std::stringstream ss;
+				ss << "uvec3(6, 6, 6) vs uvec3(" << lsb.x << ", " << lsb.y << ", " << lsb.z << ")";
+				LOG_ERROR("uvec3(6, 6, 6)", ss.str(),
+					"umulExtended: Expected LSB to be uvec3(6) when multiplying uvec3(2) by uvec3(3)");
+				Error++;
+			}
 		}
 
 		{
@@ -1303,10 +1565,25 @@ namespace umulExtended
 			glm::uvec4 lsb(0);
 			glm::umulExtended(x, y, msb, lsb);
 
-			Error += glm::all(glm::equal(msb, glm::uvec4(0))) ? 0 : 1;
-			Error += glm::all(glm::equal(lsb, glm::uvec4(6))) ? 0 : 1;
+			if (!glm::all(glm::equal(msb, glm::uvec4(0)))) {
+				std::stringstream ss;
+				ss << "uvec4(0, 0, 0, 0) vs uvec4(" << msb.x << ", " << msb.y << ", "
+				   << msb.z << ", " << msb.w << ")";
+				LOG_ERROR("uvec4(0, 0, 0, 0)", ss.str(),
+					"umulExtended: Expected MSB to be uvec4(0) when multiplying uvec4(2) by uvec4(3)");
+				Error++;
+			}
+			if (!glm::all(glm::equal(lsb, glm::uvec4(6)))) {
+				std::stringstream ss;
+				ss << "uvec4(6, 6, 6, 6) vs uvec4(" << lsb.x << ", " << lsb.y << ", "
+				   << lsb.z << ", " << lsb.w << ")";
+				LOG_ERROR("uvec4(6, 6, 6, 6)", ss.str(),
+					"umulExtended: Expected LSB to be uvec4(6) when multiplying uvec4(2) by uvec4(3)");
+				Error++;
+			}
 		}
 
+		LOG_TEST_RESULT("umulExtended", Error);
 		return Error;
 	}
 }//namespace umulExtended
@@ -1315,8 +1592,9 @@ namespace imulExtended
 {
 	static int test()
 	{
+		LOG_TEST_START("imulExtended");
 		int Error(0);
-		
+
 		{
 			int x = 2;
 			int y = 3;
@@ -1324,8 +1602,14 @@ namespace imulExtended
 			int lsb = 0;
 			glm::imulExtended(x, y, msb, lsb);
 
-			Error += msb == 0 ? 0 : 1;
-			Error += lsb == 6 ? 0 : 1;
+			if (msb != 0) {
+				LOG_ERROR(0, msb, "imulExtended: Expected MSB to be 0 when multiplying 2 by 3");
+				Error++;
+			}
+			if (lsb != 6) {
+				LOG_ERROR(6, lsb, "imulExtended: Expected LSB to be 6 when multiplying 2 by 3");
+				Error++;
+			}
 		}
 
 		{
@@ -1335,8 +1619,16 @@ namespace imulExtended
 			glm::ivec1 lsb(0);
 			glm::imulExtended(x, y, msb, lsb);
 
-			Error += glm::all(glm::equal(msb, glm::ivec1(0))) ? 0 : 1;
-			Error += glm::all(glm::equal(lsb, glm::ivec1(6))) ? 0 : 1;
+			if (!glm::all(glm::equal(msb, glm::ivec1(0)))) {
+				LOG_ERROR("ivec1(0)", "ivec1(" + std::to_string(msb.x) + ")",
+					"imulExtended: Expected MSB to be ivec1(0) when multiplying ivec1(2) by ivec1(3)");
+				Error++;
+			}
+			if (!glm::all(glm::equal(lsb, glm::ivec1(6)))) {
+				LOG_ERROR("ivec1(6)", "ivec1(" + std::to_string(lsb.x) + ")",
+					"imulExtended: Expected LSB to be ivec1(6) when multiplying ivec1(2) by ivec1(3)");
+				Error++;
+			}
 		}
 
 		{
@@ -1346,8 +1638,20 @@ namespace imulExtended
 			glm::ivec2 lsb(0);
 			glm::imulExtended(x, y, msb, lsb);
 
-			Error += glm::all(glm::equal(msb, glm::ivec2(0))) ? 0 : 1;
-			Error += glm::all(glm::equal(lsb, glm::ivec2(6))) ? 0 : 1;
+			if (!glm::all(glm::equal(msb, glm::ivec2(0)))) {
+				std::stringstream ss;
+				ss << "ivec2(0, 0) vs ivec2(" << msb.x << ", " << msb.y << ")";
+				LOG_ERROR("ivec2(0, 0)", ss.str(),
+					"imulExtended: Expected MSB to be ivec2(0) when multiplying ivec2(2) by ivec2(3)");
+				Error++;
+			}
+			if (!glm::all(glm::equal(lsb, glm::ivec2(6)))) {
+				std::stringstream ss;
+				ss << "ivec2(6, 6) vs ivec2(" << lsb.x << ", " << lsb.y << ")";
+				LOG_ERROR("ivec2(6, 6)", ss.str(),
+					"imulExtended: Expected LSB to be ivec2(6) when multiplying ivec2(2) by ivec2(3)");
+				Error++;
+			}
 		}
 
 		{
@@ -1357,8 +1661,20 @@ namespace imulExtended
 			glm::ivec3 lsb(0);
 			glm::imulExtended(x, y, msb, lsb);
 
-			Error += glm::all(glm::equal(msb, glm::ivec3(0))) ? 0 : 1;
-			Error += glm::all(glm::equal(lsb, glm::ivec3(6))) ? 0 : 1;
+			if (!glm::all(glm::equal(msb, glm::ivec3(0)))) {
+				std::stringstream ss;
+				ss << "ivec3(0, 0, 0) vs ivec3(" << msb.x << ", " << msb.y << ", " << msb.z << ")";
+				LOG_ERROR("ivec3(0, 0, 0)", ss.str(),
+					"imulExtended: Expected MSB to be ivec3(0) when multiplying ivec3(2) by ivec3(3)");
+				Error++;
+			}
+			if (!glm::all(glm::equal(lsb, glm::ivec3(6)))) {
+				std::stringstream ss;
+				ss << "ivec3(6, 6, 6) vs ivec3(" << lsb.x << ", " << lsb.y << ", " << lsb.z << ")";
+				LOG_ERROR("ivec3(6, 6, 6)", ss.str(),
+					"imulExtended: Expected LSB to be ivec3(6) when multiplying ivec3(2) by ivec3(3)");
+				Error++;
+			}
 		}
 
 		{
@@ -1368,10 +1684,25 @@ namespace imulExtended
 			glm::ivec4 lsb(0);
 			glm::imulExtended(x, y, msb, lsb);
 
-			Error += glm::all(glm::equal(msb, glm::ivec4(0))) ? 0 : 1;
-			Error += glm::all(glm::equal(lsb, glm::ivec4(6))) ? 0 : 1;
+			if (!glm::all(glm::equal(msb, glm::ivec4(0)))) {
+				std::stringstream ss;
+				ss << "ivec4(0, 0, 0, 0) vs ivec4(" << msb.x << ", " << msb.y << ", "
+				   << msb.z << ", " << msb.w << ")";
+				LOG_ERROR("ivec4(0, 0, 0, 0)", ss.str(),
+					"imulExtended: Expected MSB to be ivec4(0) when multiplying ivec4(2) by ivec4(3)");
+				Error++;
+			}
+			if (!glm::all(glm::equal(lsb, glm::ivec4(6)))) {
+				std::stringstream ss;
+				ss << "ivec4(6, 6, 6, 6) vs ivec4(" << lsb.x << ", " << lsb.y << ", "
+				   << lsb.z << ", " << lsb.w << ")";
+				LOG_ERROR("ivec4(6, 6, 6, 6)", ss.str(),
+					"imulExtended: Expected LSB to be ivec4(6) when multiplying ivec4(2) by ivec4(3)");
+				Error++;
+			}
 		}
 
+		LOG_TEST_RESULT("imulExtended", Error);
 		return Error;
 	}
 }//namespace imulExtended
@@ -1532,33 +1863,59 @@ namespace bitCount
 
 	static int test()
 	{
+		LOG_TEST_START("bitCount");
 		int Error(0);
 
 		for(std::size_t i = 0, n = sizeof(DataI32) / sizeof(type<int>); i < n; ++i)
 		{
 			int ResultA = glm::bitCount(DataI32[i].Value);
-			Error += DataI32[i].Return == ResultA ? 0 : 1;
-			assert(!Error);
+			bool SuccessA = DataI32[i].Return == ResultA;
+			if (!SuccessA) {
+				LOG_ERROR(DataI32[i].Return, ResultA,
+					"glm::bitCount failed for case " + std::to_string(i) + ":\n" +
+					"  Value: " + toHexString(DataI32[i].Value));
+				Error++;
+			}
 
 			int ResultB = bitCount_if(DataI32[i].Value);
-			Error += DataI32[i].Return == ResultB ? 0 : 1;
-			assert(!Error);
+			bool SuccessB = DataI32[i].Return == ResultB;
+			if (!SuccessB) {
+				LOG_ERROR(DataI32[i].Return, ResultB,
+					"bitCount_if failed for case " + std::to_string(i) + ":\n" +
+					"  Value: " + toHexString(DataI32[i].Value));
+				Error++;
+			}
 
 			int ResultC = bitCount_vec(DataI32[i].Value);
-			Error += DataI32[i].Return == ResultC ? 0 : 1;
-			assert(!Error);
+			bool SuccessC = DataI32[i].Return == ResultC;
+			if (!SuccessC) {
+				LOG_ERROR(DataI32[i].Return, ResultC,
+					"bitCount_vec failed for case " + std::to_string(i) + ":\n" +
+					"  Value: " + toHexString(DataI32[i].Value));
+				Error++;
+			}
 
 			int ResultE = bitCount_bitfield(DataI32[i].Value);
-			Error += DataI32[i].Return == ResultE ? 0 : 1;
-			assert(!Error);
+			bool SuccessE = DataI32[i].Return == ResultE;
+			if (!SuccessE) {
+				LOG_ERROR(DataI32[i].Return, ResultE,
+					"bitCount_bitfield failed for case " + std::to_string(i) + ":\n" +
+					"  Value: " + toHexString(DataI32[i].Value));
+				Error++;
+			}
 		}
 
+		LOG_TEST_RESULT("bitCount", Error);
 		return Error;
 	}
 }//bitCount
 
 int main()
 {
+	std::cout << "\n=======================================\n";
+	std::cout << "GLM Integer Functions Test Suite\n";
+	std::cout << "=======================================\n";
+
 	int Error = 0;
 
 	Error += ::bitCount::test();
@@ -1578,10 +1935,22 @@ int main()
 		std::size_t const Samples = 1;
 #	endif
 
-	::bitCount::perf(Samples);
-	::bitfieldReverse::perf(Samples);
-	::findMSB::perf(Samples);
-	::findLSB::perf(Samples);
+#ifdef GLM_TEST_PERF
+	if (Error == 0) {
+		std::cout << "\n=======================================\n";
+		std::cout << "Performance tests:\n";
+		std::cout << "=======================================\n";
+
+		::bitCount::perf(Samples);
+		::bitfieldReverse::perf(Samples);
+		::findMSB::perf(Samples);
+		::findLSB::perf(Samples);
+	}
+#endif
+
+	std::cout << "\n=======================================\n";
+	std::cout << "Total errors: " << Error << "\n";
+	std::cout << "=======================================\n";
 
 	return Error;
 }

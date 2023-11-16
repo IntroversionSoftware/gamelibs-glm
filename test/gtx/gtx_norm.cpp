@@ -8,7 +8,7 @@
 static int test_lMaxNorm()
 {
 	int Error(0);
-	
+
 	{
 		float norm = glm::lMaxNorm(glm::vec3(-1, -2, -3));
 		Error += glm::equal(norm, 3.f, 0.00001f) ? 0 : 1;
@@ -18,7 +18,7 @@ static int test_lMaxNorm()
 		float norm = glm::lMaxNorm(glm::vec3(2, 3, 1));
 		Error += glm::equal(norm, 3.f, 0.00001f) ? 0 : 1;
 	}
-  
+
 	return Error;
 }
 

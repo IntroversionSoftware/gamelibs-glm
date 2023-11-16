@@ -304,10 +304,11 @@ namespace glm
 	}
 
 	template<typename T>
-	GLM_FUNC_QUALIFIER mat<2, 3, T, defaultp> make_mat2x3(T const *const ptr)
+	GLM_FUNC_QUALIFIER mat<2, 3, T, defaultp> make_mat2x3(T const* const ptr)
 	{
 		mat<2, 3, T, defaultp> Result;
-		memcpy(value_ptr(Result), ptr, sizeof(mat<2, 3, T, defaultp>));
+		Result[0] = { ptr[0], ptr[1], ptr[2] };
+		Result[1] = { ptr[3], ptr[4], ptr[5] };
 		return Result;
 	}
 
@@ -331,7 +332,9 @@ namespace glm
 	GLM_FUNC_QUALIFIER mat<3, 3, T, defaultp> make_mat3x3(T const *const ptr)
 	{
 		mat<3, 3, T, defaultp> Result;
-		memcpy(value_ptr(Result), ptr, sizeof(mat<3, 3, T, defaultp>));
+		Result[0] = { ptr[0], ptr[1], ptr[2] };
+		Result[1] = { ptr[3], ptr[4], ptr[5] };
+		Result[2] = { ptr[6], ptr[7], ptr[8] };
 		return Result;
 	}
 
@@ -355,7 +358,10 @@ namespace glm
 	GLM_FUNC_QUALIFIER mat<4, 3, T, defaultp> make_mat4x3(T const *const ptr)
 	{
 		mat<4, 3, T, defaultp> Result;
-		memcpy(value_ptr(Result), ptr, sizeof(mat<4, 3, T, defaultp>));
+		Result[0] = { ptr[0], ptr[1], ptr[2] };
+		Result[1] = { ptr[3], ptr[4], ptr[5] };
+		Result[2] = { ptr[6], ptr[7], ptr[8] };
+		Result[3] = { ptr[9], ptr[10], ptr[11] };
 		return Result;
 	}
 

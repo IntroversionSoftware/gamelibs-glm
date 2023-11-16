@@ -210,3 +210,144 @@ namespace detail
 }//namespace glm
 
 #endif//GLM_ARCH & GLM_ARCH_SSE2_BIT
+
+#if GLM_ARCH & GLM_ARCH_CLANG_BIT
+
+namespace glm{
+namespace detail
+{
+	template<length_t L, typename T, qualifier Q>
+	struct compute_length<L, T, Q, true>
+	{
+		GLM_FUNC_QUALIFIER static T call(vec<L, T, Q> const &v)
+		{
+			return sqrt(compute_dot<vec<L, T, Q>, T, true>::call(v, v));
+		}
+	};
+
+	template<length_t L, typename T, qualifier Q>
+	struct compute_distance<L, T, Q, true>
+	{
+		GLM_FUNC_QUALIFIER static T call(vec<L, T, Q> const &p0, vec<L, T, Q> const &p1)
+		{
+			return compute_length<L, T, Q, true>::call(p1 - p0);
+		}
+	};
+
+	template<typename T, qualifier Q>
+	struct compute_cross<T, Q, true>
+	{
+		GLM_FUNC_QUALIFIER static vec<3, T, Q> call(vec<3, T, Q> const &a, vec<3, T, Q> const &b)
+		{
+			using storage_type = typename detail::storage<3, T, true>::type;
+			const storage_type lhs_yzx = a.data.yzx;
+			const storage_type rhs_yzx = b.data.yzx;
+			const storage_type rv = (a.data.xyz * rhs_yzx) - (lhs_yzx * b.data.xyz);
+			vec<3, T, Q> Result;
+			Result.data = rv.yzx;
+			return vec<3, T, Q>(Result);
+		}
+
+		GLM_FUNC_QUALIFIER static vec<4, T, Q> call(vec<4, T, Q> const& a, vec<4, T, Q> const& b)
+		{
+			using storage_type = typename detail::storage<4, T, true>::type;
+			const storage_type v1 = a.data;
+			const storage_type v2 = b.data;
+			const storage_type swp0 = v1.yzxw;
+			const storage_type swp1 = v1.zxyw;
+			const storage_type swp2 = v2.yzxw;
+			const storage_type swp3 = v2.zxyw;
+			const storage_type mul0 = swp0 * swp3;
+			const storage_type mul1 = swp1 * swp2;
+			const storage_type sub0 = mul0 - mul1;
+			vec<4, T, Q> Result;
+			Result.data = sub0;
+			return Result;
+		}
+	};
+
+	template<typename T, qualifier Q>
+	struct compute_dot<vec<3, T, Q>, T, true>
+	{
+		GLM_FUNC_QUALIFIER static T call(vec<3, T, Q> const &x, vec<3, T, Q> const &y)
+		{
+			using storage_type = typename detail::storage<3, T, true>::type;
+			const storage_type prod = x.data * y.data;
+			return prod.x + prod.y + prod.z;
+		}
+	};
+
+	template<typename T, qualifier Q>
+	struct compute_dot<vec<4, T, Q>, T, true>
+	{
+		GLM_FUNC_QUALIFIER static T call(vec<4, T, Q> const& x, vec<4, T, Q> const& y)
+		{
+			using storage_type4 = typename detail::storage<4, T, true>::type;
+			using storage_type2 = typename detail::storage<2, T, true>::type;
+			const storage_type4 prod = x.data * y.data;
+			const storage_type2 hadd = prod.xy + prod.zw;
+			return hadd.x + hadd.y;
+		}
+	};
+
+	template<typename T, qualifier Q>
+	struct compute_dot<qua<T, Q>, T, true>
+	{
+		GLM_FUNC_QUALIFIER static T call(qua<T, Q> const& x, qua<T, Q> const& y)
+		{
+			using storage_type4 = typename detail::storage<4, T, true>::type;
+			using storage_type2 = typename detail::storage<2, T, true>::type;
+			const storage_type4 prod = x.data * y.data;
+			const storage_type2 hadd = prod.xy + prod.zw;
+			return hadd.x + hadd.y;
+		}
+	};
+
+	template<length_t L, typename T, qualifier Q>
+	struct compute_normalize<L, T, Q, true>
+	{
+		GLM_FUNC_QUALIFIER static vec<L, T, Q> call(vec<L, T, Q> const& v)
+		{
+			const T lenSq = compute_dot<vec<L, T, Q>, T, true>::call(v, v);
+			vec<L, T, Q> Result;
+			Result.data = v.data * compute_inversesqrt_scalar<T, mediump>::call(lenSq);
+			return Result;
+		}
+	};
+
+	template<typename T, qualifier Q>
+	struct compute_quat_normalize<T, Q, true>
+	{
+		GLM_FUNC_QUALIFIER static qua<T, Q> call(qua<T, Q> const& q, T lenSq)
+		{
+			qua<T, Q> Result;
+			Result.data = q.data * compute_inversesqrt_scalar<T, mediump>::call(lenSq);
+			return Result;
+		}
+	};
+
+	template<qualifier Q>
+	struct compute_faceforward<4, float, Q, true>
+	{
+		GLM_FUNC_QUALIFIER static vec<4, float, Q> call(vec<4, float, Q> const& N, vec<4, float, Q> const& I, vec<4, float, Q> const& Nref)
+		{
+			vec<4, float, Q> Result;
+			Result.data = glm_vec4_faceforward(N.data, I.data, Nref.data);
+			return Result;
+		}
+	};
+
+	template<qualifier Q>
+	struct compute_reflect<4, float, Q, true>
+	{
+		GLM_FUNC_QUALIFIER static vec<4, float, Q> call(vec<4, float, Q> const& I, vec<4, float, Q> const& N)
+		{
+			vec<4, float, Q> Result;
+			Result.data = glm_vec4_reflect(I.data, N.data);
+			return Result;
+		}
+	};
+
+}//namespace detail
+}//namespace glm
+#endif//GLM_ARCH & GLM_ARCH_CLANG_BIT

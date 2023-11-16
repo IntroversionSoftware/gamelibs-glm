@@ -323,6 +323,7 @@
 #define GLM_ARCH_SSE42_BIT	(0x00000040)
 #define GLM_ARCH_AVX_BIT	(0x00000080)
 #define GLM_ARCH_AVX2_BIT	(0x00000100)
+#define GLM_ARCH_CLANG_BIT	(0x00000200)
 
 #define GLM_ARCH_UNKNOWN	(0)
 #define GLM_ARCH_X86		(GLM_ARCH_X86_BIT)
@@ -339,9 +340,23 @@
 #define GLM_ARCH_NEON		(GLM_ARCH_NEON_BIT | GLM_ARCH_SIMD_BIT | GLM_ARCH_ARM)
 #define GLM_ARCH_MIPS		(GLM_ARCH_MIPS_BIT)
 #define GLM_ARCH_PPC		(GLM_ARCH_PPC_BIT)
+#define GLM_ARCH_CLANG		(GLM_ARCH_CLANG_BIT | GLM_ARCH_SIMD_BIT)
+
+#if defined(__has_attribute)
+#	define GLM_HAS_ATTRIBUTE(attribute) __has_attribute(attribute)
+#else
+#	define GLM_HAS_ATTRIBUTE(attribute) 0
+#endif
 
 #if defined(GLM_FORCE_ARCH_UNKNOWN) || defined(GLM_FORCE_PURE)
 #	define GLM_ARCH GLM_ARCH_UNKNOWN
+#elif defined(GLM_FORCE_CLANG)
+#	if !(GLM_COMPILER & GLM_COMPILER_CLANG)
+#		pragma message("Compiler is not Clang, GLM_FORCE_CLANG has no effect")
+#		define GLM_ARCH GLM_ARCH_UNKNOWN
+#	else
+#		define GLM_ARCH GLM_ARCH_CLANG
+#	endif
 #elif defined(GLM_FORCE_NEON)
 #	if __ARM_ARCH >= 8 || defined(_M_ARM64)
 #		define GLM_ARCH (GLM_ARCH_ARMV8)
@@ -374,7 +389,9 @@
 #	define GLM_ARCH (GLM_ARCH_SSE)
 #	define GLM_FORCE_INTRINSICS
 #elif defined(GLM_FORCE_INTRINSICS) && !defined(GLM_FORCE_XYZW_ONLY)
-#	if defined(__AVX2__)
+#	if defined(__clang__) && __clang_major__ >= 16 && GLM_HAS_ATTRIBUTE(ext_vector_type)
+#		define GLM_ARCH (GLM_ARCH_CLANG)
+#	elif defined(__AVX2__)
 #		define GLM_ARCH (GLM_ARCH_AVX2)
 #	elif defined(__AVX__)
 #		define GLM_ARCH (GLM_ARCH_AVX)
@@ -469,3 +486,25 @@
 	typedef int32x4_t			glm_i32vec4;
 	typedef uint32x4_t			glm_u32vec4;
 #endif
+
+#if GLM_ARCH & GLM_ARCH_CLANG_BIT
+	typedef float               glm_f32vec2 __attribute__((ext_vector_type(2)));
+	typedef float               glm_f32vec3 __attribute__((ext_vector_type(3)));
+	typedef float               glm_f32vec4 __attribute__((ext_vector_type(4)));
+	typedef double              glm_f64vec2 __attribute__((ext_vector_type(2)));
+	typedef double              glm_f64vec3 __attribute__((ext_vector_type(3)));
+	typedef double              glm_f64vec4 __attribute__((ext_vector_type(4)));
+	typedef signed int          glm_i32vec2 __attribute__((ext_vector_type(2)));
+	typedef signed int          glm_i32vec3 __attribute__((ext_vector_type(3)));
+	typedef signed int          glm_i32vec4 __attribute__((ext_vector_type(4)));
+	typedef unsigned int        glm_u32vec2 __attribute__((ext_vector_type(2)));
+	typedef unsigned int        glm_u32vec3 __attribute__((ext_vector_type(3)));
+	typedef unsigned int        glm_u32vec4 __attribute__((ext_vector_type(4)));
+	typedef signed long long    glm_i64vec2 __attribute__((ext_vector_type(2)));
+	typedef signed long long    glm_i64vec3 __attribute__((ext_vector_type(3)));
+	typedef signed long long    glm_i64vec4 __attribute__((ext_vector_type(4)));
+	typedef unsigned long long  glm_u64vec2 __attribute__((ext_vector_type(2)));
+	typedef unsigned long long  glm_u64vec3 __attribute__((ext_vector_type(3)));
+	typedef unsigned long long  glm_u64vec4 __attribute__((ext_vector_type(4)));
+#endif
+

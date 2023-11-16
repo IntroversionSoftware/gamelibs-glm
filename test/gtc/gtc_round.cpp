@@ -280,25 +280,25 @@ namespace roundPowerOfTwo
 	static int test()
 	{
 		int Error = 0;
-		
+
 		glm::uint32 const A = glm::roundPowerOfTwo(7u);
 		Error += A == 8u ? 0 : 1;
-		
+
 		glm::uint32 const B = glm::roundPowerOfTwo(15u);
 		Error += B == 16u ? 0 : 1;
 
 		glm::uint32 const C = glm::roundPowerOfTwo(31u);
 		Error += C == 32u ? 0 : 1;
-		
+
 		glm::uint32 const D = glm::roundPowerOfTwo(9u);
 		Error += D == 8u ? 0 : 1;
-		
+
 		glm::uint32 const E = glm::roundPowerOfTwo(17u);
 		Error += E == 16u ? 0 : 1;
-		
+
 		glm::uint32 const F = glm::roundPowerOfTwo(33u);
 		Error += F == 32u ? 0 : 1;
-		
+
 		return Error;
 	}
 }//namespace roundPowerOfTwo
@@ -308,16 +308,16 @@ namespace floorPowerOfTwo
 	static int test()
 	{
 		int Error = 0;
-		
+
 		glm::uint32 const A = glm::floorPowerOfTwo(7u);
 		Error += A == 4u ? 0 : 1;
-		
+
 		glm::uint32 const B = glm::floorPowerOfTwo(15u);
 		Error += B == 8u ? 0 : 1;
-		
+
 		glm::uint32 const C = glm::floorPowerOfTwo(31u);
 		Error += C == 16u ? 0 : 1;
-		
+
 		return Error;
 	}
 }//namespace floorPowerOfTwo
@@ -327,16 +327,16 @@ namespace ceilPowerOfTwo
 	static int test()
 	{
 		int Error = 0;
-		
+
 		glm::uint32 const A = glm::ceilPowerOfTwo(7u);
 		Error += A == 8u ? 0 : 1;
-		
+
 		glm::uint32 const B = glm::ceilPowerOfTwo(15u);
 		Error += B == 16u ? 0 : 1;
-		
+
 		glm::uint32 const C = glm::ceilPowerOfTwo(31u);
 		Error += C == 32u ? 0 : 1;
-		
+
 		return Error;
 	}
 }//namespace ceilPowerOfTwo
@@ -354,14 +354,14 @@ namespace floorMultiple
 
 	static int test_float()
 	{
-		type<glm::float64> const Data[] = 
+		type<glm::float64> const Data[] =
 		{
 			{3.4, 0.3, 3.3, 0.0001},
 			{-1.4, 0.3, -1.5, 0.0001},
 		};
 
 		int Error(0);
-		
+
 		for(std::size_t i = 0, n = sizeof(Data) / sizeof(type<glm::float64>); i < n; ++i)
 		{
 			glm::float64 Result = glm::floorMultiple(Data[i].Source, Data[i].Multiple);
@@ -394,7 +394,7 @@ namespace ceilMultiple
 
 	static int test_float()
 	{
-		type<glm::float64> const Data[] = 
+		type<glm::float64> const Data[] =
 		{
 			{3.4, 0.3, 3.6, 0.0001},
 			{-1.4, 0.3, -1.2, 0.0001},
@@ -413,7 +413,7 @@ namespace ceilMultiple
 
 	static int test_int()
 	{
-		type<int> const Data[] = 
+		type<int> const Data[] =
 		{
 			{3, 4, 4, 0},
 			{7, 4, 8, 0},
@@ -457,7 +457,7 @@ int main()
 	Error += roundPowerOfTwo::test();
 	Error += ceilPowerOfTwo::test();
 	Error += ceilPowerOfTwo_advanced::test();
-	
+
 	Error += ceilPowerOfTwo_advanced::perf();
 
 	Error += floorMultiple::test();

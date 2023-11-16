@@ -630,7 +630,7 @@ static int test_mix()
 		{glm::ivec3(1, 2, 3), glm::ivec3(4, 5, 6), glm::bvec3(true, false, true), glm::ivec3(4, 2, 6)}
 	};
 
-	test_mix_entry<glm::ivec4, bool> const TestVec4Bool[] = 
+	test_mix_entry<glm::ivec4, bool> const TestVec4Bool[] =
 	{
 		{glm::ivec4(0), glm::ivec4(1), false, glm::ivec4(0)},
 		{glm::ivec4(0), glm::ivec4(1), true, glm::ivec4(1)},
@@ -638,7 +638,7 @@ static int test_mix()
 		{glm::ivec4(-1), glm::ivec4(1), true, glm::ivec4(1)}
 	};
 
-	test_mix_entry<glm::ivec4, glm::bvec4> const TestBVec4[] = 
+	test_mix_entry<glm::ivec4, glm::bvec4> const TestBVec4[] =
 	{
 		{glm::ivec4(0, 0, 1, 1), glm::ivec4(2, 2, 3, 3), glm::bvec4(false, true, false, true), glm::ivec4(0, 2, 1, 3)},
 		{glm::ivec4(0), glm::ivec4(1), glm::bvec4(true), glm::ivec4(1)},

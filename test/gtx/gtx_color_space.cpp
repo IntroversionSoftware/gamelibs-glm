@@ -18,7 +18,7 @@ static int test_hsv()
 static int test_saturation()
 {
 	int Error = 0;
-	
+
 	glm::vec4 Color = glm::saturation(1.0f, glm::vec4(1.0, 0.5, 0.0, 1.0));
 	Error += glm::all(glm::equal(Color, glm::vec4(1.0, 0.5, 0.0, 1.0), glm::epsilon<float>())) ? 0 : 1;
 
