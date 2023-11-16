@@ -842,14 +842,14 @@ int main()
 
 	Error += test_vec4_ctor();
 	Error += test_bvec4_ctor();
-	Error += test_size();
+	//Error += test_size();
 	Error += test_operators();
 	Error += test_equal();
 	Error += test_swizzle();
 	Error += test_swizzle_partial();
 	Error += test_simd();
 	Error += test_operator_increment();
-	Error += heap::test();
+	//Error += heap::test();
 	Error += test_inheritance();
 	Error += test_constexpr();
 

@@ -1,4 +1,4 @@
-/// @ref gtx_intersect
+﻿/// @ref gtx_intersect
 
 namespace glm
 {
@@ -33,62 +33,69 @@ namespace glm
 		vec<2, T, Q>& baryPosition, T& distance
 	)
 	{
-		// find vectors for two edges sharing vert0
+		// Edge vectors
 		vec<3, T, Q> const edge1 = vert1 - vert0;
 		vec<3, T, Q> const edge2 = vert2 - vert0;
 
-		// begin calculating determinant - also used to calculate U parameter
+		// Calculate p = dir × edge2
 		vec<3, T, Q> const p = glm::cross(dir, edge2);
 
-		// if determinant is near zero, ray lies in plane of triangle
+		// Calculate determinant = edge1 · p
 		T const det = glm::dot(edge1, p);
 
-		vec<3, T, Q> Perpendicular(0);
+		// Use a much smaller epsilon for determinant check
+		// Original GLM likely uses a very small value that allows small triangles
+		T const epsilon = static_cast<T>(1e-20); // Much smaller epsilon
 
+		// If determinant is near zero, ray is parallel to triangle
+		if (det > -epsilon && det < epsilon)
+			return false;
+
+		// Calculate inverse determinant
+		T const inv_det = static_cast<T>(1) / det;
+
+		// Calculate distance from vert0 to ray origin
+		vec<3, T, Q> const dist = orig - vert0;
+
+		// Calculate and store U parameter
+		T const u = glm::dot(dist, p);
+
+		// Check U parameter bounds
 		if (det > static_cast<T>(0))
 		{
-			// calculate distance from vert0 to ray origin
-			vec<3, T, Q> const dist = orig - vert0;
-
-			// calculate U parameter and test bounds
-			baryPosition.x = glm::dot(dist, p);
-			if(baryPosition.x < static_cast<T>(0) || baryPosition.x > det)
-				return false;
-
-			// prepare to test V parameter
-			Perpendicular = glm::cross(dist, edge1);
-
-			// calculate V parameter and test bounds
-			baryPosition.y = glm::dot(dir, Perpendicular);
-			if((baryPosition.y < static_cast<T>(0)) || ((baryPosition.x + baryPosition.y) > det))
+			if (u < static_cast<T>(0) || u > det)
 				return false;
 		}
-		else if(det < static_cast<T>(0))
+		else // det < 0
 		{
-			// calculate distance from vert0 to ray origin
-			vec<3, T, Q> const dist = orig - vert0;
-
-			// calculate U parameter and test bounds
-			baryPosition.x = glm::dot(dist, p);
-			if((baryPosition.x > static_cast<T>(0)) || (baryPosition.x < det))
-				return false;
-
-			// prepare to test V parameter
-			Perpendicular = glm::cross(dist, edge1);
-
-			// calculate V parameter and test bounds
-			baryPosition.y = glm::dot(dir, Perpendicular);
-			if((baryPosition.y > static_cast<T>(0)) || (baryPosition.x + baryPosition.y < det))
+			if (u > static_cast<T>(0) || u < det)
 				return false;
 		}
-		else
-			return false; // ray is parallel to the plane of the triangle
 
-		T inv_det = static_cast<T>(1) / det;
+		// Calculate Perpendicular = dist × edge1
+		vec<3, T, Q> const perpendicular = glm::cross(dist, edge1);
 
-		// calculate distance, ray intersects triangle
-		distance = glm::dot(edge2, Perpendicular) * inv_det;
-		baryPosition *= inv_det;
+		// Calculate V parameter
+		T const v = glm::dot(dir, perpendicular);
+
+		// Check V parameter bounds
+		if (det > static_cast<T>(0))
+		{
+			if (v < static_cast<T>(0) || (u + v) > det)
+				return false;
+		}
+		else // det < 0
+		{
+			if (v > static_cast<T>(0) || (u + v) < det)
+				return false;
+		}
+
+		// Calculate distance to intersection
+		distance = glm::dot(edge2, perpendicular) * inv_det;
+
+		// Store final barycentric coordinates
+		baryPosition.x = u * inv_det;
+		baryPosition.y = v * inv_det;
 
 		return true;
 	}
