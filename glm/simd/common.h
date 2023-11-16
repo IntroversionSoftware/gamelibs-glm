@@ -247,3 +247,135 @@ GLM_FUNC_QUALIFIER glm_vec4 glm_vec4_inf(glm_vec4 x)
 }
 
 #endif//GLM_ARCH & GLM_ARCH_SSE2_BIT
+
+#if GLM_ARCH & GLM_ARCH_CLANG_BIT
+
+GLM_FUNC_QUALIFIER glm_f32vec4 glm_vec4_add(glm_f32vec4 a, glm_f32vec4 b)
+{
+	return a + b;
+}
+
+GLM_FUNC_QUALIFIER glm_f32vec4 glm_vec1_add(glm_f32vec4 a, glm_f32vec4 b)
+{
+	return a + b;
+}
+
+GLM_FUNC_QUALIFIER glm_f32vec4 glm_vec4_sub(glm_f32vec4 a, glm_f32vec4 b)
+{
+	return a - b;
+}
+
+GLM_FUNC_QUALIFIER glm_f32vec4 glm_vec1_sub(glm_f32vec4 a, glm_f32vec4 b)
+{
+	return a - b;
+}
+
+GLM_FUNC_QUALIFIER glm_f32vec4 glm_vec4_mul(glm_f32vec4 a, glm_f32vec4 b)
+{
+	return a * b;
+}
+
+GLM_FUNC_QUALIFIER glm_f32vec4 glm_vec1_mul(glm_f32vec4 a, glm_f32vec4 b)
+{
+	return a * b;
+}
+
+GLM_FUNC_QUALIFIER glm_f32vec4 glm_vec4_div(glm_f32vec4 a, glm_f32vec4 b)
+{
+	return a / b;
+}
+
+GLM_FUNC_QUALIFIER glm_f32vec4 glm_vec1_div(glm_f32vec4 a, glm_f32vec4 b)
+{
+	return a / b;
+}
+
+GLM_FUNC_QUALIFIER glm_f32vec4 glm_vec4_div_lowp(glm_f32vec4 a, glm_f32vec4 b)
+{
+	return a * (1.0f / b);
+}
+
+GLM_FUNC_QUALIFIER glm_f32vec4 glm_vec4_swizzle_xyzw(glm_f32vec4 a)
+{
+	return __builtin_shufflevector(a, a, 3, 2, 1, 0);
+}
+
+GLM_FUNC_QUALIFIER glm_f32vec4 glm_vec1_fma(glm_f32vec4 a, glm_f32vec4 b, glm_f32vec4 c)
+{
+	return (a * b) + c;
+}
+
+GLM_FUNC_QUALIFIER glm_f32vec4 glm_vec4_fma(glm_f32vec4 a, glm_f32vec4 b, glm_f32vec4 c)
+{
+	return (a * b) + c;
+}
+
+GLM_FUNC_QUALIFIER glm_f32vec4 glm_vec4d_fma(glm_f32vec4 a, glm_f32vec4 b, glm_f32vec4 c)
+{
+	return (a * b) + c;
+}
+
+GLM_FUNC_QUALIFIER glm_f32vec4 glm_vec4_abs(glm_f32vec4 x)
+{
+	return __builtin_elementwise_abs(x);
+}
+
+GLM_FUNC_QUALIFIER glm_i32vec4 glm_ivec4_abs(glm_i32vec4 x)
+{
+	return __builtin_elementwise_abs(x);
+}
+
+GLM_FUNC_QUALIFIER glm_f32vec4 glm_vec4_sign(glm_f32vec4 x)
+{
+	return __builtin_elementwise_copysign(glm_f32vec4(1.0f), x);
+}
+
+GLM_FUNC_QUALIFIER glm_f32vec4 glm_vec4_round(glm_f32vec4 x)
+{
+	return __builtin_elementwise_round(x);
+}
+
+GLM_FUNC_QUALIFIER glm_f32vec4 glm_vec4_floor(glm_f32vec4 x)
+{
+	return __builtin_elementwise_floor(x);
+}
+
+//roundEven
+GLM_FUNC_QUALIFIER glm_f32vec4 glm_vec4_roundEven(glm_f32vec4 x)
+{
+	return __builtin_elementwise_roundeven(x);
+}
+
+GLM_FUNC_QUALIFIER glm_f32vec4 glm_vec4_ceil(glm_f32vec4 x)
+{
+	return __builtin_elementwise_ceil(x);
+}
+
+GLM_FUNC_QUALIFIER glm_f32vec4 glm_vec4_fract(glm_f32vec4 x)
+{
+	return x - __builtin_elementwise_trunc(x);
+}
+
+GLM_FUNC_QUALIFIER glm_f32vec4 glm_vec4_mod(glm_f32vec4 x, glm_f32vec4 y)
+{
+	glm_f32vec4 const div0 = glm_vec4_div(x, y);
+	glm_f32vec4 const flr0 = glm_vec4_floor(div0);
+	glm_f32vec4 const mul0 = glm_vec4_mul(y, flr0);
+	glm_f32vec4 const sub0 = glm_vec4_sub(x, mul0);
+	return sub0;
+}
+
+GLM_FUNC_QUALIFIER glm_f32vec4 glm_vec4_clamp(glm_f32vec4 v, glm_f32vec4 minVal, glm_f32vec4 maxVal)
+{
+	return __builtin_elementwise_max(__builtin_elementwise_min(v, maxVal), minVal);
+}
+
+GLM_FUNC_QUALIFIER glm_f32vec4 glm_vec4_mix(glm_f32vec4 v1, glm_f32vec4 v2, glm_f32vec4 a)
+{
+	glm_f32vec4 const sub0 = glm_vec4_sub(glm_f32vec4(1.0f), a);
+	glm_f32vec4 const mul0 = glm_vec4_mul(v1, sub0);
+	glm_f32vec4 const mad0 = glm_vec4_fma(v2, a, mul0);
+	return mad0;
+}
+
+#endif//GLM_ARCH & GLM_ARCH_SSE2_BIT
