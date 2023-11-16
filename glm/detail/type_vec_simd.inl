@@ -9,6 +9,296 @@
 #define CTORSL(L, CTOR)
 #endif
 
+#if GLM_ARCH & GLM_ARCH_CLANG_BIT
+namespace glm {
+namespace detail
+{
+#	if GLM_CONFIG_SWIZZLE == GLM_SWIZZLE_OPERATOR
+	template<typename T, qualifier Q, int E0, int E1, int E2, int E3>
+	struct _swizzle_base1<2, T, Q, E0,E1,E2,E3, true> : public _swizzle_base0<T, 2>
+	{
+		GLM_FUNC_QUALIFIER vec<2, T, Q> operator ()()  const
+		{
+			using clangvec_type = __attribute__((ext_vector_type(4))) T;
+			clangvec_type data = *reinterpret_cast<clangvec_type const *>(&this->_buffer);
+
+			vec<2, T, Q> Result;
+			Result.data = __builtin_shufflevector(data, data, E0, E1);
+			return Result;
+		}
+	};
+
+	template<typename T, qualifier Q, int E0, int E1, int E2, int E3>
+	struct _swizzle_base1<3, T, Q, E0,E1,E2,E3, true> : public _swizzle_base0<T, 3>
+	{
+		GLM_FUNC_QUALIFIER vec<3, T, Q> operator ()()  const
+		{
+			using clangvec_type = __attribute__((ext_vector_type(4))) T;
+			clangvec_type data = *reinterpret_cast<clangvec_type const *>(&this->_buffer);
+
+			vec<3, T, Q> Result;
+			Result.data = __builtin_shufflevector(data, data, E0, E1, E2, E2); // 4-lane vec3 storage
+			return Result;
+		}
+	};
+
+	template<typename T, qualifier Q, int E0, int E1, int E2, int E3>
+	struct _swizzle_base1<4, T, Q, E0,E1,E2,E3, true> : public _swizzle_base0<T, 4>
+	{
+		GLM_FUNC_QUALIFIER vec<4, T, Q> operator ()()  const
+		{
+			using clangvec_type = __attribute__((ext_vector_type(4))) T;
+			clangvec_type data = *reinterpret_cast<clangvec_type const *>(&this->_buffer);
+
+			vec<4, T, Q> Result;
+			Result.data = __builtin_shufflevector(data, data, E0, E1, E2, E3);
+			return Result;
+		}
+	};
+#	endif// GLM_CONFIG_SWIZZLE == GLM_SWIZZLE_OPERATOR
+
+
+	template<length_t L, typename T, qualifier Q>
+	struct compute_vec_add<L, T, Q, true>
+	{
+		GLM_FUNC_QUALIFIER static vec<L, T, Q> call(vec<L, T, Q> const& a, vec<L, T, Q> const& b)
+		{
+			vec<L, T, Q> Result;
+			Result.data = a.data + b.data;
+			return Result;
+		}
+	};
+
+	template<length_t L, typename T, qualifier Q>
+	struct compute_vec_sub<L, T, Q, true>
+	{
+		GLM_FUNC_QUALIFIER static vec<L, T, Q> call(vec<L, T, Q> const& a, vec<L, T, Q> const& b)
+		{
+			vec<L, T, Q> Result;
+			Result.data = a.data - b.data;
+			return Result;
+		}
+	};
+
+	template<length_t L, typename T, qualifier Q>
+	struct compute_vec_mul<L, T, Q, true>
+	{
+		GLM_FUNC_QUALIFIER static vec<L, T, Q> call(vec<L, T, Q> const& a, vec<L, T, Q> const& b)
+		{
+			vec<L, T, Q> Result;
+			Result.data = a.data * b.data;
+			return Result;
+		}
+	};
+
+	// The divisor for an integer division over a vector's storage: an aligned vec3's 4th (padding)
+	// lane may be 0, and integer division by zero is undefined even in an unused lane.
+	template<length_t L, typename T, typename V>
+	GLM_FUNC_QUALIFIER V divisor(V d)
+	{
+		if constexpr (L == 3 && std::is_integral<T>::value)
+			d.w = T(1);
+		return d;
+	}
+
+	template<length_t L, typename T, qualifier Q>
+	struct compute_vec_div<L, T, Q, true>
+	{
+		GLM_FUNC_QUALIFIER static vec<L, T, Q> call(vec<L, T, Q> const& a, vec<L, T, Q> const& b)
+		{
+			vec<L, T, Q> Result;
+			Result.data = a.data / divisor<L, T>(b.data);
+			return Result;
+		}
+	};
+
+	template<length_t L, typename T, qualifier Q, std::size_t Size>
+	struct compute_vec_and<L, T, Q, -1, Size, true>
+	{
+		GLM_FUNC_QUALIFIER static vec<L, T, Q> call(vec<L, T, Q> const& a, vec<L, T, Q> const& b)
+		{
+			vec<L, T, Q> Result;
+			Result.data = a.data & b.data;
+			return Result;
+		}
+	};
+
+	template<length_t L, typename T, qualifier Q, std::size_t Size>
+	struct compute_vec_or<L, T, Q, -1, Size, true>
+	{
+		GLM_FUNC_QUALIFIER static vec<L, T, Q> call(vec<L, T, Q> const& a, vec<L, T, Q> const& b)
+		{
+			vec<L, T, Q> Result;
+			Result.data = a.data | b.data;
+			return Result;
+		}
+	};
+
+	template<length_t L, typename T, qualifier Q, std::size_t Size>
+	struct compute_vec_xor<L, T, Q, -1, Size, true>
+	{
+		GLM_FUNC_QUALIFIER static vec<L, T, Q> call(vec<L, T, Q> const& a, vec<L, T, Q> const& b)
+		{
+			vec<L, T, Q> Result;
+			Result.data = a.data ^ b.data;
+			return Result;
+		}
+	};
+
+	template<length_t L, typename T, qualifier Q>
+	struct compute_vec_mod<L, T, Q, true>
+	{
+		GLM_FUNC_QUALIFIER static vec<L, T, Q> call(vec<L, T, Q> const& a, vec<L, T, Q> const& b)
+		{
+			vec<L, T, Q> Result;
+			Result.data = a.data % divisor<L, T>(b.data);
+			return Result;
+		}
+	};
+
+}//namespace detail
+
+#if !GLM_CONFIG_XYZW_ONLY
+
+#if GLM_CONFIG_ALIGNED_GENTYPES == GLM_ENABLE
+#define CTORSLO(CTOR, T, N, M, SWA, SWB) \
+	CTOR(aligned_lowp, T, N, M, SWA, SWB) \
+	CTOR(aligned_mediump, T, N, M, SWA, SWB) \
+	CTOR(aligned_highp, T, N, M, SWA, SWB)
+#else
+#define CTORSLO(CTOR, T, N, M, SWA, SWB)
+#endif
+
+#define CTORSLOT(CTOR, N, M, SWA, SWB) \
+	CTORSLO(CTOR, float, N, M, SWA, SWB) \
+	CTORSLO(CTOR, int, N, M, SWA, SWB) \
+	CTORSLO(CTOR, uint, N, M, SWA, SWB)
+
+#define CTOR_VECN_IMM1(OP, T, N, M, SWA, SWB) \
+	template<> \
+	template<typename A, typename B, qualifier P> \
+	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<N, T, OP>::vec(vec<M, A, P> const& _xyz, B _w) \
+	{ \
+		/* An aligned vec3's storage is 4 lanes, so convert all of them and then replace w. */ \
+		using vec_full = typename detail::storage<N, T, detail::is_aligned<OP>::value>::type; \
+		vec_full v = __builtin_convertvector(_xyz.data, vec_full); \
+		v.SWB = static_cast<T>(_w); \
+		data = v; \
+	}
+
+#define CTOR_VECN_TRUNC(OP, T, N, M, SWA, SWB) \
+	template<> \
+	template<typename U, qualifier P> \
+	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<N, T, OP>::vec(vec<M, U, P> const& _other) \
+	{ \
+		/* An aligned vec3's storage is 4 lanes like the vec4's: convert all of them, so the source's */ \
+		/* w becomes the padding lane and every lane is written. */ \
+		using vec_full = typename detail::storage<N, T, detail::is_aligned<OP>::value>::type; \
+		data = __builtin_convertvector(_other.data, vec_full); \
+	}
+
+#define CTOR_FLOAT(L, Q)\
+	template<>\
+	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<L, float, Q>::vec(float _s) :\
+		data(_s)\
+	{}
+
+#define CTOR_INT(L, Q)\
+	template<>\
+	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<L, int, Q>::vec(int _s) :\
+		data(_s)\
+	{}
+
+#define CTOR_UINT(L, Q)\
+	template<>\
+	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<L, uint, Q>::vec(uint _s) :\
+		data(_s)\
+	{}
+
+#define CTOR_FLOAT3(L, Q)\
+	template<>\
+	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<L, float, Q>::vec(float _x, float _y, float _z) :\
+		data{_x, _y, _z} \
+	{}
+
+#define CTOR_FLOAT4(L, Q)\
+	template<>\
+	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<L, float, Q>::vec(float _x, float _y, float _z, float _w) :\
+		data{_x, _y, _z, _w} \
+	{}
+
+#define CTOR_VECF_INT4(L, Q)\
+	template<>\
+	template<>\
+	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<L, float, Q>::vec(int _x, int _y, int _z, int _w) :\
+		data(__builtin_convertvector(vec<L, int, Q>(_x, _y, _z, _w).data, detail::storage<L, float, true>::type))\
+	{}
+
+#define CTOR_VECF_UINT4(L, Q)\
+	template<>\
+	template<>\
+	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<L, float, Q>::vec(uint _x, uint _y, uint _z, uint _w) :\
+		data(__builtin_convertvector(vec<L, uint, Q>(_x, _y, _z, _w).data, detail::storage<L, float, true>::type))\
+	{}
+
+#define CTOR_VECF_INT3(L, Q)\
+	template<>\
+	template<>\
+	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<L, float, Q>::vec(int _x, int _y, int _z) :\
+		data(__builtin_convertvector(vec<L, int, Q>(_x, _y, _z).data, detail::storage<L, float, true>::type))\
+	{}
+
+#define CTOR_VECF_UINT3(L, Q)\
+	template<>\
+	template<>\
+	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<L, float, Q>::vec(uint _x, uint _y, uint _z) :\
+		data(__builtin_convertvector(vec<L, uint, Q>(_x, _y, _z).data, detail::storage<L, float, true>::type))\
+	{}
+
+#define CTOR_VECD_VECS(L, Q, D, S)\
+	template<>\
+	template<>\
+	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<L, D, Q>::vec(vec<L, S, Q> const& rhs) :\
+		data(__builtin_convertvector(rhs.data, detail::storage<L, D, true>::type))\
+	{}
+
+#define CTOR_VEC_VEC(L, Q)\
+	CTOR_VECD_VECS(L, Q, float, float) \
+	CTOR_VECD_VECS(L, Q, float, int) \
+	CTOR_VECD_VECS(L, Q, float, uint) \
+	CTOR_VECD_VECS(L, Q, int, float) \
+	CTOR_VECD_VECS(L, Q, int, int) \
+	CTOR_VECD_VECS(L, Q, int, uint) \
+	CTOR_VECD_VECS(L, Q, uint, float) \
+	CTOR_VECD_VECS(L, Q, uint, int) \
+	CTOR_VECD_VECS(L, Q, uint, uint) \
+
+#define CTOR_VECF_VECF(L, Q)\
+	template<>\
+	template<>\
+	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<L, float, Q>::vec(const vec<L, float, Q>& rhs) :\
+		data(rhs.data)\
+	{}
+
+#define CTOR_VECF_VECI(L, Q)\
+	template<>\
+	template<>\
+	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<L, float, Q>::vec(const vec<L, int, Q>& rhs) :\
+		data(__builtin_convertvector(rhs.data, detail::storage<L, float, true>::type))\
+	{}
+
+#define CTOR_VECF_VECU(L, Q)\
+	template<>\
+	template<>\
+	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<L, float, Q>::vec(const vec<L, uint, Q>& rhs) :\
+		data(__builtin_convertvector(rhs.data, detail::storage<L, float, true>::type))\
+	{}
+
+#endif
+}//namespace glm
+
+#endif
+
 #if GLM_ARCH & GLM_ARCH_SSE2_BIT
 namespace glm {
 namespace detail
