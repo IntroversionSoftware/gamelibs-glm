@@ -11,9 +11,9 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 	endif()
 
 	add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-	if(NOT GLM_DISABLE_AUTO_DETECTION)
-		add_compile_options(-Werror -Weverything)
-	endif()
+	#if(NOT GLM_DISABLE_AUTO_DETECTION)
+	#	add_compile_options(-Werror -Weverything)
+	#endif()
 
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
 	if(NOT GLM_QUIET)
