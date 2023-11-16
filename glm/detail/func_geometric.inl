@@ -105,12 +105,23 @@ namespace detail
 		}
 	};
 
+	template<typename T, qualifier Q, bool Aligned>
+	struct compute_quat_normalize
+	{
+		GLM_FUNC_QUALIFIER static qua<T, Q> call(qua<T, Q> const& v, T lenSq)
+		{
+			GLM_STATIC_ASSERT(std::numeric_limits<T>::is_iec559, "'normalize' accepts only floating-point inputs");
+
+			return v * inversesqrt(lenSq);
+		}
+	};
+
 	template<length_t L, typename T, qualifier Q, bool Aligned>
 	struct compute_faceforward
 	{
 		GLM_FUNC_QUALIFIER static vec<L, T, Q> call(vec<L, T, Q> const& N, vec<L, T, Q> const& I, vec<L, T, Q> const& Nref)
 		{
-			GLM_STATIC_ASSERT(std::numeric_limits<T>::is_iec559, "'normalize' accepts only floating-point inputs");
+			GLM_STATIC_ASSERT(std::numeric_limits<T>::is_iec559, "'faceforward' accepts only floating-point inputs");
 
 			return dot(Nref, I) < static_cast<T>(0) ? N : -N;
 		}
