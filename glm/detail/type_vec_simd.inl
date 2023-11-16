@@ -1,15 +1,18 @@
 #pragma once
 
-#define CTORSL(L, CTOR)\
-CTOR(L, aligned_lowp)\
-CTOR(L, aligned_mediump)\
-CTOR(L, aligned_highp)\
-
-namespace glm {
-	namespace detail
-	{
+#if GLM_CONFIG_ALIGNED_GENTYPES == GLM_ENABLE
+#define CTORSL(L, CTOR) \
+	CTOR(L, aligned_lowp) \
+	CTOR(L, aligned_mediump) \
+	CTOR(L, aligned_highp)
+#else
+#define CTORSL(L, CTOR)
+#endif
 
 #if GLM_ARCH & GLM_ARCH_SSE2_BIT
+namespace glm {
+namespace detail
+{
 
 #	if GLM_CONFIG_SWIZZLE == GLM_SWIZZLE_OPERATOR
 	template<length_t L, qualifier Q, int E0, int E1, int E2, int E3>
@@ -518,9 +521,6 @@ namespace glm {
 
 #	endif
 
-
-
-
 }//namespace detail
 
 
@@ -654,16 +654,17 @@ namespace glm {
 		:data(_mm_set_ps(v.z, v.z, v.y, v.x))\
 	{}
 
-
-
 }//namespace glm
-
 #endif//GLM_ARCH & GLM_ARCH_SSE2_BIT
 
 #if GLM_ARCH & GLM_ARCH_NEON_BIT
 
+namespace glm{
+namespace detail
+{
+
 #if GLM_CONFIG_SWIZZLE == GLM_SWIZZLE_OPERATOR
-// the functions below needs to be properly implemented, use unoptimized function fro now.
+// the functions below needs to be properly implemented, use unoptimized function for now.
 
 template<length_t L, qualifier Q, int E0, int E1, int E2, int E3>
 struct _swizzle_base1<L, float, Q, E0, E1, E2, E3, true> : public _swizzle_base1<L, float, Q, E0, E1, E2, E3, false>{}; 
@@ -873,23 +874,23 @@ struct _swizzle_base1<L, uint, Q, E0, E1, E2, E3, true> : public _swizzle_base1<
 	};
 
 	template<length_t L, qualifier Q>
-	struct compute_vec_nequal<L, uint, Q, false, 32, true>
+	struct compute_vec_nequal<L, uint, Q, true, 32, true>
 	{
 		static bool call(vec<L, uint, Q> const& v1, vec<L, uint, Q> const& v2)
 		{
-			return !compute_vec_equal<L, uint, Q, false, 32, true>::call(v1, v2);
+			return !compute_vec_equal<L, uint, Q, true, 32, true>::call(v1, v2);
 		}
 	};
 
 	template<length_t L, qualifier Q>
-	struct compute_vec_nequal<L, int, Q, false, 32, true>
+	struct compute_vec_nequal<L, int, Q, true, 32, true>
 	{
 		static bool call(vec<L, int, Q> const& v1, vec<L, int, Q> const& v2)
 		{
-			return !compute_vec_equal<L, int, Q, false, 32, true>::call(v1, v2);
+			return !compute_vec_equal<L, int, Q, true, 32, true>::call(v1, v2);
 		}
 	};
-
+}//namespace detail
 
 #if !GLM_CONFIG_XYZW_ONLY
 
@@ -961,11 +962,7 @@ struct _swizzle_base1<L, uint, Q, E0, E1, E2, E3, true> : public _swizzle_base1<
 		data(vcvtq_f32_u32(rhs.data))\
 	{}
 
-
 #endif
-
-
-}//namespace detail
 
 }//namespace glm
 
