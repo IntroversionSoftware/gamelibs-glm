@@ -1064,7 +1064,10 @@ namespace detail
 #	endif
 
 	// Report build target
-#	if (GLM_ARCH & GLM_ARCH_AVX2_BIT) && (GLM_MODEL == GLM_MODEL_64)
+#	if (GLM_ARCH & GLM_ARCH_CLANG_BIT)
+#		pragma message("GLM: clang vector extensions enabled")
+
+#	elif (GLM_ARCH & GLM_ARCH_AVX2_BIT) && (GLM_MODEL == GLM_MODEL_64)
 #		pragma message("GLM: x86 64 bits with AVX2 instruction set build target")
 #	elif (GLM_ARCH & GLM_ARCH_AVX2_BIT) && (GLM_MODEL == GLM_MODEL_32)
 #		pragma message("GLM: x86 32 bits with AVX2 instruction set build target")

@@ -121,7 +121,10 @@ option(GLM_ENABLE_SIMD_SSE4_2 "Enable SSE 4.2 optimizations" OFF)
 option(GLM_ENABLE_SIMD_AVX "Enable AVX optimizations" OFF)
 option(GLM_ENABLE_SIMD_AVX2 "Enable AVX2 optimizations" OFF)
 option(GLM_ENABLE_SIMD_NEON "Enable ARM NEON optimizations" OFF)
+option(GLM_ENABLE_SIMD_CLANG "Enable Clang vector extensions" OFF)
 option(GLM_FORCE_PURE "Force 'pure' instructions" OFF)
+
+set(GLM_BUILDING_WITH_SIMD OFF)
 
 if(GLM_FORCE_PURE)
 	add_definitions(-DGLM_FORCE_PURE)
@@ -131,7 +134,19 @@ if(GLM_FORCE_PURE)
 #	endif()
 	message(STATUS "GLM: No SIMD instruction set")
 
+elseif(GLM_ENABLE_SIMD_CLANG)
+	set(GLM_BUILDING_WITH_SIMD ON)
+	add_definitions(-DGLM_FORCE_INTRINSICS)
+
+	if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+		add_compile_options(-DGLM_FORCE_CLANG)
+	else()
+		message(FATAL_ERROR "Compiler is not Clang, cannot enable Clang vector intrinsics")
+	endif()
+	message(STATUS "GLM: Clang vector extensions enabled")
+
 elseif(GLM_ENABLE_SIMD_AVX2)
+	set(GLM_BUILDING_WITH_SIMD ON)
 	add_definitions(-DGLM_FORCE_INTRINSICS)
 
 	if((CMAKE_CXX_COMPILER_ID MATCHES "GNU") OR (CMAKE_CXX_COMPILER_ID MATCHES "Clang"))
@@ -144,6 +159,7 @@ elseif(GLM_ENABLE_SIMD_AVX2)
 	message(STATUS "GLM: AVX2 instruction set")
 
 elseif(GLM_ENABLE_SIMD_AVX)
+	set(GLM_BUILDING_WITH_SIMD ON)
 	add_definitions(-DGLM_FORCE_INTRINSICS)
 
 	if((CMAKE_CXX_COMPILER_ID MATCHES "GNU") OR (CMAKE_CXX_COMPILER_ID MATCHES "Clang"))
@@ -156,6 +172,7 @@ elseif(GLM_ENABLE_SIMD_AVX)
 	message(STATUS "GLM: AVX instruction set")
 
 elseif(GLM_ENABLE_SIMD_SSE4_2)
+	set(GLM_BUILDING_WITH_SIMD ON)
 	add_definitions(-DGLM_FORCE_INTRINSICS)
 
 	if((CMAKE_CXX_COMPILER_ID MATCHES "GNU") OR (CMAKE_CXX_COMPILER_ID MATCHES "Clang"))
@@ -168,6 +185,7 @@ elseif(GLM_ENABLE_SIMD_SSE4_2)
 	message(STATUS "GLM: SSE4.2 instruction set")
 
 elseif(GLM_ENABLE_SIMD_SSE4_1)
+	set(GLM_BUILDING_WITH_SIMD ON)
 	add_definitions(-DGLM_FORCE_INTRINSICS)
 
 	if((CMAKE_CXX_COMPILER_ID MATCHES "GNU") OR (CMAKE_CXX_COMPILER_ID MATCHES "Clang"))
@@ -180,6 +198,7 @@ elseif(GLM_ENABLE_SIMD_SSE4_1)
 	message(STATUS "GLM: SSE4.1 instruction set")
 
 elseif(GLM_ENABLE_SIMD_SSSE3)
+	set(GLM_BUILDING_WITH_SIMD ON)
 	add_definitions(-DGLM_FORCE_INTRINSICS)
 
 	if((CMAKE_CXX_COMPILER_ID MATCHES "GNU") OR (CMAKE_CXX_COMPILER_ID MATCHES "Clang"))
@@ -192,6 +211,7 @@ elseif(GLM_ENABLE_SIMD_SSSE3)
 	message(STATUS "GLM: SSSE3 instruction set")
 
 elseif(GLM_ENABLE_SIMD_SSE3)
+	set(GLM_BUILDING_WITH_SIMD ON)
 	add_definitions(-DGLM_FORCE_INTRINSICS)
 
 	if((CMAKE_CXX_COMPILER_ID MATCHES "GNU") OR (CMAKE_CXX_COMPILER_ID MATCHES "Clang"))
@@ -204,6 +224,7 @@ elseif(GLM_ENABLE_SIMD_SSE3)
 	message(STATUS "GLM: SSE3 instruction set")
 
 elseif(GLM_ENABLE_SIMD_SSE2)
+	set(GLM_BUILDING_WITH_SIMD ON)
 	add_definitions(-DGLM_FORCE_INTRINSICS)
 
 	if((CMAKE_CXX_COMPILER_ID MATCHES "GNU") OR (CMAKE_CXX_COMPILER_ID MATCHES "Clang"))
@@ -215,6 +236,7 @@ elseif(GLM_ENABLE_SIMD_SSE2)
 	endif()
 	message(STATUS "GLM: SSE2 instruction set")
 elseif(GLM_ENABLE_SIMD_NEON)
+	set(GLM_BUILDING_WITH_SIMD ON)
 	add_definitions(-DGLM_FORCE_INTRINSICS)
 
 	message(STATUS "GLM: ARM NEON instruction set")
@@ -223,6 +245,11 @@ endif()
 add_subdirectory(glm)
 
 if (GLM_BUILD_TESTS)
+	if (GLM_BUILDING_WITH_SIMD)
+		# When we've forcibly enabled SIMD, we should ensure our tests cover
+		# the SIMD versions of each datatype.
+		add_definitions(-DGLM_FORCE_DEFAULT_ALIGNED_GENTYPES)
+	endif()
 	include(CTest)
 	add_subdirectory(test)
 endif()
