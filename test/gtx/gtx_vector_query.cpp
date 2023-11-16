@@ -29,7 +29,7 @@ static int test_areCollinear()
 static int test_areOrthogonal()
 {
 	int Error(0);
-	
+
 	bool TestA = glm::areOrthogonal(glm::vec2(1, 0), glm::vec2(0, 1), 0.00001f);
 	Error += TestA ? 0 : 1;
 
@@ -39,7 +39,7 @@ static int test_areOrthogonal()
 static int test_isNormalized()
 {
 	int Error(0);
-	
+
 	bool TestA = glm::isNormalized(glm::vec4(1, 0, 0, 0), 0.00001f);
 	Error += TestA ? 0 : 1;
 
@@ -49,7 +49,7 @@ static int test_isNormalized()
 static int test_isNull()
 {
 	int Error(0);
-	
+
 	bool TestA = glm::isNull(glm::vec4(0), 0.00001f);
 	Error += TestA ? 0 : 1;
 

@@ -23,7 +23,7 @@ struct test_vec_mul_mat< matType, vecType, false>
 	void operator()(matType const& M, std::vector<vecType> const& I, std::vector<vecType>& O)
 	{
 		for (std::size_t i = 0, n = I.size(); i < n; ++i)
-			O[i] = I[i] * M; 
+			O[i] = I[i] * M;
 	}
 };
 
@@ -62,7 +62,7 @@ template <typename packedMatType, typename packedVecType, typename alignedMatTyp
 static int comp_vec2_mul_mat2(std::size_t Samples)
 {
 	typedef typename packedMatType::value_type T;
-	
+
 	int Error = 0;
 
 	packedMatType const Transform(1, 2, 3, 4);
@@ -80,7 +80,7 @@ static int comp_vec2_mul_mat2(std::size_t Samples)
 		packedVecType const B = packedVecType(SIMD[i]);
 		Error += glm::all(glm::equal(A, B, static_cast<T>(0.001))) ? 0 : 1;
 	}
-	
+
 	return Error;
 }
 
@@ -88,7 +88,7 @@ template <typename packedMatType, typename packedVecType, typename alignedMatTyp
 static int comp_vec3_mul_mat3(std::size_t Samples)
 {
 	typedef typename packedMatType::value_type T;
-	
+
 	int Error = 0;
 
 	packedMatType const Transform(1, 2, 3, 4, 5, 6, 7, 8, 9);
@@ -106,7 +106,7 @@ static int comp_vec3_mul_mat3(std::size_t Samples)
 		packedVecType const B = SIMD[i];
 		Error += glm::all(glm::equal(A, B, static_cast<T>(0.001))) ? 0 : 1;
 	}
-	
+
 	return Error;
 }
 
@@ -114,7 +114,7 @@ template <typename packedMatType, typename packedVecType, typename alignedMatTyp
 static int comp_vec4_mul_mat4(std::size_t Samples)
 {
 	typedef typename packedMatType::value_type T;
-	
+
 	int Error = 0;
 
 	packedMatType const Transform(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
@@ -132,14 +132,14 @@ static int comp_vec4_mul_mat4(std::size_t Samples)
 		packedVecType const B = SIMD[i];
 		Error += glm::all(glm::equal(A, B, static_cast<T>(0.001))) ? 0 : 1;
 	}
-	
+
 	return Error;
 }
 
 int main()
 {
 	std::size_t const Samples = 1000;
-	
+
 	int Error = 0;
 
 	std::printf("vec2 * mat2:\n");
@@ -156,7 +156,7 @@ int main()
 
 	std::printf("vec4 * mat4:\n");
 	Error += comp_vec4_mul_mat4<glm::mat4, glm::vec4, glm::aligned_mat4, glm::aligned_vec4, false>(Samples);
-	
+
 	std::printf("dvec4 * dmat4:\n");
 	Error += comp_vec4_mul_mat4<glm::dmat4, glm::dvec4, glm::aligned_dmat4, glm::aligned_dvec4, false>(Samples);
 

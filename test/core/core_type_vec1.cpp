@@ -173,6 +173,6 @@ int main()
 	Error += test_operators();
 	Error += test_operator_increment();
 	Error += test_swizzle();
-	
+
 	return Error;
 }

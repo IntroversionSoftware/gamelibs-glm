@@ -4,7 +4,7 @@
 static int test_isNull()
 {
 	int Error(0);
-	
+
 	bool TestA = glm::isNull(glm::mat4(0), 0.00001f);
 	Error += TestA ? 0 : 1;
 
@@ -14,7 +14,7 @@ static int test_isNull()
 static int test_isIdentity()
 {
 	int Error(0);
-	
+
 	{
 		bool TestA = glm::isIdentity(glm::mat2(1), 0.00001f);
 		Error += TestA ? 0 : 1;
