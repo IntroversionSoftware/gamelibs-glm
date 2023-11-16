@@ -218,10 +218,10 @@ namespace glm {
 		struct compute_vec_nequal<L, T, Q, IsInt, Size, true> : public compute_vec_nequal<L, T, Q, IsInt, Size, false>
 		{};
 
+#if !(GLM_ARCH & GLM_ARCH_CLANG_BIT)
 		template<length_t L, typename T, qualifier Q>
 		struct compute_vec_mod<L, T, Q, true> : public compute_vec_mod<L, T, Q, false>
 		{};
-
 
 		template<typename T, length_t L, qualifier Q>
 		struct compute_vec_add<L, T, Q, true> : public compute_vec_add<L, T, Q, false>
@@ -238,6 +238,6 @@ namespace glm {
 		template< length_t L, typename T, qualifier Q>
 		struct compute_vec_div<L, T, Q, true> : public compute_vec_div<L, T, Q, false>
 		{};
-
+#endif
 	}
 }

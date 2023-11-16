@@ -131,8 +131,8 @@ static int test_quat_slerp()
 	float const Epsilon = 0.0001f;//glm::epsilon<float>();
 
 	float sqrt2 = std::sqrt(2.0f)/2.0f;
-	glm::quat id(static_cast<float>(1), static_cast<float>(0), static_cast<float>(0), static_cast<float>(0));
-	glm::quat Y90rot(sqrt2, 0.0f, sqrt2, 0.0f);
+	glm::quat id = glm::quat::wxyz(static_cast<float>(1), static_cast<float>(0), static_cast<float>(0), static_cast<float>(0));
+	glm::quat Y90rot = glm::quat::wxyz(sqrt2, 0.0f, sqrt2, 0.0f);
 
 	// Testing a == 0
 	// Must be id
@@ -147,7 +147,7 @@ static int test_quat_slerp()
 	// Testing standard, easy case
 	// Must be 45 degrees rotation on Y : 0 0.38 0 0.92
 	glm::quat Y45rot1 = glm::slerp(id, Y90rot, 0.5f);
-	Error += glm::all(glm::equal(Y45rot1, glm::quat(0.924f, 0.0f, 0.383f, 0.0f), 0.01f)) ? 0 : 1;
+	Error += glm::all(glm::equal(Y45rot1, glm::quat::wxyz(0.924f, 0.0f, 0.383f, 0.0f), 0.01f)) ? 0 : 1;
 
 	// Testing reverse case
 	// Must be 45 degrees rotation on Y : 0 0.38 0 0.92
@@ -181,11 +181,11 @@ static int test_quat_slerp()
 	// Testing almost equal quaternions (this test should pass through the linear interpolation)
 	// Must be 0 0.00X 0 0.99999
 	glm::quat almostid = glm::slerp(id, glm::angleAxis(0.1f, glm::vec3(0.0f, 1.0f, 0.0f)), 0.5f);
-	Error += glm::all(glm::equal(almostid, glm::quat(1.0f, 0.0f, 0.0f, 0.0f), 0.1f)) ? 0 : 1;
+	Error += glm::all(glm::equal(almostid, glm::quat::wxyz(1.0f, 0.0f, 0.0f, 0.0f), 0.1f)) ? 0 : 1;
 
 	// Testing quaternions with opposite sign
 	{
-		glm::quat a(-1, 0, 0, 0);
+		glm::quat a = glm::quat::wxyz(-1, 0, 0, 0);
 
 		glm::quat result = glm::slerp(a, id, 0.5f);
 
@@ -202,9 +202,9 @@ static int test_quat_slerp_spins()
     float const Epsilon = 0.0001f;//glm::epsilon<float>();
 
     float sqrt2 = std::sqrt(2.0f) / 2.0f;
-    glm::quat id(static_cast<float>(1), static_cast<float>(0), static_cast<float>(0), static_cast<float>(0));
-    glm::quat Y90rot(sqrt2, 0.0f, sqrt2, 0.0f);
-    glm::quat Y180rot(0.0f, 0.0f, 1.0f, 0.0f);
+    glm::quat id = glm::quat::wxyz(static_cast<float>(1), static_cast<float>(0), static_cast<float>(0), static_cast<float>(0));
+    glm::quat Y90rot = glm::quat::wxyz(sqrt2, 0.0f, sqrt2, 0.0f);
+    glm::quat Y180rot = glm::quat::wxyz(0.0f, 0.0f, 1.0f, 0.0f);
 
     // Testing a == 0, k == 1
     // Must be id
@@ -318,8 +318,8 @@ static int test_identity()
 
 	glm::quat const Q = glm::identity<glm::quat>();
 
-	Error += glm::all(glm::equal(Q, glm::quat(1, 0, 0, 0), 0.0001f)) ? 0 : 1;
-	Error += glm::any(glm::notEqual(Q, glm::quat(1, 0, 0, 0), 0.0001f)) ? 1 : 0;
+	Error += glm::all(glm::equal(Q, glm::quat::wxyz(1, 0, 0, 0), 0.0001f)) ? 0 : 1;
+	Error += glm::any(glm::notEqual(Q, glm::quat::wxyz(1, 0, 0, 0), 0.0001f)) ? 1 : 0;
 
 	glm::mat4 const M = glm::identity<glm::mat4x4>();
 	glm::mat4 const N(1.0f);
