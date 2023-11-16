@@ -359,7 +359,6 @@ namespace glm
 		template<typename T, qualifier Q, bool is_aligned>
 		struct mul3x3 {};
 
-#if GLM_CONFIG_SIMD == GLM_ENABLE
 		template<typename T, qualifier Q>
 		struct mul3x3<T, Q, true>
 		{
@@ -380,7 +379,7 @@ namespace glm
 				return mat<3, 3, T, Q>(tmp0, tmp1, tmp2);
 			}
 		};
-#endif
+
 		template<typename T, qualifier Q>
 		struct mul3x3<T, Q, false>
 		{

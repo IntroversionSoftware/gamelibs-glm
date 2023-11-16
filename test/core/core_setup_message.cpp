@@ -5,7 +5,7 @@
 static int test_compiler()
 {
 	int Error(0);
-	
+
 #	if(GLM_COMPILER & GLM_COMPILER_VC)
 	{
 		switch(GLM_COMPILER)
@@ -223,9 +223,9 @@ static int test_compiler()
 static int test_model()
 {
 	int Error = 0;
-	
+
 	Error += ((sizeof(void*) == 4) && (GLM_MODEL == GLM_MODEL_32)) || ((sizeof(void*) == 8) && (GLM_MODEL == GLM_MODEL_64)) ? 0 : 1;
-	
+
 #	if GLM_MODEL == GLM_MODEL_32
 		std::printf("GLM_MODEL_32\n");
 #	elif GLM_MODEL == GLM_MODEL_64
@@ -269,7 +269,7 @@ static int test_instruction_set()
 static int test_cpp_version()
 {
 	std::printf("__cplusplus: %d\n", static_cast<int>(__cplusplus));
-	
+
 	std::printf("GLM_LANG: ");
 
 #	if(GLM_LANG & GLM_LANG_CXX20_FLAG)
@@ -302,7 +302,7 @@ int main()
 	int Error = 0;
 
 #	if !defined(GLM_FORCE_PLATFORM_UNKNOWN) && !defined(GLM_FORCE_COMPILER_UNKNOWN) && !defined(GLM_FORCE_ARCH_UNKNOWN) && !defined(GLM_FORCE_CXX_UNKNOWN)
-		
+
 		Error += test_cpp_version();
 		Error += test_compiler();
 		Error += test_model();
@@ -310,6 +310,6 @@ int main()
 		Error += test_operators();
 
 #	endif
-	
+
 	return Error;
 }

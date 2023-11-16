@@ -1038,3 +1038,111 @@ GLM_FUNC_QUALIFIER void glm_mat4_outerProduct(__m128 const& c, __m128 const& r, 
 }
 
 #endif//GLM_ARCH & GLM_ARCH_SSE2_BIT
+
+#if GLM_ARCH & GLM_ARCH_CLANG_BIT
+
+GLM_FUNC_QUALIFIER void glm_mat4_inverse(glm_f32vec4 const in[4], glm_f32vec4 out[4])
+{
+    // Access the input matrix rows
+    glm_f32vec4 const& m0 = in[0];
+    glm_f32vec4 const& m1 = in[1];
+    glm_f32vec4 const& m2 = in[2];
+    glm_f32vec4 const& m3 = in[3];
+
+    // Calculate the cofactor matrices
+    glm_f32vec4 Fac0;
+    {
+        // Original: m2.z * m3.w - m3.z * m2.w, repeated with variations
+        glm_f32vec4 w0 = {m2[2], m2[2], m1[2], m1[2]};
+        glm_f32vec4 w1 = {m3[3], m3[3], m3[3], m2[3]};
+        glm_f32vec4 w2 = {m3[2], m3[2], m3[2], m2[2]};
+        glm_f32vec4 w3 = {m2[3], m2[3], m1[3], m1[3]};
+        Fac0 = w0 * w1 - w2 * w3;
+    }
+
+    glm_f32vec4 Fac1;
+    {
+        // Original: m2.y * m3.w - m3.y * m2.w, repeated with variations
+        glm_f32vec4 w0 = {m2[1], m2[1], m1[1], m1[1]};
+        glm_f32vec4 w1 = {m3[3], m3[3], m3[3], m2[3]};
+        glm_f32vec4 w2 = {m3[1], m3[1], m3[1], m2[1]};
+        glm_f32vec4 w3 = {m2[3], m2[3], m1[3], m1[3]};
+        Fac1 = w0 * w1 - w2 * w3;
+    }
+
+    glm_f32vec4 Fac2;
+    {
+        // Original: m2.y * m3.z - m3.y * m2.z, repeated with variations
+        glm_f32vec4 w0 = {m2[1], m2[1], m1[1], m1[1]};
+        glm_f32vec4 w1 = {m3[2], m3[2], m3[2], m2[2]};
+        glm_f32vec4 w2 = {m3[1], m3[1], m3[1], m2[1]};
+        glm_f32vec4 w3 = {m2[2], m2[2], m1[2], m1[2]};
+        Fac2 = w0 * w1 - w2 * w3;
+    }
+
+    glm_f32vec4 Fac3;
+    {
+        // Original: m2.x * m3.w - m3.x * m2.w, repeated with variations
+        glm_f32vec4 w0 = {m2[0], m2[0], m1[0], m1[0]};
+        glm_f32vec4 w1 = {m3[3], m3[3], m3[3], m2[3]};
+        glm_f32vec4 w2 = {m3[0], m3[0], m3[0], m2[0]};
+        glm_f32vec4 w3 = {m2[3], m2[3], m1[3], m1[3]};
+        Fac3 = w0 * w1 - w2 * w3;
+    }
+
+    glm_f32vec4 Fac4;
+    {
+        // Original: m2.x * m3.z - m3.x * m2.z, repeated with variations
+        glm_f32vec4 w0 = {m2[0], m2[0], m1[0], m1[0]};
+        glm_f32vec4 w1 = {m3[2], m3[2], m3[2], m2[2]};
+        glm_f32vec4 w2 = {m3[0], m3[0], m3[0], m2[0]};
+        glm_f32vec4 w3 = {m2[2], m2[2], m1[2], m1[2]};
+        Fac4 = w0 * w1 - w2 * w3;
+    }
+
+    glm_f32vec4 Fac5;
+    {
+        // Original: m2.x * m3.y - m3.x * m2.y, repeated with variations
+        glm_f32vec4 w0 = {m2[0], m2[0], m1[0], m1[0]};
+        glm_f32vec4 w1 = {m3[1], m3[1], m3[1], m2[1]};
+        glm_f32vec4 w2 = {m3[0], m3[0], m3[0], m2[0]};
+        glm_f32vec4 w3 = {m2[1], m2[1], m1[1], m1[1]};
+        Fac5 = w0 * w1 - w2 * w3;
+    }
+
+    // Create Vec0-Vec3 to match the original algorithm pattern
+    glm_f32vec4 Vec0 = {m1[0], m0[0], m0[0], m0[0]};
+    glm_f32vec4 Vec1 = {m1[1], m0[1], m0[1], m0[1]};
+    glm_f32vec4 Vec2 = {m1[2], m0[2], m0[2], m0[2]};
+    glm_f32vec4 Vec3 = {m1[3], m0[3], m0[3], m0[3]};
+
+    // Calculate inverse using cofactors
+    glm_f32vec4 Inv0 = Vec1 * Fac0 - Vec2 * Fac1 + Vec3 * Fac2;
+    glm_f32vec4 Inv1 = Vec0 * Fac0 - Vec2 * Fac3 + Vec3 * Fac4;
+    glm_f32vec4 Inv2 = Vec0 * Fac1 - Vec1 * Fac3 + Vec3 * Fac5;
+    glm_f32vec4 Inv3 = Vec0 * Fac2 - Vec1 * Fac4 + Vec2 * Fac5;
+
+    // Apply sign correction (alternating +/-)
+    glm_f32vec4 SignA = {-1.0f, +1.0f, -1.0f, +1.0f};
+    glm_f32vec4 SignB = {+1.0f, -1.0f, +1.0f, -1.0f};
+
+    glm_f32vec4 r0 = Inv0 * SignA;
+    glm_f32vec4 r1 = Inv1 * SignB;
+    glm_f32vec4 r2 = Inv2 * SignA;
+    glm_f32vec4 r3 = Inv3 * SignB;
+
+    // Calculate determinant by dot product of first row with cofactors
+    glm_f32vec4 dot0 = m0 * glm_f32vec4{r0[0], r1[0], r2[0], r3[0]};
+    float det = dot0[0] + dot0[1] + dot0[2] + dot0[3];
+
+    // Multiply by reciprocal of determinant
+    glm_f32vec4 rdet = {1.0f / det, 1.0f / det, 1.0f / det, 1.0f / det};
+
+    // Store final results
+    out[0] = r0 * rdet;
+    out[1] = r1 * rdet;
+    out[2] = r2 * rdet;
+    out[3] = r3 * rdet;
+}
+
+#endif//GLM_ARCH & GLM_ARCH_CLANG_BIT

@@ -87,6 +87,7 @@ namespace detail
 		} type;
 	};
 
+#	if !(GLM_ARCH & GLM_ARCH_CLANG_BIT)
 	template<length_t L, typename T>
 	struct storage<L, T, true>
 	{
@@ -102,6 +103,7 @@ namespace detail
 			T data[4];
 		} type;
 	};
+#	endif
 
 #	if GLM_ARCH & GLM_ARCH_SSE2_BIT
 	template<>
@@ -246,6 +248,26 @@ namespace detail
 */
 #	endif
 
+#	if GLM_ARCH & GLM_ARCH_CLANG_BIT
+	template <length_t L>
+	struct storage<L, bool, true>
+	{
+		static constexpr std::size_t alignment = ((L < 3) ? 2 : ((L <= 4) ? 4 : ((L <= 8) ? 8 : L)));
+		typedef struct alignas(alignment) type {
+			bool data[L];
+		} type;
+	};
+
+	template<length_t L, typename T>
+	struct storage<L, T, true>
+	{
+		using vec_type = T __attribute__((ext_vector_type(L), aligned(4)));
+		typedef vec_type type;
+	};
+#	endif
+
+
+
 	enum genTypeEnum
 	{
 		GENTYPE_VEC,
@@ -273,7 +295,7 @@ namespace detail
 	{
 		GLM_FUNC_QUALIFIER GLM_CONSTEXPR static genType identity()
 		{
-			return genType(1, 0, 0, 0);
+			return genType::wxyz(1, 0, 0, 0);
 		}
 	};
 

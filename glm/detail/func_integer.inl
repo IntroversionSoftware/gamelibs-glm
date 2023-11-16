@@ -5,6 +5,7 @@
 #	include <intrin.h>
 #	pragma intrinsic(_BitScanReverse)
 #endif//(GLM_ARCH & GLM_ARCH_X86 && GLM_COMPILER & GLM_COMPILER_VC)
+#include <cstring>
 #include <limits>
 
 namespace glm{
@@ -16,42 +17,6 @@ namespace detail
 		return Bits >= static_cast<T>(sizeof(T) * 8) ? ~static_cast<T>(0) : (static_cast<T>(1) << Bits) - static_cast<T>(1);
 	}
 
-	template<length_t L, typename T, qualifier Q, bool Aligned, bool EXEC>
-	struct compute_bitfieldReverseStep
-	{
-		GLM_FUNC_QUALIFIER static vec<L, T, Q> call(vec<L, T, Q> const& v, T, T)
-		{
-			return v;
-		}
-	};
-
-	template<length_t L, typename T, qualifier Q, bool Aligned>
-	struct compute_bitfieldReverseStep<L, T, Q, Aligned, true>
-	{
-		GLM_FUNC_QUALIFIER static vec<L, T, Q> call(vec<L, T, Q> const& v, T Mask, T Shift)
-		{
-			return (v & Mask) << Shift | (v & (~Mask)) >> Shift;
-		}
-	};
-
-	template<length_t L, typename T, qualifier Q, bool Aligned, bool EXEC>
-	struct compute_bitfieldBitCountStep
-	{
-		GLM_FUNC_QUALIFIER static vec<L, T, Q> call(vec<L, T, Q> const& v, T, T)
-		{
-			return v;
-		}
-	};
-
-	template<length_t L, typename T, qualifier Q, bool Aligned>
-	struct compute_bitfieldBitCountStep<L, T, Q, Aligned, true>
-	{
-		GLM_FUNC_QUALIFIER static vec<L, T, Q> call(vec<L, T, Q> const& v, T Mask, T Shift)
-		{
-			return (v & Mask) + ((v >> Shift) & Mask);
-		}
-	};
-
 	template<typename genIUType, size_t Bits>
 	struct compute_findLSB
 	{
@@ -60,107 +25,102 @@ namespace detail
 			if(Value == 0)
 				return -1;
 
-			return glm::bitCount(~Value & (Value - static_cast<genIUType>(1)));
-		}
-	};
-
-#	if GLM_HAS_BITSCAN_WINDOWS
-		template<typename genIUType>
-		struct compute_findLSB<genIUType, 32>
-		{
-			GLM_FUNC_QUALIFIER static int call(genIUType Value)
-			{
-				unsigned long Result(0);
-				unsigned char IsNotNull = _BitScanForward(&Result, *reinterpret_cast<unsigned long*>(&Value));
-				return IsNotNull ? int(Result) : -1;
+			genIUType bitIndex = static_cast<genIUType>(0);
+			while ((Value & 1) == 0) {
+				Value >>= 1;
+				bitIndex++;
 			}
-		};
-
-#		if !((GLM_COMPILER & GLM_COMPILER_VC) && (GLM_MODEL == GLM_MODEL_32))
-		template<typename genIUType>
-		struct compute_findLSB<genIUType, 64>
-		{
-			GLM_FUNC_QUALIFIER static int call(genIUType Value)
-			{
-				unsigned long Result(0);
-				unsigned char IsNotNull = _BitScanForward64(&Result, *reinterpret_cast<unsigned __int64*>(&Value));
-				return IsNotNull ? int(Result) : -1;
-			}
-		};
-#		endif
-#	endif//GLM_HAS_BITSCAN_WINDOWS
-
-	template<length_t L, typename T, qualifier Q, bool EXEC = true>
-	struct compute_findMSB_step_vec
-	{
-		GLM_FUNC_QUALIFIER static vec<L, T, Q> call(vec<L, T, Q> const& x, T Shift)
-		{
-			return x | (x >> Shift);
+			return bitIndex;
 		}
 	};
 
-	template<length_t L, typename T, qualifier Q>
-	struct compute_findMSB_step_vec<L, T, Q, false>
+	template<typename genIUType, size_t Bits>
+	struct compute_findMSB
 	{
-		GLM_FUNC_QUALIFIER static vec<L, T, Q> call(vec<L, T, Q> const& x, T)
+		GLM_FUNC_QUALIFIER static int call(genIUType Value)
 		{
-			return x;
+			if(Value == 0)
+				return -1;
+
+			genIUType bitIndex = static_cast<genIUType>(Bits);
+			do {
+				bitIndex--;
+			} while (((Value >> bitIndex) & 1) == 0);
+			return static_cast<int>(bitIndex);
 		}
 	};
 
-	template<length_t L, typename T, qualifier Q, int>
-	struct compute_findMSB_vec
+#if GLM_HAS_BUILTIN(__builtin_ctz)
+	template<typename genIUType>
+	struct compute_findLSB<genIUType, 32>
 	{
-		GLM_FUNC_QUALIFIER static vec<L, int, Q> call(vec<L, T, Q> const& v)
+		GLM_FUNC_QUALIFIER static int call(genIUType Value)
 		{
-			vec<L, T, Q> x(v);
-			x = compute_findMSB_step_vec<L, T, Q, sizeof(T) * 8 >=  8>::call(x, static_cast<T>( 1));
-			x = compute_findMSB_step_vec<L, T, Q, sizeof(T) * 8 >=  8>::call(x, static_cast<T>( 2));
-			x = compute_findMSB_step_vec<L, T, Q, sizeof(T) * 8 >=  8>::call(x, static_cast<T>( 4));
-			x = compute_findMSB_step_vec<L, T, Q, sizeof(T) * 8 >= 16>::call(x, static_cast<T>( 8));
-			x = compute_findMSB_step_vec<L, T, Q, sizeof(T) * 8 >= 32>::call(x, static_cast<T>(16));
-			x = compute_findMSB_step_vec<L, T, Q, sizeof(T) * 8 >= 64>::call(x, static_cast<T>(32));
-			return vec<L, int, Q>(sizeof(T) * 8 - 1) - glm::bitCount(~x);
+			return (Value != static_cast<genIUType>(0)) ? __builtin_ctz(Value) : -1;
 		}
 	};
+#endif
 
-#	if GLM_HAS_BITSCAN_WINDOWS
-		template<typename genIUType>
-		GLM_FUNC_QUALIFIER int compute_findMSB_32(genIUType Value)
+#if GLM_HAS_BUILTIN(__builtin_ctzll)
+	template<typename genIUType>
+	struct compute_findLSB<genIUType, 64>
+	{
+		GLM_FUNC_QUALIFIER static int call(genIUType Value)
+		{
+			return (Value != static_cast<genIUType>(0)) ? __builtin_ctzll(Value) : -1;
+		}
+	};
+#endif
+
+#if GLM_HAS_BUILTIN(__builtin_clz)
+	template<typename genIUType>
+	struct compute_findMSB<genIUType, 32>
+	{
+		GLM_FUNC_QUALIFIER static int call(genIUType Value)
+		{
+			int const count = Value ? __builtin_clz(Value) : 32;
+			return 31 - count;
+		}
+	};
+#endif
+
+#if GLM_HAS_BUILTIN(__builtin_clzll)
+	template<typename genIUType>
+	struct compute_findMSB<genIUType, 64>
+	{
+		GLM_FUNC_QUALIFIER static int call(genIUType Value)
+		{
+			int const count = Value ? __builtin_clzll(Value) : 64;
+			return 63 - count;
+		}
+	};
+#endif
+
+#if GLM_HAS_BITSCAN_WINDOWS
+	template<typename genIUType>
+	struct compute_findLSB<genIUType, 32>
+	{
+		GLM_FUNC_QUALIFIER static int call(genIUType Value)
 		{
 			unsigned long Result(0);
-			unsigned char IsNotNull = _BitScanReverse(&Result, *reinterpret_cast<unsigned long*>(&Value));
+			unsigned char IsNotNull = _BitScanForward(&Result, *reinterpret_cast<unsigned long*>(&Value));
 			return IsNotNull ? int(Result) : -1;
 		}
+	};
 
-		template<length_t L, typename T, qualifier Q>
-		struct compute_findMSB_vec<L, T, Q, 32>
-		{
-			GLM_FUNC_QUALIFIER static vec<L, int, Q> call(vec<L, T, Q> const& x)
-			{
-				return detail::functor1<vec, L, int, T, Q>::call(compute_findMSB_32, x);
-			}
-		};
-
-#		if !((GLM_COMPILER & GLM_COMPILER_VC) && (GLM_MODEL == GLM_MODEL_32))
-		template<typename genIUType>
-		GLM_FUNC_QUALIFIER int compute_findMSB_64(genIUType Value)
+#if !((GLM_COMPILER & GLM_COMPILER_VC) && (GLM_MODEL == GLM_MODEL_32))
+	template<typename genIUType>
+	struct compute_findLSB<genIUType, 64>
+	{
+		GLM_FUNC_QUALIFIER static int call(genIUType Value)
 		{
 			unsigned long Result(0);
-			unsigned char IsNotNull = _BitScanReverse64(&Result, *reinterpret_cast<unsigned __int64*>(&Value));
+			unsigned char IsNotNull = _BitScanForward64(&Result, *reinterpret_cast<unsigned __int64*>(&Value));
 			return IsNotNull ? int(Result) : -1;
 		}
-
-		template<length_t L, typename T, qualifier Q>
-		struct compute_findMSB_vec<L, T, Q, 64>
-		{
-			GLM_FUNC_QUALIFIER static vec<L, int, Q> call(vec<L, T, Q> const& x)
-			{
-				return detail::functor1<vec, L, int, T, Q>::call(compute_findMSB_64, x);
-			}
-		};
-#		endif
-#	endif//GLM_HAS_BITSCAN_WINDOWS
+	};
+#endif
+#endif//GLM_HAS_BITSCAN_WINDOWS
 }//namespace detail
 
 	// uaddCarry
@@ -265,46 +225,68 @@ namespace detail
 		return (Base & ~Mask) | ((Insert << static_cast<T>(Offset)) & Mask);
 	}
 
-#if GLM_COMPILER & GLM_COMPILER_VC
-#	pragma warning(push)
-#	pragma warning(disable : 4309)
-#endif
-
 	// bitfieldReverse
-	template<typename genIUType>
-	GLM_FUNC_QUALIFIER genIUType bitfieldReverse(genIUType x)
+	template<typename genIType>
+	GLM_FUNC_QUALIFIER genIType bitfieldReverse(genIType sx)
 	{
-		static_assert(std::numeric_limits<genIUType>::is_integer, "'bitfieldReverse' only accept integer values");
+		static_assert(std::numeric_limits<genIType>::is_integer, "'bitfieldReverse' only accept integer values");
 
-		return bitfieldReverse(glm::vec<1, genIUType, glm::defaultp>(x)).x;
+		using UnsignedType = typename std::make_unsigned<genIType>::type;
+		static_assert(sizeof(UnsignedType) == sizeof(genIType), "Unsigned type must have the same size");
+
+		// Preserve bit representation via memcpy (bit_cast equivalent)
+		UnsignedType x;
+		std::memcpy(&x, &sx, sizeof(genIType));
+
+		UnsignedType result = 0;
+		int numBits = std::numeric_limits<genIType>::digits; // Excludes sign bit for signed types
+
+		for (int i = 0; i < numBits; ++i)
+		{
+			result = (result << 1) | (x & 1);
+			x >>= 1;
+		}
+
+		// Convert back to original type safely
+		genIType finalResult;
+		std::memcpy(&finalResult, &result, sizeof(genIType));
+		return finalResult;
 	}
+
 
 	template<length_t L, typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER vec<L, T, Q> bitfieldReverse(vec<L, T, Q> const& v)
 	{
 		static_assert(std::numeric_limits<T>::is_integer, "'bitfieldReverse' only accept integer values");
 
-		vec<L, T, Q> x(v);
-		x = detail::compute_bitfieldReverseStep<L, T, Q, detail::is_aligned<Q>::value, sizeof(T) * 8>=  2>::call(x, static_cast<T>(0x5555555555555555ull), static_cast<T>( 1));
-		x = detail::compute_bitfieldReverseStep<L, T, Q, detail::is_aligned<Q>::value, sizeof(T) * 8>=  4>::call(x, static_cast<T>(0x3333333333333333ull), static_cast<T>( 2));
-		x = detail::compute_bitfieldReverseStep<L, T, Q, detail::is_aligned<Q>::value, sizeof(T) * 8>=  8>::call(x, static_cast<T>(0x0F0F0F0F0F0F0F0Full), static_cast<T>( 4));
-		x = detail::compute_bitfieldReverseStep<L, T, Q, detail::is_aligned<Q>::value, sizeof(T) * 8>= 16>::call(x, static_cast<T>(0x00FF00FF00FF00FFull), static_cast<T>( 8));
-		x = detail::compute_bitfieldReverseStep<L, T, Q, detail::is_aligned<Q>::value, sizeof(T) * 8>= 32>::call(x, static_cast<T>(0x0000FFFF0000FFFFull), static_cast<T>(16));
-		x = detail::compute_bitfieldReverseStep<L, T, Q, detail::is_aligned<Q>::value, sizeof(T) * 8>= 64>::call(x, static_cast<T>(0x00000000FFFFFFFFull), static_cast<T>(32));
-		return x;
+		vec<L, typename std::make_unsigned<T>::type, Q> x(v);
+		vec<L, T, Q> r;
+		#if GLM_COMPILER & GLM_COMPILER_CLANG
+		#pragma unroll
+		#endif
+		for (uint i = 0; i < L; ++i)
+			r[i] = bitfieldReverse(x[i]);
+		return r;
 	}
 
-#		if GLM_COMPILER & GLM_COMPILER_VC
-#			pragma warning(pop)
-#		endif
-
 	// bitCount
-	template<typename genIUType>
-	GLM_FUNC_QUALIFIER int bitCount(genIUType x)
+	template<typename genIType>
+	GLM_FUNC_QUALIFIER int bitCount(genIType sx)
 	{
-		static_assert(std::numeric_limits<genIUType>::is_integer, "'bitCount' only accept integer values");
+		static_assert(std::numeric_limits<genIType>::is_integer, "'bitCount' only accept integer values");
 
-		return bitCount(glm::vec<1, genIUType, glm::defaultp>(x)).x;
+		using genIUType = typename std::make_unsigned<genIType>::type;
+
+		// Bit-cast using memcpy for safety in C++11
+		genIUType x;
+		std::memcpy(&x, &sx, sizeof(genIUType));
+
+		int c = 0;
+		while (x) {
+			x &= (x - 1);
+			c++;
+		}
+		return c;
 	}
 
 	template<length_t L, typename T, qualifier Q>
@@ -312,23 +294,7 @@ namespace detail
 	{
 		static_assert(std::numeric_limits<T>::is_integer, "'bitCount' only accept integer values");
 
-#		if GLM_COMPILER & GLM_COMPILER_VC
-#			pragma warning(push)
-#			pragma warning(disable : 4310) //cast truncates constant value
-#		endif
-
-		vec<L, typename std::make_unsigned<T>::type, Q> x(v);
-		x = detail::compute_bitfieldBitCountStep<L, typename std::make_unsigned<T>::type, Q, detail::is_aligned<Q>::value, sizeof(T) * 8>=  2>::call(x, typename std::make_unsigned<T>::type(0x5555555555555555ull), typename std::make_unsigned<T>::type( 1));
-		x = detail::compute_bitfieldBitCountStep<L, typename std::make_unsigned<T>::type, Q, detail::is_aligned<Q>::value, sizeof(T) * 8>=  4>::call(x, typename std::make_unsigned<T>::type(0x3333333333333333ull), typename std::make_unsigned<T>::type( 2));
-		x = detail::compute_bitfieldBitCountStep<L, typename std::make_unsigned<T>::type, Q, detail::is_aligned<Q>::value, sizeof(T) * 8>=  8>::call(x, typename std::make_unsigned<T>::type(0x0F0F0F0F0F0F0F0Full), typename std::make_unsigned<T>::type( 4));
-		x = detail::compute_bitfieldBitCountStep<L, typename std::make_unsigned<T>::type, Q, detail::is_aligned<Q>::value, sizeof(T) * 8>= 16>::call(x, typename std::make_unsigned<T>::type(0x00FF00FF00FF00FFull), typename std::make_unsigned<T>::type( 8));
-		x = detail::compute_bitfieldBitCountStep<L, typename std::make_unsigned<T>::type, Q, detail::is_aligned<Q>::value, sizeof(T) * 8>= 32>::call(x, typename std::make_unsigned<T>::type(0x0000FFFF0000FFFFull), typename std::make_unsigned<T>::type(16));
-		x = detail::compute_bitfieldBitCountStep<L, typename std::make_unsigned<T>::type, Q, detail::is_aligned<Q>::value, sizeof(T) * 8>= 64>::call(x, typename std::make_unsigned<T>::type(0x00000000FFFFFFFFull), typename std::make_unsigned<T>::type(32));
-		return vec<L, int, Q>(x);
-
-#		if GLM_COMPILER & GLM_COMPILER_VC
-#			pragma warning(pop)
-#		endif
+		return detail::functor1<vec, L, int, typename std::make_unsigned<T>::type, Q>::call(bitCount, v);
 	}
 
 	// findLSB
@@ -350,19 +316,19 @@ namespace detail
 
 	// findMSB
 	template<typename genIUType>
-	GLM_FUNC_QUALIFIER int findMSB(genIUType v)
+	GLM_FUNC_QUALIFIER int findMSB(genIUType Value)
 	{
 		static_assert(std::numeric_limits<genIUType>::is_integer, "'findMSB' only accept integer values");
 
-		return findMSB(vec<1, genIUType>(v)).x;
+		return detail::compute_findMSB<genIUType, sizeof(genIUType) * 8>::call(Value);
 	}
 
 	template<length_t L, typename T, qualifier Q>
-	GLM_FUNC_QUALIFIER vec<L, int, Q> findMSB(vec<L, T, Q> const& v)
+	GLM_FUNC_QUALIFIER vec<L, int, Q> findMSB(vec<L, T, Q> const& x)
 	{
 		static_assert(std::numeric_limits<T>::is_integer, "'findMSB' only accept integer values");
 
-		return detail::compute_findMSB_vec<L, T, Q, static_cast<int>(sizeof(T) * 8)>::call(v);
+		return detail::functor1<vec, L, int, T, Q>::call(findMSB, x);
 	}
 }//namespace glm
 
