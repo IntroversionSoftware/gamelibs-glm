@@ -532,6 +532,31 @@ namespace glm
 			m[2] * scalar,
 			m[3] * scalar);
 	}
+	namespace detail
+	{
+		template<typename T, qualifier Q, bool is_aligned>
+		struct mul4x4_row
+		{
+			using col_type = typename mat<4, 4, T, Q>::col_type;
+			using row_type = typename mat<4, 4, T, Q>::row_type;
+
+			GLM_FUNC_QUALIFIER GLM_CONSTEXPR static col_type call(mat<4, 4, T, Q> const& m, row_type const& v)
+			{
+				col_type const Mov0(v[0]);
+				col_type const Mov1(v[1]);
+				col_type const Mul0 = m[0] * Mov0;
+				col_type const Mul1 = m[1] * Mov1;
+				col_type const Add0 = Mul0 + Mul1;
+				col_type const Mov2(v[2]);
+				col_type const Mov3(v[3]);
+				col_type const Mul2 = m[2] * Mov2;
+				col_type const Mul3 = m[3] * Mov3;
+				col_type const Add1 = Mul2 + Mul3;
+				col_type const Add2 = Add0 + Add1;
+				return Add2;
+			}
+		};
+	}
 
 	template<typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR typename mat<4, 4, T, Q>::col_type operator*
@@ -540,45 +565,7 @@ namespace glm
 		typename mat<4, 4, T, Q>::row_type const& v
 	)
 	{
-/*
-		__m128 v0 = _mm_shuffle_ps(v.data, v.data, _MM_SHUFFLE(0, 0, 0, 0));
-		__m128 v1 = _mm_shuffle_ps(v.data, v.data, _MM_SHUFFLE(1, 1, 1, 1));
-		__m128 v2 = _mm_shuffle_ps(v.data, v.data, _MM_SHUFFLE(2, 2, 2, 2));
-		__m128 v3 = _mm_shuffle_ps(v.data, v.data, _MM_SHUFFLE(3, 3, 3, 3));
-
-		__m128 m0 = _mm_mul_ps(m[0].data, v0);
-		__m128 m1 = _mm_mul_ps(m[1].data, v1);
-		__m128 a0 = _mm_add_ps(m0, m1);
-
-		__m128 m2 = _mm_mul_ps(m[2].data, v2);
-		__m128 m3 = _mm_mul_ps(m[3].data, v3);
-		__m128 a1 = _mm_add_ps(m2, m3);
-
-		__m128 a2 = _mm_add_ps(a0, a1);
-
-		return typename mat<4, 4, T, Q>::col_type(a2);
-*/
-
-		typename mat<4, 4, T, Q>::col_type const Mov0(v[0]);
-		typename mat<4, 4, T, Q>::col_type const Mov1(v[1]);
-		typename mat<4, 4, T, Q>::col_type const Mul0 = m[0] * Mov0;
-		typename mat<4, 4, T, Q>::col_type const Mul1 = m[1] * Mov1;
-		typename mat<4, 4, T, Q>::col_type const Add0 = Mul0 + Mul1;
-		typename mat<4, 4, T, Q>::col_type const Mov2(v[2]);
-		typename mat<4, 4, T, Q>::col_type const Mov3(v[3]);
-		typename mat<4, 4, T, Q>::col_type const Mul2 = m[2] * Mov2;
-		typename mat<4, 4, T, Q>::col_type const Mul3 = m[3] * Mov3;
-		typename mat<4, 4, T, Q>::col_type const Add1 = Mul2 + Mul3;
-		typename mat<4, 4, T, Q>::col_type const Add2 = Add0 + Add1;
-		return Add2;
-
-/*
-		return typename mat<4, 4, T, Q>::col_type(
-			m[0][0] * v[0] + m[1][0] * v[1] + m[2][0] * v[2] + m[3][0] * v[3],
-			m[0][1] * v[0] + m[1][1] * v[1] + m[2][1] * v[2] + m[3][1] * v[3],
-			m[0][2] * v[0] + m[1][2] * v[1] + m[2][2] * v[2] + m[3][2] * v[3],
-			m[0][3] * v[0] + m[1][3] * v[1] + m[2][3] * v[2] + m[3][3] * v[3]);
-*/
+		return detail::mul4x4_row<T, Q, detail::is_aligned<Q>::value>::call(m, v);
 	}
 
 	template<typename T, qualifier Q>
