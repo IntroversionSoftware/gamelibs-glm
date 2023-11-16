@@ -2,7 +2,8 @@
 
 #include "compute_vector_relational.hpp"
 
-namespace glm{
+namespace glm
+{
 namespace detail
 {
 	template<typename T, qualifier Q, bool Aligned>

@@ -5,7 +5,8 @@
 
 #if GLM_ARCH & GLM_ARCH_SSE2_BIT
 
-namespace glm{
+namespace glm
+{
 namespace detail
 {
 	template<qualifier Q>
@@ -35,3 +36,26 @@ namespace detail
 }//namespace glm
 
 #endif//GLM_ARCH & GLM_ARCH_SSE2_BIT
+
+#if GLM_ARCH & GLM_ARCH_CLANG_BIT
+
+namespace glm
+{
+namespace detail
+{
+#if __has_builtin(__builtin_elementwise_sqrt)
+	template<qualifier Q>
+	struct compute_sqrt<4, float, Q, true>
+	{
+		GLM_FUNC_QUALIFIER static vec<4, float, Q> call(vec<4, float, Q> const& v)
+		{
+			vec<4, float, Q> Result;
+			Result.data = __builtin_elementwise_sqrt(v.data);
+			return Result;
+		}
+	};
+#endif
+}//namespace detail
+}//namespace glm
+
+#endif//GLM_ARCH & GLM_ARCH_CLANG_BIT

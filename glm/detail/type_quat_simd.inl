@@ -206,3 +206,161 @@ namespace detail
 }//namespace glm
 
 #endif//GLM_ARCH & GLM_ARCH_SSE2_BIT
+
+#if GLM_ARCH & GLM_ARCH_CLANG_BIT
+
+namespace glm{
+namespace detail
+{
+	template<qualifier Q>
+	struct compute_quat_add<float, Q, true>
+	{
+		static qua<float, Q> call(qua<float, Q> const& q, qua<float, Q> const& p)
+		{
+			qua<float, Q> Result;
+			Result.data = q.data + p.data;
+			return Result;
+		}
+	};
+
+	template<qualifier Q>
+	struct compute_quat_add<double, Q, true>
+	{
+		static qua<double, Q> call(qua<double, Q> const& a, qua<double, Q> const& b)
+		{
+			qua<double, Q> Result;
+			Result.data = a.data + b.data;
+			return Result;
+		}
+	};
+
+	template<qualifier Q>
+	struct compute_quat_sub<float, Q, true>
+	{
+		static qua<float, Q> call(qua<float, Q> const& q, qua<float, Q> const& p)
+		{
+			qua<float, Q> Result;
+			Result.data = q.data - p.data;
+			return Result;
+		}
+	};
+
+	template<qualifier Q>
+	struct compute_quat_sub<double, Q, true>
+	{
+		static qua<double, Q> call(qua<double, Q> const& a, qua<double, Q> const& b)
+		{
+			qua<double, Q> Result;
+			Result.data = a.data - b.data;
+			return Result;
+		}
+	};
+
+	template<qualifier Q>
+	struct compute_quat_mul_scalar<float, Q, true>
+	{
+		static qua<float, Q> call(qua<float, Q> const& q, float s)
+		{
+			qua<float, Q> Result;
+			Result.data = q.data * s;
+			return Result;
+		}
+	};
+
+	template<qualifier Q>
+	struct compute_quat_mul_scalar<double, Q, true>
+	{
+		static qua<double, Q> call(qua<double, Q> const& q, double s)
+		{
+			qua<double, Q> Result;
+			Result.data = q.data * s;
+			return Result;
+		}
+	};
+
+	template<qualifier Q>
+	struct compute_quat_div_scalar<float, Q, true>
+	{
+		static qua<float, Q> call(qua<float, Q> const& q, float s)
+		{
+			qua<float, Q> Result;
+			Result.data = q.data / s;
+			return Result;
+		}
+	};
+
+	template<qualifier Q>
+	struct compute_quat_div_scalar<double, Q, true>
+	{
+		static qua<double, Q> call(qua<double, Q> const& q, double s)
+		{
+			qua<double, Q> Result;
+			Result.data = q.data / s;
+			return Result;
+		}
+	};
+
+#if 0
+	// NOTE: This is pretty much a direct translation of the SSE2
+	// implementation above, but it does not seem to work correctly from what I
+	// can tell.
+	template<qualifier Q>
+	struct compute_quat_mul_vec4<float, Q, true>
+	{
+		static vec<4, float, Q> call(qua<float, Q> const& q, vec<4, float, Q> const& v)
+		{
+			typedef float float4 __attribute__((ext_vector_type(4)));
+
+#			ifdef GLM_FORCE_QUAT_DATA_XYZW
+				// Please note that the "data" clang vectors still address
+				// elements in terms of (w, x, y, z), so we have to swap the
+				// names around when swizzling based on how we're storing the
+				// data.
+
+				float4 const q_wwww = q.data.zzzz;
+				float4 const q_swp0 = q.data.zwyx;
+				float4 const q_swp1 = q.data.zxwy;
+				float4 const v_swp0 = v.data.zwyx;
+				float4 const v_swp1 = v.data.zxwy;
+
+				float4 uv      = (q_swp0 * v_swp1) - (q_swp1 * v_swp0);
+				float4 uv_swp0 = uv.zwyx;
+				float4 uv_swp1 = uv.zxwy;
+				float4 uuv     = (q_swp0 * uv_swp1) - (q_swp1 * uv_swp0);
+
+				float4 const two(2.0f);
+
+				uv  = uv * (q_wwww * two);
+				uuv = uuv * two;
+
+				vec<4, float, Q> Result;
+				Result.data = v.data + (uv + uuv);
+				return Result;
+#			else
+				float4 const q_wwww = q.data.wwww;
+				float4 const q_swp0 = q.data.wxzy;
+				float4 const q_swp1 = q.data.wyxz;
+				float4 const v_swp0 = v.data.zwyx;
+				float4 const v_swp1 = v.data.zxwy;
+
+				float4 uv      = (q_swp0 * v_swp1) - (q_swp1 * v_swp0);
+				float4 uv_swp0 = uv.zwyx;
+				float4 uv_swp1 = uv.zxwy;
+				float4 uuv     = (q_swp0 * uv_swp1) - (q_swp1 * uv_swp0);
+
+				float4 const two(2.0f);
+
+				uv = uv * (q_wwww * two);
+				uuv = uuv * two;
+
+				vec<4, float, Q> Result;
+				Result.data = v.data + (uv + uuv);
+				return Result;
+#			endif
+		}
+	};
+#endif
+}//namespace detail
+}//namespace glm
+
+#endif//GLM_ARCH & GLM_ARCH_CLANG_BIT
