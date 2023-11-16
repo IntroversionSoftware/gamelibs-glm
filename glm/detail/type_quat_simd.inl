@@ -206,3 +206,100 @@ namespace detail
 }//namespace glm
 
 #endif//GLM_ARCH & GLM_ARCH_SSE2_BIT
+
+#if GLM_ARCH & GLM_ARCH_CLANG_BIT
+
+namespace glm{
+namespace detail
+{
+	template<qualifier Q>
+	struct compute_quat_add<float, Q, true>
+	{
+		static qua<float, Q> call(qua<float, Q> const& q, qua<float, Q> const& p)
+		{
+			qua<float, Q> Result;
+			Result.data = q.data + p.data;
+			return Result;
+		}
+	};
+
+	template<qualifier Q>
+	struct compute_quat_add<double, Q, true>
+	{
+		static qua<double, Q> call(qua<double, Q> const& a, qua<double, Q> const& b)
+		{
+			qua<double, Q> Result;
+			Result.data = a.data + b.data;
+			return Result;
+		}
+	};
+
+	template<qualifier Q>
+	struct compute_quat_sub<float, Q, true>
+	{
+		static qua<float, Q> call(qua<float, Q> const& q, qua<float, Q> const& p)
+		{
+			qua<float, Q> Result;
+			Result.data = q.data - p.data;
+			return Result;
+		}
+	};
+
+	template<qualifier Q>
+	struct compute_quat_sub<double, Q, true>
+	{
+		static qua<double, Q> call(qua<double, Q> const& a, qua<double, Q> const& b)
+		{
+			qua<double, Q> Result;
+			Result.data = a.data - b.data;
+			return Result;
+		}
+	};
+
+	template<qualifier Q>
+	struct compute_quat_mul_scalar<float, Q, true>
+	{
+		static qua<float, Q> call(qua<float, Q> const& q, float s)
+		{
+			qua<float, Q> Result;
+			Result.data = q.data * s;
+			return Result;
+		}
+	};
+
+	template<qualifier Q>
+	struct compute_quat_mul_scalar<double, Q, true>
+	{
+		static qua<double, Q> call(qua<double, Q> const& q, double s)
+		{
+			qua<double, Q> Result;
+			Result.data = q.data * s;
+			return Result;
+		}
+	};
+
+	template<qualifier Q>
+	struct compute_quat_div_scalar<float, Q, true>
+	{
+		static qua<float, Q> call(qua<float, Q> const& q, float s)
+		{
+			qua<float, Q> Result;
+			Result.data = q.data / s;
+			return Result;
+		}
+	};
+
+	template<qualifier Q>
+	struct compute_quat_div_scalar<double, Q, true>
+	{
+		static qua<double, Q> call(qua<double, Q> const& q, double s)
+		{
+			qua<double, Q> Result;
+			Result.data = q.data / s;
+			return Result;
+		}
+	};
+}//namespace detail
+}//namespace glm
+
+#endif//GLM_ARCH & GLM_ARCH_CLANG_BIT
