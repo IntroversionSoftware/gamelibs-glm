@@ -263,4 +263,168 @@ namespace detail
 	};
 }//namespace detail
 }//namespace glm
+
+#elif GLM_ARCH & GLM_ARCH_CLANG_BIT
+
+namespace glm{
+namespace detail
+{
+	template<qualifier Q>
+	GLM_FUNC_QUALIFIER mat<4, 4, float, Q> mat4_scale(vec<3, float, Q> const &scale)
+	{
+		mat<4, 4, float, Q> Result;
+		Result[0].data = {scale.data.x, 0.0f, 0.0f, 0.0f};
+		Result[1].data = {0.0f, scale.data.y, 0.0f, 0.0f};
+		Result[2].data = {0.0f, 0.0f, scale.data.z, 0.0f};
+		Result[3].data = {0.0f, 0.0f, 0.0f, 1.0f};
+		return Result;
+	}
+
+	template<qualifier Q>
+	GLM_FUNC_QUALIFIER mat<4, 4, float, Q> mat4_translate(vec<3, float, Q> const &pos)
+	{
+		mat<4, 4, float, Q> Result;
+		Result[0].data = {1.0f, 0.0f, 0.0f, 0.0f};
+		Result[1].data = {0.0f, 1.0f, 0.0f, 0.0f};
+		Result[2].data = {0.0f, 0.0f, 1.0f, 0.0f};
+		Result[3].data = {pos.data.x, pos.data.y, pos.data.z, 1.0f};
+		return Result;
+	}
+
+	template<qualifier Q>
+	GLM_FUNC_QUALIFIER mat<4, 4, float, Q> mat4_rotate(float angle, vec<3, float, Q> const &v)
+	{
+		const float c = std::cos(angle);
+		const float s = std::sin(angle);
+		const float t = 1.0f - c;
+
+		vec<3, float, Q> axis = normalize(v);
+
+		const glm_f32vec4 a{ axis.data.x, axis.data.y, axis.data.z, 0.0f };
+
+		glm_f32vec4 x_axis =
+				glm_f32vec4{ c, 0.0f, 0.0f, 0.0f } +
+				t * __builtin_shufflevector(a, a, 0, 0, 0, 0) * a +
+				glm_f32vec4{ 0.0f, s * a[2], -s * a[1], 0.0f };
+
+		glm_f32vec4 y_axis =
+				glm_f32vec4{ 0.0f, c, 0.0f, 0.0f } +
+				t * __builtin_shufflevector(a, a, 0, 1, 1, 1) * __builtin_shufflevector(a, a, 1, 1, 3, 4) +
+				glm_f32vec4{ -s * a[2], 0.0f, s * a[0], 0.0f };
+
+		glm_f32vec4 z_axis =
+				glm_f32vec4{ 0.0f, 0.0f, c, 0.0f } +
+				t * __builtin_shufflevector(a, a, 0, 1, 2, 2) * __builtin_shufflevector(a, a, 2, 2, 2, 2) +
+				glm_f32vec4{ s * a[1], -s * a[0], 0.0f, 0.0f };
+
+		x_axis[3] = 0.0f;
+		y_axis[3] = 0.0f;
+		z_axis[3] = 0.0f;
+
+		mat<4, 4, float, Q> Result;
+		Result[0].data = x_axis;
+		Result[1].data = y_axis;
+		Result[2].data = z_axis;
+		Result[3].data = { 0.0f, 0.0f, 0.0f, 1.0f };
+		return Result;
+	}
+
+	template<qualifier Q>
+	struct compute_inverse<4, 4, float, Q, true>
+	{
+		GLM_FUNC_QUALIFIER static mat<4, 4, float, Q> call(mat<4, 4, float, Q> const& m)
+		{
+			using float4 = glm_f32vec4;
+
+			// Get the four columns
+			const float4 c0 = m[0].data;
+			const float4 c1 = m[1].data;
+			const float4 c2 = m[2].data;
+			const float4 c3 = m[3].data;
+
+			// Compute submatrix determinants
+			// For the cofactors of a 4x4 matrix, we need to compute 3x3 determinants
+			// We can compute these efficiently using the vector extensions
+
+			// Build the adjugate matrix (cofactor matrix transposed)
+			float4 d0 = float4{
+				c1.y * (c2.z * c3.w - c2.w * c3.z) - c1.z * (c2.y * c3.w - c2.w * c3.y) + c1.w * (c2.y * c3.z - c2.z * c3.y),
+				-(c0.y * (c2.z * c3.w - c2.w * c3.z) - c0.z * (c2.y * c3.w - c2.w * c3.y) + c0.w * (c2.y * c3.z - c2.z * c3.y)),
+				c0.y * (c1.z * c3.w - c1.w * c3.z) - c0.z * (c1.y * c3.w - c1.w * c3.y) + c0.w * (c1.y * c3.z - c1.z * c3.y),
+				-(c0.y * (c1.z * c2.w - c1.w * c2.z) - c0.z * (c1.y * c2.w - c1.w * c2.y) + c0.w * (c1.y * c2.z - c1.z * c2.y))
+			};
+
+			float4 d1 = float4{
+				-(c1.x * (c2.z * c3.w - c2.w * c3.z) - c1.z * (c2.x * c3.w - c2.w * c3.x) + c1.w * (c2.x * c3.z - c2.z * c3.x)),
+				c0.x * (c2.z * c3.w - c2.w * c3.z) - c0.z * (c2.x * c3.w - c2.w * c3.x) + c0.w * (c2.x * c3.z - c2.z * c3.x),
+				-(c0.x * (c1.z * c3.w - c1.w * c3.z) - c0.z * (c1.x * c3.w - c1.w * c3.x) + c0.w * (c1.x * c3.z - c1.z * c3.x)),
+				c0.x * (c1.z * c2.w - c1.w * c2.z) - c0.z * (c1.x * c2.w - c1.w * c2.x) + c0.w * (c1.x * c2.z - c1.z * c2.x)
+			};
+
+			float4 d2 = float4{
+				c1.x * (c2.y * c3.w - c2.w * c3.y) - c1.y * (c2.x * c3.w - c2.w * c3.x) + c1.w * (c2.x * c3.y - c2.y * c3.x),
+				-(c0.x * (c2.y * c3.w - c2.w * c3.y) - c0.y * (c2.x * c3.w - c2.w * c3.x) + c0.w * (c2.x * c3.y - c2.y * c3.x)),
+				c0.x * (c1.y * c3.w - c1.w * c3.y) - c0.y * (c1.x * c3.w - c1.w * c3.x) + c0.w * (c1.x * c3.y - c1.y * c3.x),
+				-(c0.x * (c1.y * c2.w - c1.w * c2.y) - c0.y * (c1.x * c2.w - c1.w * c2.x) + c0.w * (c1.x * c2.y - c1.y * c2.x))
+			};
+
+			float4 d3 = float4{
+				-(c1.x * (c2.y * c3.z - c2.z * c3.y) - c1.y * (c2.x * c3.z - c2.z * c3.x) + c1.z * (c2.x * c3.y - c2.y * c3.x)),
+				c0.x * (c2.y * c3.z - c2.z * c3.y) - c0.y * (c2.x * c3.z - c2.z * c3.x) + c0.z * (c2.x * c3.y - c2.y * c3.x),
+				-(c0.x * (c1.y * c3.z - c1.z * c3.y) - c0.y * (c1.x * c3.z - c1.z * c3.x) + c0.z * (c1.x * c3.y - c1.y * c3.x)),
+				c0.x * (c1.y * c2.z - c1.z * c2.y) - c0.y * (c1.x * c2.z - c1.z * c2.x) + c0.z * (c1.x * c2.y - c1.y * c2.x)
+			};
+
+			// Compute determinant using dot product of first row and first column of cofactors
+			float det = c0.x * d0.x + c0.y * d1.x + c0.z * d2.x + c0.w * d3.x;
+
+			// Check for singular matrix
+			if (det == 0.0f) {
+				return mat<4, 4, float, Q>(1); // Return identity matrix
+			}
+
+			// Calculate inverse of determinant
+			float inv_det = 1.0f / det;
+
+			// Scale by inverse determinant and build result matrix
+			mat<4, 4, float, Q> result;
+			result[0].data = d0 * inv_det;
+			result[1].data = d1 * inv_det;
+			result[2].data = d2 * inv_det;
+			result[3].data = d3 * inv_det;
+
+			return result;
+		}
+	};
+
+	template<qualifier Q>
+	struct compute_transpose<3, 3, float, Q, true>
+	{
+		GLM_FUNC_QUALIFIER static mat<3, 3, float, Q> call(mat<3, 3, float, Q> const &m)
+		{
+			mat<3, 3, float, Q> Result;
+			Result[0].data = { m[0].data.x, m[1].data.x, m[2].data.x };
+			Result[1].data = { m[0].data.y, m[1].data.y, m[2].data.y };
+			Result[2].data = { m[0].data.z, m[1].data.z, m[2].data.z };
+			return Result;
+		}
+	};
+
+	template<qualifier Q>
+	struct compute_transpose<4, 4, float, Q, true>
+	{
+		GLM_FUNC_QUALIFIER static mat<4, 4, float, Q> call(mat<4, 4, float, Q> const &m)
+		{
+			mat<4, 4, float, Q> Result;
+			Result[0].data = { m[0].data.x, m[1].data.x, m[2].data.x, m[3].data.x };
+			Result[1].data = { m[0].data.y, m[1].data.y, m[2].data.y, m[3].data.y };
+			Result[2].data = { m[0].data.z, m[1].data.z, m[2].data.z, m[3].data.z };
+			Result[3].data = { m[0].data.w, m[1].data.w, m[2].data.w, m[3].data.w };
+			return Result;
+		}
+	};
+
+}//namespace detail
+}//namespace glm
+
 #endif
