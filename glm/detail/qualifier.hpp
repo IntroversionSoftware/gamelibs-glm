@@ -89,7 +89,7 @@ namespace detail
 		} type;
 	};
 
-#	if GLM_HAS_ALIGNOF
+#	if GLM_HAS_ALIGNOF && !(GLM_ARCH & GLM_ARCH_CLANG_BIT)
 		template<length_t L, typename T>
 		struct storage<L, T, true>
 		{
@@ -185,6 +185,39 @@ namespace detail
 		typedef glm_u32vec4 type;
 	};
 #	endif
+
+#	if GLM_ARCH & GLM_ARCH_CLANG_BIT
+	template<length_t L, typename T>
+	struct storage<L, T, true>
+	{
+		typedef T vec_type __attribute__((ext_vector_type(L)));
+		typedef vec_type type;
+	};
+
+	template<length_t L, typename T>
+	struct storage<L, T, false>
+	{
+		typedef T vec_type __attribute__((ext_vector_type(L)));
+		struct type
+		{
+			T data[L];
+			GLM_DEFAULTED_DEFAULT_CTOR_QUALIFIER GLM_CONSTEXPR type() GLM_DEFAULT;
+			type(vec_type v) {
+				for (int i = 0; i < L; i++)
+					data[i] = v[i];
+			}
+			operator vec_type() const
+			{
+				vec_type v;
+				for (int i = 0; i < L; i++)
+					v[i] = data[i];
+				return v;
+			}
+		};
+	};
+#	endif
+
+
 
 	enum genTypeEnum
 	{

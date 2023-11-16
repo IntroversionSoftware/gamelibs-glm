@@ -94,7 +94,7 @@ namespace detail
 	{
 		GLM_FUNC_QUALIFIER static vec<L, T, Q> call(vec<L, T, Q> const& N, vec<L, T, Q> const& I, vec<L, T, Q> const& Nref)
 		{
-			GLM_STATIC_ASSERT(std::numeric_limits<T>::is_iec559, "'normalize' accepts only floating-point inputs");
+			GLM_STATIC_ASSERT(std::numeric_limits<T>::is_iec559, "'faceforward' accepts only floating-point inputs");
 
 			return dot(Nref, I) < static_cast<T>(0) ? N : -N;
 		}
