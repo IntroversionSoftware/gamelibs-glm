@@ -294,9 +294,6 @@ namespace detail
 		} type;
 	};
 
-
-	return ;
-
 	template<>
 	struct storage<4, int, true>
 	{
@@ -310,8 +307,8 @@ namespace detail
 		{
 			int data[4];
 			GLM_DEFAULTED_DEFAULT_CTOR_QUALIFIER GLM_CONSTEXPR type() GLM_DEFAULT;
-			type(glm_i32vec4 v) { vst1q_u32(data, v); }
-			operator glm_i32vec4() const { return vld1q_u32(data); }
+			type(glm_i32vec4 v) { vst1q_s32(data, v); }
+			operator glm_i32vec4() const { return vld1q_s32(data); }
 		};
 	};
 
@@ -328,8 +325,8 @@ namespace detail
 		{
 			unsigned int data[4];
 			GLM_DEFAULTED_DEFAULT_CTOR_QUALIFIER GLM_CONSTEXPR type() GLM_DEFAULT;
-			type(glm_i32vec4 v) { vst1q_u32(data, v); }
-			operator glm_i32vec4() const { return vld1q_u32(data); }
+			type(glm_u32vec4 v) { vst1q_u32(data, v); }
+			operator glm_u32vec4() const { return vld1q_u32(data); }
 		};
 	};
 
