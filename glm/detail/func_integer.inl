@@ -71,35 +71,100 @@ namespace detail
 			if(Value == 0)
 				return -1;
 
-			return glm::bitCount(~Value & (Value - static_cast<genIUType>(1)));
+			genIUType bitIndex = static_cast<genIUType>(0);
+			while ((Value & 1) == 0) {
+				Value >>= 1;
+				bitIndex++;
+			}
+			return bitIndex;
 		}
 	};
 
-#	if GLM_HAS_BITSCAN_WINDOWS
-		template<typename genIUType>
-		struct compute_findLSB<genIUType, 32>
+	template<typename genIUType, size_t Bits>
+	struct compute_findMSB
+	{
+		GLM_FUNC_QUALIFIER static int call(genIUType Value)
 		{
-			GLM_FUNC_QUALIFIER static int call(genIUType Value)
-			{
-				unsigned long Result(0);
-				unsigned char IsNotNull = _BitScanForward(&Result, *reinterpret_cast<unsigned long*>(&Value));
-				return IsNotNull ? int(Result) : -1;
-			}
-		};
+			if(Value == 0)
+				return -1;
 
-#		if !((GLM_COMPILER & GLM_COMPILER_VC) && (GLM_MODEL == GLM_MODEL_32))
-		template<typename genIUType>
-		struct compute_findLSB<genIUType, 64>
+			genIUType bitIndex = static_cast<genIUType>(Bits);
+			do {
+				bitIndex--;
+			} while (((Value >> bitIndex) & 1) == 0);
+			return bitIndex;
+		}
+	};
+
+#if __has_builtin(__builtin_ctz)
+	template<typename genIUType>
+	struct compute_findLSB<genIUType, 32>
+	{
+		GLM_FUNC_QUALIFIER static int call(genIUType Value)
 		{
-			GLM_FUNC_QUALIFIER static int call(genIUType Value)
-			{
-				unsigned long Result(0);
-				unsigned char IsNotNull = _BitScanForward64(&Result, *reinterpret_cast<unsigned __int64*>(&Value));
-				return IsNotNull ? int(Result) : -1;
-			}
-		};
-#		endif
-#	endif//GLM_HAS_BITSCAN_WINDOWS
+			return (Value != static_cast<genIUType>(0)) ? __builtin_ctz(Value) : -1;
+		}
+	};
+#endif
+
+#if __has_builtin(__builtin_ctzll)
+	template<typename genIUType>
+	struct compute_findLSB<genIUType, 64>
+	{
+		GLM_FUNC_QUALIFIER static int call(genIUType Value)
+		{
+			return (Value != static_cast<genIUType>(0)) ? __builtin_ctzll(Value) : -1;
+		}
+	};
+#endif
+
+#if __has_builtin(__builtin_clz)
+	template<typename genIUType>
+	struct compute_findMSB<genIUType, 32>
+	{
+		GLM_FUNC_QUALIFIER static int call(genIUType Value)
+		{
+			return (Value != static_cast<genIUType>(0)) ? 31 - __builtin_clz(Value) : -1;
+		}
+	};
+#endif
+
+#if __has_builtin(__builtin_clzll)
+	template<typename genIUType>
+	struct compute_findMSB<genIUType, 64>
+	{
+		GLM_FUNC_QUALIFIER static int call(genIUType Value)
+		{
+			return (Value != static_cast<genIUType>(0)) ? 63 - __builtin_clzll(Value) : -1;
+		}
+	};
+#endif
+
+#if GLM_HAS_BITSCAN_WINDOWS
+	template<typename genIUType>
+	struct compute_findLSB<genIUType, 32>
+	{
+		GLM_FUNC_QUALIFIER static int call(genIUType Value)
+		{
+			unsigned long Result(0);
+			unsigned char IsNotNull = _BitScanForward(&Result, *reinterpret_cast<unsigned long*>(&Value));
+			return IsNotNull ? int(Result) : -1;
+		}
+	};
+
+#if !((GLM_COMPILER & GLM_COMPILER_VC) && (GLM_MODEL == GLM_MODEL_32))
+	template<typename genIUType>
+	struct compute_findLSB<genIUType, 64>
+	{
+		GLM_FUNC_QUALIFIER static int call(genIUType Value)
+		{
+			unsigned long Result(0);
+			unsigned char IsNotNull = _BitScanForward64(&Result, *reinterpret_cast<unsigned __int64*>(&Value));
+			return IsNotNull ? int(Result) : -1;
+		}
+	};
+#endif
+#endif//GLM_HAS_BITSCAN_WINDOWS
 
 	template<length_t L, typename T, qualifier Q, bool EXEC = true>
 	struct compute_findMSB_step_vec
@@ -361,19 +426,19 @@ namespace detail
 
 	// findMSB
 	template<typename genIUType>
-	GLM_FUNC_QUALIFIER int findMSB(genIUType v)
+	GLM_FUNC_QUALIFIER int findMSB(genIUType Value)
 	{
 		GLM_STATIC_ASSERT(std::numeric_limits<genIUType>::is_integer, "'findMSB' only accept integer values");
 
-		return findMSB(vec<1, genIUType>(v)).x;
+		return detail::compute_findMSB<genIUType, sizeof(genIUType) * 8>::call(Value);
 	}
 
 	template<length_t L, typename T, qualifier Q>
-	GLM_FUNC_QUALIFIER vec<L, int, Q> findMSB(vec<L, T, Q> const& v)
+	GLM_FUNC_QUALIFIER vec<L, int, Q> findMSB(vec<L, T, Q> const& x)
 	{
 		GLM_STATIC_ASSERT(std::numeric_limits<T>::is_integer, "'findMSB' only accept integer values");
 
-		return detail::compute_findMSB_vec<L, T, Q, static_cast<int>(sizeof(T) * 8)>::call(v);
+		return detail::functor1<vec, L, int, T, Q>::call(findMSB, x);
 	}
 }//namespace glm
 
