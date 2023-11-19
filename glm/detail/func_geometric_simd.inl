@@ -165,6 +165,10 @@ namespace detail
 
 #elif GLM_ARCH & GLM_ARCH_CLANG_BIT
 
+#if defined(__SSE4_1__)
+#include <immintrin.h>
+#endif
+
 namespace glm
 {
 namespace detail
