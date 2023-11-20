@@ -1,4 +1,6 @@
 #if GLM_ARCH & GLM_ARCH_CLANG_BIT
+#include "type_vec4.hpp"
+
 namespace glm {
 namespace detail {
 
@@ -155,6 +157,27 @@ namespace detail {
 		data(_s)
 	{}
 
+	template <>
+	template <>
+	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<3, float, aligned_highp>::vec(const vec<4, float, aligned_highp> &rhs)
+		: data(rhs.data.xyz)
+	{
+	}
+
+	template <>
+	template <>
+	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<3, float, aligned_highp>::vec(const vec<4, int, aligned_highp> &rhs)
+		: data(__builtin_convertvector(rhs.data.xyz, glm_f32vec3))
+	{
+	}
+
+	template <>
+	template <>
+	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<3, float, aligned_highp>::vec(const vec<4, uint, aligned_highp> &rhs)
+		: data(__builtin_convertvector(rhs.data.xyz, glm_f32vec3))
+	{
+	}
+
 	template<>
 	template<>
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<3, float, aligned_highp>::vec(const vec<3, float, aligned_highp> &rhs) :
@@ -171,6 +194,24 @@ namespace detail {
 	template<>
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<3, float, aligned_highp>::vec(const vec<3, uint, aligned_highp> &rhs) :
 		data(__builtin_convertvector(rhs.data, glm_f32vec3))
+	{}
+
+	template<>
+	template<>
+	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<3, float, aligned_lowp>::vec(float _x, float _y, float _z) :
+		data{ _x, _y, _z }
+	{}
+
+	template<>
+	template<>
+	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<3, float, aligned_mediump>::vec(float _x, float _y, float _z) :
+		data{ _x, _y, _z }
+	{}
+
+	template<>
+	template<>
+	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<3, float, aligned_highp>::vec(float _x, float _y, float _z) :
+		data{ _x, _y, _z }
 	{}
 
 	template<>
