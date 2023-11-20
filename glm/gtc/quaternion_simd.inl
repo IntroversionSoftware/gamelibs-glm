@@ -29,6 +29,18 @@ GLM_FUNC_QUALIFIER qua<float, aligned_highp> &qua<float, aligned_highp>::operato
 }
 
 template<>
+GLM_FUNC_QUALIFIER qua<float, aligned_highp> normalize(qua<float, aligned_highp> const& q)
+{
+	const float mag = length(q);
+	qua<float, aligned_highp> Result;
+	if (mag <= std::numeric_limits<float>::epsilon())
+		Result.data = {0.0f, 0.0f, 0.0f, 1.0f};
+	else
+		Result.data = q.data * (1.0f / mag);
+	return Result;
+}
+
+template<>
 GLM_FUNC_QUALIFIER mat<3, 3, float, aligned_highp> mat3_cast(qua<float, aligned_highp> const &_q)
 {
 	const glm_f32vec4 q = _q.data;
