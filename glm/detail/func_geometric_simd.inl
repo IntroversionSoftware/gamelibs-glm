@@ -166,6 +166,15 @@ namespace detail
 #elif GLM_ARCH & GLM_ARCH_CLANG_BIT
 
 #if defined(__SSE4_1__)
+// Note: You can set this to 1 if you want to use _mm_dp_ps to reduce dot
+// products to a single instruction, which will reduce code size, but the dpps
+// instruction has pretty high latency and low throughput.
+#define GLM_USE_DP 0
+#else
+#define GLM_USE_DP 0
+#endif
+
+#if GLM_USE_DP
 #include <immintrin.h>
 #endif
 
@@ -229,7 +238,7 @@ namespace detail
 	{
 		GLM_FUNC_QUALIFIER static float call(vec<3, float, Q> const &x, vec<3, float, Q> const &y)
 		{
-#if defined(__SSE4_1__)
+#if GLM_USE_DP
 			// Clang doesn't notice this is a dot product, so we have to use
 			// SSE4.1 intrinsics here.
 			const __m128 xv = _mm_loadu_ps((const float *)&x.data);
@@ -248,7 +257,7 @@ namespace detail
 	{
 		GLM_FUNC_QUALIFIER static float call(vec<4, float, Q> const& x, vec<4, float, Q> const& y)
 		{
-#if defined(__SSE4_1__)
+#if GLM_USE_DP
 			// Clang doesn't notice this is a dot product, so we have to use
 			// SSE4.1 intrinsics here.
 			const __m128 xv = _mm_loadu_ps((const float *)&x.data);
@@ -257,8 +266,7 @@ namespace detail
 			return _mm_cvtss_f32(dp);
 #else
 			const glm_f32vec4 prod = x.data * y.data;
-			const glm_f32vec2 hsum = prod.xz + prod.yw;
-			return hsum.x + hsum.y;
+			return prod.w + prod.x + prod.y + prod.z;
 #endif
 		}
 	};
@@ -284,5 +292,7 @@ namespace detail
 	};
 }//namespace detail
 }//namespace glm
+
+#undef GLM_USE_DP
 
 #endif
