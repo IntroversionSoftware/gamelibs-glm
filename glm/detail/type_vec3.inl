@@ -338,10 +338,8 @@ namespace detail
 	template<typename U>
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<3, T, Q>& vec<3, T, Q>::operator=(vec<3, U, Q> const& v)
 	{
-		this->x = static_cast<T>(v.x);
-		this->y = static_cast<T>(v.y);
-		this->z = static_cast<T>(v.z);
-		return *this;
+		vec<3, T, Q> newvec(v);
+		return *this = newvec;
 	}
 
 	template<typename T, qualifier Q>
