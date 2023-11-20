@@ -945,7 +945,7 @@ namespace detail {
 	template<>
 	template<>
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<4, float, aligned_highp>::vec(const vec<4, float, aligned_highp> &rhs) :
-		data(rhs.data)
+		data(__builtin_convertvector(rhs.data, glm_f32vec4))
 	{}
 
 	template<>
@@ -958,6 +958,42 @@ namespace detail {
 	template<>
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<4, float, aligned_highp>::vec(const vec<4, uint, aligned_highp> &rhs) :
 		data(__builtin_convertvector(rhs.data, glm_f32vec4))
+	{}
+
+	template<>
+	template<>
+	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<4, int, aligned_highp>::vec(const vec<4, float, aligned_highp> &rhs) :
+		data(__builtin_convertvector(rhs.data, glm_i32vec4))
+	{}
+
+	template<>
+	template<>
+	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<4, int, aligned_highp>::vec(const vec<4, int, aligned_highp> &rhs) :
+		data(__builtin_convertvector(rhs.data, glm_i32vec4))
+	{}
+
+	template<>
+	template<>
+	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<4, int, aligned_highp>::vec(const vec<4, uint, aligned_highp> &rhs) :
+		data(__builtin_convertvector(rhs.data, glm_i32vec4))
+	{}
+
+	template<>
+	template<>
+	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<4, uint, aligned_highp>::vec(const vec<4, float, aligned_highp> &rhs) :
+		data(__builtin_convertvector(rhs.data, glm_u32vec4))
+	{}
+
+	template<>
+	template<>
+	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<4, uint, aligned_highp>::vec(const vec<4, int, aligned_highp> &rhs) :
+		data(__builtin_convertvector(rhs.data, glm_u32vec4))
+	{}
+
+	template<>
+	template<>
+	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<4, uint, aligned_highp>::vec(const vec<4, uint, aligned_highp> &rhs) :
+		data(__builtin_convertvector(rhs.data, glm_u32vec4))
 	{}
 
 	template<>
