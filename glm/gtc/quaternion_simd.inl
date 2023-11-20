@@ -8,6 +8,27 @@ namespace detail
 }//namespace detail
 
 template<>
+template<>
+GLM_FUNC_QUALIFIER qua<float, aligned_highp> &qua<float, aligned_highp>::operator*=(
+	qua<float, aligned_highp> const &q)
+{
+	const glm_f32vec4 l = data;
+	const glm_f32vec4 r = q.data;
+
+	constexpr glm_f32vec4 pnpn = { 1.0, -1.0f,  1.0f, -1.0f};
+	constexpr glm_f32vec4 ppnn = { 1.0,  1.0f, -1.0f, -1.0f};
+	constexpr glm_f32vec4 nppn = {-1.0,  1.0f,  1.0f, -1.0f};
+
+	data =
+		l[3] * r +
+		pnpn * l[0] * __builtin_shufflevector(r, r, 3, 2, 1, 0) +
+		ppnn * l[1] * __builtin_shufflevector(r, r, 2, 3, 0, 1) +
+		nppn * l[2] * __builtin_shufflevector(r, r, 1, 0, 3, 2);
+
+	return *this;
+}
+
+template<>
 GLM_FUNC_QUALIFIER mat<3, 3, float, aligned_highp> mat3_cast(qua<float, aligned_highp> const &_q)
 {
 	qua<float, aligned_highp> q = _q;
