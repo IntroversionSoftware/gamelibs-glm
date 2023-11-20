@@ -112,6 +112,33 @@ namespace detail {
 }//namespace detail
 
 #if !GLM_CONFIG_XYZW_ONLY
+	// Note: The following constructors really belong in type_vec4_simd, but
+	// there are declaration ordering issues.
+	template<>
+	template<typename A, typename B, qualifier P>
+	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<4, float, aligned_highp>::vec(vec<3, A, P> const& _xyz, B _w)
+	{
+		data.xyz = __builtin_convertvector(_xyz.data, glm_f32vec3);
+		data.w = static_cast<float>(_w);
+	}
+
+	template<>
+	template<typename A, typename B, qualifier P>
+	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<4, int, aligned_highp>::vec(vec<3, A, P> const& _xyz, B _w)
+	{
+		data.xyz = __builtin_convertvector(_xyz.data, glm_i32vec3);
+		data.w = static_cast<int>(_w);
+	}
+	//
+
+	template<>
+	template<typename A, typename B, qualifier P>
+	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<4, uint, aligned_highp>::vec(vec<3, A, P> const& _xyz, B _w)
+	{
+		data.xyz = __builtin_convertvector(_xyz.data, glm_u32vec3);
+		data.w = static_cast<uint>(_w);
+	}
+
 	template<>
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<3, float, aligned_lowp>::vec(float _s) :
 		data(_s)
