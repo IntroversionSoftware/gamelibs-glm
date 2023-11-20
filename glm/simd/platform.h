@@ -478,5 +478,11 @@
 	typedef float               glm_f32vec2 __attribute__((ext_vector_type(2)));
 	typedef float               glm_f32vec3 __attribute__((ext_vector_type(3)));
 	typedef float               glm_f32vec4 __attribute__((ext_vector_type(4)));
+	typedef int                 glm_i32vec2 __attribute__((ext_vector_type(2)));
+	typedef int                 glm_i32vec3 __attribute__((ext_vector_type(3)));
+	typedef int                 glm_i32vec4 __attribute__((ext_vector_type(4)));
+	typedef unsigned int        glm_u32vec2 __attribute__((ext_vector_type(2)));
+	typedef unsigned int        glm_u32vec3 __attribute__((ext_vector_type(3)));
+	typedef unsigned int        glm_u32vec4 __attribute__((ext_vector_type(4)));
 #endif
 
