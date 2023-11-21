@@ -260,6 +260,64 @@ namespace glm {
 namespace detail
 {
 	template<qualifier Q>
+	GLM_FUNC_QUALIFIER mat<4, 4, float, Q> mat4_scale(vec<3, float, Q> const &scale)
+	{
+		mat<4, 4, float, Q> Result;
+		Result[0].data = {scale.data.x, 0.0f, 0.0f, 0.0f};
+		Result[1].data = {0.0f, scale.data.y, 0.0f, 0.0f};
+		Result[2].data = {0.0f, 0.0f, scale.data.z, 0.0f};
+		Result[3].data = {0.0f, 0.0f, 0.0f, 1.0f};
+		return Result;
+	}
+
+	template<qualifier Q>
+	GLM_FUNC_QUALIFIER mat<4, 4, float, Q> mat4_translate(vec<3, float, Q> const &pos)
+	{
+		mat<4, 4, float, Q> Result;
+		Result[0].data = {1.0f, 0.0f, 0.0f, 0.0f};
+		Result[1].data = {0.0f, 1.0f, 0.0f, 0.0f};
+		Result[2].data = {0.0f, 0.0f, 1.0f, 0.0f};
+		Result[3].data = {pos.data.x, pos.data.y, pos.data.z, 1.0f};
+		return Result;
+	}
+
+	template<qualifier Q>
+	GLM_FUNC_QUALIFIER mat<4, 4, float, Q> mat4_rotate(float angle, vec<3, float, Q> const &axis)
+	{
+			const glm_f32vec4 a{ axis.data.x, axis.data.y, axis.data.z, 0.0f };
+
+			const float c = std::cos(angle);
+			const float s = std::sin(angle);
+			const float t = 1.0f - c;
+
+			glm_f32vec4 x_axis =
+					glm_f32vec4{ c, 0.0f, 0.0f, 0.0f } +
+					t * __builtin_shufflevector(a, a, 0, 0, 0, 0) * a +
+					glm_f32vec4{ 0.0f, s * a[2], -s * a[1], 0.0f };
+
+			glm_f32vec4 y_axis =
+					glm_f32vec4{ 0.0f, c, 0.0f, 0.0f } +
+					t * __builtin_shufflevector(a, a, 0, 1, 1, 1) * __builtin_shufflevector(a, a, 1, 1, 3, 4) +
+					glm_f32vec4{ -s * a[2], 0.0f, s * a[0], 0.0f };
+
+			glm_f32vec4 z_axis =
+					glm_f32vec4{ 0.0f, 0.0f, c, 0.0f } +
+					t * __builtin_shufflevector(a, a, 0, 1, 2, 2) * __builtin_shufflevector(a, a, 2, 2, 2, 2) +
+					glm_f32vec4{ s * a[1], -s * a[0], 0.0f, 0.0f };
+
+			x_axis[3] = 0.0f;
+			y_axis[3] = 0.0f;
+			z_axis[3] = 0.0f;
+
+			mat<4, 4, float, Q> Result;
+			Result[0].data = x_axis;
+			Result[1].data = y_axis;
+			Result[2].data = z_axis;
+			Result[3].data = { 0.0f, 0.0f, 0.0f, 1.0f };
+			return Result;
+	}
+
+	template<qualifier Q>
 	struct compute_transpose<3, 3, float, Q, true>
 	{
 		GLM_FUNC_QUALIFIER static mat<3, 3, float, Q> call(mat<3, 3, float, Q> const &m)
@@ -286,7 +344,7 @@ namespace detail
 		}
 	};
 
-}
+}//namespace detail
 
 }//namespace glm
 
