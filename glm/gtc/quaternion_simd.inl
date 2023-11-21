@@ -41,6 +41,23 @@ GLM_FUNC_QUALIFIER qua<float, aligned_highp> normalize(qua<float, aligned_highp>
 }
 
 template<>
+GLM_FUNC_QUALIFIER qua<float, aligned_highp> conjugate(qua<float, aligned_highp> const& q)
+{
+	typedef union {
+		glm_f32vec4 f;
+		glm_u32vec4 u;
+	} glm_32vec4;
+
+	constexpr glm_32vec4 neg = { .f = { -0.0f, -0.0f, -0.0f, 0.0f} };
+	const     glm_32vec4 in  = { .f = q.data };
+	const     glm_32vec4 rv  = { .u = in.u ^ neg.u };
+
+	qua<float, aligned_highp> Result;
+	Result.data = rv.f;
+	return Result;
+}
+
+template<>
 GLM_FUNC_QUALIFIER mat<3, 3, float, aligned_highp> mat3_cast(qua<float, aligned_highp> const &_q)
 {
 	const glm_f32vec4 q = _q.data;
