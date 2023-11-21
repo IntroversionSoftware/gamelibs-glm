@@ -998,6 +998,24 @@ namespace detail {
 
 	template<>
 	template<>
+	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<4, float, aligned_lowp>::vec(float _x, float _y, float _z, float _w) :
+		data{_x, _y, _z, _w}
+	{}
+
+	template<>
+	template<>
+	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<4, float, aligned_mediump>::vec(float _x, float _y, float _z, float _w) :
+		data{_x, _y, _z, _w}
+	{}
+
+	template<>
+	template<>
+	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<4, float, aligned_highp>::vec(float _x, float _y, float _z, float _w) :
+		data{_x, _y, _z, _w}
+	{}
+
+	template<>
+	template<>
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<4, float, aligned_lowp>::vec(int _x, int _y, int _z, int _w) :
 		data(__builtin_convertvector((vec<4, int, aligned_lowp>(_x, _y, _z, _w).data), glm_f32vec4))
 	{}
