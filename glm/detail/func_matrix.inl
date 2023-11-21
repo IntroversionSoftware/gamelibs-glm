@@ -403,6 +403,56 @@ namespace detail
 			return Inverse * OneOverDeterminant;
 		}
 	};
+
+	template<typename T, qualifier Q>
+	GLM_FUNC_QUALIFIER mat<4, 4, T, Q> mat4_scale(vec<3, T, Q> const &scale)
+	{
+		mat<4, 4, T, Q> Result;
+		Result[0] = glm::vec4(scale.x, 0.0f, 0.0f, 0.0f);
+		Result[1] = glm::vec4(0.0f, scale.y, 0.0f, 0.0f);
+		Result[2] = glm::vec4(0.0f, 0.0f, scale.z, 0.0f);
+		Result[3] = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+		return Result;
+	}
+
+	template<typename T, qualifier Q>
+	GLM_FUNC_QUALIFIER mat<4, 4, T, Q> mat4_translate(vec<3, T, Q> const &pos)
+	{
+		mat<4, 4, T, Q> Result(1.0f);
+		Result[3] = glm::vec4(pos, 1.0f);
+		return Result;
+	}
+
+	template<typename T, qualifier Q>
+	GLM_FUNC_QUALIFIER mat<4, 4, T, Q> mat4_rotate(T angle, vec<3, T, Q> const &axis)
+	{
+		mat<4, 4, T, Q> Result;
+
+		const T x = axis.x;
+		const T y = axis.y;
+		const T z = axis.z;
+
+		const T c = std::cos(angle);
+		const T s = std::sin(angle);
+		const T t = 1.0f - c;
+		const T tx = t * x;
+		const T ty = t * y;
+		const T tz = t * z;
+		const T txy = tx * y;
+		const T txz = tx * z;
+		const T tyz = ty * z;
+		const T sx = s * x;
+		const T sy = s * y;
+		const T sz = s * z;
+
+		Result[0] = vec4(c + tx * x, txy + sz, txz - sy, 0.0f);
+		Result[1] = vec4(txy - sz, c + ty * y, tyz + sx, 0.0f);
+		Result[2] = vec4(txz + sy, tyz - sx, c + tz * z, 0.0f);
+		Result[3] = vec4(0.0f, 0.0f, 0.0f, 1.0f);
+
+		return Result;
+	}
+
 }//namespace detail
 
 	template<length_t C, length_t R, typename T, qualifier Q>
