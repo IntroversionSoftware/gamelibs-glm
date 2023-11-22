@@ -161,7 +161,7 @@ namespace detail
 		GLM_FUNC_QUALIFIER static vec<4, T, Q> call(vec<4, T, Q> const& a, vec<4, T, Q> const& b)
 		{
 			vec<4, T, Q> Result;
-			Result.data = _mm_and_si128((glm_f32vec4)a.data, (glm_f32vec4)b.data);
+			Result.data = _mm_and_si128((glm_i32vec4)a.data, (glm_i32vec4)b.data);
 			return Result;
 		}
 	};
@@ -173,7 +173,7 @@ namespace detail
 		GLM_FUNC_QUALIFIER static vec<4, T, Q> call(vec<4, T, Q> const& a, vec<4, T, Q> const& b)
 		{
 			vec<4, T, Q> Result;
-			Result.data = _mm256_and_si256((glm_f32vec4)a.data, (glm_f32vec4)b.data);
+			Result.data = _mm256_and_si256((glm_i32vec4)a.data, (glm_i32vec4)b.data);
 			return Result;
 		}
 	};
@@ -185,7 +185,7 @@ namespace detail
 		GLM_FUNC_QUALIFIER static vec<4, T, Q> call(vec<4, T, Q> const& a, vec<4, T, Q> const& b)
 		{
 			vec<4, T, Q> Result;
-			Result.data = _mm_or_si128((glm_f32vec4)a.data, (glm_f32vec4)b.data);
+			Result.data = _mm_or_si128((glm_i32vec4)a.data, (glm_i32vec4)b.data);
 			return Result;
 		}
 	};
@@ -197,7 +197,7 @@ namespace detail
 		GLM_FUNC_QUALIFIER static vec<4, T, Q> call(vec<4, T, Q> const& a, vec<4, T, Q> const& b)
 		{
 			vec<4, T, Q> Result;
-			Result.data = _mm256_or_si256((glm_f32vec4)a.data, (glm_f32vec4)b.data);
+			Result.data = _mm256_or_si256((glm_i32vec4)a.data, (glm_i32vec4)b.data);
 			return Result;
 		}
 	};
@@ -209,7 +209,7 @@ namespace detail
 		GLM_FUNC_QUALIFIER static vec<4, T, Q> call(vec<4, T, Q> const& a, vec<4, T, Q> const& b)
 		{
 			vec<4, T, Q> Result;
-			Result.data = _mm_xor_si128((glm_f32vec4)a.data, (glm_f32vec4)b.data);
+			Result.data = _mm_xor_si128((glm_i32vec4)a.data, (glm_i32vec4)b.data);
 			return Result;
 		}
 	};
@@ -221,7 +221,7 @@ namespace detail
 		GLM_FUNC_QUALIFIER static vec<4, T, Q> call(vec<4, T, Q> const& a, vec<4, T, Q> const& b)
 		{
 			vec<4, T, Q> Result;
-			Result.data = _mm256_xor_si256((glm_f32vec4)a.data, (glm_f32vec4)b.data);
+			Result.data = _mm256_xor_si256((glm_i32vec4)a.data, (glm_i32vec4)b.data);
 			return Result;
 		}
 	};
@@ -233,7 +233,7 @@ namespace detail
 		GLM_FUNC_QUALIFIER static vec<4, T, Q> call(vec<4, T, Q> const& a, vec<4, T, Q> const& b)
 		{
 			vec<4, T, Q> Result;
-			Result.data = _mm_sll_epi32((glm_f32vec4)a.data, (glm_f32vec4)b.data);
+			Result.data = _mm_sll_epi32((glm_i32vec4)a.data, (glm_i32vec4)b.data);
 			return Result;
 		}
 	};
@@ -245,7 +245,7 @@ namespace detail
 		GLM_FUNC_QUALIFIER static vec<4, T, Q> call(vec<4, T, Q> const& a, vec<4, T, Q> const& b)
 		{
 			vec<4, T, Q> Result;
-			Result.data = _mm256_sll_epi64((glm_f32vec4)a.data, (glm_f32vec4)b.data);
+			Result.data = _mm256_sll_epi64((glm_i32vec4)a.data, (glm_i32vec4)b.data);
 			return Result;
 		}
 	};
@@ -257,7 +257,7 @@ namespace detail
 		GLM_FUNC_QUALIFIER static vec<4, T, Q> call(vec<4, T, Q> const& a, vec<4, T, Q> const& b)
 		{
 			vec<4, T, Q> Result;
-			Result.data = _mm_srl_epi32((glm_f32vec4)a.data, (glm_f32vec4)b.data);
+			Result.data = _mm_srl_epi32((glm_i32vec4)a.data, (glm_i32vec4)b.data);
 			return Result;
 		}
 	};
@@ -269,7 +269,7 @@ namespace detail
 		GLM_FUNC_QUALIFIER static vec<4, T, Q> call(vec<4, T, Q> const& a, vec<4, T, Q> const& b)
 		{
 			vec<4, T, Q> Result;
-			Result.data = _mm256_srl_epi64((glm_f32vec4)a.data, (glm_f32vec4)b.data);
+			Result.data = _mm256_srl_epi64((glm_i32vec4)a.data, (glm_i32vec4)b.data);
 			return Result;
 		}
 	};
@@ -281,7 +281,7 @@ namespace detail
 		GLM_FUNC_QUALIFIER static vec<4, T, Q> call(vec<4, T, Q> const& v)
 		{
 			vec<4, T, Q> Result;
-			Result.data = _mm_xor_si128((glm_f32vec4)v.data, _mm_set1_epi32(-1));
+			Result.data = _mm_xor_si128((glm_i32vec4)v.data, _mm_set1_epi32(-1));
 			return Result;
 		}
 	};
@@ -293,7 +293,7 @@ namespace detail
 		GLM_FUNC_QUALIFIER static vec<4, T, Q> call(vec<4, T, Q> const& v)
 		{
 			vec<4, T, Q> Result;
-			Result.data = _mm256_xor_si256((glm_f32vec4)v.data, _mm_set1_epi32(-1));
+			Result.data = _mm256_xor_si256((glm_i32vec4)v.data, _mm_set1_epi32(-1));
 			return Result;
 		}
 	};
@@ -315,7 +315,7 @@ namespace detail
 		GLM_FUNC_QUALIFIER static bool call(vec<4, int, Q> const& v1, vec<4, int, Q> const& v2)
 		{
 			//return _mm_movemask_epi8(_mm_cmpeq_epi32(v1.data, v2.data)) != 0;
-			__m128i neq = _mm_xor_si128((glm_f32vec4)v1.data, (glm_f32vec4)v2.data);
+			__m128i neq = _mm_xor_si128((glm_i32vec4)v1.data, (glm_i32vec4)v2.data);
 			return _mm_test_all_zeros(neq, neq) == 0;
 		}
 	};
@@ -337,7 +337,7 @@ namespace detail
 		GLM_FUNC_QUALIFIER static bool call(vec<4, int, Q> const& v1, vec<4, int, Q> const& v2)
 		{
 			//return _mm_movemask_epi8(_mm_cmpneq_epi32(v1.data, v2.data)) != 0;
-			__m128i neq = _mm_xor_si128((glm_f32vec4)v1.data, (glm_f32vec4)v2.data);
+			__m128i neq = _mm_xor_si128((glm_i32vec4)v1.data, (glm_i32vec4)v2.data);
 			return _mm_test_all_zeros(neq, neq) != 0;
 		}
 	};
