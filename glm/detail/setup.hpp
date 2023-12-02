@@ -136,6 +136,12 @@
 ///////////////////////////////////////////////////////////////////////////////////
 // Has of C++ features
 
+#if defined(__has_cpp_attribute)
+#	define GLM_HAS_CPP_ATTRIBUTE(attribute) __has_cpp_attribute(attribute)
+#else
+#	define GLM_HAS_CPP_ATTRIBUTE(attribute) 0
+#endif
+
 // User override for disabling use of constexpr
 #if !defined(GLM_FORCE_NO_CONSTEXPR)
 #define GLM_FORCE_NO_CONSTEXPR 0
