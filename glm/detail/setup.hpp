@@ -407,6 +407,15 @@
 #	define GLM_NOEXCEPT
 #endif
 
+// P0479R5
+#if GLM_HAS_CPP_ATTRIBUTE(likely)
+#   define GLM_LIKELY [[likely]]
+#   define GLM_UNLIKELY [[unlikely]]
+#else
+#   define GLM_LIKELY
+#   define GLM_UNLIKELY
+#endif
+
 ///////////////////////////////////////////////////////////////////////////////////
 // OpenMP
 #ifdef _OPENMP
