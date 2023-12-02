@@ -175,6 +175,12 @@
 		((GLM_PLATFORM != GLM_PLATFORM_WINDOWS) && (GLM_COMPILER & GLM_COMPILER_INTEL) && (GLM_COMPILER >= GLM_COMPILER_INTEL15))))
 #endif
 
+#if defined(__has_cpp_attribute)
+#	define GLM_HAS_CPP_ATTRIBUTE(attribute) __has_cpp_attribute(attribute)
+#else
+#	define GLM_HAS_CPP_ATTRIBUTE(attribute) 0
+#endif
+
 // N1720
 #if GLM_COMPILER & GLM_COMPILER_CLANG
 #	define GLM_HAS_STATIC_ASSERT __has_feature(cxx_static_assert)
