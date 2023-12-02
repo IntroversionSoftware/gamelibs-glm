@@ -34,7 +34,7 @@ namespace detail
 		int e = (value >> 10) & 0x0000001f;
 		int m =  value        & 0x000003ff;
 
-		if(e == 0)
+		if(e == 0) GLM_UNLIKELY
 		{
 			if(m == 0)
 			{
@@ -62,7 +62,7 @@ namespace detail
 				m &= ~0x00000400;
 			}
 		}
-		else if(e == 31)
+		else if(e == 31) GLM_UNLIKELY
 		{
 			if(m == 0)
 			{
@@ -102,7 +102,7 @@ namespace detail
 		return Result.f;
 	}
 
-	GLM_FUNC_QUALIFIER hdata toFloat16(float const& f)
+	GLM_FUNC_QUALIFIER hdata toFloat16(float f)
 	{
 		uif32 Entry;
 		Entry.f = f;
@@ -126,7 +126,7 @@ namespace detail
 		// Now reassemble s, e and m into a half:
 		//
 
-		if(e <= 0)
+		if(e <= 0) GLM_UNLIKELY
 		{
 			if(e < -10)
 			{
@@ -168,7 +168,7 @@ namespace detail
 
 			return hdata(s | (m >> 13));
 		}
-		else if(e == 0xff - (127 - 15))
+		else if(e == 0xff - (127 - 15)) GLM_UNLIKELY
 		{
 			if(m == 0)
 			{
