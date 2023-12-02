@@ -98,7 +98,6 @@
 #	define GLM_LANG (GLM_LANG_CXX26 | GLM_LANG_EXT)
 #elif defined(GLM_FORCE_CXX23)
 #	define GLM_LANG (GLM_LANG_CXX23 | GLM_LANG_EXT)
-#	define GLM_LANG_STL11_FORCED
 #elif defined(GLM_FORCE_CXX20)
 #	define GLM_LANG (GLM_LANG_CXX20 | GLM_LANG_EXT)
 #elif defined(GLM_FORCE_CXX17)
@@ -173,6 +172,12 @@
 		((GLM_COMPILER & GLM_COMPILER_GCC) && (GLM_COMPILER >= GLM_COMPILER_GCC48)) || \
 		((GLM_COMPILER & GLM_COMPILER_VC) && (GLM_COMPILER >= GLM_COMPILER_VC12)) || \
 		((GLM_PLATFORM != GLM_PLATFORM_WINDOWS) && (GLM_COMPILER & GLM_COMPILER_INTEL) && (GLM_COMPILER >= GLM_COMPILER_INTEL15))))
+#endif
+
+#if defined(__has_cpp_attribute)
+#	define GLM_HAS_CPP_ATTRIBUTE(attribute) __has_cpp_attribute(attribute)
+#else
+#	define GLM_HAS_CPP_ATTRIBUTE(attribute) 0
 #endif
 
 // N1720
