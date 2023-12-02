@@ -60,7 +60,7 @@
 ///////////////////////////////////////////////////////////////////////////////////
 // C++ Version
 
-// User defines: GLM_FORCE_CXX98, GLM_FORCE_CXX03, GLM_FORCE_CXX11, GLM_FORCE_CXX14, GLM_FORCE_CXX17, GLM_FORCE_CXX2A
+// User defines: GLM_FORCE_CXX98, GLM_FORCE_CXX03, GLM_FORCE_CXX11, GLM_FORCE_CXX14, GLM_FORCE_CXX17, GLM_FORCE_CXX20, GLM_FORCE_CXX23, GLM_FORCE_CXX26
 
 #define GLM_LANG_CXX98_FLAG			(1 << 1)
 #define GLM_LANG_CXX03_FLAG			(1 << 2)
@@ -70,7 +70,9 @@
 #define GLM_LANG_CXX17_FLAG			(1 << 6)
 #define GLM_LANG_CXX20_FLAG			(1 << 7)
 #define GLM_LANG_CXX23_FLAG			(1 << 8)
-#define GLM_LANG_CXXMS_FLAG			(1 << 9)
+#define GLM_LANG_CXX26_FLAG			(1 << 9)
+
+#define GLM_LANG_CXXMS_FLAG			(1 << 16)
 
 #define GLM_LANG_CXX98			GLM_LANG_CXX98_FLAG
 #define GLM_LANG_CXX03			(GLM_LANG_CXX98 | GLM_LANG_CXX03_FLAG)
@@ -80,6 +82,7 @@
 #define GLM_LANG_CXX17			(GLM_LANG_CXX14 | GLM_LANG_CXX17_FLAG)
 #define GLM_LANG_CXX20			(GLM_LANG_CXX17 | GLM_LANG_CXX20_FLAG)
 #define GLM_LANG_CXX23			(GLM_LANG_CXX20 | GLM_LANG_CXX23_FLAG)
+#define GLM_LANG_CXX26			(GLM_LANG_CXX23 | GLM_LANG_CXX26_FLAG)
 #define GLM_LANG_CXXMS			GLM_LANG_CXXMS_FLAG
 
 #if (defined(_MSC_EXTENSIONS))
@@ -92,6 +95,11 @@
 
 #if (defined(GLM_FORCE_CXX_UNKNOWN))
 #	define GLM_LANG 0
+#elif defined(GLM_FORCE_CXX26)
+#	define GLM_LANG (GLM_LANG_CXX26 | GLM_LANG_EXT)
+#elif defined(GLM_FORCE_CXX23)
+#	define GLM_LANG (GLM_LANG_CXX23 | GLM_LANG_EXT)
+#	define GLM_LANG_STL11_FORCED
 #elif defined(GLM_FORCE_CXX20)
 #	define GLM_LANG (GLM_LANG_CXX20 | GLM_LANG_EXT)
 #elif defined(GLM_FORCE_CXX17)
@@ -114,7 +122,7 @@
 #	endif
 
 #	if __cplusplus > 202302L || GLM_LANG_PLATFORM > 202302L
-#		define GLM_LANG (GLM_LANG_CXX23 | GLM_LANG_EXT)
+#		define GLM_LANG (GLM_LANG_CXX26 | GLM_LANG_EXT)
 #	elif __cplusplus == 202302L || GLM_LANG_PLATFORM == 202302L
 #		define GLM_LANG (GLM_LANG_CXX23 | GLM_LANG_EXT)
 #	elif __cplusplus == 202002L || GLM_LANG_PLATFORM == 202002L
@@ -596,7 +604,11 @@ namespace detail
 #		pragma message ("GLM: version " GLM_STR(GLM_VERSION_MAJOR) "." GLM_STR(GLM_VERSION_MINOR) "." GLM_STR(GLM_VERSION_PATCH))
 
 	// Report C++ language
-#	if (GLM_LANG & GLM_LANG_CXX23_FLAG) && (GLM_LANG & GLM_LANG_EXT)
+#	if (GLM_LANG & GLM_LANG_CXX26_FLAG) && (GLM_LANG & GLM_LANG_EXT)
+#		pragma message("GLM: C++ 26 with extensions")
+#	elif (GLM_LANG & GLM_LANG_CXX26_FLAG)
+#		pragma message("GLM: C++ 26")
+#	elif (GLM_LANG & GLM_LANG_CXX23_FLAG) && (GLM_LANG & GLM_LANG_EXT)
 #		pragma message("GLM: C++ 23 with extensions")
 #	elif (GLM_LANG & GLM_LANG_CXX23_FLAG)
 #		pragma message("GLM: C++ 23")
