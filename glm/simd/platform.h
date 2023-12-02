@@ -343,7 +343,7 @@
 #if defined(GLM_FORCE_ARCH_UNKNOWN) || defined(GLM_FORCE_PURE)
 #	define GLM_ARCH GLM_ARCH_UNKNOWN
 #elif defined(GLM_FORCE_NEON)
-#	if __ARM_ARCH >= 8
+#	if __ARM_ARCH >= 8 || defined(_M_ARM64)
 #		define GLM_ARCH (GLM_ARCH_ARMV8)
 #	else
 #		define GLM_ARCH (GLM_ARCH_NEON)
@@ -390,7 +390,7 @@
 #		define GLM_ARCH (GLM_ARCH_SSE2)
 #	elif defined(__i386__)
 #		define GLM_ARCH (GLM_ARCH_X86)
-#	elif defined(__ARM_ARCH) && (__ARM_ARCH >= 8)
+#	elif (defined(__ARM_ARCH) && (__ARM_ARCH >= 8)) || defined(_M_ARM64)
 #		define GLM_ARCH (GLM_ARCH_ARMV8)
 #	elif defined(__ARM_NEON)
 #		define GLM_ARCH (GLM_ARCH_ARM | GLM_ARCH_NEON)
@@ -406,6 +406,8 @@
 #else
 #	if defined(__x86_64__) || defined(_M_X64) || defined(_M_IX86) || defined(__i386__)
 #		define GLM_ARCH (GLM_ARCH_X86)
+#	elif defined(__aarch64__) || defined(_M_ARM64)
+#		define GLM_ARCH (GLM_ARCH_ARMV8)
 #	elif defined(__arm__) || defined(_M_ARM)
 #		define GLM_ARCH (GLM_ARCH_ARM)
 #	elif defined(__powerpc__) || defined(_M_PPC)
