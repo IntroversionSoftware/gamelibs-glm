@@ -99,7 +99,6 @@
 #	define GLM_LANG (GLM_LANG_CXX26 | GLM_LANG_EXT)
 #elif defined(GLM_FORCE_CXX23)
 #	define GLM_LANG (GLM_LANG_CXX23 | GLM_LANG_EXT)
-#	define GLM_LANG_STL11_FORCED
 #elif defined(GLM_FORCE_CXX20)
 #	define GLM_LANG (GLM_LANG_CXX20 | GLM_LANG_EXT)
 #elif defined(GLM_FORCE_CXX17)
@@ -136,6 +135,12 @@
 
 ///////////////////////////////////////////////////////////////////////////////////
 // Has of C++ features
+
+#if defined(__has_cpp_attribute)
+#	define GLM_HAS_CPP_ATTRIBUTE(attribute) __has_cpp_attribute(attribute)
+#else
+#	define GLM_HAS_CPP_ATTRIBUTE(attribute) 0
+#endif
 
 // User override for disabling use of constexpr
 #if !defined(GLM_FORCE_NO_CONSTEXPR)
