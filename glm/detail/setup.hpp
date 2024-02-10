@@ -633,6 +633,14 @@
 #endif
 
 ///////////////////////////////////////////////////////////////////////////////////
+
+#if defined(__has_builtin)
+#	define GLM_HAS_BUILTIN(attribute) __has_builtin(attribute)
+#else
+#	define GLM_HAS_BUILTIN(attribute) 0
+#endif
+
+///////////////////////////////////////////////////////////////////////////////////
 // Length type: all length functions returns a length_t type.
 // When GLM_FORCE_SIZE_T_LENGTH is defined, length_t is a typedef of size_t otherwise
 // length_t is a typedef of int like GLSL defines it.
