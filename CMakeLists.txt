@@ -192,7 +192,7 @@ elseif(GLM_ENABLE_SIMD_SSE4_2)
 	elseif(CMAKE_CXX_COMPILER_ID MATCHES "Intel")
 		add_compile_options(/QxSSE4.2)
 	elseif((CMAKE_CXX_COMPILER_ID MATCHES "MSVC") AND NOT CMAKE_CL_64)
-		add_compile_options(/arch:SSE2) # VC doesn't support SSE4.2
+		add_compile_options(/arch:SSE2 /DGLM_FORCE_SSE42) # VC doesn't support SSE4.2
 	endif()
 	message(STATUS "GLM: SSE4.2 instruction set")
 
@@ -204,7 +204,7 @@ elseif(GLM_ENABLE_SIMD_SSE4_1)
 	elseif(CMAKE_CXX_COMPILER_ID MATCHES "Intel")
 		add_compile_options(/QxSSE4.1)
 	elseif((CMAKE_CXX_COMPILER_ID MATCHES "MSVC") AND NOT CMAKE_CL_64)
-		add_compile_options(/arch:SSE2) # VC doesn't support SSE4.1
+		add_compile_options(/arch:SSE2 /DGLM_FORCE_SSE41) # VC doesn't support SSE4.1
 	endif()
 	message(STATUS "GLM: SSE4.1 instruction set")
 
@@ -216,7 +216,7 @@ elseif(GLM_ENABLE_SIMD_SSSE3)
 	elseif(CMAKE_CXX_COMPILER_ID MATCHES "Intel")
 		add_compile_options(/QxSSSE3)
 	elseif((CMAKE_CXX_COMPILER_ID MATCHES "MSVC") AND NOT CMAKE_CL_64)
-		add_compile_options(/arch:SSE2) # VC doesn't support SSSE3
+		add_compile_options(/arch:SSE2 /DGLM_FORCE_SSSE3) # VC doesn't support SSSE3
 	endif()
 	message(STATUS "GLM: SSSE3 instruction set")
 
@@ -228,7 +228,7 @@ elseif(GLM_ENABLE_SIMD_SSE3)
 	elseif(CMAKE_CXX_COMPILER_ID MATCHES "Intel")
 		add_compile_options(/QxSSE3)
 	elseif((CMAKE_CXX_COMPILER_ID MATCHES "MSVC") AND NOT CMAKE_CL_64)
-		add_compile_options(/arch:SSE2) # VC doesn't support SSE3
+		add_compile_options(/arch:SSE2 /DGLM_FORCE_SSE3) # VC doesn't support SSE3
 	endif()
 	message(STATUS "GLM: SSE3 instruction set")
 
