@@ -25,10 +25,12 @@ namespace detail
 		typedef std::int8_t			int8;
 		typedef std::int16_t		int16;
 		typedef std::int32_t		int32;
+		typedef std::int64_t		int64;
 #	else
 		typedef signed char			int8;
 		typedef signed short		int16;
 		typedef signed int			int32;
+		typedef signed long long	int64;
 #endif//
 
 	template<>
