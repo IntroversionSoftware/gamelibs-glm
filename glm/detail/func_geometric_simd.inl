@@ -216,6 +216,23 @@ namespace detail
 			Result.data = rv.yzx;
 			return vec<3, T, Q>(Result);
 		}
+
+		GLM_FUNC_QUALIFIER static vec<4, T, Q> call(vec<4, T, Q> const& a, vec<4, T, Q> const& b)
+		{
+			using fv4_t = T __attribute__((ext_vector_type(4)));
+			fv4_t const v1 = a.data;
+			fv4_t const v2 = b.data;
+			fv4_t const swp0 = v1.yzxw;
+			fv4_t const swp1 = v1.zxyw;
+			fv4_t const swp2 = v2.yzxw;
+			fv4_t const swp3 = v2.zxyw;
+			fv4_t const mul0 = swp0 * swp3;
+			fv4_t const mul1 = swp1 * swp2;
+			fv4_t const sub0 = mul0 - mul1;
+			vec<4, T, Q> Result;
+			Result.data = sub0;
+			return Result;
+		}
 	};
 
 	template<typename T, qualifier Q>
