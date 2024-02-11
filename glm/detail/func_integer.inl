@@ -88,7 +88,8 @@ namespace detail
 	{
 		GLM_FUNC_QUALIFIER static int call(genIUType Value)
 		{
-			return (Value != static_cast<genIUType>(0)) ? 31 - __builtin_clz(Value) : -1;
+			int const count = Value ? __builtin_clz(Value) : 32;
+			return 31 - count;
 		}
 	};
 #endif
@@ -99,7 +100,8 @@ namespace detail
 	{
 		GLM_FUNC_QUALIFIER static int call(genIUType Value)
 		{
-			return (Value != static_cast<genIUType>(0)) ? 63 - __builtin_clzll(Value) : -1;
+			int const count = Value ? __builtin_clzll(Value) : 64;
+			return 63 - count;
 		}
 	};
 #endif
