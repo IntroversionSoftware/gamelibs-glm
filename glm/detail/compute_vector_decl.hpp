@@ -168,7 +168,7 @@ namespace glm {
 		template<length_t L, typename T, qualifier Q, int IsInt, std::size_t Size>
 		struct compute_vec_nequal<L, T, Q, IsInt, Size, false>
 		{
-			GLM_FUNC_QUALIFIER GLM_CONSTEXPR static bool call(vec<4, T, Q> const& v1, vec<4, T, Q> const& v2)
+			GLM_FUNC_QUALIFIER GLM_CONSTEXPR static bool call(vec<L, T, Q> const& v1, vec<L, T, Q> const& v2)
 			{
 				return !compute_vec_equal<L, T, Q, detail::is_int<T>::value, sizeof(T) * 8, detail::is_aligned<Q>::value>::call(v1, v2);
 			}
