@@ -572,11 +572,11 @@ namespace glm {
 		template<length_t L, qualifier Q>
 		struct compute_splat<L, float, Q, true> {
 			template<int c>
-			GLM_FUNC_QUALIFIER GLM_CONSTEXPR static vec<L, float, Q> call(vec<L, float, Q> const&)
+			GLM_FUNC_QUALIFIER static vec<L, float, Q> call(vec<L, float, Q> const&)
 			{}
 
 			template<>
-			GLM_FUNC_QUALIFIER GLM_CONSTEXPR static vec<L, float, Q> call<0>(vec<L, float, Q> const& a)
+			GLM_FUNC_QUALIFIER vec<L, float, Q> call<0>(vec<L, float, Q> const& a)
 			{
 				vec<L, float, Q> Result;
 				Result.data = vdupq_lane_f32(vget_low_f32(a.data), 0);
@@ -584,7 +584,7 @@ namespace glm {
 			}
 
 			template<>
-			GLM_FUNC_QUALIFIER GLM_CONSTEXPR static vec<L, float, Q> call<1>(vec<L, float, Q> const& a)
+			GLM_FUNC_QUALIFIER vec<L, float, Q> call<1>(vec<L, float, Q> const& a)
 			{
 				vec<L, float, Q> Result;
 				Result.data = vdupq_lane_f32(vget_low_f32(a.data), 1);
@@ -592,7 +592,7 @@ namespace glm {
 			}
 
 			template<>
-			GLM_FUNC_QUALIFIER GLM_CONSTEXPR static vec<L, float, Q> call<2>(vec<L, float, Q> const& a)
+			GLM_FUNC_QUALIFIER vec<L, float, Q> call<2>(vec<L, float, Q> const& a)
 			{
 				vec<L, float, Q> Result;
 				Result.data = vdupq_lane_f32(vget_high_f32(a.data), 0);
@@ -600,7 +600,7 @@ namespace glm {
 			}
 
 			template<>
-			GLM_FUNC_QUALIFIER GLM_CONSTEXPR static vec<L, float, Q> call<3>(vec<L, float, Q> const& a)
+			GLM_FUNC_QUALIFIER vec<L, float, Q> call<3>(vec<L, float, Q> const& a)
 			{
 				vec<L, float, Q> Result;
 				Result.data = vdupq_lane_f32(vget_high_f32(a.data), 1);
