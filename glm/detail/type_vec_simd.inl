@@ -1110,25 +1110,25 @@ struct _swizzle_base1<L, uint, Q, E0, E1, E2, E3, true> : public _swizzle_base1<
 	{
 		static bool call(vec<L, float, Q> const& v1, vec<L, float, Q> const& v2)
 		{
-			return !compute_vec_equal<float, Q, false, 32, true>::call(v1, v2);
+			return !compute_vec_equal<L, float, Q, false, 32, true>::call(v1, v2);
 		}
 	};
 
 	template<length_t L, qualifier Q>
-	struct compute_vec_nequal<L, uint, Q, false, 32, true>
+	struct compute_vec_nequal<L, uint, Q, true, 32, true>
 	{
 		static bool call(vec<L, uint, Q> const& v1, vec<L, uint, Q> const& v2)
 		{
-			return !compute_vec_equal<uint, Q, false, 32, true>::call(v1, v2);
+			return !compute_vec_equal<L, uint, Q, true, 32, true>::call(v1, v2);
 		}
 	};
 
 	template<length_t L, qualifier Q>
-	struct compute_vec_nequal<L, int, Q, false, 32, true>
+	struct compute_vec_nequal<L, int, Q, true, 32, true>
 	{
 		static bool call(vec<L, int, Q> const& v1, vec<L, int, Q> const& v2)
 		{
-			return !compute_vec_equal<int, Q, false, 32, true>::call(v1, v2);
+			return !compute_vec_equal<L, int, Q, true, 32, true>::call(v1, v2);
 		}
 	};
 }//namespace detail
