@@ -23,22 +23,25 @@ namespace glm
 	{
 		glm_f32vec4 x_axis, y_axis, z_axis, w_axis;
 
-		x_axis =          m1[0].data.xxxx * m2[0].data;
-		x_axis = x_axis + m1[0].data.yyyy * m2[1].data;
-		x_axis = x_axis + m1[0].data.zzzz * m2[2].data;
+		x_axis = m1[0].data.xxxx * m2[0].data +
+		         m1[0].data.yyyy * m2[1].data +
+		         m1[0].data.zzzz * m2[2].data +
+		         m1[0].data.wwww * m2[3].data;
 
-		y_axis =          m1[1].data.xxxx * m2[0].data;
-		y_axis = y_axis + m1[1].data.yyyy * m2[1].data;
-		y_axis = y_axis + m1[1].data.zzzz * m2[2].data;
+		y_axis = m1[1].data.xxxx * m2[0].data +
+		         m1[1].data.yyyy * m2[1].data +
+		         m1[1].data.zzzz * m2[2].data +
+		         m1[1].data.wwww * m2[3].data;
 
-		z_axis =          m1[2].data.xxxx * m2[0].data;
-		z_axis = z_axis + m1[2].data.yyyy * m2[1].data;
-		z_axis = z_axis + m1[2].data.zzzz * m2[2].data;
+		z_axis = m1[2].data.xxxx * m2[0].data +
+		         m1[2].data.yyyy * m2[1].data +
+		         m1[2].data.zzzz * m2[2].data +
+		         m1[2].data.wwww * m2[3].data;
 
-		w_axis =          m1[3].data.xxxx * m2[0].data;
-		w_axis = w_axis + m1[3].data.yyyy * m2[1].data;
-		w_axis = w_axis + m1[3].data.zzzz * m2[2].data;
-		w_axis = w_axis + m2[3].data;
+		w_axis = m1[3].data.xxxx * m2[0].data +
+		         m1[3].data.yyyy * m2[1].data +
+		         m1[3].data.zzzz * m2[2].data +
+		         m1[3].data.wwww * m2[3].data;
 
 		mat<4, 4, float, defaultp> Result;
 		Result[0].data = x_axis;
