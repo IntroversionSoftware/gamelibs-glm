@@ -363,6 +363,7 @@ namespace detail
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR T& vec<4, T, Q>::operator[](typename vec<4, T, Q>::length_type i)
 	{
 		GLM_ASSERT_LENGTH(i, this->length());
+#if 0
 		switch (i)
 		{
 		default:
@@ -375,12 +376,17 @@ namespace detail
 		case 3:
 			return w;
 		}
+#else
+		T *ptr = &x;
+		return ptr[i];
+#endif
 	}
 
 	template<typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR T const& vec<4, T, Q>::operator[](typename vec<4, T, Q>::length_type i) const
 	{
 		GLM_ASSERT_LENGTH(i, this->length());
+#if 0
 		switch (i)
 		{
 		default:
@@ -393,6 +399,10 @@ namespace detail
 		case 3:
 			return w;
 		}
+#else
+		T const *ptr = &x;
+		return ptr[i];
+#endif
 	}
 
 	// -- Unary arithmetic operators --
