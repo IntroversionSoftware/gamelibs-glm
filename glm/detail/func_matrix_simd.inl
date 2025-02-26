@@ -328,6 +328,74 @@ namespace detail
 	}
 
 	template<qualifier Q>
+	struct compute_inverse<4, 4, float, Q, true>
+	{
+		GLM_FUNC_QUALIFIER static mat<4, 4, float, Q> call(mat<4, 4, float, Q> const& m)
+		{
+			using float4 = glm_f32vec4;
+
+			// Get the four columns
+			const float4 c0 = m[0].data;
+			const float4 c1 = m[1].data;
+			const float4 c2 = m[2].data;
+			const float4 c3 = m[3].data;
+
+			// Compute submatrix determinants
+			// For the cofactors of a 4x4 matrix, we need to compute 3x3 determinants
+			// We can compute these efficiently using the vector extensions
+
+			// Build the adjugate matrix (cofactor matrix transposed)
+			float4 d0 = float4{
+				c1.y * (c2.z * c3.w - c2.w * c3.z) - c1.z * (c2.y * c3.w - c2.w * c3.y) + c1.w * (c2.y * c3.z - c2.z * c3.y),
+				-(c0.y * (c2.z * c3.w - c2.w * c3.z) - c0.z * (c2.y * c3.w - c2.w * c3.y) + c0.w * (c2.y * c3.z - c2.z * c3.y)),
+				c0.y * (c1.z * c3.w - c1.w * c3.z) - c0.z * (c1.y * c3.w - c1.w * c3.y) + c0.w * (c1.y * c3.z - c1.z * c3.y),
+				-(c0.y * (c1.z * c2.w - c1.w * c2.z) - c0.z * (c1.y * c2.w - c1.w * c2.y) + c0.w * (c1.y * c2.z - c1.z * c2.y))
+			};
+
+			float4 d1 = float4{
+				-(c1.x * (c2.z * c3.w - c2.w * c3.z) - c1.z * (c2.x * c3.w - c2.w * c3.x) + c1.w * (c2.x * c3.z - c2.z * c3.x)),
+				c0.x * (c2.z * c3.w - c2.w * c3.z) - c0.z * (c2.x * c3.w - c2.w * c3.x) + c0.w * (c2.x * c3.z - c2.z * c3.x),
+				-(c0.x * (c1.z * c3.w - c1.w * c3.z) - c0.z * (c1.x * c3.w - c1.w * c3.x) + c0.w * (c1.x * c3.z - c1.z * c3.x)),
+				c0.x * (c1.z * c2.w - c1.w * c2.z) - c0.z * (c1.x * c2.w - c1.w * c2.x) + c0.w * (c1.x * c2.z - c1.z * c2.x)
+			};
+
+			float4 d2 = float4{
+				c1.x * (c2.y * c3.w - c2.w * c3.y) - c1.y * (c2.x * c3.w - c2.w * c3.x) + c1.w * (c2.x * c3.y - c2.y * c3.x),
+				-(c0.x * (c2.y * c3.w - c2.w * c3.y) - c0.y * (c2.x * c3.w - c2.w * c3.x) + c0.w * (c2.x * c3.y - c2.y * c3.x)),
+				c0.x * (c1.y * c3.w - c1.w * c3.y) - c0.y * (c1.x * c3.w - c1.w * c3.x) + c0.w * (c1.x * c3.y - c1.y * c3.x),
+				-(c0.x * (c1.y * c2.w - c1.w * c2.y) - c0.y * (c1.x * c2.w - c1.w * c2.x) + c0.w * (c1.x * c2.y - c1.y * c2.x))
+			};
+
+			float4 d3 = float4{
+				-(c1.x * (c2.y * c3.z - c2.z * c3.y) - c1.y * (c2.x * c3.z - c2.z * c3.x) + c1.z * (c2.x * c3.y - c2.y * c3.x)),
+				c0.x * (c2.y * c3.z - c2.z * c3.y) - c0.y * (c2.x * c3.z - c2.z * c3.x) + c0.z * (c2.x * c3.y - c2.y * c3.x),
+				-(c0.x * (c1.y * c3.z - c1.z * c3.y) - c0.y * (c1.x * c3.z - c1.z * c3.x) + c0.z * (c1.x * c3.y - c1.y * c3.x)),
+				c0.x * (c1.y * c2.z - c1.z * c2.y) - c0.y * (c1.x * c2.z - c1.z * c2.x) + c0.z * (c1.x * c2.y - c1.y * c2.x)
+			};
+
+			// Compute determinant using dot product of first row and first column of cofactors
+			float det = c0.x * d0.x + c0.y * d1.x + c0.z * d2.x + c0.w * d3.x;
+
+			// Check for singular matrix
+			if (det == 0.0f) {
+				return mat<4, 4, float, Q>(1); // Return identity matrix
+			}
+
+			// Calculate inverse of determinant
+			float inv_det = 1.0f / det;
+
+			// Scale by inverse determinant and build result matrix
+			mat<4, 4, float, Q> result;
+			result[0].data = d0 * inv_det;
+			result[1].data = d1 * inv_det;
+			result[2].data = d2 * inv_det;
+			result[3].data = d3 * inv_det;
+
+			return result;
+		}
+	};
+
+	template<qualifier Q>
 	struct compute_transpose<3, 3, float, Q, true>
 	{
 		GLM_FUNC_QUALIFIER static mat<3, 3, float, Q> call(mat<3, 3, float, Q> const &m)
