@@ -236,11 +236,16 @@ namespace detail
 	}
 
 	// bitfieldReverse
-	template<typename genIUType>
-	GLM_FUNC_QUALIFIER genIUType bitfieldReverse(genIUType x)
+	template<typename genIType>
+	GLM_FUNC_QUALIFIER genIType bitfieldReverse(genIType sx)
 	{
-		GLM_STATIC_ASSERT(std::numeric_limits<genIUType>::is_integer, "'bitfieldReverse' only accept integer values");
-		GLM_STATIC_ASSERT(!std::numeric_limits<genIUType>::is_signed, "'bitfieldReverse' only accepts unsigned integer values");
+		GLM_STATIC_ASSERT(std::numeric_limits<genIType>::is_integer, "'bitfieldReverse' only accept integer values");
+
+		using genIUType = typename std::make_unsigned<genIType>::type;
+
+		// Bit-cast using memcpy for safety in C++11
+		genIUType x;
+		std::memcpy(&x, &sx, sizeof(genIUType));
 
 		genIUType r = x;
 		int s = sizeof(genIUType) * 8 - 1;
@@ -250,7 +255,10 @@ namespace detail
 			s--;
 		}
 		r <<= s;
-		return r;
+
+		memcpy(&sx, &x, sizeof(genIUType));
+
+		return sx;
 	}
 
 	template<length_t L, typename T, qualifier Q>
@@ -267,11 +275,17 @@ namespace detail
 	}
 
 	// bitCount
-	template<typename genIUType>
-	GLM_FUNC_QUALIFIER int bitCount(genIUType x)
+	template<typename genIType>
+	GLM_FUNC_QUALIFIER int bitCount(genIType sx)
 	{
-		GLM_STATIC_ASSERT(std::numeric_limits<genIUType>::is_integer, "'bitCount' only accepts integer values");
-		GLM_STATIC_ASSERT(!std::numeric_limits<genIUType>::is_signed, "'bitCount' only accepts unsigned integer values");
+		GLM_STATIC_ASSERT(std::numeric_limits<genIType>::is_integer, "'bitCount' only accepts integer values");
+
+		using genIUType = typename std::make_unsigned<genIType>::type;
+
+		// Bit-cast using memcpy for safety in C++11
+		genIUType x;
+		std::memcpy(&x, &sx, sizeof(genIUType));
+
 		int c = 0;
 		while (x) {
 			x &= (x - 1);

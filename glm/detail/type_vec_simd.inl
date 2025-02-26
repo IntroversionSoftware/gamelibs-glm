@@ -1,9 +1,13 @@
 #pragma once
 
-#define CTORSL(L, CTOR)\
-CTOR(L, aligned_lowp)\
-CTOR(L, aligned_mediump)\
-CTOR(L, aligned_highp)\
+#if GLM_CONFIG_ALIGNED_GENTYPES == GLM_ENABLE
+#define CTORSL(L, CTOR) \
+	CTOR(L, aligned_lowp) \
+	CTOR(L, aligned_mediump) \
+	CTOR(L, aligned_highp)
+#else
+#define CTORSL(L, CTOR)
+#endif
 
 #if GLM_ARCH & GLM_ARCH_CLANG_BIT
 namespace glm {
@@ -146,10 +150,14 @@ namespace detail
 
 #if !GLM_CONFIG_XYZW_ONLY
 
+#if GLM_CONFIG_ALIGNED_GENTYPES == GLM_ENABLE
 #define CTORSLO(CTOR, T, N, M, SWA, SWB) \
 	CTOR(aligned_lowp, T, N, M, SWA, SWB) \
 	CTOR(aligned_mediump, T, N, M, SWA, SWB) \
 	CTOR(aligned_highp, T, N, M, SWA, SWB)
+#else
+#define CTORSLO(CTOR, T, N, M, SWA, SWB)
+#endif
 
 #define CTORSLOT(CTOR, N, M, SWA, SWB) \
 	CTORSLO(CTOR, float, N, M, SWA, SWB) \

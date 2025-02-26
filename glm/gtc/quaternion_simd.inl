@@ -1,4 +1,5 @@
 #if GLM_ARCH & GLM_ARCH_CLANG_BIT
+#if GLM_CONFIG_ALIGNED_GENTYPES == GLM_ENABLE
 
 namespace glm
 {
@@ -122,4 +123,5 @@ GLM_FUNC_QUALIFIER mat<3, 3, float, aligned_highp> mat3_cast(qua<float, aligned_
 
 }//namespace glm
 
+#endif // GLM_CONFIG_ALIGNED_GENTYPES == GLM_ENABLE
 #endif // GLM_ARCH & GLM_ARCH_CLANG_BIT
