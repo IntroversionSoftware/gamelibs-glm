@@ -240,8 +240,7 @@ namespace detail
 	{
 		GLM_FUNC_QUALIFIER static T call(vec<3, T, Q> const &x, vec<3, T, Q> const &y)
 		{
-			using fv3_t = T __attribute__((ext_vector_type(3)));
-			const fv3_t prod = x.data * y.data;
+			const glm_f32vec3 prod = x.data * y.data;
 			return prod.x + prod.y + prod.z;
 		}
 	};
@@ -251,11 +250,8 @@ namespace detail
 	{
 		GLM_FUNC_QUALIFIER static T call(vec<4, T, Q> const& x, vec<4, T, Q> const& y)
 		{
-			using fv4_t = T __attribute__((ext_vector_type(4)));
-			using fv2_t = T __attribute__((ext_vector_type(2)));
-			const fv4_t prod = x.data * y.data;
-			const fv2_t hadd = prod.xz + prod.yw;
-			return hadd.x + hadd.y;
+			const glm_f32vec4 prod = x.data * y.data;
+			return prod.x + prod.y + prod.z + prod.w;
 		}
 	};
 
