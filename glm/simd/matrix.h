@@ -1042,7 +1042,8 @@ GLM_FUNC_QUALIFIER void glm_mat4_outerProduct(__m128 const& c, __m128 const& r, 
 #if GLM_ARCH & GLM_ARCH_CLANG_BIT
 
 // Our SSE shuffle emulation with Clang vector extensions
-#define CLANG_SHUFFLE_MASK(a, b, c, d) (((a) << 6) | ((b) << 4) | ((c) << 2) | (d))
+#define GLM_CV_SHUFFLE_MASK(a, b, c, d) (((a) << 6) | ((b) << 4) | ((c) << 2) | (d))
+#define GLM_CV_SHUFFLE(v1, v2, imm8) clang_shuffle_vec2<imm8>(v1, v2)
 
 template<int imm8>
 static GLM_INLINE glm_f32vec4 clang_shuffle_vec2(glm_f32vec4 a, glm_f32vec4 b) {
@@ -1054,14 +1055,6 @@ static GLM_INLINE glm_f32vec4 clang_shuffle_vec2(glm_f32vec4 a, glm_f32vec4 b) {
     return __builtin_shufflevector(a, b, w, x, 4+y, 4+z);
 }
 
-#define CLANG_SHUFFLE(v1, v2, imm8) clang_shuffle_vec2<imm8>(v1, v2)
-
-GLM_FUNC_QUALIFIER float glm_f32vec4_dot(glm_f32vec4 const &a, glm_f32vec4 const &b)
-{
-	glm_f32vec2 dot2 = (a.xz * b.xz) + (a.yw * b.yw);
-	return dot2.x + dot2.y;
-}
-
 GLM_FUNC_QUALIFIER void glm_mat4_inverse(glm_f32vec4 const in[4], glm_f32vec4 out[4])
 {
 	glm_f32vec4 Fac0;
@@ -1071,13 +1064,13 @@ GLM_FUNC_QUALIFIER void glm_mat4_inverse(glm_f32vec4 const in[4], glm_f32vec4 ou
 		//	valType SubFactor06 = m[1][2] * m[3][3] - m[3][2] * m[1][3];
 		//	valType SubFactor13 = m[1][2] * m[2][3] - m[2][2] * m[1][3];
 
-		glm_f32vec4 Swp0a = CLANG_SHUFFLE(in[3], in[2], CLANG_SHUFFLE_MASK(3, 3, 3, 3));
-		glm_f32vec4 Swp0b = CLANG_SHUFFLE(in[3], in[2], CLANG_SHUFFLE_MASK(2, 2, 2, 2));
+		glm_f32vec4 Swp0a = GLM_CV_SHUFFLE(in[3], in[2], GLM_CV_SHUFFLE_MASK(3, 3, 3, 3));
+		glm_f32vec4 Swp0b = GLM_CV_SHUFFLE(in[3], in[2], GLM_CV_SHUFFLE_MASK(2, 2, 2, 2));
 
-		glm_f32vec4 Swp00 = CLANG_SHUFFLE(in[2], in[1], CLANG_SHUFFLE_MASK(2, 2, 2, 2));
-		glm_f32vec4 Swp01 = CLANG_SHUFFLE(Swp0a, Swp0a, CLANG_SHUFFLE_MASK(2, 0, 0, 0));
-		glm_f32vec4 Swp02 = CLANG_SHUFFLE(Swp0b, Swp0b, CLANG_SHUFFLE_MASK(2, 0, 0, 0));
-		glm_f32vec4 Swp03 = CLANG_SHUFFLE(in[2], in[1], CLANG_SHUFFLE_MASK(3, 3, 3, 3));
+		glm_f32vec4 Swp00 = GLM_CV_SHUFFLE(in[2], in[1], GLM_CV_SHUFFLE_MASK(2, 2, 2, 2));
+		glm_f32vec4 Swp01 = GLM_CV_SHUFFLE(Swp0a, Swp0a, GLM_CV_SHUFFLE_MASK(2, 0, 0, 0));
+		glm_f32vec4 Swp02 = GLM_CV_SHUFFLE(Swp0b, Swp0b, GLM_CV_SHUFFLE_MASK(2, 0, 0, 0));
+		glm_f32vec4 Swp03 = GLM_CV_SHUFFLE(in[2], in[1], GLM_CV_SHUFFLE_MASK(3, 3, 3, 3));
 
 		glm_f32vec4 Mul00 = Swp00 * Swp01;
 		glm_f32vec4 Mul01 = Swp02 * Swp03;
@@ -1091,13 +1084,13 @@ GLM_FUNC_QUALIFIER void glm_mat4_inverse(glm_f32vec4 const in[4], glm_f32vec4 ou
 		//	valType SubFactor07 = m[1][1] * m[3][3] - m[3][1] * m[1][3];
 		//	valType SubFactor14 = m[1][1] * m[2][3] - m[2][1] * m[1][3];
 
-		glm_f32vec4 Swp0a = CLANG_SHUFFLE(in[3], in[2], CLANG_SHUFFLE_MASK(3, 3, 3, 3));
-		glm_f32vec4 Swp0b = CLANG_SHUFFLE(in[3], in[2], CLANG_SHUFFLE_MASK(1, 1, 1, 1));
+		glm_f32vec4 Swp0a = GLM_CV_SHUFFLE(in[3], in[2], GLM_CV_SHUFFLE_MASK(3, 3, 3, 3));
+		glm_f32vec4 Swp0b = GLM_CV_SHUFFLE(in[3], in[2], GLM_CV_SHUFFLE_MASK(1, 1, 1, 1));
 
-		glm_f32vec4 Swp00 = CLANG_SHUFFLE(in[2], in[1], CLANG_SHUFFLE_MASK(1, 1, 1, 1));
-		glm_f32vec4 Swp01 = CLANG_SHUFFLE(Swp0a, Swp0a, CLANG_SHUFFLE_MASK(2, 0, 0, 0));
-		glm_f32vec4 Swp02 = CLANG_SHUFFLE(Swp0b, Swp0b, CLANG_SHUFFLE_MASK(2, 0, 0, 0));
-		glm_f32vec4 Swp03 = CLANG_SHUFFLE(in[2], in[1], CLANG_SHUFFLE_MASK(3, 3, 3, 3));
+		glm_f32vec4 Swp00 = GLM_CV_SHUFFLE(in[2], in[1], GLM_CV_SHUFFLE_MASK(1, 1, 1, 1));
+		glm_f32vec4 Swp01 = GLM_CV_SHUFFLE(Swp0a, Swp0a, GLM_CV_SHUFFLE_MASK(2, 0, 0, 0));
+		glm_f32vec4 Swp02 = GLM_CV_SHUFFLE(Swp0b, Swp0b, GLM_CV_SHUFFLE_MASK(2, 0, 0, 0));
+		glm_f32vec4 Swp03 = GLM_CV_SHUFFLE(in[2], in[1], GLM_CV_SHUFFLE_MASK(3, 3, 3, 3));
 
 		glm_f32vec4 Mul00 = Swp00 * Swp01;
 		glm_f32vec4 Mul01 = Swp02 * Swp03;
@@ -1111,13 +1104,13 @@ GLM_FUNC_QUALIFIER void glm_mat4_inverse(glm_f32vec4 const in[4], glm_f32vec4 ou
 		//	valType SubFactor08 = m[1][1] * m[3][2] - m[3][1] * m[1][2];
 		//	valType SubFactor15 = m[1][1] * m[2][2] - m[2][1] * m[1][2];
 
-		glm_f32vec4 Swp0a = CLANG_SHUFFLE(in[3], in[2], CLANG_SHUFFLE_MASK(2, 2, 2, 2));
-		glm_f32vec4 Swp0b = CLANG_SHUFFLE(in[3], in[2], CLANG_SHUFFLE_MASK(1, 1, 1, 1));
+		glm_f32vec4 Swp0a = GLM_CV_SHUFFLE(in[3], in[2], GLM_CV_SHUFFLE_MASK(2, 2, 2, 2));
+		glm_f32vec4 Swp0b = GLM_CV_SHUFFLE(in[3], in[2], GLM_CV_SHUFFLE_MASK(1, 1, 1, 1));
 
-		glm_f32vec4 Swp00 = CLANG_SHUFFLE(in[2], in[1], CLANG_SHUFFLE_MASK(1, 1, 1, 1));
-		glm_f32vec4 Swp01 = CLANG_SHUFFLE(Swp0a, Swp0a, CLANG_SHUFFLE_MASK(2, 0, 0, 0));
-		glm_f32vec4 Swp02 = CLANG_SHUFFLE(Swp0b, Swp0b, CLANG_SHUFFLE_MASK(2, 0, 0, 0));
-		glm_f32vec4 Swp03 = CLANG_SHUFFLE(in[2], in[1], CLANG_SHUFFLE_MASK(2, 2, 2, 2));
+		glm_f32vec4 Swp00 = GLM_CV_SHUFFLE(in[2], in[1], GLM_CV_SHUFFLE_MASK(1, 1, 1, 1));
+		glm_f32vec4 Swp01 = GLM_CV_SHUFFLE(Swp0a, Swp0a, GLM_CV_SHUFFLE_MASK(2, 0, 0, 0));
+		glm_f32vec4 Swp02 = GLM_CV_SHUFFLE(Swp0b, Swp0b, GLM_CV_SHUFFLE_MASK(2, 0, 0, 0));
+		glm_f32vec4 Swp03 = GLM_CV_SHUFFLE(in[2], in[1], GLM_CV_SHUFFLE_MASK(2, 2, 2, 2));
 
 		glm_f32vec4 Mul00 = Swp00 * Swp01;
 		glm_f32vec4 Mul01 = Swp02 * Swp03;
@@ -1131,13 +1124,13 @@ GLM_FUNC_QUALIFIER void glm_mat4_inverse(glm_f32vec4 const in[4], glm_f32vec4 ou
 		//	valType SubFactor09 = m[1][0] * m[3][3] - m[3][0] * m[1][3];
 		//	valType SubFactor16 = m[1][0] * m[2][3] - m[2][0] * m[1][3];
 
-		glm_f32vec4 Swp0a = CLANG_SHUFFLE(in[3], in[2], CLANG_SHUFFLE_MASK(3, 3, 3, 3));
-		glm_f32vec4 Swp0b = CLANG_SHUFFLE(in[3], in[2], CLANG_SHUFFLE_MASK(0, 0, 0, 0));
+		glm_f32vec4 Swp0a = GLM_CV_SHUFFLE(in[3], in[2], GLM_CV_SHUFFLE_MASK(3, 3, 3, 3));
+		glm_f32vec4 Swp0b = GLM_CV_SHUFFLE(in[3], in[2], GLM_CV_SHUFFLE_MASK(0, 0, 0, 0));
 
-		glm_f32vec4 Swp00 = CLANG_SHUFFLE(in[2], in[1], CLANG_SHUFFLE_MASK(0, 0, 0, 0));
-		glm_f32vec4 Swp01 = CLANG_SHUFFLE(Swp0a, Swp0a, CLANG_SHUFFLE_MASK(2, 0, 0, 0));
-		glm_f32vec4 Swp02 = CLANG_SHUFFLE(Swp0b, Swp0b, CLANG_SHUFFLE_MASK(2, 0, 0, 0));
-		glm_f32vec4 Swp03 = CLANG_SHUFFLE(in[2], in[1], CLANG_SHUFFLE_MASK(3, 3, 3, 3));
+		glm_f32vec4 Swp00 = GLM_CV_SHUFFLE(in[2], in[1], GLM_CV_SHUFFLE_MASK(0, 0, 0, 0));
+		glm_f32vec4 Swp01 = GLM_CV_SHUFFLE(Swp0a, Swp0a, GLM_CV_SHUFFLE_MASK(2, 0, 0, 0));
+		glm_f32vec4 Swp02 = GLM_CV_SHUFFLE(Swp0b, Swp0b, GLM_CV_SHUFFLE_MASK(2, 0, 0, 0));
+		glm_f32vec4 Swp03 = GLM_CV_SHUFFLE(in[2], in[1], GLM_CV_SHUFFLE_MASK(3, 3, 3, 3));
 
 		glm_f32vec4 Mul00 = Swp00 * Swp01;
 		glm_f32vec4 Mul01 = Swp02 * Swp03;
@@ -1151,13 +1144,13 @@ GLM_FUNC_QUALIFIER void glm_mat4_inverse(glm_f32vec4 const in[4], glm_f32vec4 ou
 		//	valType SubFactor10 = m[1][0] * m[3][2] - m[3][0] * m[1][2];
 		//	valType SubFactor17 = m[1][0] * m[2][2] - m[2][0] * m[1][2];
 
-		glm_f32vec4 Swp0a = CLANG_SHUFFLE(in[3], in[2], CLANG_SHUFFLE_MASK(2, 2, 2, 2));
-		glm_f32vec4 Swp0b = CLANG_SHUFFLE(in[3], in[2], CLANG_SHUFFLE_MASK(0, 0, 0, 0));
+		glm_f32vec4 Swp0a = GLM_CV_SHUFFLE(in[3], in[2], GLM_CV_SHUFFLE_MASK(2, 2, 2, 2));
+		glm_f32vec4 Swp0b = GLM_CV_SHUFFLE(in[3], in[2], GLM_CV_SHUFFLE_MASK(0, 0, 0, 0));
 
-		glm_f32vec4 Swp00 = CLANG_SHUFFLE(in[2], in[1], CLANG_SHUFFLE_MASK(0, 0, 0, 0));
-		glm_f32vec4 Swp01 = CLANG_SHUFFLE(Swp0a, Swp0a, CLANG_SHUFFLE_MASK(2, 0, 0, 0));
-		glm_f32vec4 Swp02 = CLANG_SHUFFLE(Swp0b, Swp0b, CLANG_SHUFFLE_MASK(2, 0, 0, 0));
-		glm_f32vec4 Swp03 = CLANG_SHUFFLE(in[2], in[1], CLANG_SHUFFLE_MASK(2, 2, 2, 2));
+		glm_f32vec4 Swp00 = GLM_CV_SHUFFLE(in[2], in[1], GLM_CV_SHUFFLE_MASK(0, 0, 0, 0));
+		glm_f32vec4 Swp01 = GLM_CV_SHUFFLE(Swp0a, Swp0a, GLM_CV_SHUFFLE_MASK(2, 0, 0, 0));
+		glm_f32vec4 Swp02 = GLM_CV_SHUFFLE(Swp0b, Swp0b, GLM_CV_SHUFFLE_MASK(2, 0, 0, 0));
+		glm_f32vec4 Swp03 = GLM_CV_SHUFFLE(in[2], in[1], GLM_CV_SHUFFLE_MASK(2, 2, 2, 2));
 
 		glm_f32vec4 Mul00 = Swp00 * Swp01;
 		glm_f32vec4 Mul01 = Swp02 * Swp03;
@@ -1171,13 +1164,13 @@ GLM_FUNC_QUALIFIER void glm_mat4_inverse(glm_f32vec4 const in[4], glm_f32vec4 ou
 		//	valType SubFactor12 = m[1][0] * m[3][1] - m[3][0] * m[1][1];
 		//	valType SubFactor18 = m[1][0] * m[2][1] - m[2][0] * m[1][1];
 
-		glm_f32vec4 Swp0a = CLANG_SHUFFLE(in[3], in[2], CLANG_SHUFFLE_MASK(1, 1, 1, 1));
-		glm_f32vec4 Swp0b = CLANG_SHUFFLE(in[3], in[2], CLANG_SHUFFLE_MASK(0, 0, 0, 0));
+		glm_f32vec4 Swp0a = GLM_CV_SHUFFLE(in[3], in[2], GLM_CV_SHUFFLE_MASK(1, 1, 1, 1));
+		glm_f32vec4 Swp0b = GLM_CV_SHUFFLE(in[3], in[2], GLM_CV_SHUFFLE_MASK(0, 0, 0, 0));
 
-		glm_f32vec4 Swp00 = CLANG_SHUFFLE(in[2], in[1], CLANG_SHUFFLE_MASK(0, 0, 0, 0));
-		glm_f32vec4 Swp01 = CLANG_SHUFFLE(Swp0a, Swp0a, CLANG_SHUFFLE_MASK(2, 0, 0, 0));
-		glm_f32vec4 Swp02 = CLANG_SHUFFLE(Swp0b, Swp0b, CLANG_SHUFFLE_MASK(2, 0, 0, 0));
-		glm_f32vec4 Swp03 = CLANG_SHUFFLE(in[2], in[1], CLANG_SHUFFLE_MASK(1, 1, 1, 1));
+		glm_f32vec4 Swp00 = GLM_CV_SHUFFLE(in[2], in[1], GLM_CV_SHUFFLE_MASK(0, 0, 0, 0));
+		glm_f32vec4 Swp01 = GLM_CV_SHUFFLE(Swp0a, Swp0a, GLM_CV_SHUFFLE_MASK(2, 0, 0, 0));
+		glm_f32vec4 Swp02 = GLM_CV_SHUFFLE(Swp0b, Swp0b, GLM_CV_SHUFFLE_MASK(2, 0, 0, 0));
+		glm_f32vec4 Swp03 = GLM_CV_SHUFFLE(in[2], in[1], GLM_CV_SHUFFLE_MASK(1, 1, 1, 1));
 
 		glm_f32vec4 Mul00 = Swp00 * Swp01;
 		glm_f32vec4 Mul01 = Swp02 * Swp03;
@@ -1191,29 +1184,29 @@ GLM_FUNC_QUALIFIER void glm_mat4_inverse(glm_f32vec4 const in[4], glm_f32vec4 ou
 	// m[0][0]
 	// m[0][0]
 	// m[0][0]
-	glm_f32vec4 Temp0 = CLANG_SHUFFLE(in[1], in[0], CLANG_SHUFFLE_MASK(0, 0, 0, 0));
-	glm_f32vec4 Vec0 = CLANG_SHUFFLE(Temp0, Temp0, CLANG_SHUFFLE_MASK(2, 2, 2, 0));
+	glm_f32vec4 Temp0 = GLM_CV_SHUFFLE(in[1], in[0], GLM_CV_SHUFFLE_MASK(0, 0, 0, 0));
+	glm_f32vec4 Vec0 = GLM_CV_SHUFFLE(Temp0, Temp0, GLM_CV_SHUFFLE_MASK(2, 2, 2, 0));
 
 	// m[1][1]
 	// m[0][1]
 	// m[0][1]
 	// m[0][1]
-	glm_f32vec4 Temp1 = CLANG_SHUFFLE(in[1], in[0], CLANG_SHUFFLE_MASK(1, 1, 1, 1));
-	glm_f32vec4 Vec1 = CLANG_SHUFFLE(Temp1, Temp1, CLANG_SHUFFLE_MASK(2, 2, 2, 0));
+	glm_f32vec4 Temp1 = GLM_CV_SHUFFLE(in[1], in[0], GLM_CV_SHUFFLE_MASK(1, 1, 1, 1));
+	glm_f32vec4 Vec1 = GLM_CV_SHUFFLE(Temp1, Temp1, GLM_CV_SHUFFLE_MASK(2, 2, 2, 0));
 
 	// m[1][2]
 	// m[0][2]
 	// m[0][2]
 	// m[0][2]
-	glm_f32vec4 Temp2 = CLANG_SHUFFLE(in[1], in[0], CLANG_SHUFFLE_MASK(2, 2, 2, 2));
-	glm_f32vec4 Vec2 = CLANG_SHUFFLE(Temp2, Temp2, CLANG_SHUFFLE_MASK(2, 2, 2, 0));
+	glm_f32vec4 Temp2 = GLM_CV_SHUFFLE(in[1], in[0], GLM_CV_SHUFFLE_MASK(2, 2, 2, 2));
+	glm_f32vec4 Vec2 = GLM_CV_SHUFFLE(Temp2, Temp2, GLM_CV_SHUFFLE_MASK(2, 2, 2, 0));
 
 	// m[1][3]
 	// m[0][3]
 	// m[0][3]
 	// m[0][3]
-	glm_f32vec4 Temp3 = CLANG_SHUFFLE(in[1], in[0], CLANG_SHUFFLE_MASK(3, 3, 3, 3));
-	glm_f32vec4 Vec3 = CLANG_SHUFFLE(Temp3, Temp3, CLANG_SHUFFLE_MASK(2, 2, 2, 0));
+	glm_f32vec4 Temp3 = GLM_CV_SHUFFLE(in[1], in[0], GLM_CV_SHUFFLE_MASK(3, 3, 3, 3));
+	glm_f32vec4 Vec3 = GLM_CV_SHUFFLE(Temp3, Temp3, GLM_CV_SHUFFLE_MASK(2, 2, 2, 0));
 
 	// col0
 	// + (Vec1[0] * Fac0[0] - Vec2[0] * Fac1[0] + Vec3[0] * Fac2[0]),
@@ -1263,9 +1256,9 @@ GLM_FUNC_QUALIFIER void glm_mat4_inverse(glm_f32vec4 const in[4], glm_f32vec4 ou
 	glm_f32vec4 Add03 = Sub03 + Mul11;
 	glm_f32vec4 Inv3 = SignA * Add03;
 
-	glm_f32vec4 Row0 = CLANG_SHUFFLE(Inv0, Inv1, CLANG_SHUFFLE_MASK(0, 0, 0, 0));
-	glm_f32vec4 Row1 = CLANG_SHUFFLE(Inv2, Inv3, CLANG_SHUFFLE_MASK(0, 0, 0, 0));
-	glm_f32vec4 Row2 = CLANG_SHUFFLE(Row0, Row1, CLANG_SHUFFLE_MASK(2, 0, 2, 0));
+	glm_f32vec4 Row0 = GLM_CV_SHUFFLE(Inv0, Inv1, GLM_CV_SHUFFLE_MASK(0, 0, 0, 0));
+	glm_f32vec4 Row1 = GLM_CV_SHUFFLE(Inv2, Inv3, GLM_CV_SHUFFLE_MASK(0, 0, 0, 0));
+	glm_f32vec4 Row2 = GLM_CV_SHUFFLE(Row0, Row1, GLM_CV_SHUFFLE_MASK(2, 0, 2, 0));
 
 	//	valType Determinant = m[0][0] * Inverse[0][0]
 	//						+ m[0][1] * Inverse[1][0]
@@ -1281,8 +1274,7 @@ GLM_FUNC_QUALIFIER void glm_mat4_inverse(glm_f32vec4 const in[4], glm_f32vec4 ou
 	out[3] = Inv3 * Rcp0;
 }
 
-#undef CLANG_SHUFFLE_MASK
-#undef CLANG_SHUFFLE
-#undef CLANG_SHUFFLE1
+#undef GLM_CV_SHUFFLE_MASK
+#undef GLM_CV_SHUFFLE
 
 #endif//GLM_ARCH & GLM_ARCH_CLANG_BIT
