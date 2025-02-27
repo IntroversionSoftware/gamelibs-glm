@@ -351,9 +351,13 @@
 #if defined(GLM_FORCE_ARCH_UNKNOWN) || defined(GLM_FORCE_PURE)
 #	define GLM_ARCH GLM_ARCH_UNKNOWN
 #elif defined(GLM_FORCE_CLANG)
-#	define GLM_ARCH GLM_ARCH_CLANG
-#	ifndef GLM_FORCE_DEFAULT_ALIGNED_GENTYPES
-#		define GLM_FORCE_DEFAULT_ALIGNED_GENTYPES
+#	if !(GLM_COMPILER & GLM_COMPILER_CLANG)
+#		pragma message("Compiler is not Clang, GLM_FORCE_CLANG has no effect")
+#	else
+#		define GLM_ARCH GLM_ARCH_CLANG
+#		ifndef GLM_FORCE_DEFAULT_ALIGNED_GENTYPES
+#			define GLM_FORCE_DEFAULT_ALIGNED_GENTYPES
+#		endif
 #	endif
 #elif defined(GLM_FORCE_NEON)
 #	if __ARM_ARCH >= 8 || defined(_M_ARM64)
