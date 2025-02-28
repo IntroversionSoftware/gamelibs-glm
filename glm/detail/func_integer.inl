@@ -5,6 +5,7 @@
 #	include <intrin.h>
 #	pragma intrinsic(_BitScanReverse)
 #endif//(GLM_ARCH & GLM_ARCH_X86 && GLM_COMPILER & GLM_COMPILER_VC)
+#include <cstring>
 #include <limits>
 
 #if !GLM_HAS_EXTENDED_INTEGER_TYPE
