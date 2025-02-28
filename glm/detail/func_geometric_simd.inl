@@ -267,6 +267,17 @@ namespace detail
 		}
 	};
 
+	template<typename T, qualifier Q>
+	struct compute_quat_normalize<T, Q, true>
+	{
+		GLM_FUNC_QUALIFIER static qua<T, Q> call(qua<T, Q> const& q, T lenSq)
+		{
+			qua<T, Q> Result;
+			Result.data = q.data * (1.0f / sqrt(lenSq));
+			return Result;
+		}
+	};
+
 	template<qualifier Q>
 	struct compute_faceforward<4, float, Q, true>
 	{

@@ -32,23 +32,6 @@ GLM_FUNC_QUALIFIER qua<float, aligned_highp> &qua<float, aligned_highp>::operato
 }
 
 template<>
-GLM_FUNC_QUALIFIER qua<float, aligned_highp> normalize(qua<float, aligned_highp> const& q)
-{
-#ifdef GLM_FORCE_QUAT_DATA_XYZW
-	constexpr glm_f32vec4 identity = {0.0f, 0.0f, 0.0f, 1.0f};
-#else
-	constexpr glm_f32vec4 identity = {1.0f, 0.0f, 0.0f, 0.0f};
-#endif
-	const float mag = length(q);
-	qua<float, aligned_highp> Result;
-	if (mag <= std::numeric_limits<float>::epsilon())
-		Result.data = identity;
-	else
-		Result.data = q.data * (1.0f / mag);
-	return Result;
-}
-
-template<>
 GLM_FUNC_QUALIFIER qua<float, aligned_highp> conjugate(qua<float, aligned_highp> const& q)
 {
 	typedef union {
