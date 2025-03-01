@@ -469,8 +469,15 @@ namespace glm
 	template<typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR typename mat<3, 3, T, Q>::col_type operator*(mat<3, 3, T, Q> const& m, typename mat<3, 3, T, Q>::row_type const& v)
 	{
+		const typename mat<3, 3, T, Q>::row_type row0(m[0][0], m[1][0], m[2][0]);
+		const typename mat<3, 3, T, Q>::row_type row1(m[0][1], m[1][1], m[2][1]);
+		const typename mat<3, 3, T, Q>::row_type row2(m[0][2], m[1][2], m[2][2]);
+
 		return typename mat<3, 3, T, Q>::col_type(
-			m[0] * splatX(v) + m[1] * splatY(v) + m[2] * splatZ(v));
+			dot(row0, v),
+			dot(row1, v),
+			dot(row2, v)
+		);
 	}
 
 	template<typename T, qualifier Q>
