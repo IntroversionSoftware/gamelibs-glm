@@ -3,65 +3,75 @@ namespace glm
 	template<typename T>
 	GLM_FUNC_QUALIFIER mat<4, 4, T, defaultp> ortho(T left, T right, T bottom, T top)
 	{
-		mat<4, 4, T, defaultp> Result(static_cast<T>(1));
-		Result[0][0] = static_cast<T>(2) / (right - left);
-		Result[1][1] = static_cast<T>(2) / (top - bottom);
-		Result[2][2] = - static_cast<T>(1);
-		Result[3][0] = - (right + left) / (right - left);
-		Result[3][1] = - (top + bottom) / (top - bottom);
-		return Result;
+		T const width_inv = static_cast<T>(1) / (right - left);
+		T const height_inv = static_cast<T>(1) / (top - bottom);
+
+		return mat<4, 4, T, defaultp>(
+			vec<4, T, defaultp>(static_cast<T>(2) * width_inv, 0, 0, 0),
+			vec<4, T, defaultp>(0, static_cast<T>(2) * height_inv, 0, 0),
+			vec<4, T, defaultp>(0, 0, -1, 0),
+			vec<4, T, defaultp>(-(right + left) * width_inv, -(top + bottom) * height_inv, 0, 1)
+		);
 	}
 
 	template<typename T>
 	GLM_FUNC_QUALIFIER mat<4, 4, T, defaultp> orthoLH_ZO(T left, T right, T bottom, T top, T zNear, T zFar)
 	{
-		mat<4, 4, T, defaultp> Result(1);
-		Result[0][0] = static_cast<T>(2) / (right - left);
-		Result[1][1] = static_cast<T>(2) / (top - bottom);
-		Result[2][2] = static_cast<T>(1) / (zFar - zNear);
-		Result[3][0] = - (right + left) / (right - left);
-		Result[3][1] = - (top + bottom) / (top - bottom);
-		Result[3][2] = - zNear / (zFar - zNear);
-		return Result;
+		T const width_inv = static_cast<T>(1) / (right - left);
+		T const height_inv = static_cast<T>(1) / (top - bottom);
+		T const depth_inv = static_cast<T>(1) / (zFar - zNear);
+
+		return mat<4, 4, T, defaultp>(
+			vec<4, T, defaultp>(static_cast<T>(2) * width_inv, 0, 0, 0),
+			vec<4, T, defaultp>(0, static_cast<T>(2) * height_inv, 0, 0),
+			vec<4, T, defaultp>(0, 0, depth_inv, 0),
+			vec<4, T, defaultp>(-(right + left) * width_inv, -(top + bottom) * height_inv, -zNear * depth_inv, 1)
+		);
 	}
 
 	template<typename T>
 	GLM_FUNC_QUALIFIER mat<4, 4, T, defaultp> orthoLH_NO(T left, T right, T bottom, T top, T zNear, T zFar)
 	{
-		mat<4, 4, T, defaultp> Result(1);
-		Result[0][0] = static_cast<T>(2) / (right - left);
-		Result[1][1] = static_cast<T>(2) / (top - bottom);
-		Result[2][2] = static_cast<T>(2) / (zFar - zNear);
-		Result[3][0] = - (right + left) / (right - left);
-		Result[3][1] = - (top + bottom) / (top - bottom);
-		Result[3][2] = - (zFar + zNear) / (zFar - zNear);
-		return Result;
+		T const width_inv = static_cast<T>(1) / (right - left);
+		T const height_inv = static_cast<T>(1) / (top - bottom);
+		T const depth_inv = static_cast<T>(1) / (zFar - zNear);
+
+		return mat<4, 4, T, defaultp>(
+			vec<4, T, defaultp>(static_cast<T>(2) * width_inv, 0, 0, 0),
+			vec<4, T, defaultp>(0, static_cast<T>(2) * height_inv, 0, 0),
+			vec<4, T, defaultp>(0, 0, static_cast<T>(2) * depth_inv, 0),
+			vec<4, T, defaultp>(-(right + left) * width_inv, -(top + bottom) * height_inv, -(zFar + zNear) * depth_inv, 1)
+		);
 	}
 
 	template<typename T>
 	GLM_FUNC_QUALIFIER mat<4, 4, T, defaultp> orthoRH_ZO(T left, T right, T bottom, T top, T zNear, T zFar)
 	{
-		mat<4, 4, T, defaultp> Result(1);
-		Result[0][0] = static_cast<T>(2) / (right - left);
-		Result[1][1] = static_cast<T>(2) / (top - bottom);
-		Result[2][2] = - static_cast<T>(1) / (zFar - zNear);
-		Result[3][0] = - (right + left) / (right - left);
-		Result[3][1] = - (top + bottom) / (top - bottom);
-		Result[3][2] = - zNear / (zFar - zNear);
-		return Result;
+		T const width_inv = static_cast<T>(1) / (right - left);
+		T const height_inv = static_cast<T>(1) / (top - bottom);
+		T const depth_inv = static_cast<T>(1) / (zFar - zNear);
+
+		return mat<4, 4, T, defaultp>(
+			vec<4, T, defaultp>(static_cast<T>(2) * width_inv, 0, 0, 0),
+			vec<4, T, defaultp>(0, static_cast<T>(2) * height_inv, 0, 0),
+			vec<4, T, defaultp>(0, 0, -depth_inv, 0),
+			vec<4, T, defaultp>(-(right + left) * width_inv, -(top + bottom) * height_inv, -zNear * depth_inv, 1)
+		);
 	}
 
 	template<typename T>
 	GLM_FUNC_QUALIFIER mat<4, 4, T, defaultp> orthoRH_NO(T left, T right, T bottom, T top, T zNear, T zFar)
 	{
-		mat<4, 4, T, defaultp> Result(1);
-		Result[0][0] = static_cast<T>(2) / (right - left);
-		Result[1][1] = static_cast<T>(2) / (top - bottom);
-		Result[2][2] = - static_cast<T>(2) / (zFar - zNear);
-		Result[3][0] = - (right + left) / (right - left);
-		Result[3][1] = - (top + bottom) / (top - bottom);
-		Result[3][2] = - (zFar + zNear) / (zFar - zNear);
-		return Result;
+		T const width_inv = static_cast<T>(1) / (right - left);
+		T const height_inv = static_cast<T>(1) / (top - bottom);
+		T const depth_inv = static_cast<T>(1) / (zFar - zNear);
+
+		return mat<4, 4, T, defaultp>(
+			vec<4, T, defaultp>(static_cast<T>(2) * width_inv, 0, 0, 0),
+			vec<4, T, defaultp>(0, static_cast<T>(2) * height_inv, 0, 0),
+			vec<4, T, defaultp>(0, 0, -static_cast<T>(2) * depth_inv, 0),
+			vec<4, T, defaultp>(-(right + left) * width_inv, -(top + bottom) * height_inv, -(zFar + zNear) * depth_inv, 1)
+		);
 	}
 
 	template<typename T>
