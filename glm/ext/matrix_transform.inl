@@ -124,37 +124,31 @@ namespace glm
 	template<typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER mat<4, 4, T, Q> lookAtRH(vec<3, T, Q> const& eye, vec<3, T, Q> const& center, vec<3, T, Q> const& up)
 	{
-		const T zero = static_cast<T>(0);
-		const T one = static_cast<T>(1);
-
 		vec<3, T, Q> const f(normalize(center - eye));
 		vec<3, T, Q> const s(normalize(cross(f, up)));
 		vec<3, T, Q> const u(cross(s, f));
 
-		mat<4, 4, T, Q> Result;
-		Result[0] = { s.x, u.x, -f.x, zero };
-		Result[1] = { s.y, u.y, -f.y, zero };
-		Result[2] = { s.z, u.z, -f.z, zero };
-		Result[3] = { -dot(s, eye), -dot(u, eye), dot(f, eye), one };
-		return Result;
+		return mat<4, 4, T, Q>(
+			vec<4, T, Q>(s.x, u.x, -f.x, 0),
+			vec<4, T, Q>(s.y, u.y, -f.y, 0),
+			vec<4, T, Q>(s.z, u.z, -f.z, 0),
+			vec<4, T, Q>(-dot(s, eye), -dot(u, eye), dot(f, eye), 1)
+		);
 	}
 
 	template<typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER mat<4, 4, T, Q> lookAtLH(vec<3, T, Q> const& eye, vec<3, T, Q> const& center, vec<3, T, Q> const& up)
 	{
-		const T zero = static_cast<T>(0);
-		const T one = static_cast<T>(1);
-
 		vec<3, T, Q> const f(normalize(center - eye));
 		vec<3, T, Q> const s(normalize(cross(up, f)));
 		vec<3, T, Q> const u(cross(f, s));
 
-		mat<4, 4, T, Q> Result;
-		Result[0] = { s.x, u.x, f.x, zero };
-		Result[1] = { s.y, u.y, f.y, zero };
-		Result[2] = { s.z, u.z, f.z, zero };
-		Result[3] = { -dot(s, eye), -dot(u, eye), -dot(f, eye), one };
-		return Result;
+		return mat<4, 4, T, Q>(
+			vec<4, T, Q>(s.x, u.x, f.x, 0),
+			vec<4, T, Q>(s.y, u.y, f.y, 0),
+			vec<4, T, Q>(s.z, u.z, f.z, 0),
+			vec<4, T, Q>(-dot(s, eye), -dot(u, eye), -dot(f, eye), 1)
+		);
 	}
 
 	template<typename T, qualifier Q>
