@@ -576,6 +576,43 @@ namespace detail {
 	template<length_t L, qualifier Q>
 	struct compute_splat<L, float, Q, true> {
 		template<int c>
+		GLM_FUNC_QUALIFIER GLM_CONSTEXPR static vec<L, float, Q> call(vec<L, float, Q> const& a) {
+			GLM_IF_CONSTEXPR (c == 0) {
+				vec<L, float, Q> Result;
+				Result.data = vdupq_lane_f32(vget_low_f32(a.data), 0);
+				return Result;
+			} else GLM_IF_CONSTEXPR (c == 1) {
+				vec<L, float, Q> Result;
+				Result.data = vdupq_lane_f32(vget_low_f32(a.data), 1);
+				return Result;
+			} else GLM_IF_CONSTEXPR (c == 2) {
+				vec<L, float, Q> Result;
+				Result.data = vdupq_lane_f32(vget_high_f32(a.data), 0);
+				return Result;
+			} else GLM_IF_CONSTEXPR (c == 3) {
+				vec<L, float, Q> Result;
+				Result.data = vdupq_lane_f32(vget_high_f32(a.data), 1);
+				return Result;
+			} else {
+				static_assert(c >= 0 && c < 4, "Index out of bounds");
+				return vec<L, float, Q>(0);
+			}
+		}
+	};
+
+	template<qualifier Q>
+	struct convert_vec4_to_vec3<float, Q, true> {
+		GLM_FUNC_QUALIFIER static vec<3, float, Q> call(vec<4, float, Q> const& a)
+		{
+			vec<3, float, Q> v;
+			v.data = a.data;
+			return v;
+		}
+	};
+
+	template<length_t L, qualifier Q>
+	struct compute_splat<L, float, Q, true> {
+		template<int c>
 		GLM_FUNC_QUALIFIER GLM_CONSTEXPR static vec<L, float, Q> call(vec<L, float, Q> const& a)
 		{
 			(void)a;
