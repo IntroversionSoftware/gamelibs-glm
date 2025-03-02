@@ -1192,35 +1192,28 @@ struct _swizzle_base1<L, uint, Q, E0, E1, E2, E3, true> : public _swizzle_base1<
 	template<>\
 	template<>\
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<L, float, Q>::vec(int _x, int _y, int _z, int _w) :\
-		data(vcvtq_f32_s32(vec<L, int, Q>(_x, _y, _z, _w).data))\
-	{}
-
-#define CTOR_VECF_UINT4(L, Q)\
-	template<>\
-	template<>\
-	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<L, float, Q>::vec(uint _x, uint _y, uint _z, uint _w) :\
-		data(vcvtq_f32_u32(vec<L, uint, Q>(_x, _y, _z, _w).data))\
+		data(vcvtq_f32_s32((vec<L, int, Q>(_x, _y, _z, _w).data)))\
 	{}
 
 #define CTOR_VECF_INT3(L, Q)\
 	template<>\
 	template<>\
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<L, float, Q>::vec(int _x, int _y, int _z) :\
-		data(vcvtq_f32_s32(vec<L, int, Q>(_x, _y, _z).data))\
+		data(vcvtq_f32_s32((vec<L, int, Q>(_x, _y, _z).data)))\
 	{}
 
 #define CTOR_VECF_UINT4(L, Q)\
 	template<>\
 	template<>\
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<L, float, Q>::vec(uint _x, uint _y, uint _z, uint _w) :\
-		data(vcvtq_f32_u32(vec<L, uint, Q>(_x, _y, _z, _w).data))\
+		data(vcvtq_f32_u32((vec<L, uint, Q>(_x, _y, _z, _w).data)))\
 	{}
 
 #define CTOR_VECF_UINT3(L, Q)\
 	template<>\
 	template<>\
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<L, float, Q>::vec(uint _x, uint _y, uint _z) :\
-		data(vcvtq_f32_u32(vec<L, uint, Q>(_x, _y, _z).data))\
+		data(vcvtq_f32_u32((vec<L, uint, Q>(_x, _y, _z).data)))\
 	{}
 
 
