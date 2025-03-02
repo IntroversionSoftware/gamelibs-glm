@@ -553,11 +553,11 @@ namespace glm {
 			GLM_FUNC_QUALIFIER static vec<4, float, Q> call(vec<3, float, Q> const& a)
 			{
 				vec<4, float, Q> v;
-				#if defined(_MSC_VER) && !defined(__clang__)
+#if defined(_MSC_VER) && !defined(__clang__)
 				static const uint32x4_t mask = { .n128_u32 = { 0, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF } };
-				#else
+#else
 				static const uint32x4_t mask = { 0, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF };
-				#endif
+#endif
 				v.data = vbslq_f32(mask, a.data, vdupq_n_f32(0));
 				return v;
 			}
@@ -576,43 +576,29 @@ namespace glm {
 		template<length_t L, qualifier Q>
 		struct compute_splat<L, float, Q, true> {
 			template<int c>
-			GLM_FUNC_QUALIFIER GLM_CONSTEXPR static vec<L, float, Q> call(vec<L, float, Q> const& a)
-			{
-				(void)a;
+			GLM_FUNC_QUALIFIER GLM_CONSTEXPR static vec<L, float, Q> call(vec<L, float, Q> const& a) {
+				if constexpr (c == 0) {
+					vec<L, float, Q> Result;
+					Result.data = vdupq_lane_f32(vget_low_f32(a.data), 0);
+					return Result;
+				} else if constexpr (c == 1) {
+					vec<L, float, Q> Result;
+					Result.data = vdupq_lane_f32(vget_low_f32(a.data), 1);
+					return Result;
+				} else if constexpr (c == 2) {
+					vec<L, float, Q> Result;
+					Result.data = vdupq_lane_f32(vget_high_f32(a.data), 0);
+					return Result;
+				} else if constexpr (c == 3) {
+					vec<L, float, Q> Result;
+					Result.data = vdupq_lane_f32(vget_high_f32(a.data), 1);
+					return Result;
+				} else {
+					static_assert(c >= 0 && c < 4, "Index out of bounds");
+					return vec<L, float, Q>(0);
+				}
 			}
-
-			template<>
-			GLM_FUNC_QUALIFIER GLM_CONSTEXPR static vec<L, float, Q> call<0>(vec<L, float, Q> const& a)
-			{
-				vec<L, float, Q> Result;
-				Result.data = vdupq_lane_f32(vget_low_f32(a.data), 0);
-				return Result;
-			}
-
-			template<>
-			GLM_FUNC_QUALIFIER GLM_CONSTEXPR static vec<L, float, Q> call<1>(vec<L, float, Q> const& a)
-			{
-				vec<L, float, Q> Result;
-				Result.data = vdupq_lane_f32(vget_low_f32(a.data), 1);
-				return Result;
-			}
-
-			template<>
-			GLM_FUNC_QUALIFIER GLM_CONSTEXPR static vec<L, float, Q> call<2>(vec<L, float, Q> const& a)
-			{
-				vec<L, float, Q> Result;
-				Result.data = vdupq_lane_f32(vget_high_f32(a.data), 0);
-				return Result;
-			}
-
-			template<>
-			GLM_FUNC_QUALIFIER GLM_CONSTEXPR static vec<L, float, Q> call<3>(vec<L, float, Q> const& a)
-			{
-				vec<L, float, Q> Result;
-				Result.data = vdupq_lane_f32(vget_high_f32(a.data), 1);
-				return Result;
-			}
-	};
+		};
 
 }//namespace detail
 }//namespace glm
