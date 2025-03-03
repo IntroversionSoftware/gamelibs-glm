@@ -262,8 +262,10 @@ namespace detail
 	{
 		GLM_FUNC_QUALIFIER static vec<L, T, Q> call(vec<L, T, Q> const& v)
 		{
-			const T invLen = 1.0f / compute_length<L, T, Q, true>::call(v);
-			return vec<L, T, Q>(v) *= invLen;
+			const T lenSq = compute_dot<vec<L, T, Q>, T, true>::call(v, v);
+			vec<L, T, Q> Result;
+			Result.data = v.data * compute_inversesqrt_scalar<T, lowp>::call(lenSq);
+			return Result;
 		}
 	};
 
@@ -273,7 +275,7 @@ namespace detail
 		GLM_FUNC_QUALIFIER static qua<T, Q> call(qua<T, Q> const& q, T lenSq)
 		{
 			qua<T, Q> Result;
-			Result.data = q.data * (1.0f / sqrt(lenSq));
+			Result.data = q.data * compute_inversesqrt_scalar<T, lowp>::call(lenSq);
 			return Result;
 		}
 	};
