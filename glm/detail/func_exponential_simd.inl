@@ -3,6 +3,10 @@
 
 #include "../simd/exponential.h"
 
+#if defined(_M_ARM64) || defined(__aarch64__)
+#include <arm_neon.h>
+#endif
+
 #if GLM_ARCH & GLM_ARCH_SSE2_BIT
 
 namespace glm{
