@@ -46,62 +46,71 @@ namespace detail
 	{
 		GLM_FUNC_QUALIFIER static float call(float _v)
 		{
+			float result;
+
 #if defined(_M_X64) || defined(__x86_64__)
-		// Load the scalar value into an SSE register
-		const __m128 v = _mm_set_ss(_v);
+			// Load the scalar value into an SSE register
+			const __m128 v = _mm_set_ss(_v);
 
-		// Get initial estimate of 1/sqrt(x) using the RSQRTSS instruction
-		// This provides a 12-bit approximation
-		const __m128 estimate = _mm_rsqrt_ss(v);
+			// Get initial estimate of 1/sqrt(x) using the RSQRTSS instruction
+			__m128 current = _mm_rsqrt_ss(v);
 
-		// Depending on our precision requirements, either do a single
-		// Newton-Raphson iteration, or just return the estimate as-is.
-		if constexpr (Q != lowp) {
-			// One Newton-Raphson iteration for refinement
-			// Formula: estimate = estimate * (1.5 - 0.5 * v * estimate * estimate)
-			const __m128 half = _mm_set_ss(0.5f);
-			const __m128 three_halves = _mm_set_ss(1.5f);
+			if constexpr (Q != lowp) {
+				// Constants for Newton-Raphson
+				const __m128 half = _mm_set_ss(0.5f);
+				const __m128 three_halves = _mm_set_ss(1.5f);
 
-			const __m128 estimate_squared = _mm_mul_ss(estimate, estimate); // estimate²
-			const __m128 v_times_est_squared = _mm_mul_ss(v, estimate_squared); // v * estimate²
-			const __m128 half_v_est_squared = _mm_mul_ss(half, v_times_est_squared); // 0.5 * v * estimate²
-			const __m128 step = _mm_sub_ss(three_halves, half_v_est_squared); // 1.5 - 0.5 * v * estimate²
-			const __m128 refined = _mm_mul_ss(estimate, step); // estimate * (1.5 - 0.5 * v * estimate²)
+				// First Newton-Raphson iteration for refinement
+				// y₁ = y₀ * (1.5 - 0.5 * x * y₀²)
+				__m128 current_squared = _mm_mul_ss(current, current);
+				__m128 v_times_est_squared = _mm_mul_ss(v, current_squared);
+				__m128 half_v_est_squared = _mm_mul_ss(half, v_times_est_squared);
+				__m128 step = _mm_sub_ss(three_halves, half_v_est_squared);
+				current = _mm_mul_ss(current, step);
+
+				if constexpr (Q == highp) {
+					// Second Newton-Raphson iteration for further refinement
+					// y₂ = y₁ * (1.5 - 0.5 * x * y₁²)
+					current_squared = _mm_mul_ss(current, current);
+					v_times_est_squared = _mm_mul_ss(v, current_squared);
+					half_v_est_squared = _mm_mul_ss(half, v_times_est_squared);
+					step = _mm_sub_ss(three_halves, half_v_est_squared);
+					current = _mm_mul_ss(current, step);
+				}
+			}
 
 			// Extract the result
-			float result;
-			_mm_store_ss(&result, refined);
-			return result;
-		} else {
-			// Extract the result
-			float result;
-			_mm_store_ss(&result, estimate);
-			return result;
-		}
+			_mm_store_ss(&result, current);
+
 #elif defined(_M_ARM64) || defined(__aarch64__)
-		// Load the scalar value into a NEON register
-		const float32x2_t v = vdup_n_f32(_v);
+			// Load the scalar value into a NEON register
+			const float32x2_t v = vdup_n_f32(_v);
 
-		// Get initial estimate of 1/sqrt(x)
-		const float32x2_t estimate = vrsqrte_f32(v);
+			// Get initial estimate of 1/sqrt(x)
+			float32x2_t current = vrsqrte_f32(v);
 
-		if constexpr (Q != lowp) {
-			// One Newton-Raphson iteration for refinement using vrsqrts_f32
-			// This intrinsic computes (2 - v * estimate^2) / 2, which is the step factor
-			const float32x2_t step = vrsqrts_f32(v, vmul_f32(estimate, estimate));
+			if constexpr (Q != lowp) {
+				// First Newton-Raphson iteration using vrsqrts_f32
+				// This intrinsic computes (2 - v * estimate^2) / 2, which is the step factor
+				float32x2_t step = vrsqrts_f32(v, vmul_f32(current, current));
+				current = vmul_f32(current, step);
 
-			// Apply the step: estimate = estimate * step
-			const float32x2_t refined = vmul_f32(estimate, step);
+				if constexpr (Q == highp) {
+					// Second Newton-Raphson iteration for further refinement
+					step = vrsqrts_f32(v, vmul_f32(current, current));
+					current = vmul_f32(current, step);
+				}
+			}
 
 			// Extract the result (first lane)
-			return vget_lane_f32(refined, 0);
-		} else {
-			// Extract the result (first lane)
-			return vget_lane_f32(estimate, 0);
-		}
+			result = vget_lane_f32(current, 0);
+
 #else
-		return 1.0f / std::sqrt(_v);
+			// Standard library fallback
+			result = 1.0f / std::sqrt(_v);
 #endif
+
+			return result;
 		}
 	};
 
