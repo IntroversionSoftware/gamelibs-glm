@@ -264,7 +264,7 @@ namespace detail
 		{
 			const T lenSq = compute_dot<vec<L, T, Q>, T, true>::call(v, v);
 			vec<L, T, Q> Result;
-			Result.data = v.data * compute_inversesqrt_scalar<T, lowp>::call(lenSq);
+			Result.data = v.data * compute_inversesqrt_scalar<T, mediump>::call(lenSq);
 			return Result;
 		}
 	};
