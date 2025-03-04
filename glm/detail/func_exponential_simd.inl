@@ -93,17 +93,15 @@ namespace detail
 			// Get initial estimate of 1/sqrt(x)
 			float32x2_t current = vrsqrte_f32(v);
 
-			if constexpr (Q != lowp) {
-				// First Newton-Raphson iteration using vrsqrts_f32
-				// This intrinsic computes (2 - v * estimate^2) / 2, which is the step factor
-				float32x2_t step = vrsqrts_f32(v, vmul_f32(current, current));
-				current = vmul_f32(current, step);
+			// First Newton-Raphson iteration using vrsqrts_f32
+			// This intrinsic computes (2 - v * estimate^2) / 2, which is the step factor
+			float32x2_t step = vrsqrts_f32(v, vmul_f32(current, current));
+			current = vmul_f32(current, step);
 
-				if constexpr (Q == highp) {
-					// Second Newton-Raphson iteration for further refinement
-					step = vrsqrts_f32(v, vmul_f32(current, current));
-					current = vmul_f32(current, step);
-				}
+			if constexpr (Q != lowp) {
+				// Second Newton-Raphson iteration for further refinement
+				step = vrsqrts_f32(v, vmul_f32(current, current));
+				current = vmul_f32(current, step);
 			}
 
 			// Extract the result (first lane)
