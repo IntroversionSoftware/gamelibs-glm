@@ -240,27 +240,30 @@ namespace detail
 	template<typename genIType>
 	GLM_FUNC_QUALIFIER genIType bitfieldReverse(genIType sx)
 	{
-		GLM_STATIC_ASSERT(std::numeric_limits<genIType>::is_integer, "'bitfieldReverse' only accept integer values");
+		GLM_STATIC_ASSERT(std::numeric_limits<genIType>::is_integer, "'bitfieldReverse' only accepts integer values");
 
-		using genIUType = typename std::make_unsigned<genIType>::type;
+		using UnsignedType = typename std::make_unsigned<genIType>::type;
+		static_assert(sizeof(UnsignedType) == sizeof(genIType), "Unsigned type must have the same size");
 
-		// Bit-cast using memcpy for safety in C++11
-		genIUType x;
-		std::memcpy(&x, &sx, sizeof(genIUType));
+		// Preserve bit representation via memcpy (bit_cast equivalent)
+		UnsignedType x;
+		std::memcpy(&x, &sx, sizeof(genIType));
 
-		genIUType r = x;
-		int s = sizeof(genIUType) * 8 - 1;
-		for (x >>= 1; x; x >>= 1) {
-			r <<= 1;
-			r |= x & 1;
-			s--;
+		UnsignedType result = 0;
+		int numBits = std::numeric_limits<genIType>::digits; // Excludes sign bit for signed types
+
+		for (int i = 0; i < numBits; ++i)
+		{
+			result = (result << 1) | (x & 1);
+			x >>= 1;
 		}
-		r <<= s;
 
-		memcpy(&sx, &x, sizeof(genIUType));
-
-		return sx;
+		// Convert back to original type safely
+		genIType finalResult;
+		std::memcpy(&finalResult, &result, sizeof(genIType));
+		return finalResult;
 	}
+
 
 	template<length_t L, typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER vec<L, T, Q> bitfieldReverse(vec<L, T, Q> const& v)
