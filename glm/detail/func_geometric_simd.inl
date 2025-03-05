@@ -251,9 +251,11 @@ namespace detail
 	{
 		GLM_FUNC_QUALIFIER static T call(vec<4, T, Q> const& x, vec<4, T, Q> const& y)
 		{
-			using storage_type = typename detail::storage<4, T, true>::type;
-			const storage_type prod = x.data * y.data;
-			return prod.x + prod.y + prod.z + prod.w;
+			using storage_type4 = typename detail::storage<4, T, true>::type;
+			using storage_type2 = typename detail::storage<2, T, true>::type;
+			const storage_type4 prod = x.data * y.data;
+			const storage_type2 hadd = prod.xy + prod.zw;
+			return hadd.x + hadd.y;
 		}
 	};
 
@@ -262,9 +264,11 @@ namespace detail
 	{
 		GLM_FUNC_QUALIFIER static T call(qua<T, Q> const& x, qua<T, Q> const& y)
 		{
-			using storage_type = typename detail::storage<4, T, true>::type;
-			const storage_type prod = x.data * y.data;
-			return prod.x + prod.y + prod.z + prod.w;
+			using storage_type4 = typename detail::storage<4, T, true>::type;
+			using storage_type2 = typename detail::storage<2, T, true>::type;
+			const storage_type4 prod = x.data * y.data;
+			const storage_type2 hadd = prod.xy + prod.zw;
+			return hadd.x + hadd.y;
 		}
 	};
 
