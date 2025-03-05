@@ -290,7 +290,7 @@ namespace detail
 		GLM_FUNC_QUALIFIER static qua<T, Q> call(qua<T, Q> const& q, T lenSq)
 		{
 			qua<T, Q> Result;
-			Result.data = q.data * compute_inversesqrt_scalar<T, mediump>::call(lenSq);
+			Result.data = q.data * compute_inversesqrt_scalar<T, lowp>::call(lenSq);
 			return Result;
 		}
 	};
