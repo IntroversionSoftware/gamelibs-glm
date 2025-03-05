@@ -257,6 +257,17 @@ namespace detail
 		}
 	};
 
+	template<typename T, qualifier Q>
+	struct compute_dot<qua<T, Q>, T, true>
+	{
+		GLM_FUNC_QUALIFIER static T call(qua<T, Q> const& x, qua<T, Q> const& y)
+		{
+			using storage_type = typename detail::storage<4, T, true>::type;
+			const storage_type prod = x.data * y.data;
+			return prod.x + prod.y + prod.z + prod.w;
+		}
+	};
+
 	template<length_t L, typename T, qualifier Q>
 	struct compute_normalize<L, T, Q, true>
 	{
