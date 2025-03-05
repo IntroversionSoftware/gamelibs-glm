@@ -11,10 +11,16 @@ namespace glm
 		template<typename MatrixType, typename T, qualifier Q>
 		GLM_FUNC_QUALIFIER qua<T, Q> quat_cast_impl(MatrixType const& m)
 		{
-			T fourXSquaredMinus1 = m[0][0] - m[1][1] - m[2][2];
-			T fourYSquaredMinus1 = m[1][1] - m[0][0] - m[2][2];
-			T fourZSquaredMinus1 = m[2][2] - m[0][0] - m[1][1];
-			T fourWSquaredMinus1 = m[0][0] + m[1][1] + m[2][2];
+			// Compute diagonal elements once
+			T m00 = m[0][0];
+			T m11 = m[1][1];
+			T m22 = m[2][2];
+
+			// Compute the four squares directly
+			T fourWSquaredMinus1 = m00 + m11 + m22;
+			T fourXSquaredMinus1 = m00 - m11 - m22;
+			T fourYSquaredMinus1 = m11 - m00 - m22;
+			T fourZSquaredMinus1 = m22 - m00 - m11;
 
 			int biggestIndex = 0;
 			T fourBiggestSquaredMinus1 = fourWSquaredMinus1;
@@ -34,25 +40,61 @@ namespace glm
 				biggestIndex = 3;
 			}
 
-			T biggestVal = sqrt(fourBiggestSquaredMinus1 + static_cast<T>(1)) * static_cast<T>(0.5);
-			T mult = static_cast<T>(0.25) / biggestVal;
+			// Calculate these only once
+			T biggestVal = sqrt(fourBiggestSquaredMinus1 + T(1)) * T(0.5);
+			T mult = T(0.25) / biggestVal;
+
+			// Pre-compute differences and sums that appear in multiple cases
+			T yz_zy = m[1][2] - m[2][1];
+			T zx_xz = m[2][0] - m[0][2];
+			T xy_yx = m[0][1] - m[1][0];
+
+			// We only need these if biggestIndex != 0
+			T xy_plus_yx, zx_plus_xz, yz_plus_zy;
+			if (biggestIndex != 0) {
+				xy_plus_yx = m[0][1] + m[1][0];
+				zx_plus_xz = m[2][0] + m[0][2];
+				yz_plus_zy = m[1][2] + m[2][1];
+			}
 
 			switch(biggestIndex)
 			{
 			case 0:
-				return qua<T, Q>::wxyz(biggestVal, (m[1][2] - m[2][1]) * mult, (m[2][0] - m[0][2]) * mult, (m[0][1] - m[1][0]) * mult);
+				return qua<T, Q>::wxyz(
+					biggestVal,
+					yz_zy * mult,
+					zx_xz * mult,
+					xy_yx * mult
+				);
 			case 1:
-				return qua<T, Q>::wxyz((m[1][2] - m[2][1]) * mult, biggestVal, (m[0][1] + m[1][0]) * mult, (m[2][0] + m[0][2]) * mult);
+				return qua<T, Q>::wxyz(
+					yz_zy * mult,
+					biggestVal,
+					xy_plus_yx * mult,
+					zx_plus_xz * mult
+				);
 			case 2:
-				return qua<T, Q>::wxyz((m[2][0] - m[0][2]) * mult, (m[0][1] + m[1][0]) * mult, biggestVal, (m[1][2] + m[2][1]) * mult);
+				return qua<T, Q>::wxyz(
+					zx_xz * mult,
+					xy_plus_yx * mult,
+					biggestVal,
+					yz_plus_zy * mult
+				);
 			case 3:
-				return qua<T, Q>::wxyz((m[0][1] - m[1][0]) * mult, (m[2][0] + m[0][2]) * mult, (m[1][2] + m[2][1]) * mult, biggestVal);
-			default: // Silence a -Wswitch-default warning in GCC. Should never actually get here. Assert is just for sanity.
-				assert(false);
-				return qua<T, Q>::wxyz(1, 0, 0, 0);
+				return qua<T, Q>::wxyz(
+					xy_yx * mult,
+					zx_plus_xz * mult,
+					yz_plus_zy * mult,
+					biggestVal
+				);
 			}
+
+			// Unreachable, but avoids compiler warnings
+			// Will be optimized out completely
+			return qua<T, Q>::wxyz(T(1), T(0), T(0), T(0));
 		}
-	}
+	}//namespace detail
+
 	template<typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER vec<3, T, Q> eulerAngles(qua<T, Q> const& x)
 	{
