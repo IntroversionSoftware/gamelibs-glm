@@ -61,6 +61,36 @@ namespace detail
 		static const bool value = false;
 	};
 
+	template<glm::qualifier P>
+	struct is_highp
+	{
+#	if GLM_CONFIG_ALIGNED_GENTYPES == GLM_ENABLE
+		static const bool value = P == glm::highp || P == glm::aligned_highp;
+#	else
+		static const bool value = P == glm::highp;
+#	endif
+	};
+
+	template<glm::qualifier P>
+	struct is_mediump
+	{
+#	if GLM_CONFIG_ALIGNED_GENTYPES == GLM_ENABLE
+		static const bool value = P == glm::mediump || P == glm::aligned_mediump;
+#	else
+		static const bool value = P == glm::mediump;
+#	endif
+	};
+
+	template<glm::qualifier P>
+	struct is_lowp
+	{
+#	if GLM_CONFIG_ALIGNED_GENTYPES == GLM_ENABLE
+		static const bool value = P == glm::lowp || P == glm::aligned_lowp;
+#	else
+		static const bool value = P == glm::lowp;
+#	endif
+	};
+
 #	if GLM_CONFIG_ALIGNED_GENTYPES == GLM_ENABLE
 		template<>
 		struct is_aligned<glm::aligned_lowp>
