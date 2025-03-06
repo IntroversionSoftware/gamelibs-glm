@@ -482,8 +482,8 @@ namespace detail
 		const T y = axis.y;
 		const T z = axis.z;
 
-		const T c = std::cos(angle);
-		const T s = std::sin(angle);
+		const T c = cos(angle);
+		const T s = sin(angle);
 		const T t = one - c;
 		const T tx = t * x;
 		const T ty = t * y;
