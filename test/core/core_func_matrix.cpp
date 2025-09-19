@@ -201,9 +201,126 @@ static int test_transpose()
 
 static int test_determinant()
 {
+	int Error = 0;
 
+	// Test 2x2 matrices
+	{
+		// Identity matrix - determinant should be 1
+		glm::mat2 m0(1.0f, 0.0f, 0.0f, 1.0f);
+		float det0 = glm::determinant(m0);
+		Error += glm::abs(det0 - 1.0f) < glm::epsilon<float>() ? 0 : 1;
 
-	return 0;
+		// Simple 2x2 case: [[1,2],[3,4]] - determinant = 1*4 - 2*3 = -2
+		glm::mat2 m1(1.0f, 3.0f, 2.0f, 4.0f);
+		float det1 = glm::determinant(m1);
+		Error += glm::abs(det1 - (-2.0f)) < glm::epsilon<float>() ? 0 : 1;
+
+		// Singular matrix (zero determinant)
+		glm::mat2 m2(1.0f, 2.0f, 2.0f, 4.0f);
+		float det2 = glm::determinant(m2);
+		Error += glm::abs(det2 - 0.0f) < glm::epsilon<float>() ? 0 : 1;
+
+		// Scaling matrix - determinant should be product of diagonal elements
+		glm::mat2 m3(2.0f, 0.0f, 0.0f, 3.0f);
+		float det3 = glm::determinant(m3);
+		Error += glm::abs(det3 - 6.0f) < glm::epsilon<float>() ? 0 : 1;
+	}
+
+	// Test 3x3 matrices
+	{
+		// Identity matrix
+		glm::mat3 m0(1.0f);
+		float det0 = glm::determinant(m0);
+		Error += glm::abs(det0 - 1.0f) < glm::epsilon<float>() ? 0 : 1;
+
+		// Simple 3x3 case: [[1,2,3],[0,1,4],[5,6,0]]
+		// determinant = 1*(1*0 - 4*6) - 2*(0*0 - 4*5) + 3*(0*6 - 1*5) = 1*(-24) - 2*(-20) + 3*(-5) = -24 + 40 - 15 = 1
+		glm::mat3 m1(1.0f, 0.0f, 5.0f,    // first column
+					 2.0f, 1.0f, 6.0f,    // second column  
+					 3.0f, 4.0f, 0.0f);   // third column
+		float det1 = glm::determinant(m1);
+		Error += glm::abs(det1 - 1.0f) < glm::epsilon<float>() ? 0 : 1;
+
+		// Singular 3x3 matrix (row 3 = row 1 + row 2)
+		glm::mat3 m2(1.0f, 2.0f, 3.0f,    // first column
+					 2.0f, 3.0f, 5.0f,    // second column
+					 3.0f, 5.0f, 8.0f);   // third column (sum of first two)
+		float det2 = glm::determinant(m2);
+		Error += glm::abs(det2 - 0.0f) < glm::epsilon<float>() ? 0 : 1;
+
+		// Diagonal matrix
+		glm::mat3 m3(2.0f, 0.0f, 0.0f,
+					 0.0f, 3.0f, 0.0f,
+					 0.0f, 0.0f, 4.0f);
+		float det3 = glm::determinant(m3);
+		Error += glm::abs(det3 - 24.0f) < glm::epsilon<float>() ? 0 : 1;
+	}
+
+	// Test 4x4 matrices
+	{
+		// Identity matrix
+		glm::mat4 m0(1.0f);
+		float det0 = glm::determinant(m0);
+		Error += glm::abs(det0 - 1.0f) < glm::epsilon<float>() ? 0 : 1;
+
+		// Diagonal matrix
+		glm::mat4 m1(2.0f, 0.0f, 0.0f, 0.0f,
+					 0.0f, 3.0f, 0.0f, 0.0f,
+					 0.0f, 0.0f, 4.0f, 0.0f,
+					 0.0f, 0.0f, 0.0f, 5.0f);
+		float det1 = glm::determinant(m1);
+		Error += glm::abs(det1 - 120.0f) < glm::epsilon<float>() ? 0 : 1;
+
+		// Upper triangular matrix - determinant should be product of diagonal
+		glm::mat4 m2(2.0f, 0.0f, 0.0f, 0.0f,
+					 1.0f, 3.0f, 0.0f, 0.0f,
+					 4.0f, 5.0f, 2.0f, 0.0f,
+					 6.0f, 7.0f, 8.0f, 4.0f);
+		float det2 = glm::determinant(m2);
+		Error += glm::abs(det2 - 48.0f) < glm::epsilon<float>() ? 0 : 1;
+
+		// Known 4x4 case - using a matrix with a simple, calculable determinant
+		// This matrix has determinant = 17
+		glm::mat4 m3(1.0f, 0.0f, 2.0f, 0.0f,
+					 2.0f, 1.0f, 0.0f, 1.0f,
+					 1.0f, 2.0f, 1.0f, 0.0f,
+					 0.0f, 1.0f, 1.0f, 2.0f);
+		float det3 = glm::determinant(m3);
+		Error += glm::abs(det3 - 17.0f) < glm::epsilon<float>() ? 0 : 1;
+
+		// Singular 4x4 matrix (rank deficient)
+		glm::mat4 m4(1.0f, 2.0f, 3.0f, 6.0f,    // columns are linearly dependent
+					 2.0f, 4.0f, 6.0f, 12.0f,   // column 4 = 2 * column 3
+					 1.0f, 2.0f, 3.0f, 6.0f,
+					 0.0f, 0.0f, 0.0f, 0.0f);
+		float det4 = glm::determinant(m4);
+		Error += glm::abs(det4 - 0.0f) < glm::epsilon<float>() ? 0 : 1;
+	}
+
+	// Test edge cases
+	{
+		// Matrix with negative values
+		glm::mat2 m0(-1.0f, 0.0f, 0.0f, -1.0f);
+		float det0 = glm::determinant(m0);
+		Error += glm::abs(det0 - 1.0f) < glm::epsilon<float>() ? 0 : 1;
+
+		// Matrix with very small values (testing numerical stability)
+		glm::mat2 m1(1e-6f, 0.0f, 0.0f, 1e-6f);
+		float det1 = glm::determinant(m1);
+		Error += glm::abs(det1 - 1e-12f) < 1e-15f ? 0 : 1;
+
+		// Matrix with larger values
+		glm::mat2 m2(100.0f, 0.0f, 0.0f, 100.0f);
+		float det2 = glm::determinant(m2);
+		Error += glm::abs(det2 - 10000.0f) < glm::epsilon<float>() ? 0 : 1;
+	}
+
+	// Output debug info on failures
+	if (Error > 0) {
+		printf("test_determinant failed with %d errors\n", Error);
+	}
+
+	return Error;
 }
 
 static int test_inverse()
