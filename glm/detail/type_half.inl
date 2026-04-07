@@ -45,8 +45,33 @@ namespace detail
 		unsigned int i;
 	};
 
+	template <class To, class From>
+	To bit_cast_fallback(const From& src) noexcept {
+		static_assert(sizeof(To) == sizeof(From), "size mismatch");
+		static_assert(std::is_trivially_copyable<From>::value, "From not trivially copyable");
+		static_assert(std::is_trivially_copyable<To>::value, "To not trivially copyable");
+
+		To dst;
+		std::memcpy(&dst, &src, sizeof(To));
+		return dst;
+	}
+
+	template <class To, class From>
+	To bit_cast(const From& src) noexcept {
+#if defined(__has_builtin) && __has_builtin(__builtin_bit_cast)
+		return __builtin_bit_cast(To, src);
+#else
+		return bit_cast_fallback<To>(src);
+#endif
+	}
+
 	GLM_FUNC_QUALIFIER float toFloat32(hdata value)
 	{
+#if defined(__clang__) && defined(__FLT16_MANT_DIG__) && __FLT16_MANT_DIG__ == 11
+		_Float16 f16 = bit_cast<_Float16>(value);
+		float f32 = static_cast<float>(f16);
+		return f32;
+#else
 		int s = (value >> 15) & 0x00000001;
 		int e = (value >> 10) & 0x0000001f;
 		int m =  value        & 0x000003ff;
@@ -117,10 +142,16 @@ namespace detail
 		uif32 Result;
 		Result.i = static_cast<unsigned int>((s << 31) | (e << 23) | m);
 		return Result.f;
+#endif
 	}
 
 	GLM_FUNC_QUALIFIER hdata toFloat16(float const& f)
 	{
+#if defined(__clang__) && defined(__FLT16_MANT_DIG__) && __FLT16_MANT_DIG__ == 11
+		_Float16 f16 = static_cast<_Float16>(f);
+		hdata h16 = bit_cast<hdata>(f16);
+		return h16;
+#else
 		uif32 Entry;
 		Entry.f = f;
 		int i = static_cast<int>(Entry.i);
@@ -252,6 +283,7 @@ namespace detail
 
 			return hdata(s | (e << 10) | (m >> 13));
 		}
+#endif
 	}
 
 }//namespace detail
