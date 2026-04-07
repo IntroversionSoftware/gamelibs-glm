@@ -45,6 +45,43 @@ namespace detail
 		unsigned int i;
 	};
 
+	template <class To, class From>
+	constexpr To bit_cast_fallback(const From& src) noexcept {
+		static_assert(sizeof(To) == sizeof(From), "size mismatch");
+		static_assert(std::is_trivially_copyable<From>::value, "From not trivially copyable");
+		static_assert(std::is_trivially_copyable<To>::value, "To not trivially copyable");
+
+		To dst;
+		std::memcpy(&dst, &src, sizeof(To));
+		return dst;
+	}
+
+	template <class To, class From>
+	constexpr To bit_cast(const From& src) noexcept {
+#if GLM_HAS_BUILTIN(__builtin_bit_cast)
+		return __builtin_bit_cast(To, src);
+#else
+		return bit_cast_fallback<To>(src);
+#endif
+	}
+
+#if GLM_HAS_NATIVE_FLOAT16
+	constexpr float toFloat32(hdata value)
+	{
+		_Float16 f16 = bit_cast<_Float16>(value);
+		float f32 = static_cast<float>(f16);
+		return f32;
+	}
+
+	constexpr hdata toFloat16(float const& f)
+	{
+		_Float16 f16 = static_cast<_Float16>(f);
+		hdata h16 = bit_cast<hdata>(f16);
+		return h16;
+	}
+#else
+	// Bit-twiddling fallback: uses non-literal uif32, so cannot be constexpr
+	// before C++23.
 	GLM_FUNC_QUALIFIER float toFloat32(hdata value)
 	{
 		int s = (value >> 15) & 0x00000001;
@@ -253,6 +290,7 @@ namespace detail
 			return hdata(s | (e << 10) | (m >> 13));
 		}
 	}
+#endif // GLM_HAS_NATIVE_FLOAT16
 
 }//namespace detail
 }//namespace glm
