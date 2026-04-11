@@ -46,7 +46,7 @@ namespace detail
 	};
 
 	template <class To, class From>
-	To bit_cast_fallback(const From& src) noexcept {
+	constexpr To bit_cast_fallback(const From& src) noexcept {
 		static_assert(sizeof(To) == sizeof(From), "size mismatch");
 		static_assert(std::is_trivially_copyable<From>::value, "From not trivially copyable");
 		static_assert(std::is_trivially_copyable<To>::value, "To not trivially copyable");
@@ -57,7 +57,7 @@ namespace detail
 	}
 
 	template <class To, class From>
-	To bit_cast(const From& src) noexcept {
+	constexpr To bit_cast(const From& src) noexcept {
 #if defined(__has_builtin) && __has_builtin(__builtin_bit_cast)
 		return __builtin_bit_cast(To, src);
 #else
@@ -65,7 +65,7 @@ namespace detail
 #endif
 	}
 
-	GLM_FUNC_QUALIFIER float toFloat32(hdata value)
+	constexpr float toFloat32(hdata value)
 	{
 #if defined(__clang__) && defined(__FLT16_MANT_DIG__) && __FLT16_MANT_DIG__ == 11
 		_Float16 f16 = bit_cast<_Float16>(value);
@@ -145,7 +145,7 @@ namespace detail
 #endif
 	}
 
-	GLM_FUNC_QUALIFIER hdata toFloat16(float const& f)
+	constexpr hdata toFloat16(float const& f)
 	{
 #if defined(__clang__) && defined(__FLT16_MANT_DIG__) && __FLT16_MANT_DIG__ == 11
 		_Float16 f16 = static_cast<_Float16>(f);
