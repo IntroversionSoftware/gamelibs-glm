@@ -65,13 +65,25 @@ namespace detail
 #endif
 	}
 
+#if GLM_HAS_NATIVE_FLOAT16
 	constexpr float toFloat32(hdata value)
 	{
-#if defined(__clang__) && defined(__FLT16_MANT_DIG__) && __FLT16_MANT_DIG__ == 11
 		_Float16 f16 = bit_cast<_Float16>(value);
 		float f32 = static_cast<float>(f16);
 		return f32;
+	}
+
+	constexpr hdata toFloat16(float const& f)
+	{
+		_Float16 f16 = static_cast<_Float16>(f);
+		hdata h16 = bit_cast<hdata>(f16);
+		return h16;
+	}
 #else
+	// Bit-twiddling fallback: uses non-literal uif32, so cannot be constexpr
+	// before C++23.
+	GLM_FUNC_QUALIFIER float toFloat32(hdata value)
+	{
 		int s = (value >> 15) & 0x00000001;
 		int e = (value >> 10) & 0x0000001f;
 		int m =  value        & 0x000003ff;
@@ -142,16 +154,10 @@ namespace detail
 		uif32 Result;
 		Result.i = static_cast<unsigned int>((s << 31) | (e << 23) | m);
 		return Result.f;
-#endif
 	}
 
-	constexpr hdata toFloat16(float const& f)
+	GLM_FUNC_QUALIFIER hdata toFloat16(float const& f)
 	{
-#if defined(__clang__) && defined(__FLT16_MANT_DIG__) && __FLT16_MANT_DIG__ == 11
-		_Float16 f16 = static_cast<_Float16>(f);
-		hdata h16 = bit_cast<hdata>(f16);
-		return h16;
-#else
 		uif32 Entry;
 		Entry.f = f;
 		int i = static_cast<int>(Entry.i);
@@ -283,8 +289,8 @@ namespace detail
 
 			return hdata(s | (e << 10) | (m >> 13));
 		}
-#endif
 	}
+#endif // GLM_HAS_NATIVE_FLOAT16
 
 }//namespace detail
 }//namespace glm
