@@ -2,6 +2,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/epsilon.hpp>
 #include <glm/gtx/intersect.hpp>
+#include <cstdio>
 
 static int test_intersectRayPlane()
 {
