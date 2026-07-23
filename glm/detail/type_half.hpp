@@ -1,6 +1,7 @@
 #pragma once
 
 #include "setup.hpp"
+#include <cstring>   // std::memcpy (bit_cast_fallback)
 
 // When a native IEEE 754 binary16 type is available (Clang/GCC _Float16 on
 // x86_64/aarch64, etc.), toFloat32/toFloat16 reduce to a cast and can be
