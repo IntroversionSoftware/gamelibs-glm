@@ -1372,8 +1372,8 @@ namespace usubBorrow
 				LOG_ERROR(1, Borrow, "usubBorrow: Expected Borrow to be 1 when subtracting 17 from 16");
 				Error++;
 			}
-			if (Result != 1) {
-				LOG_ERROR(1, Result, "usubBorrow: Expected Result to be 1 when subtracting 17 from 16");
+			if (Result != (x - y)) {
+				LOG_ERROR(x - y, Result, "usubBorrow: Expected Result to be x-y (4294967295) when subtracting 17 from 16");
 				Error++;
 			}
 		}
@@ -1389,9 +1389,9 @@ namespace usubBorrow
 					"usubBorrow: Expected Borrow to be uvec1(1) when subtracting uvec1(17) from uvec1(16)");
 				Error++;
 			}
-			if (!glm::all(glm::equal(Result, glm::uvec1(1)))) {
-				LOG_ERROR("uvec1(1)", "uvec1(" + std::to_string(Result.x) + ")",
-					"usubBorrow: Expected Result to be uvec1(1) when subtracting uvec1(17) from uvec1(16)");
+			if (!glm::all(glm::equal(Result, x - y))) {
+				LOG_ERROR("uvec1(4294967295)", "uvec1(" + std::to_string(Result.x) + ")",
+					"usubBorrow: Expected Result to be uvec1(x-y) when subtracting uvec1(17) from uvec1(16)");
 				Error++;
 			}
 		}
@@ -1409,11 +1409,11 @@ namespace usubBorrow
 					"usubBorrow: Expected Borrow to be uvec2(1, 1) when subtracting uvec2(17) from uvec2(16)");
 				Error++;
 			}
-			if (!glm::all(glm::equal(Result, glm::uvec2(1)))) {
+			if (!glm::all(glm::equal(Result, x - y))) {
 				std::stringstream ss;
-				ss << "uvec2(1, 1) vs uvec2(" << Result.x << ", " << Result.y << ")";
-				LOG_ERROR("uvec2(1, 1)", ss.str(),
-					"usubBorrow: Expected Result to be uvec2(1, 1) when subtracting uvec2(17) from uvec2(16)");
+				ss << "uvec2(x-y) vs uvec2(" << Result.x << ", " << Result.y << ")";
+				LOG_ERROR("uvec2(4294967295, 4294967295)", ss.str(),
+					"usubBorrow: Expected Result to be uvec2(x-y) when subtracting uvec2(17) from uvec2(16)");
 				Error++;
 			}
 		}
@@ -1431,11 +1431,11 @@ namespace usubBorrow
 					"usubBorrow: Expected Borrow to be uvec3(1, 1, 1) when subtracting uvec3(17) from uvec3(16)");
 				Error++;
 			}
-			if (!glm::all(glm::equal(Result, glm::uvec3(1)))) {
+			if (!glm::all(glm::equal(Result, x - y))) {
 				std::stringstream ss;
-				ss << "uvec3(1, 1, 1) vs uvec3(" << Result.x << ", " << Result.y << ", " << Result.z << ")";
-				LOG_ERROR("uvec3(1, 1, 1)", ss.str(),
-					"usubBorrow: Expected Result to be uvec3(1, 1, 1) when subtracting uvec3(17) from uvec3(16)");
+				ss << "uvec3(x-y) vs uvec3(" << Result.x << ", " << Result.y << ", " << Result.z << ")";
+				LOG_ERROR("uvec3(4294967295, 4294967295, 4294967295)", ss.str(),
+					"usubBorrow: Expected Result to be uvec3(x-y) when subtracting uvec3(17) from uvec3(16)");
 				Error++;
 			}
 		}
@@ -1454,9 +1454,9 @@ namespace usubBorrow
 					"usubBorrow: Expected Borrow to be uvec4(1) when subtracting uvec4(17) from uvec4(16)");
 				Error++;
 			}
-			if (!glm::all(glm::equal(Result, glm::uvec4(1)))) {
+			if (!glm::all(glm::equal(Result, x - y))) {
 				std::stringstream ss;
-				ss << "uvec4(1, 1, 1, 1) vs uvec4(" << Result.x << ", " << Result.y << ", "
+				ss << "uvec4(x-y) vs uvec4(" << Result.x << ", " << Result.y << ", "
 				   << Result.z << ", " << Result.w << ")";
 				LOG_ERROR("uvec4(1, 1, 1, 1)", ss.str(),
 					"usubBorrow: Expected Result to be uvec4(1) when subtracting uvec4(17) from uvec4(16)");
