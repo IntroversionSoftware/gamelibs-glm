@@ -130,64 +130,36 @@ namespace glm
 			}
 		};
 
-		// Separate sine template using the shared sincos implementation.
+		// Scalar / non-SIMD (packed) path: defer to libm for all qualifiers.
+		// A scalar polynomial cannot beat libm on speed and is less accurate, so
+		// mediump/lowp gain nothing here; the fast approximation lives in the SIMD
+		// specialization (func_trigonometric_simd.inl) for aligned vectors.
 		template<length_t L, typename T, qualifier Q, bool UseSimd = false>
 		struct compute_sin_vec {
 			GLM_FUNC_QUALIFIER static vec<L, T, Q> call(vec<L, T, Q> const& angle) {
-				if (is_highp<Q>::value) {
-					vec<L, T, Q> result;
-					for (length_t i = 0; i < L; ++i) {
-						result[i] = std::sin(angle[i]);
-					}
-					return result;
-				}
-				else {
-					return compute_sincos_vec<L, T, Q, UseSimd>::call(angle).sin;
-				}
+				vec<L, T, Q> result;
+				for (length_t i = 0; i < L; ++i)
+					result[i] = std::sin(angle[i]);
+				return result;
 			}
 		};
 
-		// Separate cosine template using the shared sincos implementation.
 		template<length_t L, typename T, qualifier Q, bool UseSimd = false>
 		struct compute_cos_vec {
 			GLM_FUNC_QUALIFIER static vec<L, T, Q> call(vec<L, T, Q> const& angle) {
-				if (is_highp<Q>::value) {
-					vec<L, T, Q> result;
-					for (length_t i = 0; i < L; ++i) {
-						result[i] = std::cos(angle[i]);
-					}
-					return result;
-				}
-				else {
-					return compute_sincos_vec<L, T, Q, UseSimd>::call(angle).cos;
-				}
+				vec<L, T, Q> result;
+				for (length_t i = 0; i < L; ++i)
+					result[i] = std::cos(angle[i]);
+				return result;
 			}
 		};
 
-		// Tangent is computed as sin/cos, with a safeguard for near-asymptotic values.
 		template<length_t L, typename T, qualifier Q, bool UseSimd = false>
 		struct compute_tan_vec {
 			GLM_FUNC_QUALIFIER static vec<L, T, Q> call(vec<L, T, Q> const& angle) {
 				vec<L, T, Q> result;
-				if (is_highp<Q>::value) {
-					for (length_t i = 0; i < L; ++i) {
-						result[i] = std::tan(angle[i]);
-					}
-				}
-				else {
-					// Compute sin and cos
-					auto sc = compute_sincos_vec<L, T, Q, UseSimd>::call(angle);
-					for (length_t i = 0; i < L; ++i) {
-						// When cosine is too close to zero, return a large value with the proper sign.
-						const T epsilon_threshold = T(1e-3);  // Adjust threshold as needed.
-						if (std::abs(sc.cos[i]) < epsilon_threshold) {
-							result[i] = std::copysign(T(1000000.0), sc.sin[i]);
-						}
-						else {
-							result[i] = sc.sin[i] / sc.cos[i];
-						}
-					}
-				}
+				for (length_t i = 0; i < L; ++i)
+					result[i] = std::tan(angle[i]);
 				return result;
 			}
 		};
@@ -756,7 +728,7 @@ namespace glm
 	// Vector tan implementation with precision from the vector's qualifier
 	template<length_t L, typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER vec<L, T, Q> tan(vec<L, T, Q> const& angle) {
-		return detail::compute_tan_vec<L, T, Q>::call(angle);
+		return detail::compute_tan_vec<L, T, Q, detail::is_aligned<Q>::value>::call(angle);
 	}
 
 	// Scalar asin implementation with precision qualifier
