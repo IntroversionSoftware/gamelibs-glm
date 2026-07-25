@@ -49,6 +49,39 @@ namespace detail
 			return static_cast<T>(1) / sqrt(x);
 		}
 	};
+
+	using std::exp;
+	using std::log;
+	using std::exp2;
+
+	// exp/log/exp2 dispatch (primary = per-element libm; SIMD specializations for
+	// aligned float in func_exponential_simd.inl accelerate mediump/lowp).
+	template<length_t L, typename T, qualifier Q, bool Aligned>
+	struct compute_exp
+	{
+		GLM_FUNC_QUALIFIER static vec<L, T, Q> call(vec<L, T, Q> const& x)
+		{
+			return detail::functor1<vec, L, T, T, Q>::call(exp, x);
+		}
+	};
+
+	template<length_t L, typename T, qualifier Q, bool Aligned>
+	struct compute_log
+	{
+		GLM_FUNC_QUALIFIER static vec<L, T, Q> call(vec<L, T, Q> const& x)
+		{
+			return detail::functor1<vec, L, T, T, Q>::call(log, x);
+		}
+	};
+
+	template<length_t L, typename T, qualifier Q, bool Aligned>
+	struct compute_exp2
+	{
+		GLM_FUNC_QUALIFIER static vec<L, T, Q> call(vec<L, T, Q> const& x)
+		{
+			return detail::functor1<vec, L, T, T, Q>::call(exp2, x);
+		}
+	};
 }//namespace detail
 
 	// pow
@@ -64,7 +97,7 @@ namespace detail
 	template<length_t L, typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER vec<L, T, Q> exp(vec<L, T, Q> const& x)
 	{
-		return detail::functor1<vec, L, T, T, Q>::call(exp, x);
+		return detail::compute_exp<L, T, Q, detail::is_aligned<Q>::value>::call(x);
 	}
 
 	// log
@@ -72,7 +105,7 @@ namespace detail
 	template<length_t L, typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER vec<L, T, Q> log(vec<L, T, Q> const& x)
 	{
-		return detail::functor1<vec, L, T, T, Q>::call(log, x);
+		return detail::compute_log<L, T, Q, detail::is_aligned<Q>::value>::call(x);
 	}
 
     using std::exp2;
@@ -80,7 +113,7 @@ namespace detail
 	template<length_t L, typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER vec<L, T, Q> exp2(vec<L, T, Q> const& x)
 	{
-		return detail::functor1<vec, L, T, T, Q>::call(exp2, x);
+		return detail::compute_exp2<L, T, Q, detail::is_aligned<Q>::value>::call(x);
 	}
 
 	// log2, ln2 = 0.69314718055994530941723212145818f
