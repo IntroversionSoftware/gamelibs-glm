@@ -322,10 +322,15 @@ namespace detail
 		GLM_FUNC_QUALIFIER static mat<4, 4, float, Q> call(mat<4, 4, float, Q> const &m)
 		{
 			mat<4, 4, float, Q> Result;
-			Result[0].data = { m[0].data.x, m[1].data.x, m[2].data.x, m[3].data.x };
-			Result[1].data = { m[0].data.y, m[1].data.y, m[2].data.y, m[3].data.y };
-			Result[2].data = { m[0].data.z, m[1].data.z, m[2].data.z, m[3].data.z };
-			Result[3].data = { m[0].data.w, m[1].data.w, m[2].data.w, m[3].data.w };
+			auto r0 = m[0].data, r1 = m[1].data, r2 = m[2].data, r3 = m[3].data;
+			auto t0 = __builtin_shufflevector(r0, r1, 0, 1, 4, 5); // movlhps
+			auto t1 = __builtin_shufflevector(r0, r1, 2, 3, 6, 7); // unpckhpd
+			auto t2 = __builtin_shufflevector(r2, r3, 0, 1, 4, 5);
+			auto t3 = __builtin_shufflevector(r2, r3, 2, 3, 6, 7);
+			Result[0].data = __builtin_shufflevector(t0, t2, 0, 2, 4, 6); // shufps 0x88
+			Result[1].data = __builtin_shufflevector(t0, t2, 1, 3, 5, 7); // shufps 0xdd
+			Result[2].data = __builtin_shufflevector(t1, t3, 0, 2, 4, 6);
+			Result[3].data = __builtin_shufflevector(t1, t3, 1, 3, 5, 7);
 			return Result;
 		}
 	};
