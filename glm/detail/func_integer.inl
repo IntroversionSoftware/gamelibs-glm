@@ -96,6 +96,53 @@ namespace detail
 	};
 #endif
 
+	// 8/16-bit: zero-extend to 32-bit and use the 32-bit bit-scan builtins
+	// (there is no native 8/16-bit lzcnt/tzcnt). Matches the generic primary's
+	// bit-pattern semantics; ~10x faster than the fallback loop.
+#if GLM_HAS_BUILTIN(__builtin_ctz)
+	template<typename genIUType>
+	struct compute_findLSB<genIUType, 16>
+	{
+		GLM_FUNC_QUALIFIER static int call(genIUType Value)
+		{
+			unsigned const v = static_cast<unsigned>(static_cast<unsigned short>(Value));
+			return v ? __builtin_ctz(v) : -1;
+		}
+	};
+
+	template<typename genIUType>
+	struct compute_findLSB<genIUType, 8>
+	{
+		GLM_FUNC_QUALIFIER static int call(genIUType Value)
+		{
+			unsigned const v = static_cast<unsigned>(static_cast<unsigned char>(Value));
+			return v ? __builtin_ctz(v) : -1;
+		}
+	};
+#endif
+
+#if GLM_HAS_BUILTIN(__builtin_clz)
+	template<typename genIUType>
+	struct compute_findMSB<genIUType, 16>
+	{
+		GLM_FUNC_QUALIFIER static int call(genIUType Value)
+		{
+			unsigned const v = static_cast<unsigned>(static_cast<unsigned short>(Value));
+			return v ? (31 - __builtin_clz(v)) : -1;
+		}
+	};
+
+	template<typename genIUType>
+	struct compute_findMSB<genIUType, 8>
+	{
+		GLM_FUNC_QUALIFIER static int call(genIUType Value)
+		{
+			unsigned const v = static_cast<unsigned>(static_cast<unsigned char>(Value));
+			return v ? (31 - __builtin_clz(v)) : -1;
+		}
+	};
+#endif
+
 #if GLM_HAS_BITSCAN_WINDOWS
 	template<typename genIUType>
 	struct compute_findLSB<genIUType, 32>
