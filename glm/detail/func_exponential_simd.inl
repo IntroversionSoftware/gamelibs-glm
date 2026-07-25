@@ -217,6 +217,23 @@ namespace detail
 		}
 	};
 
+	// pow(x, y) = exp(y * log(x))  (x > 0, per the GLSL spec)
+	template<length_t L, qualifier Q>
+	struct compute_pow<L, float, Q, true>
+	{
+		GLM_FUNC_QUALIFIER static vec<L, float, Q> call(vec<L, float, Q> const& base, vec<L, float, Q> const& e)
+		{
+			vec<L, float, Q> Result;
+			if constexpr (is_highp<Q>::value || L < 3) {
+				for (length_t i = 0; i < L; ++i) Result[i] = std::pow(base[i], e[i]);
+			} else {
+				__m128 lx = glm_log_ps(_mm_loadu_ps(reinterpret_cast<const float*>(&base.data)));
+				__m128 ye = _mm_mul_ps(_mm_loadu_ps(reinterpret_cast<const float*>(&e.data)), lx);
+				_mm_storeu_ps(reinterpret_cast<float*>(&Result.data), glm_exp_ps(ye));
+			}
+			return Result;
+		}
+	};
 
 }//namespace detail
 }//namespace glm

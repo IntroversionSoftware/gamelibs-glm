@@ -82,6 +82,16 @@ namespace detail
 			return detail::functor1<vec, L, T, T, Q>::call(exp2, x);
 		}
 	};
+
+	using std::pow;
+	template<length_t L, typename T, qualifier Q, bool Aligned>
+	struct compute_pow
+	{
+		GLM_FUNC_QUALIFIER static vec<L, T, Q> call(vec<L, T, Q> const& base, vec<L, T, Q> const& e)
+		{
+			return detail::functor2<vec, L, T, Q>::call(pow, base, e);
+		}
+	};
 }//namespace detail
 
 	// pow
@@ -89,7 +99,7 @@ namespace detail
 	template<length_t L, typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER vec<L, T, Q> pow(vec<L, T, Q> const& base, vec<L, T, Q> const& exponent)
 	{
-		return detail::functor2<vec, L, T, Q>::call(pow, base, exponent);
+		return detail::compute_pow<L, T, Q, detail::is_aligned<Q>::value>::call(base, exponent);
 	}
 
 	// exp
