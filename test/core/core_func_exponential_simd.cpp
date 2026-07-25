@@ -54,6 +54,22 @@ int test_qualifier(const char* q)
 	std::snprintf(nm, sizeof nm, "asinh %s", q); E += check<Q>(nm, [](auto v){ return glm::asinh(v); }, [](double x){ return std::asinh(x); }, -100.0, 100.0, tol);
 	std::snprintf(nm, sizeof nm, "acosh %s", q); E += check<Q>(nm, [](auto v){ return glm::acosh(v); }, [](double x){ return std::acosh(x); },  1.0, 100.0, tol);
 	std::snprintf(nm, sizeof nm, "atanh %s", q); E += check<Q>(nm, [](auto v){ return glm::atanh(v); }, [](double x){ return std::atanh(x); }, -0.999, 0.999, tol);
+	// pow(base>0, exp) = exp(exp*log(base))
+	{
+		std::mt19937 r2(7u);
+		std::uniform_real_distribution<double> b(0.01, 20.0), ex(-4.0, 4.0);
+		double maxrel = 0.0;
+		for (int i = 0; i < 100000; ++i) {
+			const float bb[4] = {(float)b(r2),(float)b(r2),(float)b(r2),(float)b(r2)};
+			const float ee[4] = {(float)ex(r2),(float)ex(r2),(float)ex(r2),(float)ex(r2)};
+			glm::vec<4,float,Q> B(bb[0],bb[1],bb[2],bb[3]), E2(ee[0],ee[1],ee[2],ee[3]);
+			glm::vec<4,float,Q> o = glm::pow(B, E2);
+			for (int j = 0; j < 4; ++j) { double r = std::pow((double)bb[j],(double)ee[j]);
+				if (r != 0.0) maxrel = std::max(maxrel, std::fabs((double)o[j]-r)/std::fabs(r)); }
+		}
+		if (maxrel > tol) { std::printf("  [FAIL] pow  %s relerr=%.3e tol=%.1e\n", q, maxrel, tol); ++E; }
+		else std::printf("  [ ok ] pow  %-19s relerr=%.2e\n", q, maxrel);
+	}
 	return E;
 }
 
