@@ -18,14 +18,21 @@ namespace glm
 			aligned = aligned_highp, ///< By default aligned qualifier is also high precision
 #		endif
 
-		highp = packed_highp, ///< By default highp qualifier is also packed
-		mediump = packed_mediump, ///< By default mediump qualifier is also packed
-		lowp = packed_lowp, ///< By default lowp qualifier is also packed
 		packed = packed_highp, ///< By default packed qualifier is also high precision
 
 #		if GLM_CONFIG_ALIGNED_GENTYPES == GLM_ENABLE && defined(GLM_FORCE_DEFAULT_ALIGNED_GENTYPES)
+			// With GLM_FORCE_DEFAULT_ALIGNED_GENTYPES, the bare precision qualifiers
+			// alias the aligned variants so every gentype (not just defaultp) is
+			// aligned/padded, matching the documented intent. Use packed_* explicitly
+			// for tight packing.
+			highp = aligned_highp,
+			mediump = aligned_mediump,
+			lowp = aligned_lowp,
 			defaultp = aligned_highp
 #		else
+			highp = packed_highp, ///< By default highp qualifier is also packed
+			mediump = packed_mediump, ///< By default mediump qualifier is also packed
+			lowp = packed_lowp, ///< By default lowp qualifier is also packed
 			defaultp = highp
 #		endif
 	};
