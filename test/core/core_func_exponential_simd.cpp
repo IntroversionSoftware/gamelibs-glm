@@ -7,6 +7,7 @@
 
 #include <glm/glm.hpp>
 #include <glm/exponential.hpp>
+#include <glm/trigonometric.hpp>
 #include <cmath>
 #include <cstdio>
 #include <random>
@@ -46,6 +47,13 @@ int test_qualifier(const char* q)
 	std::snprintf(nm, sizeof nm, "log  %s", q);  E += check<Q>(nm, [](auto v){ return glm::log(v); },  [](double x){ return std::log(x); },   1e-6, 1e6,  tol);
 	std::snprintf(nm, sizeof nm, "exp2 %s", q);  E += check<Q>(nm, [](auto v){ return glm::exp2(v); }, [](double x){ return std::exp2(x); }, -40.0, 40.0, tol);
 	std::snprintf(nm, sizeof nm, "log2 %s", q);  E += check<Q>(nm, [](auto v){ return glm::log2(v); }, [](double x){ return std::log2(x); },  1e-6, 1e6,  tol);
+	// hyperbolics (built on exp/log; cancellation-aware forms target ~1e-6)
+	std::snprintf(nm, sizeof nm, "sinh %s", q);  E += check<Q>(nm, [](auto v){ return glm::sinh(v); },  [](double x){ return std::sinh(x); },  -10.0, 10.0, tol);
+	std::snprintf(nm, sizeof nm, "cosh %s", q);  E += check<Q>(nm, [](auto v){ return glm::cosh(v); },  [](double x){ return std::cosh(x); },  -10.0, 10.0, tol);
+	std::snprintf(nm, sizeof nm, "tanh %s", q);  E += check<Q>(nm, [](auto v){ return glm::tanh(v); },  [](double x){ return std::tanh(x); },  -10.0, 10.0, tol);
+	std::snprintf(nm, sizeof nm, "asinh %s", q); E += check<Q>(nm, [](auto v){ return glm::asinh(v); }, [](double x){ return std::asinh(x); }, -100.0, 100.0, tol);
+	std::snprintf(nm, sizeof nm, "acosh %s", q); E += check<Q>(nm, [](auto v){ return glm::acosh(v); }, [](double x){ return std::acosh(x); },  1.0, 100.0, tol);
+	std::snprintf(nm, sizeof nm, "atanh %s", q); E += check<Q>(nm, [](auto v){ return glm::atanh(v); }, [](double x){ return std::atanh(x); }, -0.999, 0.999, tol);
 	return E;
 }
 
