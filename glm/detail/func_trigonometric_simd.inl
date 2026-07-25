@@ -114,6 +114,84 @@ namespace detail
 		}
 	};
 
+	// --- Inverse trig: asin/acos/atan (polynomial, aligned mediump/lowp) ---
+	// highp/L<3 defer to libm.
+	template<length_t L, qualifier Q>
+	struct compute_atan_vec<L, float, Q, true>
+	{
+		GLM_FUNC_QUALIFIER static vec<L, float, Q> call(vec<L, float, Q> const& a)
+		{
+			vec<L, float, Q> R;
+			if constexpr (is_highp<Q>::value || L < 3) {
+				for (length_t i = 0; i < L; ++i) R[i] = std::atan(a[i]);
+			} else {
+				__m128 x = _mm_loadu_ps(reinterpret_cast<const float*>(&a.data));
+				__m128 sign = _mm_and_ps(x, _mm_set1_ps(-0.0f));
+				__m128 ax = _mm_andnot_ps(_mm_set1_ps(-0.0f), x);
+				__m128 gt1 = _mm_cmpgt_ps(ax, _mm_set1_ps(1.0f));
+				__m128 z = _mm_blendv_ps(ax, _mm_div_ps(_mm_set1_ps(1.0f), ax), gt1); // reduce to [0,1]
+				__m128 z2 = _mm_mul_ps(z, z);
+				__m128 p = _mm_set1_ps(-0.01172120f);          // degree-13 minimax on [-1,1]
+				p = _mm_fmadd_ps(p, z2, _mm_set1_ps(0.05265332f));
+				p = _mm_fmadd_ps(p, z2, _mm_set1_ps(-0.11643287f));
+				p = _mm_fmadd_ps(p, z2, _mm_set1_ps(0.19354346f));
+				p = _mm_fmadd_ps(p, z2, _mm_set1_ps(-0.33262347f));
+				p = _mm_fmadd_ps(p, z2, _mm_set1_ps(0.99997726f));
+				p = _mm_mul_ps(p, z);                          // atan(z)
+				__m128 r = _mm_blendv_ps(p, _mm_sub_ps(_mm_set1_ps(1.57079632679f), p), gt1);
+				_mm_storeu_ps(reinterpret_cast<float*>(&R.data), _mm_or_ps(r, sign));
+			}
+			return R;
+		}
+	};
+
+	template<length_t L, qualifier Q>
+	struct compute_asin_vec<L, float, Q, true>
+	{
+		GLM_FUNC_QUALIFIER static vec<L, float, Q> call(vec<L, float, Q> const& a)
+		{
+			vec<L, float, Q> R;
+			if constexpr (is_highp<Q>::value || L < 3) {
+				for (length_t i = 0; i < L; ++i) R[i] = std::asin(a[i]);
+			} else {
+				// Cephes asinf: sqrt reduction for |x|>0.5 keeps accuracy near +-1
+				__m128 x = _mm_loadu_ps(reinterpret_cast<const float*>(&a.data));
+				__m128 sign = _mm_and_ps(x, _mm_set1_ps(-0.0f));
+				__m128 av = _mm_andnot_ps(_mm_set1_ps(-0.0f), x);
+				__m128 big = _mm_cmpgt_ps(av, _mm_set1_ps(0.5f));
+				__m128 zbig = _mm_mul_ps(_mm_set1_ps(0.5f), _mm_sub_ps(_mm_set1_ps(1.0f), av));
+				__m128 z = _mm_blendv_ps(_mm_mul_ps(av, av), zbig, big);
+				__m128 xx = _mm_blendv_ps(av, _mm_sqrt_ps(zbig), big);
+				__m128 p = _mm_set1_ps(4.2163199048E-2f);
+				p = _mm_fmadd_ps(p, z, _mm_set1_ps(2.4181311049E-2f));
+				p = _mm_fmadd_ps(p, z, _mm_set1_ps(4.5470025998E-2f));
+				p = _mm_fmadd_ps(p, z, _mm_set1_ps(7.4953002686E-2f));
+				p = _mm_fmadd_ps(p, z, _mm_set1_ps(1.6666752422E-1f));
+				__m128 r = _mm_add_ps(_mm_mul_ps(_mm_mul_ps(_mm_mul_ps(p, z), xx), _mm_set1_ps(1.0f)), xx);
+				r = _mm_blendv_ps(r, _mm_sub_ps(_mm_set1_ps(1.57079632679f), _mm_add_ps(r, r)), big);
+				_mm_storeu_ps(reinterpret_cast<float*>(&R.data), _mm_or_ps(r, sign));
+			}
+			return R;
+		}
+	};
+
+	template<length_t L, qualifier Q>
+	struct compute_acos_vec<L, float, Q, true>
+	{
+		GLM_FUNC_QUALIFIER static vec<L, float, Q> call(vec<L, float, Q> const& a)
+		{
+			vec<L, float, Q> R;
+			if constexpr (is_highp<Q>::value || L < 3) {
+				for (length_t i = 0; i < L; ++i) R[i] = std::acos(a[i]);
+			} else {
+				vec<L, float, Q> asin_v = compute_asin_vec<L, float, Q, true>::call(a);
+				__m128 as = _mm_loadu_ps(reinterpret_cast<const float*>(&asin_v.data));
+				_mm_storeu_ps(reinterpret_cast<float*>(&R.data), _mm_sub_ps(_mm_set1_ps(1.57079632679f), as));
+			}
+			return R;
+		}
+	};
+
 	// --- Hyperbolics via glm_exp_ps / glm_log_ps (aligned mediump/lowp) ---
 	// highp/L<3 defer to libm.
 	template<length_t L, qualifier Q>

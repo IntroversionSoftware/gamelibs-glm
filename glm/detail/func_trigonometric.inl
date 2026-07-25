@@ -741,7 +741,7 @@ namespace glm
 	// Vector asin implementation with precision from the vector's qualifier
 	template<length_t L, typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER vec<L, T, Q> asin(vec<L, T, Q> const& x) {
-		return detail::compute_asin_vec<L, T, Q>::call(x);
+		return detail::compute_asin_vec<L, T, Q, detail::is_aligned<Q>::value>::call(x);
 	}
 
 	// Scalar acos implementation with precision qualifier
