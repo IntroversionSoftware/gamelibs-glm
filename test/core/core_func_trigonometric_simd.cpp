@@ -76,6 +76,30 @@ int test_qualifier(const char* qname)
 			++Error;
 		}
 	}
+	// inverse trig: asin/acos over [-1,1], atan over a wide range (abs error)
+	{
+		double ea = 0, es = 0, ec = 0, at = highp ? 1e-6 : 5e-6;
+		std::mt19937 r2(99u);
+		std::uniform_real_distribution<double> d1(-1.0, 1.0), d2(-50.0, 50.0);
+		for (int i = 0; i < 50000; ++i)
+		{
+			const float u[4] = { (float)d1(r2), (float)d1(r2), (float)d1(r2), (float)d1(r2) };
+			const float w[4] = { (float)d2(r2), (float)d2(r2), (float)d2(r2), (float)d2(r2) };
+			glm::vec<4, float, Q> vu(u[0],u[1],u[2],u[3]), vw(w[0],w[1],w[2],w[3]);
+			glm::vec<4, float, Q> as = glm::asin(vu), ac = glm::acos(vu), at_ = glm::atan(vw);
+			for (int j = 0; j < 4; ++j) {
+				es = std::max(es, std::abs((double)as[j] - std::asin((double)u[j])));
+				ec = std::max(ec, std::abs((double)ac[j] - std::acos((double)u[j])));
+				ea = std::max(ea, std::abs((double)at_[j] - std::atan((double)w[j])));
+			}
+		}
+		if (es > at || ec > at || ea > at) {
+			std::printf("  [FAIL] %s asin=%.2e acos=%.2e atan=%.2e tol=%.1e\n", qname, es, ec, ea, at);
+			++Error;
+		} else {
+			std::printf("  [ ok ] %s asin=%.2e acos=%.2e atan=%.2e\n", qname, es, ec, ea);
+		}
+	}
 	return Error;
 }
 
