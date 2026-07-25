@@ -12,6 +12,7 @@
 
 #include <x86intrin.h>
 #include <cmath>
+#include "simd_transcendental.h"   // glm_exp_ps / glm_log_ps for hyperbolics
 
 namespace glm{
 namespace detail
@@ -110,6 +111,136 @@ namespace detail
 				_mm_storeu_ps(reinterpret_cast<float*>(&Result.data), _mm_div_ps(s, c));
 			}
 			return Result;
+		}
+	};
+
+	// --- Hyperbolics via glm_exp_ps / glm_log_ps (aligned mediump/lowp) ---
+	// highp/L<3 defer to libm.
+	template<length_t L, qualifier Q>
+	struct compute_sinh_vec<L, float, Q, true>
+	{
+		GLM_FUNC_QUALIFIER static vec<L, float, Q> call(vec<L, float, Q> const& a)
+		{
+			vec<L, float, Q> R;
+			if constexpr (is_highp<Q>::value || L < 3) {
+				for (length_t i = 0; i < L; ++i) R[i] = std::sinh(a[i]);
+			} else {
+				__m128 x = _mm_loadu_ps(reinterpret_cast<const float*>(&a.data));
+				// sinh via expm1 avoids e^x - e^-x cancellation near 0
+				__m128 r = _mm_mul_ps(_mm_sub_ps(glm_expm1_ps(x), glm_expm1_ps(_mm_sub_ps(_mm_setzero_ps(), x))), _mm_set1_ps(0.5f));
+				_mm_storeu_ps(reinterpret_cast<float*>(&R.data), r);
+			}
+			return R;
+		}
+	};
+
+	template<length_t L, qualifier Q>
+	struct compute_cosh_vec<L, float, Q, true>
+	{
+		GLM_FUNC_QUALIFIER static vec<L, float, Q> call(vec<L, float, Q> const& a)
+		{
+			vec<L, float, Q> R;
+			if constexpr (is_highp<Q>::value || L < 3) {
+				for (length_t i = 0; i < L; ++i) R[i] = std::cosh(a[i]);
+			} else {
+				__m128 x = _mm_loadu_ps(reinterpret_cast<const float*>(&a.data));
+				__m128 r = _mm_mul_ps(_mm_add_ps(glm_exp_ps(x), glm_exp_ps(_mm_sub_ps(_mm_setzero_ps(), x))), _mm_set1_ps(0.5f));
+				_mm_storeu_ps(reinterpret_cast<float*>(&R.data), r);
+			}
+			return R;
+		}
+	};
+
+	template<length_t L, qualifier Q>
+	struct compute_tanh_vec<L, float, Q, true>
+	{
+		GLM_FUNC_QUALIFIER static vec<L, float, Q> call(vec<L, float, Q> const& a)
+		{
+			vec<L, float, Q> R;
+			if constexpr (is_highp<Q>::value || L < 3) {
+				for (length_t i = 0; i < L; ++i) R[i] = std::tanh(a[i]);
+			} else {
+				// Direct minimax rational (Eigen/Cephes) - accurate near 0 and skips exp
+				__m128 x = _mm_loadu_ps(reinterpret_cast<const float*>(&a.data));
+				x = _mm_max_ps(_mm_set1_ps(-9.f), _mm_min_ps(_mm_set1_ps(9.f), x));
+				__m128 x2 = _mm_mul_ps(x, x);
+				__m128 p = _mm_set1_ps(-2.76076847742355e-16f);
+				p = _mm_fmadd_ps(p, x2, _mm_set1_ps( 2.00018790482477e-13f));
+				p = _mm_fmadd_ps(p, x2, _mm_set1_ps(-8.60467152213735e-11f));
+				p = _mm_fmadd_ps(p, x2, _mm_set1_ps( 5.12229709037114e-08f));
+				p = _mm_fmadd_ps(p, x2, _mm_set1_ps( 1.48572235717979e-05f));
+				p = _mm_fmadd_ps(p, x2, _mm_set1_ps( 6.37261928875436e-04f));
+				p = _mm_fmadd_ps(p, x2, _mm_set1_ps( 4.89352455891786e-03f));
+				__m128 num = _mm_mul_ps(x, p);
+				__m128 q = _mm_set1_ps(1.19825839466702e-06f);
+				q = _mm_fmadd_ps(q, x2, _mm_set1_ps(1.18534705686654e-04f));
+				q = _mm_fmadd_ps(q, x2, _mm_set1_ps(2.26843463243900e-03f));
+				q = _mm_fmadd_ps(q, x2, _mm_set1_ps(4.89352518554385e-03f));
+				_mm_storeu_ps(reinterpret_cast<float*>(&R.data), _mm_div_ps(num, q));
+			}
+			return R;
+		}
+	};
+
+	template<length_t L, qualifier Q>
+	struct compute_asinh_vec<L, float, Q, true>
+	{
+		GLM_FUNC_QUALIFIER static vec<L, float, Q> call(vec<L, float, Q> const& a)
+		{
+			vec<L, float, Q> R;
+			if constexpr (is_highp<Q>::value || L < 3) {
+				for (length_t i = 0; i < L; ++i) R[i] = std::asinh(a[i]);
+			} else {
+				__m128 x = _mm_loadu_ps(reinterpret_cast<const float*>(&a.data));
+				__m128 sign = _mm_and_ps(x, _mm_set1_ps(-0.0f));
+				__m128 ax = _mm_andnot_ps(_mm_set1_ps(-0.0f), x);            // |x|
+				__m128 root = _mm_sqrt_ps(_mm_fmadd_ps(ax, ax, _mm_set1_ps(1.f)));
+				// asinh = log1p(|x| + |x|^2/(sqrt(x^2+1)+1)); log1p avoids ln(~1) cancellation
+				__m128 t = _mm_add_ps(ax, _mm_div_ps(_mm_mul_ps(ax, ax), _mm_add_ps(root, _mm_set1_ps(1.f))));
+				__m128 r = _mm_xor_ps(glm_log1p_ps(t), sign);               // asinh is odd
+				_mm_storeu_ps(reinterpret_cast<float*>(&R.data), r);
+			}
+			return R;
+		}
+	};
+
+	template<length_t L, qualifier Q>
+	struct compute_acosh_vec<L, float, Q, true>
+	{
+		GLM_FUNC_QUALIFIER static vec<L, float, Q> call(vec<L, float, Q> const& a)
+		{
+			vec<L, float, Q> R;
+			if constexpr (is_highp<Q>::value || L < 3) {
+				for (length_t i = 0; i < L; ++i) R[i] = std::acosh(a[i]);
+			} else {
+				// acosh = log1p((x-1) + sqrt((x-1)(x+1))); factored sqrt + log1p avoid
+				// the x^2-1 / ln(~1) cancellation as x -> 1.
+				__m128 x = _mm_loadu_ps(reinterpret_cast<const float*>(&a.data));
+				__m128 xm1 = _mm_sub_ps(x, _mm_set1_ps(1.f));
+				__m128 s = _mm_sqrt_ps(_mm_mul_ps(xm1, _mm_add_ps(x, _mm_set1_ps(1.f))));
+				__m128 r = glm_log1p_ps(_mm_add_ps(xm1, s));
+				_mm_storeu_ps(reinterpret_cast<float*>(&R.data), r);
+			}
+			return R;
+		}
+	};
+
+	template<length_t L, qualifier Q>
+	struct compute_atanh_vec<L, float, Q, true>
+	{
+		GLM_FUNC_QUALIFIER static vec<L, float, Q> call(vec<L, float, Q> const& a)
+		{
+			vec<L, float, Q> R;
+			if constexpr (is_highp<Q>::value || L < 3) {
+				for (length_t i = 0; i < L; ++i) R[i] = std::atanh(a[i]);
+			} else {
+				__m128 x = _mm_loadu_ps(reinterpret_cast<const float*>(&a.data));
+				// atanh = 0.5*(log1p(x) - log1p(-x)); avoids ln(~1) cancellation near 0
+				__m128 r = _mm_mul_ps(_mm_set1_ps(0.5f),
+					_mm_sub_ps(glm_log1p_ps(x), glm_log1p_ps(_mm_sub_ps(_mm_setzero_ps(), x))));
+				_mm_storeu_ps(reinterpret_cast<float*>(&R.data), r);
+			}
+			return R;
 		}
 	};
 
