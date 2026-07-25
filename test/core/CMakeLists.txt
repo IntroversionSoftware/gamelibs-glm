@@ -42,9 +42,11 @@ glmCreateTestGTC(core_func_noise)
 glmCreateTestGTC(core_func_packing)
 glmCreateTestGTC(core_func_trigonometric)
 glmCreateTestGTC(core_func_trigonometric_simd)
-# Exercise the actual SIMD trig path (needs SSE4.1+/FMA); x86 + non-MSVC only.
+glmCreateTestGTC(core_func_exponential_simd)
+# Exercise the actual SIMD paths (need SSE4.1+/FMA); x86 + non-MSVC only.
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|AMD64|amd64" AND NOT MSVC)
 	target_compile_options(test-core_func_trigonometric_simd PRIVATE -march=x86-64-v3)
+	target_compile_options(test-core_func_exponential_simd PRIVATE -march=x86-64-v3)
 endif()
 glmCreateTestGTC(core_func_vector_relational)
 glmCreateTestGTC(core_func_swizzle)
