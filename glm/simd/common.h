@@ -378,7 +378,11 @@ GLM_FUNC_QUALIFIER glm_f32vec4 glm_vec4_mod(glm_f32vec4 x, glm_f32vec4 y)
 
 GLM_FUNC_QUALIFIER glm_f32vec4 glm_vec4_clamp(glm_f32vec4 v, glm_f32vec4 minVal, glm_f32vec4 maxVal)
 {
+#if GLM_HAS_BUILTIN(__builtin_elementwise_maxnum)
+	return __builtin_elementwise_maxnum(__builtin_elementwise_minnum(v, maxVal), minVal);
+#else
 	return __builtin_elementwise_max(__builtin_elementwise_min(v, maxVal), minVal);
+#endif
 }
 
 GLM_FUNC_QUALIFIER glm_f32vec4 glm_vec4_mix(glm_f32vec4 v1, glm_f32vec4 v2, glm_f32vec4 a)

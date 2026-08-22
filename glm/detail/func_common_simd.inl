@@ -657,7 +657,11 @@ namespace detail
 		GLM_FUNC_QUALIFIER static vec<L, T, Q> call(vec<L, T, Q> const& v1, vec<L, T, Q> const& v2)
 		{
 			vec<L, T, Q> result;
+#if GLM_HAS_BUILTIN(__builtin_elementwise_minnum)
+			result.data = __builtin_elementwise_minnum(v1.data, v2.data);
+#else
 			result.data = __builtin_elementwise_min(v1.data, v2.data);
+#endif
 			return result;
 		}
 	};
@@ -668,7 +672,11 @@ namespace detail
 		GLM_FUNC_QUALIFIER static vec<L, T, Q> call(vec<L, T, Q> const& v1, vec<L, T, Q> const& v2)
 		{
 			vec<L, T, Q> result;
+#if GLM_HAS_BUILTIN(__builtin_elementwise_maxnum)
+			result.data = __builtin_elementwise_maxnum(v1.data, v2.data);
+#else
 			result.data = __builtin_elementwise_max(v1.data, v2.data);
+#endif
 			return result;
 		}
 	};
@@ -679,7 +687,11 @@ namespace detail
 		GLM_FUNC_QUALIFIER static vec<L, T, Q> call(vec<L, T, Q> const& x, vec<L, T, Q> const& minVal, vec<L, T, Q> const& maxVal)
 		{
 			vec<L, T, Q> result;
+#if GLM_HAS_BUILTIN(__builtin_elementwise_maxnum)
+			result.data = __builtin_elementwise_minnum(__builtin_elementwise_maxnum(x.data, minVal.data), maxVal.data);
+#else
 			result.data = __builtin_elementwise_min(__builtin_elementwise_max(x.data, minVal.data), maxVal.data);
+#endif
 			return result;
 		}
 	};
