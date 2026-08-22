@@ -575,6 +575,8 @@ namespace detail {
 
 #if GLM_ARCH & GLM_ARCH_CLANG_BIT
 
+#include <type_traits>
+
 namespace glm{
 namespace detail
 {
@@ -647,13 +649,36 @@ namespace detail
 	// test suite expects for handling NaNs.
 	//
 
+	// minnum/maxnum only accept floating-point vectors; integer vectors use min/max.
+	template<typename T, typename V>
+	GLM_FUNC_QUALIFIER V elementwise_min(V const& a, V const& b)
+	{
+#if GLM_HAS_BUILTIN(__builtin_elementwise_minnum)
+		if constexpr (std::is_floating_point<T>::value)
+			return __builtin_elementwise_minnum(a, b);
+		else
+#endif
+			return __builtin_elementwise_min(a, b);
+	}
+
+	template<typename T, typename V>
+	GLM_FUNC_QUALIFIER V elementwise_max(V const& a, V const& b)
+	{
+#if GLM_HAS_BUILTIN(__builtin_elementwise_maxnum)
+		if constexpr (std::is_floating_point<T>::value)
+			return __builtin_elementwise_maxnum(a, b);
+		else
+#endif
+			return __builtin_elementwise_max(a, b);
+	}
+
 	template<length_t L, typename T, qualifier Q>
 	struct compute_min_vector<L, T, Q, true>
 	{
 		GLM_FUNC_QUALIFIER static vec<L, T, Q> call(vec<L, T, Q> const& v1, vec<L, T, Q> const& v2)
 		{
 			vec<L, T, Q> result;
-			result.data = __builtin_elementwise_min(v1.data, v2.data);
+			result.data = elementwise_min<T>(v1.data, v2.data);
 			return result;
 		}
 	};
@@ -664,7 +689,7 @@ namespace detail
 		GLM_FUNC_QUALIFIER static vec<L, T, Q> call(vec<L, T, Q> const& v1, vec<L, T, Q> const& v2)
 		{
 			vec<L, T, Q> result;
-			result.data = __builtin_elementwise_max(v1.data, v2.data);
+			result.data = elementwise_max<T>(v1.data, v2.data);
 			return result;
 		}
 	};
@@ -675,7 +700,7 @@ namespace detail
 		GLM_FUNC_QUALIFIER static vec<L, T, Q> call(vec<L, T, Q> const& x, vec<L, T, Q> const& minVal, vec<L, T, Q> const& maxVal)
 		{
 			vec<L, T, Q> result;
-			result.data = __builtin_elementwise_min(__builtin_elementwise_max(x.data, minVal.data), maxVal.data);
+			result.data = elementwise_min<T>(elementwise_max<T>(x.data, minVal.data), maxVal.data);
 			return result;
 		}
 	};
