@@ -29,6 +29,16 @@
 /// glUniformMatrix4fv(uniformMatrixLoc, 1, GL_FALSE, glm::value_ptr(someMatrix));
 /// @endcode
 ///
+/// value_ptr points at the type's own storage. Aligned types (including the default types under
+/// GLM_FORCE_DEFAULT_ALIGNED_GENTYPES) pad 3-component vectors to 4 components, so a matrix with
+/// 3 rows has a padding component after each column. That matches std140/std430 buffer layout, but
+/// not APIs that expect tightly packed components; convert with glm::to_packed first:
+/// @code
+/// glm::mat3 normalMatrix = ...;
+/// glUniformMatrix3fv(uniformMatrixLoc, 1, GL_FALSE, glm::value_ptr(glm::to_packed(normalMatrix)));
+/// @endcode
+/// The temporary returned by to_packed lives until the end of the full expression.
+///
 /// <glm/gtc/type_ptr.hpp> need to be included to use the features of this extension.
 
 #pragma once
@@ -49,6 +59,7 @@
 #include "../mat4x3.hpp"
 #include "../mat4x4.hpp"
 #include <cstring>
+#include <utility>
 
 #if GLM_MESSAGES == GLM_ENABLE && !defined(GLM_EXT_INCLUDED)
 #	pragma message("GLM: GLM_GTC_type_ptr extension included")
@@ -223,6 +234,48 @@ namespace glm
 	/// @see gtc_type_ptr
 	template<typename T>
 	GLM_FUNC_DECL qua<T, defaultp> make_quat(T const * const ptr);
+
+	/// Convert to the packed qualifier of the same precision. Packed types have no padding, so
+	/// value_ptr of the result points to exactly L (or C * R) contiguous components.
+	/// @see gtc_type_ptr
+	template<length_t L, typename T, qualifier Q>
+	GLM_FUNC_DECL GLM_CONSTEXPR vec<L, T, detail::packed_qualifier<Q>::value> to_packed(vec<L, T, Q> const& v);
+
+	/// Convert to the packed qualifier of the same precision. Packed types have no padding, so
+	/// value_ptr of the result points to exactly L (or C * R) contiguous components.
+	/// @see gtc_type_ptr
+	template<length_t C, length_t R, typename T, qualifier Q>
+	GLM_FUNC_DECL GLM_CONSTEXPR mat<C, R, T, detail::packed_qualifier<Q>::value> to_packed(mat<C, R, T, Q> const& m);
+
+	/// Convert to the packed qualifier of the same precision.
+	/// @see gtc_type_ptr
+	template<typename T, qualifier Q>
+	GLM_FUNC_DECL GLM_CONSTEXPR qua<T, detail::packed_qualifier<Q>::value> to_packed(qua<T, Q> const& q);
+
+	/// Convert to the aligned qualifier of the same precision (packed when aligned types are disabled).
+	/// @see gtc_type_ptr
+	template<length_t L, typename T, qualifier Q>
+	GLM_FUNC_DECL GLM_CONSTEXPR vec<L, T, detail::aligned_qualifier<Q>::value> to_aligned(vec<L, T, Q> const& v);
+
+	/// Convert to the aligned qualifier of the same precision (packed when aligned types are disabled).
+	/// @see gtc_type_ptr
+	template<length_t C, length_t R, typename T, qualifier Q>
+	GLM_FUNC_DECL GLM_CONSTEXPR mat<C, R, T, detail::aligned_qualifier<Q>::value> to_aligned(mat<C, R, T, Q> const& m);
+
+	/// Convert to the aligned qualifier of the same precision (packed when aligned types are disabled).
+	/// @see gtc_type_ptr
+	template<typename T, qualifier Q>
+	GLM_FUNC_DECL GLM_CONSTEXPR qua<T, detail::aligned_qualifier<Q>::value> to_aligned(qua<T, Q> const& q);
+
+	/// The packed counterpart of a vector, matrix or quaternion type: packed_t<mat3> is mat<3, 3, float, packed_highp>.
+	/// @see gtc_type_ptr
+	template<typename genType>
+	using packed_t = decltype(to_packed(std::declval<genType const&>()));
+
+	/// The aligned counterpart of a vector, matrix or quaternion type.
+	/// @see gtc_type_ptr
+	template<typename genType>
+	using aligned_t = decltype(to_aligned(std::declval<genType const&>()));
 
 	/// @}
 }//namespace glm

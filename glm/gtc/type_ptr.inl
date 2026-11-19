@@ -271,106 +271,89 @@ namespace glm
 		return v;
 	}
 
+	namespace detail
+	{
+		// Packed types have no padding, so the source is read as exactly sizeof(genType) bytes; the caller
+		// converts to the (possibly aligned and padded) default type.
+		template<typename genType>
+		GLM_FUNC_QUALIFIER genType make_from_ptr(typename genType::value_type const *const ptr)
+		{
+			genType Result;
+			memcpy(value_ptr(Result), ptr, sizeof(genType));
+			return Result;
+		}
+	}//namespace detail
+
 	template<typename T>
 	GLM_FUNC_QUALIFIER vec<2, T, defaultp> make_vec2(T const *const ptr)
 	{
-		vec<2, T, defaultp> Result;
-		memcpy(value_ptr(Result), ptr, sizeof(vec<2, T, defaultp>));
-		return Result;
+		return vec<2, T, defaultp>(detail::make_from_ptr<vec<2, T, packed_highp>>(ptr));
 	}
 
 	template<typename T>
 	GLM_FUNC_QUALIFIER vec<3, T, defaultp> make_vec3(T const *const ptr)
 	{
-		vec<3, T, defaultp> Result;
-		memcpy(value_ptr(Result), ptr, sizeof(vec<3, T, defaultp>));
-		return Result;
+		return vec<3, T, defaultp>(detail::make_from_ptr<vec<3, T, packed_highp>>(ptr));
 	}
 
 	template<typename T>
 	GLM_FUNC_QUALIFIER vec<4, T, defaultp> make_vec4(T const *const ptr)
 	{
-		vec<4, T, defaultp> Result;
-		memcpy(value_ptr(Result), ptr, sizeof(vec<4, T, defaultp>));
-		return Result;
+		return vec<4, T, defaultp>(detail::make_from_ptr<vec<4, T, packed_highp>>(ptr));
 	}
 
 	template<typename T>
 	GLM_FUNC_QUALIFIER mat<2, 2, T, defaultp> make_mat2x2(T const *const ptr)
 	{
-		mat<2, 2, T, defaultp> Result;
-		memcpy(value_ptr(Result), ptr, sizeof(mat<2, 2, T, defaultp>));
-		return Result;
+		return mat<2, 2, T, defaultp>(detail::make_from_ptr<mat<2, 2, T, packed_highp>>(ptr));
 	}
 
 	template<typename T>
-	GLM_FUNC_QUALIFIER mat<2, 3, T, defaultp> make_mat2x3(T const* const ptr)
+	GLM_FUNC_QUALIFIER mat<2, 3, T, defaultp> make_mat2x3(T const *const ptr)
 	{
-		mat<2, 3, T, defaultp> Result;
-		Result[0] = { ptr[0], ptr[1], ptr[2] };
-		Result[1] = { ptr[3], ptr[4], ptr[5] };
-		return Result;
+		return mat<2, 3, T, defaultp>(detail::make_from_ptr<mat<2, 3, T, packed_highp>>(ptr));
 	}
 
 	template<typename T>
 	GLM_FUNC_QUALIFIER mat<2, 4, T, defaultp> make_mat2x4(T const *const ptr)
 	{
-		mat<2, 4, T, defaultp> Result;
-		memcpy(value_ptr(Result), ptr, sizeof(mat<2, 4, T, defaultp>));
-		return Result;
+		return mat<2, 4, T, defaultp>(detail::make_from_ptr<mat<2, 4, T, packed_highp>>(ptr));
 	}
 
 	template<typename T>
 	GLM_FUNC_QUALIFIER mat<3, 2, T, defaultp> make_mat3x2(T const *const ptr)
 	{
-		mat<3, 2, T, defaultp> Result;
-		memcpy(value_ptr(Result), ptr, sizeof(mat<3, 2, T, defaultp>));
-		return Result;
+		return mat<3, 2, T, defaultp>(detail::make_from_ptr<mat<3, 2, T, packed_highp>>(ptr));
 	}
 
 	template<typename T>
 	GLM_FUNC_QUALIFIER mat<3, 3, T, defaultp> make_mat3x3(T const *const ptr)
 	{
-		mat<3, 3, T, defaultp> Result;
-		Result[0] = { ptr[0], ptr[1], ptr[2] };
-		Result[1] = { ptr[3], ptr[4], ptr[5] };
-		Result[2] = { ptr[6], ptr[7], ptr[8] };
-		return Result;
+		return mat<3, 3, T, defaultp>(detail::make_from_ptr<mat<3, 3, T, packed_highp>>(ptr));
 	}
 
 	template<typename T>
 	GLM_FUNC_QUALIFIER mat<3, 4, T, defaultp> make_mat3x4(T const *const ptr)
 	{
-		mat<3, 4, T, defaultp> Result;
-		memcpy(value_ptr(Result), ptr, sizeof(mat<3, 4, T, defaultp>));
-		return Result;
+		return mat<3, 4, T, defaultp>(detail::make_from_ptr<mat<3, 4, T, packed_highp>>(ptr));
 	}
 
 	template<typename T>
 	GLM_FUNC_QUALIFIER mat<4, 2, T, defaultp> make_mat4x2(T const *const ptr)
 	{
-		mat<4, 2, T, defaultp> Result;
-		memcpy(value_ptr(Result), ptr, sizeof(mat<4, 2, T, defaultp>));
-		return Result;
+		return mat<4, 2, T, defaultp>(detail::make_from_ptr<mat<4, 2, T, packed_highp>>(ptr));
 	}
 
 	template<typename T>
 	GLM_FUNC_QUALIFIER mat<4, 3, T, defaultp> make_mat4x3(T const *const ptr)
 	{
-		mat<4, 3, T, defaultp> Result;
-		Result[0] = { ptr[0], ptr[1], ptr[2] };
-		Result[1] = { ptr[3], ptr[4], ptr[5] };
-		Result[2] = { ptr[6], ptr[7], ptr[8] };
-		Result[3] = { ptr[9], ptr[10], ptr[11] };
-		return Result;
+		return mat<4, 3, T, defaultp>(detail::make_from_ptr<mat<4, 3, T, packed_highp>>(ptr));
 	}
 
 	template<typename T>
 	GLM_FUNC_QUALIFIER mat<4, 4, T, defaultp> make_mat4x4(T const *const ptr)
 	{
-		mat<4, 4, T, defaultp> Result;
-		memcpy(value_ptr(Result), ptr, sizeof(mat<4, 4, T, defaultp>));
-		return Result;
+		return mat<4, 4, T, defaultp>(detail::make_from_ptr<mat<4, 4, T, packed_highp>>(ptr));
 	}
 
 	template<typename T>
@@ -394,9 +377,43 @@ namespace glm
 	template<typename T>
 	GLM_FUNC_QUALIFIER qua<T, defaultp> make_quat(T const *const ptr)
 	{
-		qua<T, defaultp> Result;
-		memcpy(value_ptr(Result), ptr, sizeof(qua<T, defaultp>));
-		return Result;
+		return qua<T, defaultp>(detail::make_from_ptr<qua<T, packed_highp>>(ptr));
+	}
+
+	template<length_t L, typename T, qualifier Q>
+	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<L, T, detail::packed_qualifier<Q>::value> to_packed(vec<L, T, Q> const& v)
+	{
+		return vec<L, T, detail::packed_qualifier<Q>::value>(v);
+	}
+
+	template<length_t C, length_t R, typename T, qualifier Q>
+	GLM_FUNC_QUALIFIER GLM_CONSTEXPR mat<C, R, T, detail::packed_qualifier<Q>::value> to_packed(mat<C, R, T, Q> const& m)
+	{
+		return mat<C, R, T, detail::packed_qualifier<Q>::value>(m);
+	}
+
+	template<typename T, qualifier Q>
+	GLM_FUNC_QUALIFIER GLM_CONSTEXPR qua<T, detail::packed_qualifier<Q>::value> to_packed(qua<T, Q> const& q)
+	{
+		return qua<T, detail::packed_qualifier<Q>::value>(q);
+	}
+
+	template<length_t L, typename T, qualifier Q>
+	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<L, T, detail::aligned_qualifier<Q>::value> to_aligned(vec<L, T, Q> const& v)
+	{
+		return vec<L, T, detail::aligned_qualifier<Q>::value>(v);
+	}
+
+	template<length_t C, length_t R, typename T, qualifier Q>
+	GLM_FUNC_QUALIFIER GLM_CONSTEXPR mat<C, R, T, detail::aligned_qualifier<Q>::value> to_aligned(mat<C, R, T, Q> const& m)
+	{
+		return mat<C, R, T, detail::aligned_qualifier<Q>::value>(m);
+	}
+
+	template<typename T, qualifier Q>
+	GLM_FUNC_QUALIFIER GLM_CONSTEXPR qua<T, detail::aligned_qualifier<Q>::value> to_aligned(qua<T, Q> const& q)
+	{
+		return qua<T, detail::aligned_qualifier<Q>::value>(q);
 	}
 
 	/// @}
