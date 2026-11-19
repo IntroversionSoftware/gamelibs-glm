@@ -363,31 +363,49 @@
 #	else
 #		define GLM_ARCH (GLM_ARCH_NEON)
 #	endif
-#	define GLM_FORCE_INTRINSICS
+#	ifndef GLM_FORCE_INTRINSICS
+#		define GLM_FORCE_INTRINSICS
+#	endif
 #elif defined(GLM_FORCE_AVX2)
 #	define GLM_ARCH (GLM_ARCH_AVX2)
-#	define GLM_FORCE_INTRINSICS
+#	ifndef GLM_FORCE_INTRINSICS
+#		define GLM_FORCE_INTRINSICS
+#	endif
 #elif defined(GLM_FORCE_AVX)
 #	define GLM_ARCH (GLM_ARCH_AVX)
-#	define GLM_FORCE_INTRINSICS
+#	ifndef GLM_FORCE_INTRINSICS
+#		define GLM_FORCE_INTRINSICS
+#	endif
 #elif defined(GLM_FORCE_SSE42)
 #	define GLM_ARCH (GLM_ARCH_SSE42)
-#	define GLM_FORCE_INTRINSICS
+#	ifndef GLM_FORCE_INTRINSICS
+#		define GLM_FORCE_INTRINSICS
+#	endif
 #elif defined(GLM_FORCE_SSE41)
 #	define GLM_ARCH (GLM_ARCH_SSE41)
-#	define GLM_FORCE_INTRINSICS
+#	ifndef GLM_FORCE_INTRINSICS
+#		define GLM_FORCE_INTRINSICS
+#	endif
 #elif defined(GLM_FORCE_SSSE3)
 #	define GLM_ARCH (GLM_ARCH_SSSE3)
-#	define GLM_FORCE_INTRINSICS
+#	ifndef GLM_FORCE_INTRINSICS
+#		define GLM_FORCE_INTRINSICS
+#	endif
 #elif defined(GLM_FORCE_SSE3)
 #	define GLM_ARCH (GLM_ARCH_SSE3)
-#	define GLM_FORCE_INTRINSICS
+#	ifndef GLM_FORCE_INTRINSICS
+#		define GLM_FORCE_INTRINSICS
+#	endif
 #elif defined(GLM_FORCE_SSE2)
 #	define GLM_ARCH (GLM_ARCH_SSE2)
-#	define GLM_FORCE_INTRINSICS
+#	ifndef GLM_FORCE_INTRINSICS
+#		define GLM_FORCE_INTRINSICS
+#	endif
 #elif defined(GLM_FORCE_SSE)
 #	define GLM_ARCH (GLM_ARCH_SSE)
-#	define GLM_FORCE_INTRINSICS
+#	ifndef GLM_FORCE_INTRINSICS
+#		define GLM_FORCE_INTRINSICS
+#	endif
 #elif defined(GLM_FORCE_INTRINSICS) && !defined(GLM_FORCE_XYZW_ONLY)
 #	if defined(__clang__) && __clang_major__ >= 16 && GLM_HAS_ATTRIBUTE(ext_vector_type)
 #		define GLM_ARCH (GLM_ARCH_CLANG)
