@@ -17,9 +17,11 @@ namespace
 		if (cerberus)
 		{
 			switch (a) {
-			case glm::highp:			os << "uhi"; break;
-			case glm::mediump:			os << "umd"; break;
-			case glm::lowp:				os << "ulo"; break;
+			// The bare highp/mediump/lowp alias the aligned qualifiers under
+			// GLM_FORCE_DEFAULT_ALIGNED_GENTYPES, so name the packed ones.
+			case glm::packed_highp:		os << "uhi"; break;
+			case glm::packed_mediump:	os << "umd"; break;
+			case glm::packed_lowp:		os << "ulo"; break;
 #			if GLM_CONFIG_ALIGNED_GENTYPES == GLM_ENABLE
 				case glm::aligned_highp:	os << "ahi"; break;
 				case glm::aligned_mediump:	os << "amd"; break;

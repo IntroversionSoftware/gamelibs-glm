@@ -112,13 +112,15 @@ int main()
 {
 	std::printf("=== SIMD aligned sin/cos/tan regression ===\n");
 	int Error = 0;
-#if GLM_CONFIG_ALIGNED_GENTYPES == GLM_ENABLE
+	// Under GLM_FORCE_PURE there is no SIMD path; mediump/lowp then use the scalar
+	// reduced-precision implementations, which these tolerances are not meant for.
+#if GLM_CONFIG_ALIGNED_GENTYPES == GLM_ENABLE && (GLM_ARCH & GLM_ARCH_SIMD_BIT)
 	Error += test_qualifier<glm::aligned_highp>("aligned_highp");
 	Error += test_qualifier<glm::aligned_mediump>("aligned_mediump");
 	Error += test_qualifier<glm::aligned_lowp>("aligned_lowp");
 	std::printf(Error == 0 ? "ALL PASSED\n" : "FAILED (%d)\n", Error);
 #else
-	std::printf("SKIPPED (aligned gentypes not enabled)\n");
+	std::printf("SKIPPED (no SIMD path: aligned gentypes disabled or GLM_FORCE_PURE)\n");
 #endif
 	return Error;
 }
