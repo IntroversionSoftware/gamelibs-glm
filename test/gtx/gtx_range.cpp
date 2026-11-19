@@ -38,8 +38,9 @@ static int test_mat()
 {
 	int Error = 0;
 
+	// Flat iteration needs a packed matrix: an aligned mat4x3 pads each column to 4 components.
 	{
-		glm::mat4x3 m(1.0f);
+		glm::packed_t<glm::mat4x3> m(1.0f);
 
 		int count = 0;
 		float Sum = 0.0f;
@@ -53,11 +54,26 @@ static int test_mat()
 	}
 
 	{
-		glm::mat4x3 m(1.0f);
+		glm::packed_t<glm::mat4x3> m(1.0f);
 
 		for (float& x : m) { x = 0; }
 		glm::vec4 v(1, 1, 1, 1);
-		Error += glm::all(glm::equal(m*v, glm::vec3(0, 0, 0), glm::epsilon<float>())) ? 0 : 1;
+		Error += glm::all(glm::equal(glm::mat4x3(m) * v, glm::vec3(0, 0, 0), glm::epsilon<float>())) ? 0 : 1;
+	}
+
+	// A matrix of any qualifier can be read through a packed copy.
+	{
+		glm::mat4x3 const m(1.0f);
+
+		int count = 0;
+		float Sum = 0.0f;
+		for(float x : glm::to_packed(m))
+		{
+			count++;
+			Sum += x;
+		}
+		Error += count == 12 ? 0 : 1;
+		Error += glm::equal(Sum, 3.0f, 0.001f) ? 0 : 1;
 	}
 
 	return Error;

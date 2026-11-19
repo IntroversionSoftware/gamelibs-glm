@@ -26,6 +26,23 @@
 
 namespace glm
 {
+	namespace detail
+	{
+		// Flat iteration over a matrix needs its columns to be adjacent. Aligned 3-row matrices pad each
+		// column to 4 components, so a T* range over them would visit padding and miss the last column.
+		template<typename genType>
+		struct range_contiguous
+		{
+			static const bool value = true;
+		};
+
+		template<length_t C, length_t R, typename T, qualifier Q>
+		struct range_contiguous<mat<C, R, T, Q> >
+		{
+			static const bool value = sizeof(mat<C, R, T, Q>) == sizeof(T) * C * R;
+		};
+	}//namespace detail
+
 	/// @addtogroup gtx_range
 	/// @{
 
@@ -67,6 +84,7 @@ namespace glm
 	template<typename genType>
 	inline typename genType::value_type const * begin(genType const& v)
 	{
+		static_assert(detail::range_contiguous<genType>::value, "glm::begin/end: the columns of this matrix are padded (3 rows, aligned); iterate a packed matrix instead, see glm::to_packed");
 		return value_ptr(v);
 	}
 
@@ -79,6 +97,7 @@ namespace glm
 	template<typename genType>
 	inline typename genType::value_type * begin(genType& v)
 	{
+		static_assert(detail::range_contiguous<genType>::value, "glm::begin/end: the columns of this matrix are padded (3 rows, aligned); iterate a packed matrix instead, see glm::to_packed");
 		return value_ptr(v);
 	}
 
