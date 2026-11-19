@@ -58,7 +58,7 @@ namespace detail
 
 	template <class To, class From>
 	constexpr To bit_cast(const From& src) noexcept {
-#if defined(__has_builtin) && __has_builtin(__builtin_bit_cast)
+#if GLM_HAS_BUILTIN(__builtin_bit_cast)
 		return __builtin_bit_cast(To, src);
 #else
 		return bit_cast_fallback<To>(src);
