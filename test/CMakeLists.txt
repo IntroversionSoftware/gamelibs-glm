@@ -22,6 +22,28 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 	endif()
 
 	add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+
+	# Without F16C, _Float16 conversions (type_half) are compiler-rt calls such as
+	# __extendhfsf2/__truncsfhf2, and MSVC-ABI targets don't link compiler-rt's
+	# builtins library by default.
+	if(CMAKE_CXX_SIMULATE_ID STREQUAL "MSVC")
+		if(CMAKE_CXX_COMPILER_FRONTEND_VARIANT STREQUAL "MSVC")
+			set(GLM_CLANG_BUILTINS_QUERY /clang:--rtlib=compiler-rt /clang:-print-libgcc-file-name)
+		else()
+			set(GLM_CLANG_BUILTINS_QUERY --rtlib=compiler-rt -print-libgcc-file-name)
+		endif()
+		execute_process(
+			COMMAND ${CMAKE_CXX_COMPILER} ${GLM_CLANG_BUILTINS_QUERY}
+			OUTPUT_VARIABLE GLM_CLANG_BUILTINS
+			OUTPUT_STRIP_TRAILING_WHITESPACE
+			ERROR_QUIET)
+		if(EXISTS "${GLM_CLANG_BUILTINS}")
+			link_libraries("${GLM_CLANG_BUILTINS}")
+		else()
+			message(WARNING "GLM: clang builtins library not found; half-float tests may fail to link")
+		endif()
+	endif()
+
 	#if(NOT GLM_DISABLE_AUTO_DETECTION)
 	#	add_compile_options(-Werror -Weverything)
 	#endif()

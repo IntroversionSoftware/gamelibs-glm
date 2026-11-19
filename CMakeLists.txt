@@ -248,7 +248,13 @@ if (GLM_BUILD_TESTS)
 	if (GLM_BUILDING_WITH_SIMD)
 		# When we've forcibly enabled SIMD, we should ensure our tests cover
 		# the SIMD versions of each datatype.
-		add_definitions(-DGLM_FORCE_DEFAULT_ALIGNED_GENTYPES)
+		if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC" AND NOT GLM_ENABLE_LANG_EXTENSIONS)
+			# /Za rejects the anonymous structs aligned gentypes are built from, and
+			# GLM only enables SIMD on MSVC with language extensions anyway.
+			message(WARNING "GLM: SIMD on MSVC needs GLM_ENABLE_LANG_EXTENSIONS=ON; testing without aligned gentypes")
+		else()
+			add_definitions(-DGLM_FORCE_DEFAULT_ALIGNED_GENTYPES)
+		endif()
 	endif()
 	include(CTest)
 	add_subdirectory(test)
