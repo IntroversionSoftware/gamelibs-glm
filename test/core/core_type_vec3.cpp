@@ -312,11 +312,16 @@ static int test_vec3_size()
 	Error += sizeof(glm::vec3) == sizeof(glm::lowp_vec3) ? 0 : 1;
 	Error += sizeof(glm::vec3) == sizeof(glm::mediump_vec3) ? 0 : 1;
 	Error += sizeof(glm::vec3) == sizeof(glm::highp_vec3) ? 0 : 1;
-	Error += 12 == sizeof(glm::mediump_vec3) ? 0 : 1;
+	Error += 12 == sizeof(glm::vec<3, float, glm::packed_mediump>) ? 0 : 1;
 	Error += sizeof(glm::dvec3) == sizeof(glm::lowp_dvec3) ? 0 : 1;
 	Error += sizeof(glm::dvec3) == sizeof(glm::mediump_dvec3) ? 0 : 1;
 	Error += sizeof(glm::dvec3) == sizeof(glm::highp_dvec3) ? 0 : 1;
-	Error += 24 == sizeof(glm::highp_dvec3) ? 0 : 1;
+	Error += 24 == sizeof(glm::vec<3, double, glm::packed_highp>) ? 0 : 1;
+#	if GLM_CONFIG_ALIGNED_GENTYPES == GLM_ENABLE
+		// Aligned 3-component vectors are padded to 4 components.
+		Error += 16 == sizeof(glm::vec<3, float, glm::aligned_mediump>) ? 0 : 1;
+		Error += 32 == sizeof(glm::vec<3, double, glm::aligned_highp>) ? 0 : 1;
+#	endif
 	Error += glm::vec3().length() == 3 ? 0 : 1;
 	Error += glm::dvec3().length() == 3 ? 0 : 1;
 	Error += glm::vec3::length() == 3 ? 0 : 1;
@@ -620,9 +625,7 @@ int main()
 	Error += test_vec3_ctor();
 	Error += test_bvec3_ctor();
 	Error += test_vec3_operators();
-#ifndef GLM_FORCE_ALIGNED_GENTYPES
 	Error += test_vec3_size();
-#endif
 	Error += test_operator_increment();
 
 	Error += test_swizzle();

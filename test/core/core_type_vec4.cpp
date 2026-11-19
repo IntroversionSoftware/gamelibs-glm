@@ -692,7 +692,8 @@ namespace heap
 		p->f = 0.0f;
 		delete p;
 
-		Error += sizeof(B) == sizeof(glm::vec4) + sizeof(float) * 2 ? 0 : 1;
+		// An aligned vec4 member is placed on a 16-byte boundary after the two floats.
+		Error += sizeof(B) == (glm::detail::is_aligned<glm::defaultp>::value ? sizeof(glm::vec4) * 2 : sizeof(glm::vec4) + sizeof(float) * 2) ? 0 : 1;
 
 		return Error;
 	}
@@ -825,9 +826,7 @@ int main()
 	Error += test_swizzle_partial();
 	Error += test_simd();
 	Error += test_operator_increment();
-#ifndef GLM_FORCE_ALIGNED_GENTYPES
 	Error += heap::test();
-#endif
 	Error += test_inheritance();
 
 	return Error;
