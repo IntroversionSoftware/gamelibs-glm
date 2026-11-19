@@ -1,5 +1,8 @@
 #pragma once
 
+#include <type_traits>
+#include <utility>
+
 namespace glm{
 namespace detail
 {
@@ -17,33 +20,53 @@ namespace detail
 		char    _buffer[1];
 	};
 
-	template<length_t N, typename T, qualifier Q, int E0, int E1, int E2, int E3, bool UseSimd>
-	struct _swizzle_base1 : public _swizzle_base0<T, N>
+	// Number of source components a swizzle reaches: one past its highest index. Only the first N
+	// indices are meaningful; E2/E3 are filler (-1, -2, 3) for shorter swizzles.
+	//
+	// SIMD implementations use this to bound their accesses, since the swizzle types don't know how
+	// wide their source vector is. Every index a swizzle uses exists in its source, so touching
+	// [0, extent) is always in bounds, and an extent of 3 or more implies a vec3/vec4 source.
+	constexpr int _swizzle_extent(length_t N, int E0, int E1, int E2, int E3)
 	{
-	};
+		int m = E0 > E1 ? E0 : E1;
+		if (N > 2 && E2 > m)
+			m = E2;
+		if (N > 3 && E3 > m)
+			m = E3;
+		return m + 1;
+	}
 
+	// Portable implementation, valid for any source vector and qualifier. This is the default; SIMD
+	// paths specialize _swizzle_base1 only where they have something better.
 	template<length_t N, typename T, qualifier Q, int E0, int E1, int E2, int E3>
-	struct _swizzle_base1<N, T, Q, E0, E1, E2, E3, false> : public _swizzle_base0<T, N>
+	struct _swizzle_scalar : public _swizzle_base0<T, N>
 	{
+		GLM_FUNC_QUALIFIER vec<N, T, Q> operator ()()  const
+		{
+			if constexpr (N == 2)
+				return vec<2, T, Q>(this->elem(E0), this->elem(E1));
+			else if constexpr (N == 3)
+				return vec<3, T, Q>(this->elem(E0), this->elem(E1), this->elem(E2));
+			else
+				return vec<4, T, Q>(this->elem(E0), this->elem(E1), this->elem(E2), this->elem(E3));
+		}
 	};
 
-	template<typename T, qualifier Q, int E0, int E1>
-	struct _swizzle_base1<2, T, Q, E0,E1,-1,-2, false> : public _swizzle_base0<T, 2>
+	template<length_t N, typename T, qualifier Q, int E0, int E1, int E2, int E3, bool UseSimd>
+	struct _swizzle_base1 : public _swizzle_scalar<N, T, Q, E0, E1, E2, E3>
 	{
-		GLM_FUNC_QUALIFIER vec<2, T, Q> operator ()()  const { return vec<2, T, Q>(this->elem(E0), this->elem(E1)); }
 	};
+}//namespace detail
+}//namespace glm
 
-	template<typename T, qualifier Q, int E0, int E1, int E2>
-	struct _swizzle_base1<3, T, Q, E0,E1,E2,3, false> : public _swizzle_base0<T, 3>
-	{
-		GLM_FUNC_QUALIFIER vec<3, T, Q> operator ()()  const { return vec<3, T, Q>(this->elem(E0), this->elem(E1), this->elem(E2)); }
-	};
+// SIMD specializations of _swizzle_base1, and helpers for the vectorized write path below. These must
+// be declared before any vec type is instantiated: vec<L, T, Q> instantiates all of its swizzle members,
+// and a specialization declared after that point is silently ignored for them.
+#include "_swizzle_simd.inl"
 
-	template<typename T, qualifier Q, int E0, int E1, int E2, int E3>
-	struct _swizzle_base1<4, T, Q, E0,E1,E2,E3, false> : public _swizzle_base0<T, 4>
-	{
-		GLM_FUNC_QUALIFIER vec<4, T, Q> operator ()()  const { return vec<4, T, Q>(this->elem(E0), this->elem(E1), this->elem(E2), this->elem(E3)); }
-	};
+namespace glm{
+namespace detail
+{
 
 	// Internal class for implementing swizzle operators
 	/*
@@ -59,36 +82,42 @@ namespace detail
 	template<length_t N, typename T, qualifier Q, int E0, int E1, int E2, int E3, int DUPLICATE_ELEMENTS>
 	struct _swizzle_base2 : public _swizzle_base1<N, T, Q, E0,E1,E2,E3, detail::is_aligned<Q>::value>
 	{
+		// Each op returns the new value of a destination component (e) given the operand (t). They are
+		// templates so the vectorized write path can apply them to whole vectors at once.
 		struct op_equal
 		{
-			GLM_FUNC_QUALIFIER void operator() (T& e, T& t) const{ e = t; }
+			template<typename V>
+			GLM_FUNC_QUALIFIER V operator() (V const&, V const& t) const{ return t; }
 		};
 
 		struct op_minus
 		{
-			GLM_FUNC_QUALIFIER void operator() (T& e, T& t) const{ e -= t; }
+			template<typename V>
+			GLM_FUNC_QUALIFIER V operator() (V const& e, V const& t) const{ return e - t; }
 		};
 
 		struct op_plus
 		{
-			GLM_FUNC_QUALIFIER void operator() (T& e, T& t) const{ e += t; }
+			template<typename V>
+			GLM_FUNC_QUALIFIER V operator() (V const& e, V const& t) const{ return e + t; }
 		};
 
 		struct op_mul
 		{
-			GLM_FUNC_QUALIFIER void operator() (T& e, T& t) const{ e *= t; }
+			template<typename V>
+			GLM_FUNC_QUALIFIER V operator() (V const& e, V const& t) const{ return e * t; }
 		};
 
 		struct op_div
 		{
-			GLM_FUNC_QUALIFIER void operator() (T& e, T& t) const{ e /= t; }
+			template<typename V>
+			GLM_FUNC_QUALIFIER V operator() (V const& e, V const& t) const{ return e / t; }
 		};
 
 	public:
 		GLM_FUNC_QUALIFIER _swizzle_base2& operator= (const T& t)
 		{
-			for (int i = 0; i < N; ++i)
-				(*this)[i] = t;
+			_apply_op(vec<N, T, Q>(t), op_equal());
 			return *this;
 		}
 
@@ -133,6 +162,15 @@ namespace detail
 		template<typename U>
 		GLM_FUNC_QUALIFIER void _apply_op(vec<N, T, Q> const& that, const U& op)
 		{
+#			if GLM_ARCH & GLM_ARCH_CLANG_BIT
+			if constexpr (detail::is_aligned<Q>::value && !std::is_same<T, bool>::value)
+			{
+				// Read-modify-write the reachable source lanes as one vector (see _swizzle_simd.inl).
+				detail::_swizzle_clang_apply<N, T, E0, E1, E2, E3>(this->_buffer, that.data, op);
+				return;
+			}
+#			endif
+
 			// Make a copy of the data in this == &that.
 			// The copier should optimize out the copy in cases where the function is
 			// properly inlined and the copy is not necessary.
@@ -140,7 +178,7 @@ namespace detail
 			for (int i = 0; i < N; ++i)
 				t[i] = that[i];
 			for (int i = 0; i < N; ++i)
-				op( (*this)[i], t[i] );
+				(*this)[i] = op( (*this)[i], t[i] );
 		}
 	};
 
@@ -159,10 +197,19 @@ namespace detail
 		}
 	};
 
-	template<length_t N, typename T, qualifier Q, int E0, int E1, int E2, int E3>
-	struct _swizzle : public _swizzle_base2<N, T, Q, E0, E1, E2, E3, (E0 == E1 || E0 == E2 || E0 == E3 || E1 == E2 || E1 == E3 || E2 == E3)>
+	// Whether a swizzle repeats a component. Only the first N indices count: 3-component swizzles of a
+	// vec3/vec4 use 3 as filler for E3, which would otherwise make e.g. vec4::xwz read-only.
+	constexpr bool _swizzle_has_duplicates(length_t N, int E0, int E1, int E2, int E3)
 	{
-		typedef _swizzle_base2<N, T, Q, E0, E1, E2, E3, (E0 == E1 || E0 == E2 || E0 == E3 || E1 == E2 || E1 == E3 || E2 == E3)> base_type;
+		return E0 == E1
+			|| (N > 2 && (E0 == E2 || E1 == E2))
+			|| (N > 3 && (E0 == E3 || E1 == E3 || E2 == E3));
+	}
+
+	template<length_t N, typename T, qualifier Q, int E0, int E1, int E2, int E3>
+	struct _swizzle : public _swizzle_base2<N, T, Q, E0, E1, E2, E3, _swizzle_has_duplicates(N, E0, E1, E2, E3)>
+	{
+		typedef _swizzle_base2<N, T, Q, E0, E1, E2, E3, _swizzle_has_duplicates(N, E0, E1, E2, E3)> base_type;
 
 		using base_type::operator=;
 
