@@ -19,6 +19,11 @@ template<typename T>
 void rend(T) {}
 
 
+// Flat iteration over a matrix requires packed columns: aligned 3-row matrices pad each column, and
+// glm::begin/end reject them at compile time.
+template<glm::length_t C, glm::length_t R>
+using pmat = glm::mat<C, R, float, glm::packed_highp>;
+
 template<typename T>
 std::ptrdiff_t get_iter_distance() {
 	T t = T(); // needed for const initializing
@@ -82,7 +87,7 @@ int sumVec() {
 
 template<glm::length_t C, glm::length_t R>
 int sumMat() {
-	glm::mat<C, R, int> m;
+	glm::mat<C, R, int, glm::packed_highp> m;
 	int sumManual = 0;
 	for (int i = 0; i < C; ++i) {
 		for (int j = 0; j < R; ++j) {
@@ -90,7 +95,7 @@ int sumMat() {
 			sumManual += i * j;
 		}
 	}
-	glm::mat<C, R, int> const cm = m;
+	glm::mat<C, R, int, glm::packed_highp> const cm = m;
 	return (sumManual != std::accumulate(begin(m), end(m), 0))
 		+ (sumManual != std::accumulate(begin(cm), end(cm), 0))
 		+ (sumManual != std::accumulate(rbegin(m), rend(m), 0))
@@ -129,29 +134,29 @@ int main()
 	Error += (4 != get_iter_distance<glm::quat>());
 	Error += (4 != get_iter_distance<const glm::quat>());
 
-	Error += (2 * 2 != get_iter_distance<glm::mat2x2>());
-	Error += (2 * 3 != get_iter_distance<glm::mat2x3>());
-	Error += (2 * 4 != get_iter_distance<glm::mat2x4>());
+	Error += (2 * 2 != get_iter_distance<pmat<2, 2>>());
+	Error += (2 * 3 != get_iter_distance<pmat<2, 3>>());
+	Error += (2 * 4 != get_iter_distance<pmat<2, 4>>());
 
-	Error += (2 * 2 != get_iter_distance<const glm::mat2x2>());
-	Error += (2 * 3 != get_iter_distance<const glm::mat2x3>());
-	Error += (2 * 4 != get_iter_distance<const glm::mat2x4>());
+	Error += (2 * 2 != get_iter_distance<const pmat<2, 2>>());
+	Error += (2 * 3 != get_iter_distance<const pmat<2, 3>>());
+	Error += (2 * 4 != get_iter_distance<const pmat<2, 4>>());
 
-	Error += (3 * 2 != get_iter_distance<glm::mat3x2>());
-	Error += (3 * 3 != get_iter_distance<glm::mat3x3>());
-	Error += (3 * 4 != get_iter_distance<glm::mat3x4>());
+	Error += (3 * 2 != get_iter_distance<pmat<3, 2>>());
+	Error += (3 * 3 != get_iter_distance<pmat<3, 3>>());
+	Error += (3 * 4 != get_iter_distance<pmat<3, 4>>());
 
-	Error += (3 * 2 != get_iter_distance<const glm::mat3x2>());
-	Error += (3 * 3 != get_iter_distance<const glm::mat3x3>());
-	Error += (3 * 4 != get_iter_distance<const glm::mat3x4>());
+	Error += (3 * 2 != get_iter_distance<const pmat<3, 2>>());
+	Error += (3 * 3 != get_iter_distance<const pmat<3, 3>>());
+	Error += (3 * 4 != get_iter_distance<const pmat<3, 4>>());
 
-	Error += (4 * 2 != get_iter_distance<glm::mat4x2>());
-	Error += (4 * 3 != get_iter_distance<glm::mat4x3>());
-	Error += (4 * 4 != get_iter_distance<glm::mat4x4>());
+	Error += (4 * 2 != get_iter_distance<pmat<4, 2>>());
+	Error += (4 * 3 != get_iter_distance<pmat<4, 3>>());
+	Error += (4 * 4 != get_iter_distance<pmat<4, 4>>());
 
-	Error += (4 * 2 != get_iter_distance<const glm::mat4x2>());
-	Error += (4 * 3 != get_iter_distance<const glm::mat4x3>());
-	Error += (4 * 4 != get_iter_distance<const glm::mat4x4>());
+	Error += (4 * 2 != get_iter_distance<const pmat<4, 2>>());
+	Error += (4 * 3 != get_iter_distance<const pmat<4, 3>>());
+	Error += (4 * 4 != get_iter_distance<const pmat<4, 4>>());
 
 
 	Error += (1 != get_rev_iter_distance<glm::vec1>());
@@ -167,30 +172,30 @@ int main()
 	Error += (4 != get_rev_iter_distance<glm::quat>());
 	Error += (4 != get_rev_iter_distance<const glm::quat>());
 
-	Error += (2 * 2 != get_rev_iter_distance<glm::mat2x2>());
-	Error += (2 * 3 != get_rev_iter_distance<glm::mat2x3>());
-	Error += (2 * 4 != get_rev_iter_distance<glm::mat2x4>());
+	Error += (2 * 2 != get_rev_iter_distance<pmat<2, 2>>());
+	Error += (2 * 3 != get_rev_iter_distance<pmat<2, 3>>());
+	Error += (2 * 4 != get_rev_iter_distance<pmat<2, 4>>());
 
-	Error += (2 * 2 != get_rev_iter_distance<const glm::mat2x2>());
-	Error += (2 * 3 != get_rev_iter_distance<const glm::mat2x3>());
-	Error += (2 * 4 != get_rev_iter_distance<const glm::mat2x4>());
+	Error += (2 * 2 != get_rev_iter_distance<const pmat<2, 2>>());
+	Error += (2 * 3 != get_rev_iter_distance<const pmat<2, 3>>());
+	Error += (2 * 4 != get_rev_iter_distance<const pmat<2, 4>>());
 
 
-	Error += (3 * 2 != get_rev_iter_distance<glm::mat3x2>());
-	Error += (3 * 3 != get_rev_iter_distance<glm::mat3x3>());
-	Error += (3 * 4 != get_rev_iter_distance<glm::mat3x4>());
+	Error += (3 * 2 != get_rev_iter_distance<pmat<3, 2>>());
+	Error += (3 * 3 != get_rev_iter_distance<pmat<3, 3>>());
+	Error += (3 * 4 != get_rev_iter_distance<pmat<3, 4>>());
 
-	Error += (3 * 2 != get_rev_iter_distance<const glm::mat3x2>());
-	Error += (3 * 3 != get_rev_iter_distance<const glm::mat3x3>());
-	Error += (3 * 4 != get_rev_iter_distance<const glm::mat3x4>());
+	Error += (3 * 2 != get_rev_iter_distance<const pmat<3, 2>>());
+	Error += (3 * 3 != get_rev_iter_distance<const pmat<3, 3>>());
+	Error += (3 * 4 != get_rev_iter_distance<const pmat<3, 4>>());
 
-	Error += (4 * 2 != get_rev_iter_distance<glm::mat4x2>());
-	Error += (4 * 3 != get_rev_iter_distance<glm::mat4x3>());
-	Error += (4 * 4 != get_rev_iter_distance<glm::mat4x4>());
+	Error += (4 * 2 != get_rev_iter_distance<pmat<4, 2>>());
+	Error += (4 * 3 != get_rev_iter_distance<pmat<4, 3>>());
+	Error += (4 * 4 != get_rev_iter_distance<pmat<4, 4>>());
 
-	Error += (4 * 2 != get_rev_iter_distance<const glm::mat4x2>());
-	Error += (4 * 3 != get_rev_iter_distance<const glm::mat4x3>());
-	Error += (4 * 4 != get_rev_iter_distance<const glm::mat4x4>());
+	Error += (4 * 2 != get_rev_iter_distance<const pmat<4, 2>>());
+	Error += (4 * 3 != get_rev_iter_distance<const pmat<4, 3>>());
+	Error += (4 * 4 != get_rev_iter_distance<const pmat<4, 4>>());
 
 	Error += sumVec<1>();
 	Error += sumVec<2>();

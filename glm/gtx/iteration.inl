@@ -7,6 +7,17 @@ namespace glm
 	}
 	*/
 
+	namespace detail
+	{
+		// Flat iteration over a matrix needs its columns to be adjacent. Aligned 3-row matrices pad each
+		// column to 4 components, so a T* range over them would visit padding and miss the last column.
+		template<length_t C, length_t R, typename T, qualifier Q>
+		struct iteration_contiguous
+		{
+			static const bool value = sizeof(mat<C, R, T, Q>) == sizeof(T) * C * R;
+		};
+	}//namespace detail
+
 	/// @addtogroup gtx_iteration
 	/// @{
 	template<length_t L,typename T,qualifier Q>
@@ -15,6 +26,7 @@ namespace glm
 	}
 	template<length_t C,length_t R,typename T,qualifier Q>
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR T* begin(mat<C,R,T,Q>& m) {
+		static_assert(detail::iteration_contiguous<C, R, T, Q>::value, "glm::begin/end: the columns of this matrix are padded (3 rows, aligned); iterate a packed matrix instead, see glm::to_packed");
 		return &m[0].x;
 	}
 	template<typename T,qualifier Q>
@@ -27,6 +39,7 @@ namespace glm
 	}
 	template<length_t C,length_t R,typename T,qualifier Q>
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR const T* begin(const mat<C,R,T,Q>& m) {
+		static_assert(detail::iteration_contiguous<C, R, T, Q>::value, "glm::begin/end: the columns of this matrix are padded (3 rows, aligned); iterate a packed matrix instead, see glm::to_packed");
 		return &m[0].x;
 	}
 	template<typename T,qualifier Q>
@@ -40,6 +53,7 @@ namespace glm
 	}
 	template<length_t C,length_t R,typename T,qualifier Q>
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR T* end(mat<C,R,T,Q>& m) {
+		static_assert(detail::iteration_contiguous<C, R, T, Q>::value, "glm::begin/end: the columns of this matrix are padded (3 rows, aligned); iterate a packed matrix instead, see glm::to_packed");
 		return (&m[0].x) + C*R;
 	}
 	template<typename T,qualifier Q>
@@ -52,6 +66,7 @@ namespace glm
 	}
 	template<length_t C,length_t R,typename T,qualifier Q>
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR const T* end(const mat<C,R,T,Q>& m) {
+		static_assert(detail::iteration_contiguous<C, R, T, Q>::value, "glm::begin/end: the columns of this matrix are padded (3 rows, aligned); iterate a packed matrix instead, see glm::to_packed");
 		return (&m[0].x) + C*R;
 	}
 	template<typename T,qualifier Q>
