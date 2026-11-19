@@ -116,6 +116,30 @@ namespace detail
 		};
 #	endif
 
+	// The packed qualifier with the same precision as P.
+	template<glm::qualifier P>
+	struct packed_qualifier
+	{
+		static const glm::qualifier value =
+			is_lowp<P>::value ? glm::packed_lowp :
+			is_mediump<P>::value ? glm::packed_mediump :
+			glm::packed_highp;
+	};
+
+	// The aligned qualifier with the same precision as P, or the packed one when aligned types are disabled.
+	template<glm::qualifier P>
+	struct aligned_qualifier
+	{
+#	if GLM_CONFIG_ALIGNED_GENTYPES == GLM_ENABLE
+		static const glm::qualifier value =
+			is_lowp<P>::value ? glm::aligned_lowp :
+			is_mediump<P>::value ? glm::aligned_mediump :
+			glm::aligned_highp;
+#	else
+		static const glm::qualifier value = packed_qualifier<P>::value;
+#	endif
+	};
+
 	template<length_t L, typename T, bool is_aligned>
 	struct storage
 	{

@@ -3,6 +3,9 @@
 #include <glm/gtc/constants.hpp>
 #include <glm/ext/vector_relational.hpp>
 #include <glm/ext/matrix_relational.hpp>
+#include <cstring>
+#include <memory>
+#include <type_traits>
 
 static int test_value_ptr_vec()
 {
@@ -368,6 +371,72 @@ static int test_make_vec4()
 	return Error;
 }
 
+// to_packed gives a tightly packed copy whatever the source's qualifier, so value_ptr of it is safe to
+// hand to APIs that expect C * R contiguous components, even when the default types are aligned and padded.
+static int test_to_packed()
+{
+	int Error = 0;
+
+	static_assert(std::is_same<glm::packed_t<glm::mediump_mat3>, glm::mat<3, 3, float, glm::packed_mediump> >::value, "to_packed keeps precision");
+	static_assert(std::is_same<glm::packed_t<glm::lowp_vec3>, glm::vec<3, float, glm::packed_lowp> >::value, "to_packed keeps precision");
+	static_assert(std::is_same<glm::packed_t<glm::dquat>, glm::qua<double, glm::packed_highp> >::value, "to_packed of a quaternion");
+	static_assert(std::is_same<glm::packed_t<glm::vec<3, float, glm::packed_highp> >, glm::vec<3, float, glm::packed_highp> >::value, "packed types map to themselves");
+	static_assert(sizeof(glm::packed_t<glm::mat3>) == 9 * sizeof(float), "packed mat3 has no padding");
+	static_assert(sizeof(glm::packed_t<glm::dmat4x3>) == 12 * sizeof(double), "packed dmat4x3 has no padding");
+	static_assert(sizeof(glm::packed_t<glm::vec3>) == 3 * sizeof(float), "packed vec3 has no padding");
+
+	{
+		float const Data[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+		glm::mat3 const m(1, 2, 3, 4, 5, 6, 7, 8, 9);
+		Error += std::memcmp(glm::value_ptr(glm::to_packed(m)), Data, sizeof(Data)) == 0 ? 0 : 1;
+		Error += glm::all(glm::equal(glm::mat3(glm::to_aligned(glm::to_packed(m))), m, 0.0f)) ? 0 : 1;
+	}
+	{
+		double const Data[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+		glm::dmat4x3 const m(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12);
+		Error += std::memcmp(glm::value_ptr(glm::to_packed(m)), Data, sizeof(Data)) == 0 ? 0 : 1;
+	}
+	{
+		int const Data[] = {1, 2, 3};
+		glm::ivec3 const v(1, 2, 3);
+		Error += std::memcmp(glm::value_ptr(glm::to_packed(v)), Data, sizeof(Data)) == 0 ? 0 : 1;
+		Error += glm::ivec3(glm::to_packed(v)) == v ? 0 : 1;
+	}
+	{
+		glm::quat const q(1, 2, 3, 4);
+		Error += glm::quat(glm::to_packed(q)) == q ? 0 : 1;
+	}
+
+	return Error;
+}
+
+// The make_* functions read exactly the number of components from the pointer, so exact-size sources are fine
+// even when the default types are padded. The sources are on the heap so an over-read is sanitizer-visible.
+static int test_make_pointer_exact()
+{
+	int Error = 0;
+
+	{
+		std::unique_ptr<float[]> const Data(new float[3]{1, 2, 3});
+		Error += glm::all(glm::equal(glm::make_vec3(Data.get()), glm::vec3(1, 2, 3), 0.0f)) ? 0 : 1;
+	}
+	{
+		std::unique_ptr<double[]> const Data(new double[3]{1, 2, 3});
+		Error += glm::all(glm::equal(glm::make_vec3(Data.get()), glm::dvec3(1, 2, 3), 0.0)) ? 0 : 1;
+	}
+	{
+		std::unique_ptr<float[]> const Data(new float[9]{1, 2, 3, 4, 5, 6, 7, 8, 9});
+		Error += glm::all(glm::equal(glm::make_mat3(Data.get()), glm::mat3(1, 2, 3, 4, 5, 6, 7, 8, 9), 0.0f)) ? 0 : 1;
+	}
+	{
+		std::unique_ptr<float[]> const Data(new float[4]{1, 2, 3, 4});
+		glm::quat const q = glm::make_quat(Data.get());
+		Error += std::memcmp(glm::value_ptr(glm::to_packed(q)), Data.get(), 4 * sizeof(float)) == 0 ? 0 : 1;
+	}
+
+	return Error;
+}
+
 int main()
 {
 	int Error = 0;
@@ -382,6 +451,8 @@ int main()
 	Error += test_value_ptr_vec_const();
 	Error += test_value_ptr_mat();
 	Error += test_value_ptr_mat_const();
+	Error += test_to_packed();
+	Error += test_make_pointer_exact();
 
 	return Error;
 }
