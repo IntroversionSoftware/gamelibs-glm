@@ -311,13 +311,42 @@ namespace detail
 		}
 	};
 
+	// The sum of Data's first L lanes, in every lane: the horizontal sum stays in the vector register
+	// instead of going through a scalar and back.
+	template<length_t L, typename V>
+	GLM_FUNC_QUALIFIER V splat_sum(V const& Data)
+	{
+		if constexpr (L == 1)
+			return Data;
+		else if constexpr (L == 2)
+			return Data.xx + Data.yy;
+		else if constexpr (L == 3)
+			return Data.xxxx + Data.yyyy + Data.zzzz; // vec3 storage has 4 lanes
+		else
+		{
+			V const Pairs = Data + Data.yxwz;
+			return Pairs + Pairs.zwxy;
+		}
+	}
+
+	// highp and mediump divide by the length, with the squared length splatted across the vector, which
+	// measured faster than an rsqrt estimate refined by Newton-Raphson steps (the previous code) on both
+	// x86 (Zen 5) and AArch64 (Apple M3): it's exact without -ffast-math, and with it the compiler picks
+	// its own reciprocal estimate. lowp keeps the estimate.
 	template<length_t L, typename T, qualifier Q>
 	struct compute_normalize<L, T, Q, true>
 	{
 		GLM_FUNC_QUALIFIER static vec<L, T, Q> call(vec<L, T, Q> const& v)
 		{
-			const T lenSq = compute_dot<vec<L, T, Q>, T, true>::call(v, v);
 			vec<L, T, Q> Result;
+#			if GLM_HAS_BUILTIN(__builtin_elementwise_sqrt)
+			if constexpr (!is_lowp<Q>::value)
+			{
+				Result.data = v.data / __builtin_elementwise_sqrt(splat_sum<L>(v.data * v.data));
+				return Result;
+			}
+#			endif
+			const T lenSq = compute_dot<vec<L, T, Q>, T, true>::call(v, v);
 			Result.data = v.data * compute_inversesqrt_scalar<T, Q>::call(lenSq);
 			return Result;
 		}
@@ -329,6 +358,14 @@ namespace detail
 		GLM_FUNC_QUALIFIER static qua<T, Q> call(qua<T, Q> const& q, T lenSq)
 		{
 			qua<T, Q> Result;
+#			if GLM_HAS_BUILTIN(__builtin_elementwise_sqrt)
+			if constexpr (!is_lowp<Q>::value)
+			{
+				static_cast<void>(lenSq);
+				Result.data = q.data / __builtin_elementwise_sqrt(splat_sum<4>(q.data * q.data));
+				return Result;
+			}
+#			endif
 			Result.data = q.data * compute_inversesqrt_scalar<T, Q>::call(lenSq);
 			return Result;
 		}
