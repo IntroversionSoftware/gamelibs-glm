@@ -2,6 +2,7 @@
 
 #include "compute_vector_relational.hpp"
 #include "compute_vector_decl.hpp"
+#include <cstring>
 
 namespace glm
 {
@@ -885,9 +886,9 @@ namespace glm {
 	template<>
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<3, float, packed_highp>::vec(const vec<3, float, aligned_highp>& v)
 	{
-		_mm_store_sd(reinterpret_cast<double*>(this), _mm_castps_pd(v.data));
-		__m128 mz = _mm_shuffle_ps(v.data, v.data, _MM_SHUFFLE(2, 2, 2, 2));
-		_mm_store_ss(reinterpret_cast<float*>(this)+2, mz);
+		// Packed storage is only 4-byte aligned: an 8-byte _mm_store_sd into it is undefined behavior
+		// (and GCC miscompiles it). memcpy is well defined and compiles to the same movq/movss.
+		std::memcpy(static_cast<void*>(this), &v.data, sizeof(*this));
 	}
 
 	template<>
@@ -898,7 +899,7 @@ namespace glm {
 		data = _mm256_set_pd(v[2], v[2], v[1], v[0]);
 #else
 		data.setv(0, _mm_loadu_pd(reinterpret_cast<const double*>(&v)));
-		data.setv(1, _mm_loadu_pd(reinterpret_cast<const double*>(&v)+2));
+		data.setv(1, _mm_set1_pd(v[2])); // not a 2-lane load from &v[2], which reads past the end
 #endif
 	}
 
@@ -928,20 +929,14 @@ namespace glm {
 	template<>
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<3, int, aligned_highp>::vec(const vec<3, int, packed_highp>& v)
 	{
-		__m128 mx = _mm_load_ss(reinterpret_cast<const float*>(&v[0]));
-		__m128 my = _mm_load_ss(reinterpret_cast<const float*>(&v[1]));
-		__m128 mz = _mm_load_ss(reinterpret_cast<const float*>(&v[2]));
-		__m128 mxy = _mm_unpacklo_ps(mx, my);
-		data = _mm_castps_si128(_mm_movelh_ps(mxy, mz));
+		data = _mm_setr_epi32(static_cast<int>(v[0]), static_cast<int>(v[1]), static_cast<int>(v[2]), static_cast<int>(v[2]));
 	}
 
 	template<>
 	template<>
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<3, int, packed_highp>::vec(const vec<3, int, aligned_highp>& v)
 	{
-		_mm_store_sd(reinterpret_cast<double*>(this), _mm_castsi128_pd(v.data));
-		__m128 mz = _mm_shuffle_ps(_mm_castsi128_ps(v.data), _mm_castsi128_ps(v.data), _MM_SHUFFLE(2, 2, 2, 2));
-		_mm_store_ss(reinterpret_cast<float*>(this)+2, mz);
+		std::memcpy(static_cast<void*>(this), &v.data, sizeof(*this));
 	}
 
 	template<>
@@ -955,20 +950,14 @@ namespace glm {
 	template<>
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<3, unsigned int, aligned_highp>::vec(const vec<3, unsigned int, packed_highp>& v)
 	{
-		__m128 mx = _mm_load_ss(reinterpret_cast<const float*>(&v[0]));
-		__m128 my = _mm_load_ss(reinterpret_cast<const float*>(&v[1]));
-		__m128 mz = _mm_load_ss(reinterpret_cast<const float*>(&v[2]));
-		__m128 mxy = _mm_unpacklo_ps(mx, my);
-		data = _mm_castps_si128(_mm_movelh_ps(mxy, mz));
+		data = _mm_setr_epi32(static_cast<int>(v[0]), static_cast<int>(v[1]), static_cast<int>(v[2]), static_cast<int>(v[2]));
 	}
 
 	template<>
 	template<>
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<3, unsigned int, packed_highp>::vec(const vec<3, unsigned int, aligned_highp>& v)
 	{
-		_mm_store_sd(reinterpret_cast<double*>(this), _mm_castsi128_pd(v.data));
-		__m128 mz = _mm_shuffle_ps(_mm_castsi128_ps(v.data), _mm_castsi128_ps(v.data), _MM_SHUFFLE(2, 2, 2, 2));
-		_mm_store_ss(reinterpret_cast<float*>(this) + 2, mz);
+		std::memcpy(static_cast<void*>(this), &v.data, sizeof(*this));
 	}
 
 	CTORSL(3, CTOR_DOUBLE)
