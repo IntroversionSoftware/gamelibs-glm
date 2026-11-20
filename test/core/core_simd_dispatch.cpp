@@ -16,89 +16,19 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "glm_test_util.hpp"
+
 #include <cmath>
-#include <cstdio>
-#include <cstring>
-#include <limits>
-#include <random>
+#include <string>
 #include <type_traits>
 
 #if GLM_CONFIG_ALIGNED_GENTYPES == GLM_ENABLE
 
 namespace
 {
-	int Failures = 0;
-	char const* Context = "";
-
-	std::mt19937 Rng(20261119u);
-
-	template<typename T>
-	T random_value(double lo, double hi)
-	{
-		if constexpr (std::is_floating_point<T>::value)
-			return static_cast<T>(std::uniform_real_distribution<double>(lo, hi)(Rng));
-		else
-			return static_cast<T>(std::uniform_int_distribution<long long>(static_cast<long long>(lo), static_cast<long long>(hi))(Rng));
-	}
-
-	// A packed vector of random components; Lo/Hi bound them and NonZero keeps them away from zero.
-	template<glm::length_t L, typename T>
-	glm::vec<L, T, glm::packed_highp> random_vec(double lo, double hi, bool nonZero = false)
-	{
-		glm::vec<L, T, glm::packed_highp> v;
-		for (glm::length_t i = 0; i < L; ++i)
-		{
-			do
-				v[i] = random_value<T>(lo, hi);
-			while (nonZero && v[i] == T(0));
-		}
-		return v;
-	}
-
-	template<glm::length_t C, glm::length_t R, typename T>
-	glm::mat<C, R, T, glm::packed_highp> random_mat(double lo, double hi)
-	{
-		glm::mat<C, R, T, glm::packed_highp> m;
-		for (glm::length_t c = 0; c < C; ++c)
-			m[c] = random_vec<R, T>(lo, hi);
-		return m;
-	}
-
-	// The aligned counterpart of a packed vector, with the padding lane (if any) set to garbage.
-	template<glm::qualifier Q, glm::length_t L, typename T>
-	glm::vec<L, T, Q> to_aligned_dirty(glm::vec<L, T, glm::packed_highp> const& v)
-	{
-		using A = glm::vec<L, T, Q>;
-		static_assert(std::is_trivially_copyable<A>::value, "aligned vectors are trivially copyable");
-		// Convert normally, then overwrite only the padding bytes (if any). Building the whole vector from a
-		// byte buffer instead made GCC 13 route part of a 12-byte copy through an MMX register without EMMS,
-		// which poisons later x87 (long double) math in the test's random number generation.
-		A Result(v);
-		constexpr std::size_t Used = sizeof(T) * L;
-		if constexpr (sizeof(A) > Used)
-		{
-			unsigned char Garbage[sizeof(A) - Used];
-			if constexpr (std::is_floating_point<T>::value)
-			{
-				T const Nan = std::numeric_limits<T>::quiet_NaN();
-				for (std::size_t i = 0; i + sizeof(T) <= sizeof(Garbage); i += sizeof(T))
-					std::memcpy(Garbage + i, &Nan, sizeof(T));
-			}
-			else
-				std::memset(Garbage, 0xA5, sizeof(Garbage));
-			std::memcpy(reinterpret_cast<unsigned char*>(&Result) + Used, Garbage, sizeof(Garbage));
-		}
-		return Result;
-	}
-
-	template<glm::qualifier Q, glm::length_t C, glm::length_t R, typename T>
-	glm::mat<C, R, T, Q> to_aligned_dirty(glm::mat<C, R, T, glm::packed_highp> const& m)
-	{
-		glm::mat<C, R, T, Q> Result;
-		for (glm::length_t c = 0; c < C; ++c)
-			Result[c] = to_aligned_dirty<Q>(m[c]);
-		return Result;
-	}
+	using glm_test::random_mat;
+	using glm_test::random_vec;
+	using glm_test::to_aligned_dirty;
 
 	template<glm::qualifier Q>
 	double tolerance()
@@ -121,36 +51,38 @@ namespace
 			return a == b;
 	}
 
+	// The SIMD (aligned) result against the scalar (packed) one: scalars, bools, vectors, matrices.
 	template<typename T>
-	void report(char const* op, int index, T got, T expected)
+	typename std::enable_if<std::is_arithmetic<T>::value, bool>::type all_close(T got, T expected, double tol)
 	{
-		std::printf("  FAIL %s: %s (component %d): got %.9g, expected %.9g\n", Context, op, index, double(got), double(expected));
-		++Failures;
-	}
-
-	// Result comparisons: scalars, bools, vectors and matrices.
-	template<typename T>
-	typename std::enable_if<std::is_arithmetic<T>::value>::type check(char const* op, T got, T expected, double tol)
-	{
-		if (!close(got, expected, tol))
-			report(op, 0, got, expected);
+		return close(got, expected, tol);
 	}
 
 	template<glm::length_t L, typename T, glm::qualifier Q, glm::qualifier P>
-	void check(char const* op, glm::vec<L, T, Q> const& got, glm::vec<L, T, P> const& expected, double tol)
+	bool all_close(glm::vec<L, T, Q> const& got, glm::vec<L, T, P> const& expected, double tol)
 	{
 		for (glm::length_t i = 0; i < L; ++i)
 			if (!close(got[i], expected[i], tol))
-				return report(op, i, got[i], expected[i]);
+				return false;
+		return true;
 	}
 
 	template<glm::length_t C, glm::length_t R, typename T, glm::qualifier Q, glm::qualifier P>
-	void check(char const* op, glm::mat<C, R, T, Q> const& got, glm::mat<C, R, T, P> const& expected, double tol)
+	bool all_close(glm::mat<C, R, T, Q> const& got, glm::mat<C, R, T, P> const& expected, double tol)
 	{
 		for (glm::length_t c = 0; c < C; ++c)
-			for (glm::length_t r = 0; r < R; ++r)
-				if (!close(got[c][r], expected[c][r], tol))
-					return report(op, c * R + r, got[c][r], expected[c][r]);
+			if (!all_close(got[c], expected[c], tol))
+				return false;
+		return true;
+	}
+
+	template<typename A, typename B>
+	int check(char const* op, A const& got, B const& expected, double tol, int line)
+	{
+		char Tolerance[32];
+		std::snprintf(Tolerance, sizeof(Tolerance), "%g", tol);
+		return glm_test::check_pair(all_close(got, expected, tol), std::string(op) + " (tolerance " + Tolerance + ")", "SIMD", got, "scalar",
+			expected, __FILE__, line);
 	}
 
 	// Copy a vector and overwrite one component through the anonymous-struct members. With 3-lane
@@ -167,11 +99,11 @@ namespace
 
 	// Run Op on the aligned inputs and on the packed ones, and compare.
 #	define DIFF1(name, tol, expr) \
-		do { auto Fn = [](auto const& a) { return expr; }; check(name, Fn(A), Fn(PA), tol); } while (false)
+		do { auto Fn = [](auto const& a) { return expr; }; check(name, Fn(A), Fn(PA), tol, __LINE__); } while (false)
 #	define DIFF2(name, tol, expr) \
-		do { auto Fn = [](auto const& a, auto const& b) { return expr; }; check(name, Fn(A, B), Fn(PA, PB), tol); } while (false)
+		do { auto Fn = [](auto const& a, auto const& b) { return expr; }; check(name, Fn(A, B), Fn(PA, PB), tol, __LINE__); } while (false)
 #	define DIFF3(name, tol, expr) \
-		do { auto Fn = [](auto const& a, auto const& b, auto const& c) { return expr; }; check(name, Fn(A, B, C), Fn(PA, PB, PC), tol); } while (false)
+		do { auto Fn = [](auto const& a, auto const& b, auto const& c) { return expr; }; check(name, Fn(A, B, C), Fn(PA, PB, PC), tol, __LINE__); } while (false)
 
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	void test_vec_arith()
@@ -193,7 +125,7 @@ namespace
 			DIFF1("a * s", Tol, a * T(3));
 			if constexpr (std::is_signed<T>::value)
 				DIFF1("-a", Tol, -a);
-			check("a / s", A / S, PA / S, Tol);
+			check("a / s", A / S, PA / S, Tol, __LINE__);
 
 			DIFF2("a == b", 0, a == b);
 			DIFF2("a != b", 0, a != b);
@@ -201,8 +133,8 @@ namespace
 			DIFF1("a != a", 0, a != a);
 			// Equal in the real lanes, different in the padding lane.
 			auto const A2 = to_aligned_dirty<Q>(PA);
-			check("a == copy", A == A2, true, 0);
-			check("a != copy", A != A2, false, 0);
+			check("a == copy", A == A2, true, 0, __LINE__);
+			check("a != copy", A != A2, false, 0, __LINE__);
 
 			if constexpr (L >= 3)
 			{
@@ -212,7 +144,7 @@ namespace
 					C3 = glm::vec<L, T, Q>(PA[0], PA[1], PA[2]);
 				else
 					C3 = glm::vec<L, T, Q>(PA[0], PA[1], PA[2], PA[3]);
-				check("copy then write", copy_then_write(C3), copy_then_write(PA), 0);
+				check("copy then write", copy_then_write(C3), copy_then_write(PA), 0, __LINE__);
 				DIFF2("copy then write (a + b)", Tol, copy_then_write(a + b));
 			}
 
@@ -239,8 +171,8 @@ namespace
 				DIFF2("a | b", 0, a | b);
 				DIFF2("a ^ b", 0, a ^ b);
 				DIFF1("~a", 0, ~a);
-				check("a << n", A << ShiftA, PA << Shift, 0);
-				check("a >> n", A >> ShiftA, PA >> Shift, 0);
+				check("a << n", A << ShiftA, PA << Shift, 0, __LINE__);
+				check("a >> n", A >> ShiftA, PA >> Shift, 0, __LINE__);
 				if constexpr (sizeof(T) == 4)
 				{
 					DIFF1("bitCount", 0, glm::bitCount(a));
@@ -280,8 +212,8 @@ namespace
 
 			{
 				auto const Pos = to_aligned_dirty<Q>(PPos);
-				check("sqrt", glm::sqrt(Pos), glm::sqrt(PPos), Tol);
-				check("inversesqrt", glm::inversesqrt(Pos), glm::inversesqrt(PPos), Tol);
+				check("sqrt", glm::sqrt(Pos), glm::sqrt(PPos), Tol, __LINE__);
+				check("inversesqrt", glm::inversesqrt(Pos), glm::inversesqrt(PPos), Tol, __LINE__);
 			}
 
 			if constexpr (L >= 2)
@@ -289,7 +221,7 @@ namespace
 				DIFF1("length", Tol, glm::length(a));
 				DIFF2("distance", Tol, glm::distance(a, b));
 				DIFF2("dot", Tol, glm::dot(a, b));
-				check("normalize", glm::normalize(B), glm::normalize(PB), Tol);
+				check("normalize", glm::normalize(B), glm::normalize(PB), Tol, __LINE__);
 				DIFF3("faceforward", Tol, glm::faceforward(a, b, c));
 				DIFF2("reflect", Tol, glm::reflect(a, glm::normalize(b)));
 				DIFF2("refract", Tol, glm::refract(glm::normalize(a), glm::normalize(b), T(0.5)));
@@ -313,8 +245,8 @@ namespace
 			auto const N = to_aligned_dirty<Q>(PN);
 			auto const I = to_aligned_dirty<Q>(PI);
 			auto const Ref = to_aligned_dirty<Q>(PRef);
-			check("faceforward (dot == 0)", glm::faceforward(N, I, Ref), -PN, 0);
-			check("faceforward (dot == 0) reference", glm::faceforward(PN, PI, PRef), -PN, 0);
+			check("faceforward (dot == 0)", glm::faceforward(N, I, Ref), -PN, 0, __LINE__);
+			check("faceforward (dot == 0) reference", glm::faceforward(PN, PI, PRef), -PN, 0, __LINE__);
 		}
 	}
 
@@ -332,23 +264,23 @@ namespace
 			auto const F = to_aligned_dirty<Q>(PF);
 			auto const D = to_aligned_dirty<Q>(PD);
 
-			check("vec<float>(vec<int>)", glm::vec<L, float, Q>(I), glm::vec<L, float, glm::packed_highp>(PI), 0);
-			check("vec<float>(vec<uint>)", glm::vec<L, float, Q>(U), glm::vec<L, float, glm::packed_highp>(PU), 0);
-			check("vec<int>(vec<float>)", glm::vec<L, int, Q>(F), glm::vec<L, int, glm::packed_highp>(PF), 0);
-			check("vec<float>(vec<double>)", glm::vec<L, float, Q>(D), glm::vec<L, float, glm::packed_highp>(PD), 0);
-			check("vec<double>(vec<double, packed>)", glm::vec<L, double, Q>(PD), PD, 0);
-			check("vec<float>(vec<float, packed>)", glm::vec<L, float, Q>(PF), PF, 0);
-			check("vec<float>(float)", glm::vec<L, float, Q>(PF[0]), glm::vec<L, float, glm::packed_highp>(PF[0]), 0);
-			check("vec<int64>(int64)", glm::vec<L, glm::int64, Q>(glm::int64(PI[0]) << 33), glm::vec<L, glm::int64, glm::packed_highp>(glm::int64(PI[0]) << 33), 0);
+			check("vec<float>(vec<int>)", glm::vec<L, float, Q>(I), glm::vec<L, float, glm::packed_highp>(PI), 0, __LINE__);
+			check("vec<float>(vec<uint>)", glm::vec<L, float, Q>(U), glm::vec<L, float, glm::packed_highp>(PU), 0, __LINE__);
+			check("vec<int>(vec<float>)", glm::vec<L, int, Q>(F), glm::vec<L, int, glm::packed_highp>(PF), 0, __LINE__);
+			check("vec<float>(vec<double>)", glm::vec<L, float, Q>(D), glm::vec<L, float, glm::packed_highp>(PD), 0, __LINE__);
+			check("vec<double>(vec<double, packed>)", glm::vec<L, double, Q>(PD), PD, 0, __LINE__);
+			check("vec<float>(vec<float, packed>)", glm::vec<L, float, Q>(PF), PF, 0, __LINE__);
+			check("vec<float>(float)", glm::vec<L, float, Q>(PF[0]), glm::vec<L, float, glm::packed_highp>(PF[0]), 0, __LINE__);
+			check("vec<int64>(int64)", glm::vec<L, glm::int64, Q>(glm::int64(PI[0]) << 33), glm::vec<L, glm::int64, glm::packed_highp>(glm::int64(PI[0]) << 33), 0, __LINE__);
 			if constexpr (L == 3)
 			{
-				check("vec3(int, int, int)", glm::vec<3, float, Q>(PI[0], PI[1], PI[2]), glm::vec<3, float, glm::packed_highp>(PI[0], PI[1], PI[2]), 0);
-				check("vec3(uint, uint, uint)", glm::vec<3, float, Q>(PU[0], PU[1], PU[2]), glm::vec<3, float, glm::packed_highp>(PU[0], PU[1], PU[2]), 0);
+				check("vec3(int, int, int)", glm::vec<3, float, Q>(PI[0], PI[1], PI[2]), glm::vec<3, float, glm::packed_highp>(PI[0], PI[1], PI[2]), 0, __LINE__);
+				check("vec3(uint, uint, uint)", glm::vec<3, float, Q>(PU[0], PU[1], PU[2]), glm::vec<3, float, glm::packed_highp>(PU[0], PU[1], PU[2]), 0, __LINE__);
 			}
 			if constexpr (L == 4)
 			{
-				check("vec4(int, int, int, int)", glm::vec<4, float, Q>(PI[0], PI[1], PI[2], PI[3]), glm::vec<4, float, glm::packed_highp>(PI[0], PI[1], PI[2], PI[3]), 0);
-				check("vec4(uint, uint, uint, uint)", glm::vec<4, float, Q>(PU[0], PU[1], PU[2], PU[3]), glm::vec<4, float, glm::packed_highp>(PU[0], PU[1], PU[2], PU[3]), 0);
+				check("vec4(int, int, int, int)", glm::vec<4, float, Q>(PI[0], PI[1], PI[2], PI[3]), glm::vec<4, float, glm::packed_highp>(PI[0], PI[1], PI[2], PI[3]), 0, __LINE__);
+				check("vec4(uint, uint, uint, uint)", glm::vec<4, float, Q>(PU[0], PU[1], PU[2], PU[3]), glm::vec<4, float, glm::packed_highp>(PU[0], PU[1], PU[2], PU[3]), 0, __LINE__);
 			}
 		}
 	}
@@ -376,10 +308,10 @@ namespace
 			DIFF1("-m", Tol, -a);
 			DIFF1("transpose", Tol, glm::transpose(a));
 			DIFF2("matrixCompMult", Tol, glm::matrixCompMult(a, b));
-			check("m * v", A * V, PA * PV, Tol * 16);
-			check("v * m", W * A, PW * PA, Tol * 16);
-			check("m * m", A * Tr, PA * PT, Tol * 16);
-			check("outerProduct", glm::outerProduct(W, V), glm::outerProduct(PW, PV), Tol);
+			check("m * v", A * V, PA * PV, Tol * 16, __LINE__);
+			check("v * m", W * A, PW * PA, Tol * 16, __LINE__);
+			check("m * m", A * Tr, PA * PT, Tol * 16, __LINE__);
+			check("outerProduct", glm::outerProduct(W, V), glm::outerProduct(PW, PV), Tol, __LINE__);
 			DIFF2("m == m", 0, a == b);
 			DIFF1("m == self", 0, a == a);
 
@@ -389,7 +321,7 @@ namespace
 				// Keep the inverse well conditioned.
 				auto const PI = PA + glm::mat<C, R, T, glm::packed_highp>(T(16));
 				auto const I = to_aligned_dirty<Q>(PI);
-				check("inverse", glm::inverse(I), glm::inverse(PI), Tol * 16);
+				check("inverse", glm::inverse(I), glm::inverse(PI), Tol * 16, __LINE__);
 			}
 		}
 	}
@@ -397,11 +329,9 @@ namespace
 	template<glm::qualifier Q>
 	void test_qualifier(char const* Name)
 	{
-		static char Buffer[128];
-
 #		define RUN(test, ...) \
-			do { std::snprintf(Buffer, sizeof(Buffer), "%s %s<%s>", Name, #test, #__VA_ARGS__); Context = Buffer; \
-				test<__VA_ARGS__, Q>(); } while (false)
+			do { std::string const TestName = std::string(Name) + " " #test "<" #__VA_ARGS__ ">"; \
+				glm_test::run(TestName.c_str(), [] { test<__VA_ARGS__, Q>(); }); } while (false)
 
 		RUN(test_vec_arith, 1, float); RUN(test_vec_arith, 2, float); RUN(test_vec_arith, 3, float); RUN(test_vec_arith, 4, float);
 		RUN(test_vec_arith, 1, double); RUN(test_vec_arith, 2, double); RUN(test_vec_arith, 3, double); RUN(test_vec_arith, 4, double);
@@ -431,16 +361,16 @@ int main()
 	test_qualifier<glm::aligned_mediump>("aligned_mediump");
 	test_qualifier<glm::aligned_lowp>("aligned_lowp");
 
-	std::printf(Failures == 0 ? "PASSED\n" : "FAILED (%d)\n", Failures);
-	return Failures;
+	return GLM_TEST_FINISH();
 }
 
 #else
 
+#include "glm_test.hpp"
+
 int main()
 {
-	std::printf("SKIPPED (aligned gentypes disabled)\n");
-	return 0;
+	return GLM_TEST_SKIP_ALL("aligned gentypes are disabled");
 }
 
 #endif

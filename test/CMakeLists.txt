@@ -94,15 +94,23 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
 	add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 endif()
 
+set(GLM_TEST_COMMON_DIR ${CMAKE_CURRENT_SOURCE_DIR}/common)
+
 function(glmCreateTestGTC NAME)
 	set(SAMPLE_NAME test-${NAME})
 	add_executable(${SAMPLE_NAME} ${NAME}.cpp)
+	target_include_directories(${SAMPLE_NAME} PRIVATE ${GLM_TEST_COMMON_DIR})
 
 	# Name the target (not its file) so CMAKE_CROSSCOMPILING_EMULATOR applies, e.g. qemu for aarch64.
 	add_test(
 		NAME ${SAMPLE_NAME}
 		COMMAND ${SAMPLE_NAME} )
 	target_link_libraries(${SAMPLE_NAME} PRIVATE glm::glm)
+
+	# Exit code 77 means skipped (glm_test::finish when every test skipped), and each test is labelled
+	# with its directory (core, ext, gtc, gtx, bug, ...) for `ctest -L`.
+	get_filename_component(GLM_TEST_LABEL ${CMAKE_CURRENT_SOURCE_DIR} NAME)
+	set_tests_properties(${SAMPLE_NAME} PROPERTIES SKIP_RETURN_CODE 77 LABELS ${GLM_TEST_LABEL})
 endfunction()
 
 if(GLM_TEST_ENABLE)
