@@ -104,8 +104,8 @@ static int test_Half4x16()
 		glm::u16vec4 p2 = glm::packHalf(v0);
 		glm::vec4 v2 = glm::unpackHalf(p2);
 
-		Error += GLM_CHECK(glm::all(glm::equal(v0, v1, glm::epsilon<float>())));
-		Error += GLM_CHECK(glm::all(glm::equal(v0, v2, glm::epsilon<float>())));
+		Error += GLM_CHECK_NEAR(v0, v1, glm::epsilon<float>());
+		Error += GLM_CHECK_NEAR(v0, v2, glm::epsilon<float>());
 	}
 
 	return Error;
@@ -160,13 +160,13 @@ static int test_U3x10_1x2()
 	glm::uint32 const p0 = *reinterpret_cast<glm::uint32 const*>(&v0[0]);
 	glm::uint32 const r0 = 0x330077ff;
 
-	Error += GLM_CHECK(p0 == r0);
+	Error += GLM_CHECK_EQ(p0, r0);
 
 	glm::uvec4 const v1(0xff, 0x77, 0x0, 0x33);
 	glm::uint32 const p1 = glm::packU3x10_1x2(v1);
 	glm::uint32 const r1 = 0xc001dcff;
 
-	Error += GLM_CHECK(p1 == r1);
+	Error += GLM_CHECK_EQ(p1, r1);
 
 	return Error;
 }
@@ -239,7 +239,7 @@ static int test_F2x11_1x10()
 		glm::vec3 v0 = glm::unpackF2x11_1x10(p0);
 		glm::uint32 p1 = glm::packF2x11_1x10(v0);
 		glm::vec3 v1 = glm::unpackF2x11_1x10(p1);
-		Error += GLM_CHECK(glm::all(glm::equal(v0, v1, glm::epsilon<float>())));
+		Error += GLM_CHECK_NEAR(v0, v1, glm::epsilon<float>());
 	}
 
 	return Error;
@@ -263,7 +263,7 @@ static int test_F3x9_E1x5()
 		glm::vec3 v0 = glm::unpackF3x9_E1x5(p0);
 		glm::uint32 p1 = glm::packF3x9_E1x5(v0);
 		glm::vec3 v1 = glm::unpackF3x9_E1x5(p1);
-		Error += GLM_CHECK(glm::all(glm::equal(v0, v1, glm::epsilon<float>())));
+		Error += GLM_CHECK_NEAR(v0, v1, glm::epsilon<float>());
 	}
 
 	return Error;
@@ -279,7 +279,7 @@ static int test_RGBM()
 		glm::vec4 const RGBM = glm::packRGBM(Color);
 		glm::vec3 const Result= glm::unpackRGBM(RGBM);
 
-		Error += GLM_CHECK(glm::all(glm::equal(Color, Result, 0.01f)));
+		Error += GLM_CHECK_NEAR(Color, Result, 0.01f);
 	}
 
 	return Error;
@@ -681,10 +681,10 @@ static int test_packUint2x8()
 	glm::u8vec2 const Source(1, 2);
 
 	glm::uint16 const Packed = glm::packUint2x8(Source);
-	Error += GLM_CHECK(Packed != 0);
+	Error += GLM_CHECK_NE(Packed, 0);
 
 	glm::u8vec2 const Unpacked = glm::unpackUint2x8(Packed);
-	Error += GLM_CHECK(Source == Unpacked);
+	Error += GLM_CHECK_EQ(Source, Unpacked);
 
 	return Error;
 }
@@ -696,10 +696,10 @@ static int test_packUint4x8()
 	glm::u8vec4 const Source(1, 2, 3, 4);
 
 	glm::uint32 const Packed = glm::packUint4x8(Source);
-	Error += GLM_CHECK(Packed != 0);
+	Error += GLM_CHECK_NE(Packed, 0);
 
 	glm::u8vec4 const Unpacked = glm::unpackUint4x8(Packed);
-	Error += GLM_CHECK(Source == Unpacked);
+	Error += GLM_CHECK_EQ(Source, Unpacked);
 
 	return Error;
 }
@@ -711,10 +711,10 @@ static int test_packUint2x16()
 	glm::u16vec2 const Source(1, 2);
 
 	glm::uint32 const Packed = glm::packUint2x16(Source);
-	Error += GLM_CHECK(Packed != 0);
+	Error += GLM_CHECK_NE(Packed, 0);
 
 	glm::u16vec2 const Unpacked = glm::unpackUint2x16(Packed);
-	Error += GLM_CHECK(Source == Unpacked);
+	Error += GLM_CHECK_EQ(Source, Unpacked);
 
 	return Error;
 }
@@ -726,10 +726,10 @@ static int test_packUint4x16()
 	glm::u16vec4 const Source(1, 2, 3, 4);
 
 	glm::uint64 const Packed = glm::packUint4x16(Source);
-	Error += GLM_CHECK(Packed != 0);
+	Error += GLM_CHECK_NE(Packed, 0);
 
 	glm::u16vec4 const Unpacked = glm::unpackUint4x16(Packed);
-	Error += GLM_CHECK(Source == Unpacked);
+	Error += GLM_CHECK_EQ(Source, Unpacked);
 
 	return Error;
 }
@@ -741,10 +741,10 @@ static int test_packUint2x32()
 	glm::u32vec2 const Source(1, 2);
 
 	glm::uint64 const Packed = glm::packUint2x32(Source);
-	Error += GLM_CHECK(Packed != 0);
+	Error += GLM_CHECK_NE(Packed, 0);
 
 	glm::u32vec2 const Unpacked = glm::unpackUint2x32(Packed);
-	Error += GLM_CHECK(Source == Unpacked);
+	Error += GLM_CHECK_EQ(Source, Unpacked);
 
 	return Error;
 }
@@ -756,10 +756,10 @@ static int test_packInt2x8()
 	glm::i8vec2 const Source(1, 2);
 
 	glm::int16 const Packed = glm::packInt2x8(Source);
-	Error += GLM_CHECK(Packed != 0);
+	Error += GLM_CHECK_NE(Packed, 0);
 
 	glm::i8vec2 const Unpacked = glm::unpackInt2x8(Packed);
-	Error += GLM_CHECK(Source == Unpacked);
+	Error += GLM_CHECK_EQ(Source, Unpacked);
 
 	return Error;
 }
@@ -771,10 +771,10 @@ static int test_packInt4x8()
 	glm::i8vec4 const Source(1, 2, 3, 4);
 
 	glm::int32 const Packed = glm::packInt4x8(Source);
-	Error += GLM_CHECK(Packed != 0);
+	Error += GLM_CHECK_NE(Packed, 0);
 
 	glm::i8vec4 const Unpacked = glm::unpackInt4x8(Packed);
-	Error += GLM_CHECK(Source == Unpacked);
+	Error += GLM_CHECK_EQ(Source, Unpacked);
 
 	return Error;
 }
@@ -786,10 +786,10 @@ static int test_packInt2x16()
 	glm::i16vec2 const Source(1, 2);
 
 	glm::int32 const Packed = glm::packInt2x16(Source);
-	Error += GLM_CHECK(Packed != 0);
+	Error += GLM_CHECK_NE(Packed, 0);
 
 	glm::i16vec2 const Unpacked = glm::unpackInt2x16(Packed);
-	Error += GLM_CHECK(Source == Unpacked);
+	Error += GLM_CHECK_EQ(Source, Unpacked);
 
 	return Error;
 }
@@ -801,10 +801,10 @@ static int test_packInt4x16()
 	glm::i16vec4 const Source(1, 2, 3, 4);
 
 	glm::int64 const Packed = glm::packInt4x16(Source);
-	Error += GLM_CHECK(Packed != 0);
+	Error += GLM_CHECK_NE(Packed, 0);
 
 	glm::i16vec4 const Unpacked = glm::unpackInt4x16(Packed);
-	Error += GLM_CHECK(Source == Unpacked);
+	Error += GLM_CHECK_EQ(Source, Unpacked);
 
 	return Error;
 }
@@ -816,10 +816,10 @@ static int test_packInt2x32()
 	glm::i32vec2 const Source(1, 2);
 
 	glm::int64 const Packed = glm::packInt2x32(Source);
-	Error += GLM_CHECK(Packed != 0);
+	Error += GLM_CHECK_NE(Packed, 0);
 
 	glm::i32vec2 const Unpacked = glm::unpackInt2x32(Packed);
-	Error += GLM_CHECK(Source == Unpacked);
+	Error += GLM_CHECK_EQ(Source, Unpacked);
 
 	return Error;
 }

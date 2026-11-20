@@ -207,19 +207,19 @@ static int test_determinant()
 	{
 		imat2 const m(1, 1, 1, 1);
 		int const t = determinant(m);
-		Error += GLM_CHECK(t == 0);
+		Error += GLM_CHECK_EQ(t, 0);
 	}
 
 	{
 		imat3 m(1, 1, 1, 1, 1, 1, 1, 1, 1);
 		int t = determinant(m);
-		Error += GLM_CHECK(t == 0);
+		Error += GLM_CHECK_EQ(t, 0);
 	}
 
 	{
 		imat4 m(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
 		int t = determinant(m);
-		Error += GLM_CHECK(t == 0);
+		Error += GLM_CHECK_EQ(t, 0);
 	}
 
 	return Error;

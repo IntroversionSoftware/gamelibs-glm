@@ -244,9 +244,9 @@ static int test_fvec_precision()
 		glm::mediump_f32vec2 v3(v1);
 		glm::highp_f32vec2 v4(v1);
 
-		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::f32vec2(v2), glm::epsilon<float>())));
-		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::f32vec2(v3), glm::epsilon<float>())));
-		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::f32vec2(v4), glm::epsilon<float>())));
+		Error += GLM_CHECK_NEAR(v1, glm::f32vec2(v2), glm::epsilon<float>());
+		Error += GLM_CHECK_NEAR(v1, glm::f32vec2(v3), glm::epsilon<float>());
+		Error += GLM_CHECK_NEAR(v1, glm::f32vec2(v4), glm::epsilon<float>());
 	}
 
 	{
@@ -255,9 +255,9 @@ static int test_fvec_precision()
 		glm::mediump_f32vec3 v3(v1);
 		glm::highp_f32vec3 v4(v1);
 
-		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::f32vec3(v2), glm::epsilon<float>())));
-		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::f32vec3(v3), glm::epsilon<float>())));
-		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::f32vec3(v4), glm::epsilon<float>())));
+		Error += GLM_CHECK_NEAR(v1, glm::f32vec3(v2), glm::epsilon<float>());
+		Error += GLM_CHECK_NEAR(v1, glm::f32vec3(v3), glm::epsilon<float>());
+		Error += GLM_CHECK_NEAR(v1, glm::f32vec3(v4), glm::epsilon<float>());
 	}
 
 	{
@@ -266,9 +266,9 @@ static int test_fvec_precision()
 		glm::mediump_f32vec4 v3(v1);
 		glm::highp_f32vec4 v4(v1);
 
-		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::f32vec4(v2), glm::epsilon<float>())));
-		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::f32vec4(v3), glm::epsilon<float>())));
-		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::f32vec4(v4), glm::epsilon<float>())));
+		Error += GLM_CHECK_NEAR(v1, glm::f32vec4(v2), glm::epsilon<float>());
+		Error += GLM_CHECK_NEAR(v1, glm::f32vec4(v3), glm::epsilon<float>());
+		Error += GLM_CHECK_NEAR(v1, glm::f32vec4(v4), glm::epsilon<float>());
 	}
 
 	return Error;
@@ -284,9 +284,9 @@ static int test_dvec_precision()
 		glm::mediump_f64vec2 v3(v1);
 		glm::highp_f64vec2 v4(v1);
 
-		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::f64vec2(v2), glm::epsilon<double>())));
-		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::f64vec2(v3), glm::epsilon<double>())));
-		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::f64vec2(v4), glm::epsilon<double>())));
+		Error += GLM_CHECK_NEAR(v1, glm::f64vec2(v2), glm::epsilon<double>());
+		Error += GLM_CHECK_NEAR(v1, glm::f64vec2(v3), glm::epsilon<double>());
+		Error += GLM_CHECK_NEAR(v1, glm::f64vec2(v4), glm::epsilon<double>());
 	}
 
 	{
@@ -295,9 +295,9 @@ static int test_dvec_precision()
 		glm::mediump_f64vec3 v3(v1);
 		glm::highp_f64vec3 v4(v1);
 
-		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::f64vec3(v2), glm::epsilon<double>())));
-		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::f64vec3(v3), glm::epsilon<double>())));
-		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::f64vec3(v4), glm::epsilon<double>())));
+		Error += GLM_CHECK_NEAR(v1, glm::f64vec3(v2), glm::epsilon<double>());
+		Error += GLM_CHECK_NEAR(v1, glm::f64vec3(v3), glm::epsilon<double>());
+		Error += GLM_CHECK_NEAR(v1, glm::f64vec3(v4), glm::epsilon<double>());
 	}
 
 	{
@@ -306,9 +306,9 @@ static int test_dvec_precision()
 		glm::mediump_f64vec4 v3(v1);
 		glm::highp_f64vec4 v4(v1);
 
-		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::f64vec4(v2), glm::epsilon<double>())));
-		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::f64vec4(v3), glm::epsilon<double>())));
-		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::f64vec4(v4), glm::epsilon<double>())));
+		Error += GLM_CHECK_NEAR(v1, glm::f64vec4(v2), glm::epsilon<double>());
+		Error += GLM_CHECK_NEAR(v1, glm::f64vec4(v3), glm::epsilon<double>());
+		Error += GLM_CHECK_NEAR(v1, glm::f64vec4(v4), glm::epsilon<double>());
 	}
 
 	return Error;
@@ -965,9 +965,9 @@ static int test_quat_precision()
 		glm::f32quat q3(qB);
 		glm::f32quat q4(qC);
 
-		Error += GLM_CHECK(glm::all(glm::equal(q1, q2, glm::epsilon<float>())));
-		Error += GLM_CHECK(glm::all(glm::equal(q1, q3, glm::epsilon<float>())));
-		Error += GLM_CHECK(glm::all(glm::equal(q1, q4, glm::epsilon<float>())));
+		Error += GLM_CHECK_NEAR(q1, q2, glm::epsilon<float>());
+		Error += GLM_CHECK_NEAR(q1, q3, glm::epsilon<float>());
+		Error += GLM_CHECK_NEAR(q1, q4, glm::epsilon<float>());
 	}
 
 	return Error;
@@ -979,12 +979,12 @@ static int test_fvec_conversion()
 
 	{
 		glm::highp_vec4 a = glm::vec4(1, 2, 3, 4);
-		Error += GLM_CHECK(glm::all(glm::equal(a, glm::vec4(1, 2, 3, 4), glm::epsilon<float>())));
+		Error += GLM_CHECK_NEAR(a, glm::vec4(1, 2, 3, 4), glm::epsilon<float>());
 
 		glm::mediump_vec4 b = glm::vec4(1, 2, 3, 4);
 		glm::lowp_vec4 c = b;
 		glm::mediump_vec4 d = c;
-		Error += GLM_CHECK(glm::all(glm::equal(b, d, glm::epsilon<float>())));
+		Error += GLM_CHECK_NEAR(b, d, glm::epsilon<float>());
 
 		glm::lowp_ivec4 e = glm::ivec4(d);
 		glm::lowp_ivec3 f = glm::ivec3(e);

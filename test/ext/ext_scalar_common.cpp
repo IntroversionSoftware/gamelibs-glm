@@ -11,24 +11,24 @@ static int test_min()
 
 	T const N = static_cast<T>(0);
 	T const B = static_cast<T>(1);
-	Error += GLM_CHECK(glm::equal(glm::min(N, B), N, glm::epsilon<T>()));
-	Error += GLM_CHECK(glm::equal(glm::min(B, N), N, glm::epsilon<T>()));
+	Error += GLM_CHECK_NEAR(glm::min(N, B), N, glm::epsilon<T>());
+	Error += GLM_CHECK_NEAR(glm::min(B, N), N, glm::epsilon<T>());
 
 	T const C = static_cast<T>(2);
-	Error += GLM_CHECK(glm::equal(glm::min(N, B, C), N, glm::epsilon<T>()));
-	Error += GLM_CHECK(glm::equal(glm::min(B, N, C), N, glm::epsilon<T>()));
-	Error += GLM_CHECK(glm::equal(glm::min(C, N, B), N, glm::epsilon<T>()));
-	Error += GLM_CHECK(glm::equal(glm::min(C, B, N), N, glm::epsilon<T>()));
-	Error += GLM_CHECK(glm::equal(glm::min(B, C, N), N, glm::epsilon<T>()));
-	Error += GLM_CHECK(glm::equal(glm::min(N, C, B), N, glm::epsilon<T>()));
+	Error += GLM_CHECK_NEAR(glm::min(N, B, C), N, glm::epsilon<T>());
+	Error += GLM_CHECK_NEAR(glm::min(B, N, C), N, glm::epsilon<T>());
+	Error += GLM_CHECK_NEAR(glm::min(C, N, B), N, glm::epsilon<T>());
+	Error += GLM_CHECK_NEAR(glm::min(C, B, N), N, glm::epsilon<T>());
+	Error += GLM_CHECK_NEAR(glm::min(B, C, N), N, glm::epsilon<T>());
+	Error += GLM_CHECK_NEAR(glm::min(N, C, B), N, glm::epsilon<T>());
 
 	T const D = static_cast<T>(3);
-	Error += GLM_CHECK(glm::equal(glm::min(D, N, B, C), N, glm::epsilon<T>()));
-	Error += GLM_CHECK(glm::equal(glm::min(B, D, N, C), N, glm::epsilon<T>()));
-	Error += GLM_CHECK(glm::equal(glm::min(C, N, D, B), N, glm::epsilon<T>()));
-	Error += GLM_CHECK(glm::equal(glm::min(C, B, D, N), N, glm::epsilon<T>()));
-	Error += GLM_CHECK(glm::equal(glm::min(B, C, N, D), N, glm::epsilon<T>()));
-	Error += GLM_CHECK(glm::equal(glm::min(N, C, B, D), N, glm::epsilon<T>()));
+	Error += GLM_CHECK_NEAR(glm::min(D, N, B, C), N, glm::epsilon<T>());
+	Error += GLM_CHECK_NEAR(glm::min(B, D, N, C), N, glm::epsilon<T>());
+	Error += GLM_CHECK_NEAR(glm::min(C, N, D, B), N, glm::epsilon<T>());
+	Error += GLM_CHECK_NEAR(glm::min(C, B, D, N), N, glm::epsilon<T>());
+	Error += GLM_CHECK_NEAR(glm::min(B, C, N, D), N, glm::epsilon<T>());
+	Error += GLM_CHECK_NEAR(glm::min(N, C, B, D), N, glm::epsilon<T>());
 
 	return Error;
 }
@@ -40,24 +40,24 @@ static int test_max()
 
 	T const N = static_cast<T>(0);
 	T const B = static_cast<T>(1);
-	Error += GLM_CHECK(glm::equal(glm::max(N, B), B, glm::epsilon<T>()));
-	Error += GLM_CHECK(glm::equal(glm::max(B, N), B, glm::epsilon<T>()));
+	Error += GLM_CHECK_NEAR(glm::max(N, B), B, glm::epsilon<T>());
+	Error += GLM_CHECK_NEAR(glm::max(B, N), B, glm::epsilon<T>());
 
 	T const C = static_cast<T>(2);
-	Error += GLM_CHECK(glm::equal(glm::max(N, B, C), C, glm::epsilon<T>()));
-	Error += GLM_CHECK(glm::equal(glm::max(B, N, C), C, glm::epsilon<T>()));
-	Error += GLM_CHECK(glm::equal(glm::max(C, N, B), C, glm::epsilon<T>()));
-	Error += GLM_CHECK(glm::equal(glm::max(C, B, N), C, glm::epsilon<T>()));
-	Error += GLM_CHECK(glm::equal(glm::max(B, C, N), C, glm::epsilon<T>()));
-	Error += GLM_CHECK(glm::equal(glm::max(N, C, B), C, glm::epsilon<T>()));
+	Error += GLM_CHECK_NEAR(glm::max(N, B, C), C, glm::epsilon<T>());
+	Error += GLM_CHECK_NEAR(glm::max(B, N, C), C, glm::epsilon<T>());
+	Error += GLM_CHECK_NEAR(glm::max(C, N, B), C, glm::epsilon<T>());
+	Error += GLM_CHECK_NEAR(glm::max(C, B, N), C, glm::epsilon<T>());
+	Error += GLM_CHECK_NEAR(glm::max(B, C, N), C, glm::epsilon<T>());
+	Error += GLM_CHECK_NEAR(glm::max(N, C, B), C, glm::epsilon<T>());
 
 	T const D = static_cast<T>(3);
-	Error += GLM_CHECK(glm::equal(glm::max(D, N, B, C), D, glm::epsilon<T>()));
-	Error += GLM_CHECK(glm::equal(glm::max(B, D, N, C), D, glm::epsilon<T>()));
-	Error += GLM_CHECK(glm::equal(glm::max(C, N, D, B), D, glm::epsilon<T>()));
-	Error += GLM_CHECK(glm::equal(glm::max(C, B, D, N), D, glm::epsilon<T>()));
-	Error += GLM_CHECK(glm::equal(glm::max(B, C, N, D), D, glm::epsilon<T>()));
-	Error += GLM_CHECK(glm::equal(glm::max(N, C, B, D), D, glm::epsilon<T>()));
+	Error += GLM_CHECK_NEAR(glm::max(D, N, B, C), D, glm::epsilon<T>());
+	Error += GLM_CHECK_NEAR(glm::max(B, D, N, C), D, glm::epsilon<T>());
+	Error += GLM_CHECK_NEAR(glm::max(C, N, D, B), D, glm::epsilon<T>());
+	Error += GLM_CHECK_NEAR(glm::max(C, B, D, N), D, glm::epsilon<T>());
+	Error += GLM_CHECK_NEAR(glm::max(B, C, N, D), D, glm::epsilon<T>());
+	Error += GLM_CHECK_NEAR(glm::max(N, C, B, D), D, glm::epsilon<T>());
 
 	return Error;
 }
@@ -134,24 +134,24 @@ static int test_fmin()
 
 	T const B = static_cast<T>(1);
 	T const N = static_cast<T>(NAN);
-	Error += GLM_CHECK(glm::equal(glm::fmin(N, B), B, glm::epsilon<T>()));
-	Error += GLM_CHECK(glm::equal(glm::fmin(B, N), B, glm::epsilon<T>()));
+	Error += GLM_CHECK_NEAR(glm::fmin(N, B), B, glm::epsilon<T>());
+	Error += GLM_CHECK_NEAR(glm::fmin(B, N), B, glm::epsilon<T>());
 
 	T const C = static_cast<T>(2);
-	Error += GLM_CHECK(glm::equal(glm::fmin(N, B, C), B, glm::epsilon<T>()));
-	Error += GLM_CHECK(glm::equal(glm::fmin(B, N, C), B, glm::epsilon<T>()));
-	Error += GLM_CHECK(glm::equal(glm::fmin(C, N, B), B, glm::epsilon<T>()));
-	Error += GLM_CHECK(glm::equal(glm::fmin(C, B, N), B, glm::epsilon<T>()));
-	Error += GLM_CHECK(glm::equal(glm::fmin(B, C, N), B, glm::epsilon<T>()));
-	Error += GLM_CHECK(glm::equal(glm::fmin(N, C, B), B, glm::epsilon<T>()));
+	Error += GLM_CHECK_NEAR(glm::fmin(N, B, C), B, glm::epsilon<T>());
+	Error += GLM_CHECK_NEAR(glm::fmin(B, N, C), B, glm::epsilon<T>());
+	Error += GLM_CHECK_NEAR(glm::fmin(C, N, B), B, glm::epsilon<T>());
+	Error += GLM_CHECK_NEAR(glm::fmin(C, B, N), B, glm::epsilon<T>());
+	Error += GLM_CHECK_NEAR(glm::fmin(B, C, N), B, glm::epsilon<T>());
+	Error += GLM_CHECK_NEAR(glm::fmin(N, C, B), B, glm::epsilon<T>());
 
 	T const D = static_cast<T>(3);
-	Error += GLM_CHECK(glm::equal(glm::fmin(D, N, B, C), B, glm::epsilon<T>()));
-	Error += GLM_CHECK(glm::equal(glm::fmin(B, D, N, C), B, glm::epsilon<T>()));
-	Error += GLM_CHECK(glm::equal(glm::fmin(C, N, D, B), B, glm::epsilon<T>()));
-	Error += GLM_CHECK(glm::equal(glm::fmin(C, B, D, N), B, glm::epsilon<T>()));
-	Error += GLM_CHECK(glm::equal(glm::fmin(B, C, N, D), B, glm::epsilon<T>()));
-	Error += GLM_CHECK(glm::equal(glm::fmin(N, C, B, D), B, glm::epsilon<T>()));
+	Error += GLM_CHECK_NEAR(glm::fmin(D, N, B, C), B, glm::epsilon<T>());
+	Error += GLM_CHECK_NEAR(glm::fmin(B, D, N, C), B, glm::epsilon<T>());
+	Error += GLM_CHECK_NEAR(glm::fmin(C, N, D, B), B, glm::epsilon<T>());
+	Error += GLM_CHECK_NEAR(glm::fmin(C, B, D, N), B, glm::epsilon<T>());
+	Error += GLM_CHECK_NEAR(glm::fmin(B, C, N, D), B, glm::epsilon<T>());
+	Error += GLM_CHECK_NEAR(glm::fmin(N, C, B, D), B, glm::epsilon<T>());
 
 	return Error;
 }
@@ -165,24 +165,24 @@ static int test_fmax()
 
 	T const B = static_cast<T>(1);
 	T const N = static_cast<T>(NAN);
-	Error += GLM_CHECK(glm::equal(glm::fmax(N, B), B, glm::epsilon<T>()));
-	Error += GLM_CHECK(glm::equal(glm::fmax(B, N), B, glm::epsilon<T>()));
+	Error += GLM_CHECK_NEAR(glm::fmax(N, B), B, glm::epsilon<T>());
+	Error += GLM_CHECK_NEAR(glm::fmax(B, N), B, glm::epsilon<T>());
 
 	T const C = static_cast<T>(2);
-	Error += GLM_CHECK(glm::equal(glm::fmax(N, B, C), C, glm::epsilon<T>()));
-	Error += GLM_CHECK(glm::equal(glm::fmax(B, N, C), C, glm::epsilon<T>()));
-	Error += GLM_CHECK(glm::equal(glm::fmax(C, N, B), C, glm::epsilon<T>()));
-	Error += GLM_CHECK(glm::equal(glm::fmax(C, B, N), C, glm::epsilon<T>()));
-	Error += GLM_CHECK(glm::equal(glm::fmax(B, C, N), C, glm::epsilon<T>()));
-	Error += GLM_CHECK(glm::equal(glm::fmax(N, C, B), C, glm::epsilon<T>()));
+	Error += GLM_CHECK_NEAR(glm::fmax(N, B, C), C, glm::epsilon<T>());
+	Error += GLM_CHECK_NEAR(glm::fmax(B, N, C), C, glm::epsilon<T>());
+	Error += GLM_CHECK_NEAR(glm::fmax(C, N, B), C, glm::epsilon<T>());
+	Error += GLM_CHECK_NEAR(glm::fmax(C, B, N), C, glm::epsilon<T>());
+	Error += GLM_CHECK_NEAR(glm::fmax(B, C, N), C, glm::epsilon<T>());
+	Error += GLM_CHECK_NEAR(glm::fmax(N, C, B), C, glm::epsilon<T>());
 
 	T const D = static_cast<T>(3);
-	Error += GLM_CHECK(glm::equal(glm::fmax(D, N, B, C), D, glm::epsilon<T>()));
-	Error += GLM_CHECK(glm::equal(glm::fmax(B, D, N, C), D, glm::epsilon<T>()));
-	Error += GLM_CHECK(glm::equal(glm::fmax(C, N, D, B), D, glm::epsilon<T>()));
-	Error += GLM_CHECK(glm::equal(glm::fmax(C, B, D, N), D, glm::epsilon<T>()));
-	Error += GLM_CHECK(glm::equal(glm::fmax(B, C, N, D), D, glm::epsilon<T>()));
-	Error += GLM_CHECK(glm::equal(glm::fmax(N, C, B, D), D, glm::epsilon<T>()));
+	Error += GLM_CHECK_NEAR(glm::fmax(D, N, B, C), D, glm::epsilon<T>());
+	Error += GLM_CHECK_NEAR(glm::fmax(B, D, N, C), D, glm::epsilon<T>());
+	Error += GLM_CHECK_NEAR(glm::fmax(C, N, D, B), D, glm::epsilon<T>());
+	Error += GLM_CHECK_NEAR(glm::fmax(C, B, D, N), D, glm::epsilon<T>());
+	Error += GLM_CHECK_NEAR(glm::fmax(B, C, N, D), D, glm::epsilon<T>());
+	Error += GLM_CHECK_NEAR(glm::fmax(N, C, B, D), D, glm::epsilon<T>());
 
 	return Error;
 }
@@ -193,19 +193,19 @@ static int test_clamp()
 	int Error = 0;
 
 	float A = glm::clamp(0.5f);
-	Error += GLM_CHECK(glm::equal(A, 0.5f, 0.00001f));
+	Error += GLM_CHECK_NEAR(A, 0.5f, 0.00001f);
 
 	float B = glm::clamp(0.0f);
-	Error += GLM_CHECK(glm::equal(B, 0.0f, 0.00001f));
+	Error += GLM_CHECK_NEAR(B, 0.0f, 0.00001f);
 
 	float C = glm::clamp(1.0f);
-	Error += GLM_CHECK(glm::equal(C, 1.0f, 0.00001f));
+	Error += GLM_CHECK_NEAR(C, 1.0f, 0.00001f);
 
 	float D = glm::clamp(-0.5f);
-	Error += GLM_CHECK(glm::equal(D, 0.0f, 0.00001f));
+	Error += GLM_CHECK_NEAR(D, 0.0f, 0.00001f);
 
 	float E = glm::clamp(1.5f);
-	Error += GLM_CHECK(glm::equal(E, 1.0f, 0.00001f));
+	Error += GLM_CHECK_NEAR(E, 1.0f, 0.00001f);
 
 	return Error;
 }
@@ -215,22 +215,22 @@ static int test_repeat()
 	int Error = 0;
 
 	float A = glm::repeat(0.5f);
-	Error += GLM_CHECK(glm::equal(A, 0.5f, 0.00001f));
+	Error += GLM_CHECK_NEAR(A, 0.5f, 0.00001f);
 
 	float B = glm::repeat(0.0f);
-	Error += GLM_CHECK(glm::equal(B, 0.0f, 0.00001f));
+	Error += GLM_CHECK_NEAR(B, 0.0f, 0.00001f);
 
 	float C = glm::repeat(1.0f);
-	Error += GLM_CHECK(glm::equal(C, 0.0f, 0.00001f));
+	Error += GLM_CHECK_NEAR(C, 0.0f, 0.00001f);
 
 	float D = glm::repeat(-0.5f);
-	Error += GLM_CHECK(glm::equal(D, 0.5f, 0.00001f));
+	Error += GLM_CHECK_NEAR(D, 0.5f, 0.00001f);
 
 	float E = glm::repeat(1.5f);
-	Error += GLM_CHECK(glm::equal(E, 0.5f, 0.00001f));
+	Error += GLM_CHECK_NEAR(E, 0.5f, 0.00001f);
 
 	float F = glm::repeat(0.9f);
-	Error += GLM_CHECK(glm::equal(F, 0.9f, 0.00001f));
+	Error += GLM_CHECK_NEAR(F, 0.9f, 0.00001f);
 
 	return Error;
 }
@@ -240,31 +240,31 @@ static int test_mirrorClamp()
 	int Error = 0;
 
 	float A = glm::mirrorClamp(0.5f);
-	Error += GLM_CHECK(glm::equal(A, 0.5f, 0.00001f));
+	Error += GLM_CHECK_NEAR(A, 0.5f, 0.00001f);
 
 	float B = glm::mirrorClamp(0.0f);
-	Error += GLM_CHECK(glm::equal(B, 0.0f, 0.00001f));
+	Error += GLM_CHECK_NEAR(B, 0.0f, 0.00001f);
 
 	float C = glm::mirrorClamp(1.1f);
-	Error += GLM_CHECK(glm::equal(C, 0.1f, 0.00001f));
+	Error += GLM_CHECK_NEAR(C, 0.1f, 0.00001f);
 
 	float D = glm::mirrorClamp(-0.5f);
-	Error += GLM_CHECK(glm::equal(D, 0.5f, 0.00001f));
+	Error += GLM_CHECK_NEAR(D, 0.5f, 0.00001f);
 
 	float E = glm::mirrorClamp(1.5f);
-	Error += GLM_CHECK(glm::equal(E, 0.5f, 0.00001f));
+	Error += GLM_CHECK_NEAR(E, 0.5f, 0.00001f);
 
 	float F = glm::mirrorClamp(0.9f);
-	Error += GLM_CHECK(glm::equal(F, 0.9f, 0.00001f));
+	Error += GLM_CHECK_NEAR(F, 0.9f, 0.00001f);
 
 	float G = glm::mirrorClamp(3.1f);
-	Error += GLM_CHECK(glm::equal(G, 0.1f, 0.00001f));
+	Error += GLM_CHECK_NEAR(G, 0.1f, 0.00001f);
 
 	float H = glm::mirrorClamp(-3.1f);
-	Error += GLM_CHECK(glm::equal(H, 0.1f, 0.00001f));
+	Error += GLM_CHECK_NEAR(H, 0.1f, 0.00001f);
 
 	float I = glm::mirrorClamp(-0.9f);
-	Error += GLM_CHECK(glm::equal(I, 0.9f, 0.00001f));
+	Error += GLM_CHECK_NEAR(I, 0.9f, 0.00001f);
 
 	return Error;
 }
@@ -274,31 +274,31 @@ static int test_mirrorRepeat()
 	int Error = 0;
 
 	float A = glm::mirrorRepeat(0.5f);
-	Error += GLM_CHECK(glm::equal(A, 0.5f, 0.00001f));
+	Error += GLM_CHECK_NEAR(A, 0.5f, 0.00001f);
 
 	float B = glm::mirrorRepeat(0.0f);
-	Error += GLM_CHECK(glm::equal(B, 0.0f, 0.00001f));
+	Error += GLM_CHECK_NEAR(B, 0.0f, 0.00001f);
 
 	float C = glm::mirrorRepeat(1.0f);
-	Error += GLM_CHECK(glm::equal(C, 1.0f, 0.00001f));
+	Error += GLM_CHECK_NEAR(C, 1.0f, 0.00001f);
 
 	float D = glm::mirrorRepeat(-0.5f);
-	Error += GLM_CHECK(glm::equal(D, 0.5f, 0.00001f));
+	Error += GLM_CHECK_NEAR(D, 0.5f, 0.00001f);
 
 	float E = glm::mirrorRepeat(1.5f);
-	Error += GLM_CHECK(glm::equal(E, 0.5f, 0.00001f));
+	Error += GLM_CHECK_NEAR(E, 0.5f, 0.00001f);
 
 	float F = glm::mirrorRepeat(0.9f);
-	Error += GLM_CHECK(glm::equal(F, 0.9f, 0.00001f));
+	Error += GLM_CHECK_NEAR(F, 0.9f, 0.00001f);
 
 	float G = glm::mirrorRepeat(3.0f);
-	Error += GLM_CHECK(glm::equal(G, 1.0f, 0.00001f));
+	Error += GLM_CHECK_NEAR(G, 1.0f, 0.00001f);
 
 	float H = glm::mirrorRepeat(-3.0f);
-	Error += GLM_CHECK(glm::equal(H, 1.0f, 0.00001f));
+	Error += GLM_CHECK_NEAR(H, 1.0f, 0.00001f);
 
 	float I = glm::mirrorRepeat(-1.0f);
-	Error += GLM_CHECK(glm::equal(I, 1.0f, 0.00001f));
+	Error += GLM_CHECK_NEAR(I, 1.0f, 0.00001f);
 
 	return Error;
 }
@@ -311,7 +311,7 @@ static int test_iround()
 	{
 		int RoundFast = static_cast<int>(glm::iround(f));
 		int RoundSTD = static_cast<int>(glm::round(f));
-		Error += GLM_CHECK(RoundFast == RoundSTD);
+		Error += GLM_CHECK_EQ(RoundFast, RoundSTD);
 		assert(!Error);
 	}
 
@@ -326,7 +326,7 @@ static int test_uround()
 	{
 		int RoundFast = static_cast<int>(glm::uround(f));
 		int RoundSTD = static_cast<int>(glm::round(f));
-		Error += GLM_CHECK(RoundFast == RoundSTD);
+		Error += GLM_CHECK_EQ(RoundFast, RoundSTD);
 		assert(!Error);
 	}
 

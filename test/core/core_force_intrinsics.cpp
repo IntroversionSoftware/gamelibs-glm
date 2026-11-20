@@ -35,28 +35,28 @@ static int test_vec4_ctor()
 
 	{
 		glm::vec4 a{ 0, 1, 2, 3 };
-		Error += GLM_CHECK(glm::all(glm::equal(a, glm::vec4(0, 1, 2, 3), glm::epsilon<float>())));
+		Error += GLM_CHECK_NEAR(a, glm::vec4(0, 1, 2, 3), glm::epsilon<float>());
 
 		std::vector<glm::vec4> v = {
 			{0, 1, 2, 3},
 			{4, 5, 6, 7},
 			{8, 9, 0, 1}};
-		Error += GLM_CHECK(glm::all(glm::equal(v[0], glm::vec4(0, 1, 2, 3), glm::epsilon<float>())));
-		Error += GLM_CHECK(glm::all(glm::equal(v[1], glm::vec4(4, 5, 6, 7), glm::epsilon<float>())));
-		Error += GLM_CHECK(glm::all(glm::equal(v[2], glm::vec4(8, 9, 0, 1), glm::epsilon<float>())));
+		Error += GLM_CHECK_NEAR(v[0], glm::vec4(0, 1, 2, 3), glm::epsilon<float>());
+		Error += GLM_CHECK_NEAR(v[1], glm::vec4(4, 5, 6, 7), glm::epsilon<float>());
+		Error += GLM_CHECK_NEAR(v[2], glm::vec4(8, 9, 0, 1), glm::epsilon<float>());
 	}
 
 	{
 		glm::dvec4 a{ 0, 1, 2, 3 };
-		Error += GLM_CHECK(glm::all(glm::equal(a, glm::dvec4(0, 1, 2, 3), glm::epsilon<double>())));
+		Error += GLM_CHECK_NEAR(a, glm::dvec4(0, 1, 2, 3), glm::epsilon<double>());
 
 		std::vector<glm::dvec4> v = {
 			{0, 1, 2, 3},
 			{4, 5, 6, 7},
 			{8, 9, 0, 1}};
-		Error += GLM_CHECK(glm::all(glm::equal(v[0], glm::dvec4(0, 1, 2, 3), glm::epsilon<double>())));
-		Error += GLM_CHECK(glm::all(glm::equal(v[1], glm::dvec4(4, 5, 6, 7), glm::epsilon<double>())));
-		Error += GLM_CHECK(glm::all(glm::equal(v[2], glm::dvec4(8, 9, 0, 1), glm::epsilon<double>())));
+		Error += GLM_CHECK_NEAR(v[0], glm::dvec4(0, 1, 2, 3), glm::epsilon<double>());
+		Error += GLM_CHECK_NEAR(v[1], glm::dvec4(4, 5, 6, 7), glm::epsilon<double>());
+		Error += GLM_CHECK_NEAR(v[2], glm::dvec4(8, 9, 0, 1), glm::epsilon<double>());
 	}
 
 #	if GLM_CONFIG_SWIZZLE == GLM_SWIZZLE_OPERATOR
@@ -125,7 +125,7 @@ static int test_vec4_ctor()
 		glm::ivec4 A(1);
 		glm::ivec4 B(1, 1, 1, 1);
 
-		Error += GLM_CHECK(A == B);
+		Error += GLM_CHECK_EQ(A, B);
 	}
 
 	{
@@ -140,7 +140,7 @@ static int test_vec4_ctor()
 		Tests.push_back(glm::ivec4(glm::ivec4(1, 2, 3, 4)));
 
 		for(std::size_t i = 0; i < Tests.size(); ++i)
-			Error += GLM_CHECK(Tests[i] == glm::ivec4(1, 2, 3, 4));
+			Error += GLM_CHECK_EQ(Tests[i], glm::ivec4(1, 2, 3, 4));
 	}
 
 	return Error;
@@ -188,40 +188,40 @@ static int test_vec4_operators()
 		glm::vec4 const B(4.0f, 5.0f, 6.0f, 7.0f);
 
 		glm::vec4 const C = A + B;
-		Error += GLM_CHECK(glm::all(glm::equal(C, glm::vec4(5, 7, 9, 11), 0.001f)));
+		Error += GLM_CHECK_NEAR(C, glm::vec4(5, 7, 9, 11), 0.001f);
 
 		glm::vec4 D = B - A;
-		Error += GLM_CHECK(glm::all(glm::equal(D, glm::vec4(3, 3, 3, 3), 0.001f)));
+		Error += GLM_CHECK_NEAR(D, glm::vec4(3, 3, 3, 3), 0.001f);
 
 		glm::vec4 E = A * B;
-		Error += GLM_CHECK(glm::all(glm::equal(E, glm::vec4(4, 10, 18, 28), 0.001f)));
+		Error += GLM_CHECK_NEAR(E, glm::vec4(4, 10, 18, 28), 0.001f);
 
 		glm::vec4 F = B / A;
-		Error += GLM_CHECK(glm::all(glm::equal(F, glm::vec4(4, 2.5, 2, 7.0f / 4.0f), 0.001f)));
+		Error += GLM_CHECK_NEAR(F, glm::vec4(4, 2.5, 2, 7.0f / 4.0f), 0.001f);
 
 		glm::vec4 G = A + 1.0f;
-		Error += GLM_CHECK(glm::all(glm::equal(G, glm::vec4(2, 3, 4, 5), 0.001f)));
+		Error += GLM_CHECK_NEAR(G, glm::vec4(2, 3, 4, 5), 0.001f);
 
 		glm::vec4 H = B - 1.0f;
-		Error += GLM_CHECK(glm::all(glm::equal(H, glm::vec4(3, 4, 5, 6), 0.001f)));
+		Error += GLM_CHECK_NEAR(H, glm::vec4(3, 4, 5, 6), 0.001f);
 
 		glm::vec4 I = A * 2.0f;
-		Error += GLM_CHECK(glm::all(glm::equal(I, glm::vec4(2, 4, 6, 8), 0.001f)));
+		Error += GLM_CHECK_NEAR(I, glm::vec4(2, 4, 6, 8), 0.001f);
 
 		glm::vec4 J = B / 2.0f;
-		Error += GLM_CHECK(glm::all(glm::equal(J, glm::vec4(2, 2.5, 3, 3.5), 0.001f)));
+		Error += GLM_CHECK_NEAR(J, glm::vec4(2, 2.5, 3, 3.5), 0.001f);
 
 		glm::vec4 K = 1.0f + A;
-		Error += GLM_CHECK(glm::all(glm::equal(K, glm::vec4(2, 3, 4, 5), 0.001f)));
+		Error += GLM_CHECK_NEAR(K, glm::vec4(2, 3, 4, 5), 0.001f);
 
 		glm::vec4 L = 1.0f - B;
-		Error += GLM_CHECK(glm::all(glm::equal(L, glm::vec4(-3, -4, -5, -6), 0.001f)));
+		Error += GLM_CHECK_NEAR(L, glm::vec4(-3, -4, -5, -6), 0.001f);
 
 		glm::vec4 M = 2.0f * A;
-		Error += GLM_CHECK(glm::all(glm::equal(M, glm::vec4(2, 4, 6, 8), 0.001f)));
+		Error += GLM_CHECK_NEAR(M, glm::vec4(2, 4, 6, 8), 0.001f);
 
 		glm::vec4 const N = 2.0f / B;
-		Error += GLM_CHECK(glm::all(glm::equal(N, glm::vec4(0.5, 2.0 / 5.0, 2.0 / 6.0, 2.0 / 7.0), 0.0001f)));
+		Error += GLM_CHECK_NEAR(N, glm::vec4(0.5, 2.0 / 5.0, 2.0 / 6.0, 2.0 / 7.0), 0.0001f);
 	}
 
 	{
@@ -229,78 +229,78 @@ static int test_vec4_operators()
 		glm::ivec4 B(4.0f, 5.0f, 6.0f, 7.0f);
 
 		A += B;
-		Error += GLM_CHECK(A == glm::ivec4(5, 7, 9, 11));
+		Error += GLM_CHECK_EQ(A, glm::ivec4(5, 7, 9, 11));
 
 		A += 1;
-		Error += GLM_CHECK(A == glm::ivec4(6, 8, 10, 12));
+		Error += GLM_CHECK_EQ(A, glm::ivec4(6, 8, 10, 12));
 	}
 	{
 		glm::ivec4 A(1.0f, 2.0f, 3.0f, 4.0f);
 		glm::ivec4 B(4.0f, 5.0f, 6.0f, 7.0f);
 
 		B -= A;
-		Error += GLM_CHECK(B == glm::ivec4(3, 3, 3, 3));
+		Error += GLM_CHECK_EQ(B, glm::ivec4(3, 3, 3, 3));
 
 		B -= 1;
-		Error += GLM_CHECK(B == glm::ivec4(2, 2, 2, 2));
+		Error += GLM_CHECK_EQ(B, glm::ivec4(2, 2, 2, 2));
 	}
 	{
 		glm::ivec4 A(1.0f, 2.0f, 3.0f, 4.0f);
 		glm::ivec4 B(4.0f, 5.0f, 6.0f, 7.0f);
 
 		A *= B;
-		Error += GLM_CHECK(A == glm::ivec4(4, 10, 18, 28));
+		Error += GLM_CHECK_EQ(A, glm::ivec4(4, 10, 18, 28));
 
 		A *= 2;
-		Error += GLM_CHECK(A == glm::ivec4(8, 20, 36, 56));
+		Error += GLM_CHECK_EQ(A, glm::ivec4(8, 20, 36, 56));
 	}
 	{
 		glm::ivec4 A(1.0f, 2.0f, 3.0f, 4.0f);
 		glm::ivec4 B(4.0f, 4.0f, 6.0f, 8.0f);
 
 		B /= A;
-		Error += GLM_CHECK(B == glm::ivec4(4, 2, 2, 2));
+		Error += GLM_CHECK_EQ(B, glm::ivec4(4, 2, 2, 2));
 
 		B /= 2;
-		Error += GLM_CHECK(B == glm::ivec4(2, 1, 1, 1));
+		Error += GLM_CHECK_EQ(B, glm::ivec4(2, 1, 1, 1));
 	}
 	{
 		glm::ivec4 B(2);
 
 		B /= B.y;
-		Error += GLM_CHECK(B == glm::ivec4(1));
+		Error += GLM_CHECK_EQ(B, glm::ivec4(1));
 	}
 
 	{
 		glm::ivec4 A(1.0f, 2.0f, 3.0f, 4.0f);
 		glm::ivec4 B = -A;
-		Error += GLM_CHECK(B == glm::ivec4(-1.0f, -2.0f, -3.0f, -4.0f));
+		Error += GLM_CHECK_EQ(B, glm::ivec4(-1.0f, -2.0f, -3.0f, -4.0f));
 	}
 
 	{
 		glm::ivec4 A(1.0f, 2.0f, 3.0f, 4.0f);
 		glm::ivec4 B = --A;
-		Error += GLM_CHECK(B == glm::ivec4(0.0f, 1.0f, 2.0f, 3.0f));
+		Error += GLM_CHECK_EQ(B, glm::ivec4(0.0f, 1.0f, 2.0f, 3.0f));
 	}
 
 	{
 		glm::ivec4 A(1.0f, 2.0f, 3.0f, 4.0f);
 		glm::ivec4 B = A--;
-		Error += GLM_CHECK(B == glm::ivec4(1.0f, 2.0f, 3.0f, 4.0f));
-		Error += GLM_CHECK(A == glm::ivec4(0.0f, 1.0f, 2.0f, 3.0f));
+		Error += GLM_CHECK_EQ(B, glm::ivec4(1.0f, 2.0f, 3.0f, 4.0f));
+		Error += GLM_CHECK_EQ(A, glm::ivec4(0.0f, 1.0f, 2.0f, 3.0f));
 	}
 
 	{
 		glm::ivec4 A(1.0f, 2.0f, 3.0f, 4.0f);
 		glm::ivec4 B = ++A;
-		Error += GLM_CHECK(B == glm::ivec4(2.0f, 3.0f, 4.0f, 5.0f));
+		Error += GLM_CHECK_EQ(B, glm::ivec4(2.0f, 3.0f, 4.0f, 5.0f));
 	}
 
 	{
 		glm::ivec4 A(1.0f, 2.0f, 3.0f, 4.0f);
 		glm::ivec4 B = A++;
-		Error += GLM_CHECK(B == glm::ivec4(1.0f, 2.0f, 3.0f, 4.0f));
-		Error += GLM_CHECK(A == glm::ivec4(2.0f, 3.0f, 4.0f, 5.0f));
+		Error += GLM_CHECK_EQ(B, glm::ivec4(1.0f, 2.0f, 3.0f, 4.0f));
+		Error += GLM_CHECK_EQ(A, glm::ivec4(2.0f, 3.0f, 4.0f, 5.0f));
 	}
 
 	return Error;
@@ -329,16 +329,16 @@ static int test_vec4_size()
 {
 	int Error = 0;
 
-	Error += GLM_CHECK(sizeof(glm::vec4) == sizeof(glm::lowp_vec4));
-	Error += GLM_CHECK(sizeof(glm::vec4) == sizeof(glm::mediump_vec4));
-	Error += GLM_CHECK(sizeof(glm::vec4) == sizeof(glm::highp_vec4));
-	Error += GLM_CHECK(16 == sizeof(glm::mediump_vec4));
-	Error += GLM_CHECK(sizeof(glm::dvec4) == sizeof(glm::lowp_dvec4));
-	Error += GLM_CHECK(sizeof(glm::dvec4) == sizeof(glm::mediump_dvec4));
-	Error += GLM_CHECK(sizeof(glm::dvec4) == sizeof(glm::highp_dvec4));
-	Error += GLM_CHECK(32 == sizeof(glm::highp_dvec4));
-	Error += GLM_CHECK(glm::vec4().length() == 4);
-	Error += GLM_CHECK(glm::dvec4().length() == 4);
+	Error += GLM_CHECK_EQ(sizeof(glm::vec4), sizeof(glm::lowp_vec4));
+	Error += GLM_CHECK_EQ(sizeof(glm::vec4), sizeof(glm::mediump_vec4));
+	Error += GLM_CHECK_EQ(sizeof(glm::vec4), sizeof(glm::highp_vec4));
+	Error += GLM_CHECK_EQ(16, sizeof(glm::mediump_vec4));
+	Error += GLM_CHECK_EQ(sizeof(glm::dvec4), sizeof(glm::lowp_dvec4));
+	Error += GLM_CHECK_EQ(sizeof(glm::dvec4), sizeof(glm::mediump_dvec4));
+	Error += GLM_CHECK_EQ(sizeof(glm::dvec4), sizeof(glm::highp_dvec4));
+	Error += GLM_CHECK_EQ(32, sizeof(glm::highp_dvec4));
+	Error += GLM_CHECK_EQ(glm::vec4().length(), 4);
+	Error += GLM_CHECK_EQ(glm::dvec4().length(), 4);
 
 	return Error;
 }
@@ -353,28 +353,28 @@ static int test_vec4_swizzle_partial()
 
 	{
 		glm::ivec4 B(A.xy, A.zw);
-		Error += GLM_CHECK(A == B);
+		Error += GLM_CHECK_EQ(A, B);
 	}
 	{
 		glm::ivec4 B(A.xy, 3, 4);
-		Error += GLM_CHECK(A == B);
+		Error += GLM_CHECK_EQ(A, B);
 	}
 	{
 		glm::ivec4 B(1, A.yz, 4);
-		Error += GLM_CHECK(A == B);
+		Error += GLM_CHECK_EQ(A, B);
 	}
 	{
 		glm::ivec4 B(1, 2, A.zw);
-		Error += GLM_CHECK(A == B);
+		Error += GLM_CHECK_EQ(A, B);
 	}
 
 	{
 		glm::ivec4 B(A.xyz, 4);
-		Error += GLM_CHECK(A == B);
+		Error += GLM_CHECK_EQ(A, B);
 	}
 	{
 		glm::ivec4 B(1, A.yzw);
-		Error += GLM_CHECK(A == B);
+		Error += GLM_CHECK_EQ(A, B);
 	}
 #	endif
 
@@ -401,9 +401,9 @@ static int test_operator_increment()
 	int i3 = ++i1;
 	int i4 = i2++;
 
-	Error += GLM_CHECK(i0 == i4);
-	Error += GLM_CHECK(i1 == i2);
-	Error += GLM_CHECK(i1 == i3);
+	Error += GLM_CHECK_EQ(i0, i4);
+	Error += GLM_CHECK_EQ(i1, i2);
+	Error += GLM_CHECK_EQ(i1, i3);
 
 	return Error;
 }

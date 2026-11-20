@@ -25,16 +25,16 @@ static int test_operators()
 		genType const B(1);
 
 		genType const C = A + B;
-		Error += GLM_CHECK(glm::all(glm::equal(C, genType(2), glm::epsilon<valType>())));
+		Error += GLM_CHECK_NEAR(C, genType(2), glm::epsilon<valType>());
 
 		genType const D = A - B;
-		Error += GLM_CHECK(glm::all(glm::equal(D, genType(0), glm::epsilon<valType>())));
+		Error += GLM_CHECK_NEAR(D, genType(0), glm::epsilon<valType>());
 
 		genType const E = A * B;
-		Error += GLM_CHECK(glm::all(glm::equal(E, genType(1), glm::epsilon<valType>())));
+		Error += GLM_CHECK_NEAR(E, genType(1), glm::epsilon<valType>());
 
 		genType const F = A / B;
-		Error += GLM_CHECK(glm::all(glm::equal(F, genType(1), glm::epsilon<valType>())));
+		Error += GLM_CHECK_NEAR(F, genType(1), glm::epsilon<valType>());
 	}
 
 	return Error;
@@ -50,20 +50,20 @@ static int test_ctor()
 	glm::vec<1, T> const A = genType(1);
 
 	glm::vec<1, T> const E(genType(1));
-	Error += GLM_CHECK(glm::all(glm::equal(A, E, glm::epsilon<T>())));
+	Error += GLM_CHECK_NEAR(A, E, glm::epsilon<T>());
 
 	glm::vec<1, T> const F(E);
-	Error += GLM_CHECK(glm::all(glm::equal(A, F, glm::epsilon<T>())));
+	Error += GLM_CHECK_NEAR(A, F, glm::epsilon<T>());
 
 	genType const B = genType(1);
 	genType const G(glm::vec<2, T>(1));
-	Error += GLM_CHECK(glm::all(glm::equal(B, G, glm::epsilon<T>())));
+	Error += GLM_CHECK_NEAR(B, G, glm::epsilon<T>());
 
 	genType const H(glm::vec<3, T>(1));
-	Error += GLM_CHECK(glm::all(glm::equal(B, H, glm::epsilon<T>())));
+	Error += GLM_CHECK_NEAR(B, H, glm::epsilon<T>());
 
 	genType const I(glm::vec<4, T>(1));
-	Error += GLM_CHECK(glm::all(glm::equal(B, I, glm::epsilon<T>())));
+	Error += GLM_CHECK_NEAR(B, I, glm::epsilon<T>());
 
 	return Error;
 }
@@ -75,9 +75,9 @@ static int test_size()
 
 	int Error = 0;
 
-	Error += GLM_CHECK(sizeof(glm::vec<1, T>) == sizeof(genType));
-	Error += GLM_CHECK(genType().length() == 1);
-	Error += GLM_CHECK(genType::length() == 1);
+	Error += GLM_CHECK_EQ(sizeof(glm::vec<1, T>), sizeof(genType));
+	Error += GLM_CHECK_EQ(genType().length(), 1);
+	Error += GLM_CHECK_EQ(genType::length(), 1);
 
 	return Error;
 }

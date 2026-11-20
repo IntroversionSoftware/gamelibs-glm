@@ -97,12 +97,12 @@ static int test_equal()
 	Error += GLM_CHECK(glm::equal(1, 1));
 	Error += GLM_CHECK(!(glm::equal(0.0f, 1.0f, glm::epsilon<float>())));
 	Error += GLM_CHECK(!(glm::equal(1.0f, 0.0f, glm::epsilon<float>())));
-	Error += GLM_CHECK(glm::equal(0.0f, 0.0f, glm::epsilon<float>()));
-	Error += GLM_CHECK(glm::equal(1.0f, 1.0f, glm::epsilon<float>()));
+	Error += GLM_CHECK_NEAR(0.0f, 0.0f, glm::epsilon<float>());
+	Error += GLM_CHECK_NEAR(1.0f, 1.0f, glm::epsilon<float>());
 	Error += GLM_CHECK(!(glm::equal(0.0, 1.0, glm::epsilon<double>())));
 	Error += GLM_CHECK(!(glm::equal(1.0, 0.0, glm::epsilon<double>())));
-	Error += GLM_CHECK(glm::equal(0.0, 0.0, glm::epsilon<double>()));
-	Error += GLM_CHECK(glm::equal(1.0, 1.0, glm::epsilon<double>()));
+	Error += GLM_CHECK_NEAR(0.0, 0.0, glm::epsilon<double>());
+	Error += GLM_CHECK_NEAR(1.0, 1.0, glm::epsilon<double>());
 
 	return Error;
 }

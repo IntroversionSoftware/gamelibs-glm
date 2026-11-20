@@ -12,10 +12,10 @@ static int test_size()
 {
 	int Error = 0;
 
-	Error += GLM_CHECK(sizeof(glm::uint8) == 1);
-	Error += GLM_CHECK(sizeof(glm::uint16) == 2);
-	Error += GLM_CHECK(sizeof(glm::uint32) == 4);
-	Error += GLM_CHECK(sizeof(glm::uint64) == 8);
+	Error += GLM_CHECK_EQ(sizeof(glm::uint8), 1);
+	Error += GLM_CHECK_EQ(sizeof(glm::uint16), 2);
+	Error += GLM_CHECK_EQ(sizeof(glm::uint32), 4);
+	Error += GLM_CHECK_EQ(sizeof(glm::uint64), 8);
 
 	return Error;
 }
@@ -24,9 +24,9 @@ static int test_comp()
 {
 	int Error = 0;
 
-	Error += GLM_CHECK(sizeof(glm::uint8) < sizeof(glm::uint16));
-	Error += GLM_CHECK(sizeof(glm::uint16) < sizeof(glm::uint32));
-	Error += GLM_CHECK(sizeof(glm::uint32) < sizeof(glm::uint64));
+	Error += GLM_CHECK_LT(sizeof(glm::uint8), sizeof(glm::uint16));
+	Error += GLM_CHECK_LT(sizeof(glm::uint16), sizeof(glm::uint32));
+	Error += GLM_CHECK_LT(sizeof(glm::uint32), sizeof(glm::uint64));
 
 	return Error;
 }

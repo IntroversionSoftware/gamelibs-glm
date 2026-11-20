@@ -10,10 +10,10 @@ static int test_size()
 {
 	int Error = 0;
 
-	Error += GLM_CHECK(sizeof(glm::u8vec1) == 1);
-	Error += GLM_CHECK(sizeof(glm::u16vec1) == 2);
-	Error += GLM_CHECK(sizeof(glm::u32vec1) == 4);
-	Error += GLM_CHECK(sizeof(glm::u64vec1) == 8);
+	Error += GLM_CHECK_EQ(sizeof(glm::u8vec1), 1);
+	Error += GLM_CHECK_EQ(sizeof(glm::u16vec1), 2);
+	Error += GLM_CHECK_EQ(sizeof(glm::u32vec1), 4);
+	Error += GLM_CHECK_EQ(sizeof(glm::u64vec1), 8);
 
 	return Error;
 }
@@ -22,9 +22,9 @@ static int test_comp()
 {
 	int Error = 0;
 
-	Error += GLM_CHECK(sizeof(glm::u8vec1) < sizeof(glm::u16vec1));
-	Error += GLM_CHECK(sizeof(glm::u16vec1) < sizeof(glm::u32vec1));
-	Error += GLM_CHECK(sizeof(glm::u32vec1) < sizeof(glm::u64vec1));
+	Error += GLM_CHECK_LT(sizeof(glm::u8vec1), sizeof(glm::u16vec1));
+	Error += GLM_CHECK_LT(sizeof(glm::u16vec1), sizeof(glm::u32vec1));
+	Error += GLM_CHECK_LT(sizeof(glm::u32vec1), sizeof(glm::u64vec1));
 
 	return Error;
 }

@@ -8,7 +8,7 @@ static int test_equal_epsilon()
 {
 	int Error = 0;
 
-	Error += GLM_CHECK(glm::equal(1.01f, 1.02f, 0.1f));
+	Error += GLM_CHECK_NEAR(1.01f, 1.02f, 0.1f);
 	Error += GLM_CHECK(!glm::equal(1.01f, 1.02f, 0.001f));
 
 	return Error;
@@ -29,13 +29,13 @@ static int test_equal_ulps()
 	int Error = 0;
 
 	float const ULP1Plus = glm::nextFloat(1.0f);
-	Error += GLM_CHECK(glm::equal(1.0f, ULP1Plus, 1));
+	Error += GLM_CHECK_NEAR(1.0f, ULP1Plus, 1);
 
 	float const ULP2Plus = glm::nextFloat(ULP1Plus);
 	Error += GLM_CHECK(!glm::equal(1.0f, ULP2Plus, 1));
 
 	float const ULP1Minus = glm::prevFloat(1.0f);
-	Error += GLM_CHECK(glm::equal(1.0f, ULP1Minus, 1));
+	Error += GLM_CHECK_NEAR(1.0f, ULP1Minus, 1);
 
 	float const ULP2Minus = glm::prevFloat(ULP1Minus);
 	Error += GLM_CHECK(!glm::equal(1.0f, ULP2Minus, 1));

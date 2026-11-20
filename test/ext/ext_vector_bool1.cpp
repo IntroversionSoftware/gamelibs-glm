@@ -26,10 +26,10 @@ static int test_ctor()
 	glm::bvec1 const A = genType(true);
 
 	glm::bvec1 const E(genType(true));
-	Error += GLM_CHECK(A == E);
+	Error += GLM_CHECK_EQ(A, E);
 
 	glm::bvec1 const F(E);
-	Error += GLM_CHECK(A == F);
+	Error += GLM_CHECK_EQ(A, F);
 
 	return Error;
 }
@@ -39,9 +39,9 @@ static int test_size()
 {
 	int Error = 0;
 
-	Error += GLM_CHECK(sizeof(glm::bvec1) == sizeof(genType));
-	Error += GLM_CHECK(genType().length() == 1);
-	Error += GLM_CHECK(genType::length() == 1);
+	Error += GLM_CHECK_EQ(sizeof(glm::bvec1), sizeof(genType));
+	Error += GLM_CHECK_EQ(genType().length(), 1);
+	Error += GLM_CHECK_EQ(genType::length(), 1);
 
 	return Error;
 }
@@ -55,9 +55,9 @@ static int test_relational()
 	genType const B(true);
 	genType const C(false);
 
-	Error += GLM_CHECK(A == B);
-	Error += GLM_CHECK((A && B) == A);
-	Error += GLM_CHECK((A || C) == A);
+	Error += GLM_CHECK_EQ(A, B);
+	Error += GLM_CHECK_EQ((A && B), A);
+	Error += GLM_CHECK_EQ((A || C), A);
 
 	return Error;
 }

@@ -106,7 +106,7 @@ namespace normalize
 		glm::vec3 v = glm::cross(u, w);
 		glm::vec3 x = glm::cross(w, u);
 
-		Error += GLM_CHECK(glm::all(glm::equal(x + v, glm::vec3(0), 0.01f)));
+		Error += GLM_CHECK_NEAR(x + v, glm::vec3(0), 0.01f);
 
 		return Error;
 	}
@@ -124,7 +124,7 @@ namespace faceforward
 			glm::vec3 Nref(0.0f, 0.0f, 1.0f);
 			glm::vec3 F = glm::faceforward(N, I, Nref);
 
-			Error += GLM_CHECK(glm::all(glm::equal(F, glm::vec3(0.0, 0.0, -1.0), 0.0001f)));
+			Error += GLM_CHECK_NEAR(F, glm::vec3(0.0, 0.0, -1.0), 0.0001f);
 		}
 
 		return Error;
@@ -141,14 +141,14 @@ namespace reflect
 			glm::vec2 A(1.0f,-1.0f);
 			glm::vec2 B(0.0f, 1.0f);
 			glm::vec2 C = glm::reflect(A, B);
-			Error += GLM_CHECK(glm::all(glm::equal(C, glm::vec2(1.0, 1.0), 0.0001f)));
+			Error += GLM_CHECK_NEAR(C, glm::vec2(1.0, 1.0), 0.0001f);
 		}
 
 		{
 			glm::dvec2 A(1.0f,-1.0f);
 			glm::dvec2 B(0.0f, 1.0f);
 			glm::dvec2 C = glm::reflect(A, B);
-			Error += GLM_CHECK(glm::all(glm::equal(C, glm::dvec2(1.0, 1.0), 0.0001)));
+			Error += GLM_CHECK_NEAR(C, glm::dvec2(1.0, 1.0), 0.0001);
 		}
 
 		return Error;
@@ -165,28 +165,28 @@ namespace refract
 			float A(-1.0f);
 			float B(1.0f);
 			float C = glm::refract(A, B, 0.5f);
-			Error += GLM_CHECK(glm::equal(C, -1.0f, 0.0001f));
+			Error += GLM_CHECK_NEAR(C, -1.0f, 0.0001f);
 		}
 
 		{
 			glm::vec2 A(0.0f,-1.0f);
 			glm::vec2 B(0.0f, 1.0f);
 			glm::vec2 C = glm::refract(A, B, 0.5f);
-			Error += GLM_CHECK(glm::all(glm::equal(C, glm::vec2(0.0, -1.0), 0.0001f)));
+			Error += GLM_CHECK_NEAR(C, glm::vec2(0.0, -1.0), 0.0001f);
 		}
 
 		{
 			glm::dvec2 A(0.0f,-1.0f);
 			glm::dvec2 B(0.0f, 1.0f);
 			glm::dvec2 C = glm::refract(A, B, 0.5);
-			Error += GLM_CHECK(glm::all(glm::equal(C, glm::dvec2(0.0, -1.0), 0.0001)));
+			Error += GLM_CHECK_NEAR(C, glm::dvec2(0.0, -1.0), 0.0001);
 		}
 
 		{
 			glm::vec4 A(0.0f, -1.0f, 0.0f, 0.0f);
 			glm::vec4 B(0.0f, 1.0f, 0.0f, 0.0f);
 			glm::vec4 C = glm::refract(A, B, 0.5f);
-			Error += GLM_CHECK(glm::all(glm::equal(C, glm::vec4(0.0, -1.0, 0.0f, 0.0f), 0.0001f)));
+			Error += GLM_CHECK_NEAR(C, glm::vec4(0.0, -1.0, 0.0f, 0.0f), 0.0001f);
 		}
 
 		return Error;

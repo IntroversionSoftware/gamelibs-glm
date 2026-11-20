@@ -102,35 +102,35 @@ static int test_copy_vec4()
 	{
 		glm::aligned_vec4 const u(1.f, 2.f, 3.f, 4.f);
 		glm::packed_vec4 const v(u);
-		Error += GLM_CHECK(glm::equal(v.x, u.x, glm::epsilon<float>()));
-		Error += GLM_CHECK(glm::equal(v.y, u.y, glm::epsilon<float>()));
-		Error += GLM_CHECK(glm::equal(v.z, u.z, glm::epsilon<float>()));
-		Error += GLM_CHECK(glm::equal(v.w, u.w, glm::epsilon<float>()));
+		Error += GLM_CHECK_NEAR(v.x, u.x, glm::epsilon<float>());
+		Error += GLM_CHECK_NEAR(v.y, u.y, glm::epsilon<float>());
+		Error += GLM_CHECK_NEAR(v.z, u.z, glm::epsilon<float>());
+		Error += GLM_CHECK_NEAR(v.w, u.w, glm::epsilon<float>());
 	}
 	{
 		glm::packed_vec4 const u(1.f, 2.f, 3.f, 4.f);
 		glm::aligned_vec4 const v(u);
-		Error += GLM_CHECK(glm::equal(v.x, u.x, glm::epsilon<float>()));
-		Error += GLM_CHECK(glm::equal(v.y, u.y, glm::epsilon<float>()));
-		Error += GLM_CHECK(glm::equal(v.z, u.z, glm::epsilon<float>()));
-		Error += GLM_CHECK(glm::equal(v.w, u.w, glm::epsilon<float>()));
+		Error += GLM_CHECK_NEAR(v.x, u.x, glm::epsilon<float>());
+		Error += GLM_CHECK_NEAR(v.y, u.y, glm::epsilon<float>());
+		Error += GLM_CHECK_NEAR(v.z, u.z, glm::epsilon<float>());
+		Error += GLM_CHECK_NEAR(v.w, u.w, glm::epsilon<float>());
 	}
 
 	{
 		glm::aligned_dvec4 const u(1., 2., 3., 4.);
 		glm::packed_dvec4 const v(u);
-		Error += GLM_CHECK(glm::equal(v.x, u.x, glm::epsilon<double>()));
-		Error += GLM_CHECK(glm::equal(v.y, u.y, glm::epsilon<double>()));
-		Error += GLM_CHECK(glm::equal(v.z, u.z, glm::epsilon<double>()));
-		Error += GLM_CHECK(glm::equal(v.w, u.w, glm::epsilon<double>()));
+		Error += GLM_CHECK_NEAR(v.x, u.x, glm::epsilon<double>());
+		Error += GLM_CHECK_NEAR(v.y, u.y, glm::epsilon<double>());
+		Error += GLM_CHECK_NEAR(v.z, u.z, glm::epsilon<double>());
+		Error += GLM_CHECK_NEAR(v.w, u.w, glm::epsilon<double>());
 	}
 	{
 		glm::packed_dvec4 const u(1.f, 2.f, 3.f, 4.f);
 		glm::aligned_dvec4 const v(u);
-		Error += GLM_CHECK(glm::equal(v.x, u.x, glm::epsilon<double>()));
-		Error += GLM_CHECK(glm::equal(v.y, u.y, glm::epsilon<double>()));
-		Error += GLM_CHECK(glm::equal(v.z, u.z, glm::epsilon<double>()));
-		Error += GLM_CHECK(glm::equal(v.w, u.w, glm::epsilon<double>()));
+		Error += GLM_CHECK_NEAR(v.x, u.x, glm::epsilon<double>());
+		Error += GLM_CHECK_NEAR(v.y, u.y, glm::epsilon<double>());
+		Error += GLM_CHECK_NEAR(v.z, u.z, glm::epsilon<double>());
+		Error += GLM_CHECK_NEAR(v.w, u.w, glm::epsilon<double>());
 	}
 
 	{
@@ -155,31 +155,31 @@ static int test_copy_vec3()
 	{
 		glm::aligned_vec3 const u(1.f, 2.f, 3.f);
 		glm::packed_vec3 const v(u);
-		Error += GLM_CHECK(glm::equal(v.x, u.x, glm::epsilon<float>()));
-		Error += GLM_CHECK(glm::equal(v.y, u.y, glm::epsilon<float>()));
-		Error += GLM_CHECK(glm::equal(v.z, u.z, glm::epsilon<float>()));
+		Error += GLM_CHECK_NEAR(v.x, u.x, glm::epsilon<float>());
+		Error += GLM_CHECK_NEAR(v.y, u.y, glm::epsilon<float>());
+		Error += GLM_CHECK_NEAR(v.z, u.z, glm::epsilon<float>());
 	}
 	{
 		glm::packed_vec3 const u(1.f, 2.f, 3.f);
 		glm::aligned_vec3 const v(u);
-		Error += GLM_CHECK(glm::equal(v.x, u.x, glm::epsilon<float>()));
-		Error += GLM_CHECK(glm::equal(v.y, u.y, glm::epsilon<float>()));
-		Error += GLM_CHECK(glm::equal(v.z, u.z, glm::epsilon<float>()));
+		Error += GLM_CHECK_NEAR(v.x, u.x, glm::epsilon<float>());
+		Error += GLM_CHECK_NEAR(v.y, u.y, glm::epsilon<float>());
+		Error += GLM_CHECK_NEAR(v.z, u.z, glm::epsilon<float>());
 	}
 
 	{
 		glm::aligned_dvec3 const u(1., 2., 3.);
 		glm::packed_dvec3 const v(u);
-		Error += GLM_CHECK(glm::equal(v.x, u.x, glm::epsilon<double>()));
-		Error += GLM_CHECK(glm::equal(v.y, u.y, glm::epsilon<double>()));
-		Error += GLM_CHECK(glm::equal(v.z, u.z, glm::epsilon<double>()));
+		Error += GLM_CHECK_NEAR(v.x, u.x, glm::epsilon<double>());
+		Error += GLM_CHECK_NEAR(v.y, u.y, glm::epsilon<double>());
+		Error += GLM_CHECK_NEAR(v.z, u.z, glm::epsilon<double>());
 	}
 	{
 		glm::packed_dvec3 const u(1.f, 2.f, 3.f);
 		glm::aligned_dvec3 const v(u);
-		Error += GLM_CHECK(glm::equal(v.x, u.x, glm::epsilon<double>()));
-		Error += GLM_CHECK(glm::equal(v.y, u.y, glm::epsilon<double>()));
-		Error += GLM_CHECK(glm::equal(v.z, u.z, glm::epsilon<double>()));
+		Error += GLM_CHECK_NEAR(v.x, u.x, glm::epsilon<double>());
+		Error += GLM_CHECK_NEAR(v.y, u.y, glm::epsilon<double>());
+		Error += GLM_CHECK_NEAR(v.z, u.z, glm::epsilon<double>());
 	}
 
 	{
@@ -204,35 +204,35 @@ static int test_copy_quat()
 	{
 		glm::aligned_quat const u(1.f, 2.f, 3.f, 4.f);
 		glm::packed_quat const v(u);
-		Error += GLM_CHECK(glm::equal(v.x, u.x, glm::epsilon<float>()));
-		Error += GLM_CHECK(glm::equal(v.y, u.y, glm::epsilon<float>()));
-		Error += GLM_CHECK(glm::equal(v.z, u.z, glm::epsilon<float>()));
-		Error += GLM_CHECK(glm::equal(v.w, u.w, glm::epsilon<float>()));
+		Error += GLM_CHECK_NEAR(v.x, u.x, glm::epsilon<float>());
+		Error += GLM_CHECK_NEAR(v.y, u.y, glm::epsilon<float>());
+		Error += GLM_CHECK_NEAR(v.z, u.z, glm::epsilon<float>());
+		Error += GLM_CHECK_NEAR(v.w, u.w, glm::epsilon<float>());
 	}
 	{
 		glm::packed_quat const u(1.f, 2.f, 3.f, 4.f);
 		glm::aligned_quat const v(u);
-		Error += GLM_CHECK(glm::equal(v.x, u.x, glm::epsilon<float>()));
-		Error += GLM_CHECK(glm::equal(v.y, u.y, glm::epsilon<float>()));
-		Error += GLM_CHECK(glm::equal(v.z, u.z, glm::epsilon<float>()));
-		Error += GLM_CHECK(glm::equal(v.w, u.w, glm::epsilon<float>()));
+		Error += GLM_CHECK_NEAR(v.x, u.x, glm::epsilon<float>());
+		Error += GLM_CHECK_NEAR(v.y, u.y, glm::epsilon<float>());
+		Error += GLM_CHECK_NEAR(v.z, u.z, glm::epsilon<float>());
+		Error += GLM_CHECK_NEAR(v.w, u.w, glm::epsilon<float>());
 	}
 
 	{
 		glm::aligned_dquat const u(1., 2., 3., 4.);
 		glm::packed_dquat const v(u);
-		Error += GLM_CHECK(glm::equal(v.x, u.x, glm::epsilon<double>()));
-		Error += GLM_CHECK(glm::equal(v.y, u.y, glm::epsilon<double>()));
-		Error += GLM_CHECK(glm::equal(v.z, u.z, glm::epsilon<double>()));
-		Error += GLM_CHECK(glm::equal(v.w, u.w, glm::epsilon<double>()));
+		Error += GLM_CHECK_NEAR(v.x, u.x, glm::epsilon<double>());
+		Error += GLM_CHECK_NEAR(v.y, u.y, glm::epsilon<double>());
+		Error += GLM_CHECK_NEAR(v.z, u.z, glm::epsilon<double>());
+		Error += GLM_CHECK_NEAR(v.w, u.w, glm::epsilon<double>());
 	}
 	{
 		glm::packed_dquat const u(1., 2., 3., 4.);
 		glm::aligned_dquat const v(u);
-		Error += GLM_CHECK(glm::equal(v.x, u.x, glm::epsilon<double>()));
-		Error += GLM_CHECK(glm::equal(v.y, u.y, glm::epsilon<double>()));
-		Error += GLM_CHECK(glm::equal(v.z, u.z, glm::epsilon<double>()));
-		Error += GLM_CHECK(glm::equal(v.w, u.w, glm::epsilon<double>()));
+		Error += GLM_CHECK_NEAR(v.x, u.x, glm::epsilon<double>());
+		Error += GLM_CHECK_NEAR(v.y, u.y, glm::epsilon<double>());
+		Error += GLM_CHECK_NEAR(v.z, u.z, glm::epsilon<double>());
+		Error += GLM_CHECK_NEAR(v.w, u.w, glm::epsilon<double>());
 	}
 
 	return Error;
@@ -244,49 +244,49 @@ static int test_splat_vec3()
 	{
 		glm::aligned_vec3 const u(1.f, 2.f, 3.f);
 		glm::aligned_vec3 const v(glm::splatX(u));
-		Error += GLM_CHECK(glm::equal(v.x, u.x, glm::epsilon<float>()));
-		Error += GLM_CHECK(glm::equal(v.y, u.x, glm::epsilon<float>()));
-		Error += GLM_CHECK(glm::equal(v.z, u.x, glm::epsilon<float>()));
+		Error += GLM_CHECK_NEAR(v.x, u.x, glm::epsilon<float>());
+		Error += GLM_CHECK_NEAR(v.y, u.x, glm::epsilon<float>());
+		Error += GLM_CHECK_NEAR(v.z, u.x, glm::epsilon<float>());
 	}
 
 	{
 		glm::aligned_vec3 const u(1.f, 2.f, 3.f);
 		glm::aligned_vec3 const v(glm::splatY(u));
-		Error += GLM_CHECK(glm::equal(v.x, u.y, glm::epsilon<float>()));
-		Error += GLM_CHECK(glm::equal(v.y, u.y, glm::epsilon<float>()));
-		Error += GLM_CHECK(glm::equal(v.z, u.y, glm::epsilon<float>()));
+		Error += GLM_CHECK_NEAR(v.x, u.y, glm::epsilon<float>());
+		Error += GLM_CHECK_NEAR(v.y, u.y, glm::epsilon<float>());
+		Error += GLM_CHECK_NEAR(v.z, u.y, glm::epsilon<float>());
 	}
 
 	{
 		glm::aligned_vec3 const u(1.f, 2.f, 3.f);
 		glm::aligned_vec3 const v(glm::splatZ(u));
-		Error += GLM_CHECK(glm::equal(v.x, u.z, glm::epsilon<float>()));
-		Error += GLM_CHECK(glm::equal(v.y, u.z, glm::epsilon<float>()));
-		Error += GLM_CHECK(glm::equal(v.z, u.z, glm::epsilon<float>()));
+		Error += GLM_CHECK_NEAR(v.x, u.z, glm::epsilon<float>());
+		Error += GLM_CHECK_NEAR(v.y, u.z, glm::epsilon<float>());
+		Error += GLM_CHECK_NEAR(v.z, u.z, glm::epsilon<float>());
 	}
 
 	{
 		glm::aligned_dvec3 const u(1., 2., 3.);
 		glm::aligned_dvec3 const v(glm::splatX(u));
-		Error += GLM_CHECK(glm::equal(v.x, u.x, glm::epsilon<double>()));
-		Error += GLM_CHECK(glm::equal(v.y, u.x, glm::epsilon<double>()));
-		Error += GLM_CHECK(glm::equal(v.z, u.x, glm::epsilon<double>()));
+		Error += GLM_CHECK_NEAR(v.x, u.x, glm::epsilon<double>());
+		Error += GLM_CHECK_NEAR(v.y, u.x, glm::epsilon<double>());
+		Error += GLM_CHECK_NEAR(v.z, u.x, glm::epsilon<double>());
 	}
 
 	{
 		glm::aligned_dvec3 const u(1., 2., 3.);
 		glm::aligned_dvec3 const v(glm::splatY(u));
-		Error += GLM_CHECK(glm::equal(v.x, u.y, glm::epsilon<double>()));
-		Error += GLM_CHECK(glm::equal(v.y, u.y, glm::epsilon<double>()));
-		Error += GLM_CHECK(glm::equal(v.z, u.y, glm::epsilon<double>()));
+		Error += GLM_CHECK_NEAR(v.x, u.y, glm::epsilon<double>());
+		Error += GLM_CHECK_NEAR(v.y, u.y, glm::epsilon<double>());
+		Error += GLM_CHECK_NEAR(v.z, u.y, glm::epsilon<double>());
 	}
 
 	{
 		glm::aligned_dvec3 const u(1., 2., 3.);
 		glm::aligned_dvec3 const v(glm::splatZ(u));
-		Error += GLM_CHECK(glm::equal(v.x, u.z, glm::epsilon<double>()));
-		Error += GLM_CHECK(glm::equal(v.y, u.z, glm::epsilon<double>()));
-		Error += GLM_CHECK(glm::equal(v.z, u.z, glm::epsilon<double>()));
+		Error += GLM_CHECK_NEAR(v.x, u.z, glm::epsilon<double>());
+		Error += GLM_CHECK_NEAR(v.y, u.z, glm::epsilon<double>());
+		Error += GLM_CHECK_NEAR(v.z, u.z, glm::epsilon<double>());
 	}
 
 	return Error;
@@ -299,52 +299,52 @@ static int test_splat_vec4()
 		glm::aligned_vec4 const u(1.f, 2.f, 3.f, 4.f);
 		{
 			glm::aligned_vec4 const v(glm::splatX(u));
-			Error += GLM_CHECK(glm::equal(v.x, u.x, glm::epsilon<float>()));
-		    Error += GLM_CHECK(glm::equal(v.y, u.x, glm::epsilon<float>()));
-		    Error += GLM_CHECK(glm::equal(v.z, u.x, glm::epsilon<float>()));
-		    Error += GLM_CHECK(glm::equal(v.w, u.x, glm::epsilon<float>()));
+			Error += GLM_CHECK_NEAR(v.x, u.x, glm::epsilon<float>());
+		    Error += GLM_CHECK_NEAR(v.y, u.x, glm::epsilon<float>());
+		    Error += GLM_CHECK_NEAR(v.z, u.x, glm::epsilon<float>());
+		    Error += GLM_CHECK_NEAR(v.w, u.x, glm::epsilon<float>());
 		}
 
 		{
 			glm::aligned_vec4 const v(glm::splatY(u));
-			Error += GLM_CHECK(glm::equal(v.x, u.y, glm::epsilon<float>()));
-		    Error += GLM_CHECK(glm::equal(v.y, u.y, glm::epsilon<float>()));
-		    Error += GLM_CHECK(glm::equal(v.z, u.y, glm::epsilon<float>()));
-		    Error += GLM_CHECK(glm::equal(v.w, u.y, glm::epsilon<float>()));
+			Error += GLM_CHECK_NEAR(v.x, u.y, glm::epsilon<float>());
+		    Error += GLM_CHECK_NEAR(v.y, u.y, glm::epsilon<float>());
+		    Error += GLM_CHECK_NEAR(v.z, u.y, glm::epsilon<float>());
+		    Error += GLM_CHECK_NEAR(v.w, u.y, glm::epsilon<float>());
 		}
 
 		{
 			glm::aligned_vec4 const v(glm::splatZ(u));
-			Error += GLM_CHECK(glm::equal(v.x, u.z, glm::epsilon<float>()));
-		    Error += GLM_CHECK(glm::equal(v.y, u.z, glm::epsilon<float>()));
-		    Error += GLM_CHECK(glm::equal(v.z, u.z, glm::epsilon<float>()));
-		    Error += GLM_CHECK(glm::equal(v.w, u.z, glm::epsilon<float>()));
+			Error += GLM_CHECK_NEAR(v.x, u.z, glm::epsilon<float>());
+		    Error += GLM_CHECK_NEAR(v.y, u.z, glm::epsilon<float>());
+		    Error += GLM_CHECK_NEAR(v.z, u.z, glm::epsilon<float>());
+		    Error += GLM_CHECK_NEAR(v.w, u.z, glm::epsilon<float>());
 		}
 	}
 	{
 		glm::aligned_dvec4 const u(1., 2., 3., 4.);
 		{
 			glm::aligned_dvec4 const v(glm::splatX(u));
-			Error += GLM_CHECK(glm::equal(v.x, u.x, glm::epsilon<double>()));
-		    Error += GLM_CHECK(glm::equal(v.y, u.x, glm::epsilon<double>()));
-		    Error += GLM_CHECK(glm::equal(v.z, u.x, glm::epsilon<double>()));
-		    Error += GLM_CHECK(glm::equal(v.w, u.x, glm::epsilon<double>()));
+			Error += GLM_CHECK_NEAR(v.x, u.x, glm::epsilon<double>());
+		    Error += GLM_CHECK_NEAR(v.y, u.x, glm::epsilon<double>());
+		    Error += GLM_CHECK_NEAR(v.z, u.x, glm::epsilon<double>());
+		    Error += GLM_CHECK_NEAR(v.w, u.x, glm::epsilon<double>());
 		}
 
 		{
 			glm::aligned_dvec4 const v(glm::splatY(u));
-			Error += GLM_CHECK(glm::equal(v.x, u.y, glm::epsilon<double>()));
-		    Error += GLM_CHECK(glm::equal(v.y, u.y, glm::epsilon<double>()));
-		    Error += GLM_CHECK(glm::equal(v.z, u.y, glm::epsilon<double>()));
-		    Error += GLM_CHECK(glm::equal(v.w, u.y, glm::epsilon<double>()));
+			Error += GLM_CHECK_NEAR(v.x, u.y, glm::epsilon<double>());
+		    Error += GLM_CHECK_NEAR(v.y, u.y, glm::epsilon<double>());
+		    Error += GLM_CHECK_NEAR(v.z, u.y, glm::epsilon<double>());
+		    Error += GLM_CHECK_NEAR(v.w, u.y, glm::epsilon<double>());
 		}
 
 		{
 			glm::aligned_dvec4 const v(glm::splatZ(u));
-			Error += GLM_CHECK(glm::equal(v.x, u.z, glm::epsilon<double>()));
-		    Error += GLM_CHECK(glm::equal(v.y, u.z, glm::epsilon<double>()));
-		    Error += GLM_CHECK(glm::equal(v.z, u.z, glm::epsilon<double>()));
-		    Error += GLM_CHECK(glm::equal(v.w, u.z, glm::epsilon<double>()));
+			Error += GLM_CHECK_NEAR(v.x, u.z, glm::epsilon<double>());
+		    Error += GLM_CHECK_NEAR(v.y, u.z, glm::epsilon<double>());
+		    Error += GLM_CHECK_NEAR(v.z, u.z, glm::epsilon<double>());
+		    Error += GLM_CHECK_NEAR(v.w, u.z, glm::epsilon<double>());
 		}
 	}
 	return Error;
@@ -357,72 +357,72 @@ static int test_copy_vec4_vec3()
 	{
 		glm::aligned_vec3 const u(1.f, 2.f, 3.f);
 		glm::aligned_vec4 const v(glm::xyz0(u));
-		Error += GLM_CHECK(glm::equal(v.x, u.x, glm::epsilon<float>()));
-		Error += GLM_CHECK(glm::equal(v.y, u.y, glm::epsilon<float>()));
-		Error += GLM_CHECK(glm::equal(v.z, u.z, glm::epsilon<float>()));
-		Error += GLM_CHECK(glm::equal(v.w, 0.0f, glm::epsilon<float>()));
+		Error += GLM_CHECK_NEAR(v.x, u.x, glm::epsilon<float>());
+		Error += GLM_CHECK_NEAR(v.y, u.y, glm::epsilon<float>());
+		Error += GLM_CHECK_NEAR(v.z, u.z, glm::epsilon<float>());
+		Error += GLM_CHECK_NEAR(v.w, 0.0f, glm::epsilon<float>());
 	}
 
 	{
 		glm::aligned_vec3 const u(1.f, 2.f, 3.f);
 		glm::aligned_vec4 const v(glm::xyz1(u));
-		Error += GLM_CHECK(glm::equal(v.x, u.x, glm::epsilon<float>()));
-		Error += GLM_CHECK(glm::equal(v.y, u.y, glm::epsilon<float>()));
-		Error += GLM_CHECK(glm::equal(v.z, u.z, glm::epsilon<float>()));
+		Error += GLM_CHECK_NEAR(v.x, u.x, glm::epsilon<float>());
+		Error += GLM_CHECK_NEAR(v.y, u.y, glm::epsilon<float>());
+		Error += GLM_CHECK_NEAR(v.z, u.z, glm::epsilon<float>());
 		Error += glm::equal(v.w, 1.0f, glm::epsilon<float>()) ? 0 : 1;	;
 	}
 
 	{
 		glm::aligned_dvec3 const u(1., 2., 3.);
 		glm::aligned_dvec4 const v(glm::xyz0(u));
-		Error += GLM_CHECK(glm::equal(v.x, u.x, glm::epsilon<double>()));
-		Error += GLM_CHECK(glm::equal(v.y, u.y, glm::epsilon<double>()));
-		Error += GLM_CHECK(glm::equal(v.z, u.z, glm::epsilon<double>()));
-		Error += GLM_CHECK(glm::equal(v.w, 0.0, glm::epsilon<double>()));
+		Error += GLM_CHECK_NEAR(v.x, u.x, glm::epsilon<double>());
+		Error += GLM_CHECK_NEAR(v.y, u.y, glm::epsilon<double>());
+		Error += GLM_CHECK_NEAR(v.z, u.z, glm::epsilon<double>());
+		Error += GLM_CHECK_NEAR(v.w, 0.0, glm::epsilon<double>());
 	}
 
 	{
 		glm::aligned_dvec3 const u(1., 2., 3.);
 		glm::aligned_dvec4 const v(glm::xyz1(u));
-		Error += GLM_CHECK(glm::equal(v.x, u.x, glm::epsilon<double>()));
-		Error += GLM_CHECK(glm::equal(v.y, u.y, glm::epsilon<double>()));
-		Error += GLM_CHECK(glm::equal(v.z, u.z, glm::epsilon<double>()));
-		Error += GLM_CHECK(glm::equal(v.w, 1.0, glm::epsilon<double>()));
+		Error += GLM_CHECK_NEAR(v.x, u.x, glm::epsilon<double>());
+		Error += GLM_CHECK_NEAR(v.y, u.y, glm::epsilon<double>());
+		Error += GLM_CHECK_NEAR(v.z, u.z, glm::epsilon<double>());
+		Error += GLM_CHECK_NEAR(v.w, 1.0, glm::epsilon<double>());
 	}
 
 	{
 		glm::aligned_vec3 const u(1.f, 2.f, 3.f);
 		glm::aligned_vec4 const v(glm::xyzz(u));
-		Error += GLM_CHECK(glm::equal(v.x, u.x, glm::epsilon<float>()));
-		Error += GLM_CHECK(glm::equal(v.y, u.y, glm::epsilon<float>()));
-		Error += GLM_CHECK(glm::equal(v.z, u.z, glm::epsilon<float>()));
-		Error += GLM_CHECK(glm::equal(v.w, u.z, glm::epsilon<float>()));
+		Error += GLM_CHECK_NEAR(v.x, u.x, glm::epsilon<float>());
+		Error += GLM_CHECK_NEAR(v.y, u.y, glm::epsilon<float>());
+		Error += GLM_CHECK_NEAR(v.z, u.z, glm::epsilon<float>());
+		Error += GLM_CHECK_NEAR(v.w, u.z, glm::epsilon<float>());
 	}
 
 	{
 		glm::aligned_dvec3 const u(1., 2., 3.);
 		glm::aligned_dvec4 const v(glm::xyzz(u));
-		Error += GLM_CHECK(glm::equal(v.x, u.x, glm::epsilon<double>()));
-		Error += GLM_CHECK(glm::equal(v.y, u.y, glm::epsilon<double>()));
-		Error += GLM_CHECK(glm::equal(v.z, u.z, glm::epsilon<double>()));
-		Error += GLM_CHECK(glm::equal(v.w, u.z, glm::epsilon<double>()));
+		Error += GLM_CHECK_NEAR(v.x, u.x, glm::epsilon<double>());
+		Error += GLM_CHECK_NEAR(v.y, u.y, glm::epsilon<double>());
+		Error += GLM_CHECK_NEAR(v.z, u.z, glm::epsilon<double>());
+		Error += GLM_CHECK_NEAR(v.w, u.z, glm::epsilon<double>());
 	}
 
 
 	{
 		glm::aligned_vec4 const u(1.f, 2.f, 3.f, 4.f);
 		glm::aligned_vec3 const v(glm::xyz(u));
-		Error += GLM_CHECK(glm::equal(v.x, u.x, glm::epsilon<float>()));
-		Error += GLM_CHECK(glm::equal(v.y, u.y, glm::epsilon<float>()));
-		Error += GLM_CHECK(glm::equal(v.z, u.z, glm::epsilon<float>()));
+		Error += GLM_CHECK_NEAR(v.x, u.x, glm::epsilon<float>());
+		Error += GLM_CHECK_NEAR(v.y, u.y, glm::epsilon<float>());
+		Error += GLM_CHECK_NEAR(v.z, u.z, glm::epsilon<float>());
 	}
 
 	{
 		glm::aligned_dvec4 const u(1., 2., 3., 4.);
 		glm::aligned_dvec3 const v(glm::xyz(u));
-		Error += GLM_CHECK(glm::equal(v.x, u.x, glm::epsilon<double>()));
-		Error += GLM_CHECK(glm::equal(v.y, u.y, glm::epsilon<double>()));
-		Error += GLM_CHECK(glm::equal(v.z, u.z, glm::epsilon<double>()));
+		Error += GLM_CHECK_NEAR(v.x, u.x, glm::epsilon<double>());
+		Error += GLM_CHECK_NEAR(v.y, u.y, glm::epsilon<double>());
+		Error += GLM_CHECK_NEAR(v.z, u.z, glm::epsilon<double>());
 	}
 	return Error;
 }
@@ -446,10 +446,10 @@ static int test_copy()
 		my_ivec4_packed u;
 		u.b = a.b;
 
-		Error += GLM_CHECK(a.b.x == u.b.x);
-		Error += GLM_CHECK(a.b.y == u.b.y);
-		Error += GLM_CHECK(a.b.z == u.b.z);
-		Error += GLM_CHECK(a.b.w == u.b.w);
+		Error += GLM_CHECK_EQ(a.b.x, u.b.x);
+		Error += GLM_CHECK_EQ(a.b.y, u.b.y);
+		Error += GLM_CHECK_EQ(a.b.z, u.b.z);
+		Error += GLM_CHECK_EQ(a.b.w, u.b.w);
 	}
 
 	return Error;
@@ -473,15 +473,15 @@ static int test_aligned_mat4()
 	int Error = 0;
 
 	glm::aligned_vec4 const u(1.f, 2.f, 3.f, 4.f);
-	Error += GLM_CHECK(glm::all(glm::equal(u, glm::aligned_vec4(1.f, 2.f, 3.f, 4.f), 0.0001f)));
+	Error += GLM_CHECK_NEAR(u, glm::aligned_vec4(1.f, 2.f, 3.f, 4.f), 0.0001f);
 
 	glm::aligned_vec4 const v(1, 2, 3, 4);
-	Error += GLM_CHECK(glm::all(glm::equal(v, glm::aligned_vec4(1.f, 2.f, 3.f, 4.f), 0.0001f)));
+	Error += GLM_CHECK_NEAR(v, glm::aligned_vec4(1.f, 2.f, 3.f, 4.f), 0.0001f);
 
 	glm::aligned_mat4 const m(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
 	glm::aligned_mat4 const t = glm::transpose(m);
 	glm::aligned_mat4 const expected = glm::mat4(0, 4, 8, 12, 1, 5, 9, 13, 2, 6, 10, 14, 3, 7, 11, 15);
-	Error += GLM_CHECK(glm::all(glm::equal(t, expected, 0.0001f)));
+	Error += GLM_CHECK_NEAR(t, expected, 0.0001f);
 
 	return Error;
 }

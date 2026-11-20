@@ -12,12 +12,12 @@ static int test_lMaxNorm()
 
 	{
 		float norm = glm::lMaxNorm(glm::vec3(-1, -2, -3));
-		Error += GLM_CHECK(glm::equal(norm, 3.f, 0.00001f));
+		Error += GLM_CHECK_NEAR(norm, 3.f, 0.00001f);
 	}
 
 	{
 		float norm = glm::lMaxNorm(glm::vec3(2, 3, 1));
-		Error += GLM_CHECK(glm::equal(norm, 3.f, 0.00001f));
+		Error += GLM_CHECK_NEAR(norm, 3.f, 0.00001f);
 	}
 
 	return Error;
@@ -31,44 +31,44 @@ static int test_lxNorm()
 		unsigned int depth_1 = 1;
 		float normA = glm::lxNorm(glm::vec3(2, 3, 1), depth_1);
 		float normB = glm::l1Norm(glm::vec3(2, 3, 1));
-		Error += GLM_CHECK(glm::equal(normA, normB, 0.00001f));
-		Error += GLM_CHECK(glm::equal(normA, 6.f, 0.00001f));
+		Error += GLM_CHECK_NEAR(normA, normB, 0.00001f);
+		Error += GLM_CHECK_NEAR(normA, 6.f, 0.00001f);
 	}
 
 	{
 		unsigned int depth_1 = 1;
 		float normA = glm::lxNorm(glm::vec3(-1, -2, -3), depth_1);
 		float normB = glm::l1Norm(glm::vec3(-1, -2, -3));
-		Error += GLM_CHECK(glm::equal(normA, normB, 0.00001f));
-		Error += GLM_CHECK(glm::equal(normA, 6.f, 0.00001f));
+		Error += GLM_CHECK_NEAR(normA, normB, 0.00001f);
+		Error += GLM_CHECK_NEAR(normA, 6.f, 0.00001f);
 	}
 
 	{
 		unsigned int depth_2 = 2;
 		float normA = glm::lxNorm(glm::vec3(2, 3, 1), depth_2);
 		float normB = glm::l2Norm(glm::vec3(2, 3, 1));
-		Error += GLM_CHECK(glm::equal(normA, normB, 0.00001f));
-		Error += GLM_CHECK(glm::equal(normA, 3.741657387f, 0.00001f));
+		Error += GLM_CHECK_NEAR(normA, normB, 0.00001f);
+		Error += GLM_CHECK_NEAR(normA, 3.741657387f, 0.00001f);
 	}
 
 	{
 		unsigned int depth_2 = 2;
 		float normA = glm::lxNorm(glm::vec3(-1, -2, -3), depth_2);
 		float normB = glm::l2Norm(glm::vec3(-1, -2, -3));
-		Error += GLM_CHECK(glm::equal(normA, normB, 0.00001f));
-		Error += GLM_CHECK(glm::equal(normA, 3.741657387f, 0.00001f));
+		Error += GLM_CHECK_NEAR(normA, normB, 0.00001f);
+		Error += GLM_CHECK_NEAR(normA, 3.741657387f, 0.00001f);
 	}
 
 	{
 		unsigned int oddDepth = 3;
 		float norm = glm::lxNorm(glm::vec3(2, 3, 1), oddDepth);
-		Error += GLM_CHECK(glm::equal(norm, 3.301927249f, 0.00001f));
+		Error += GLM_CHECK_NEAR(norm, 3.301927249f, 0.00001f);
 	}
 
 	{
 		unsigned int oddDepth = 3;
 		float norm = glm::lxNorm(glm::vec3(-1, -2, -3), oddDepth);
-		Error += GLM_CHECK(glm::equal(norm, 3.301927249f, 0.00001f));
+		Error += GLM_CHECK_NEAR(norm, 3.301927249f, 0.00001f);
 	}
 
 	return Error;

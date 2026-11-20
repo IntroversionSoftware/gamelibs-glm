@@ -655,7 +655,7 @@ static int test_mix()
 		for(std::size_t i = 0; i < sizeof(TestBool) / sizeof(test_mix_entry<int, bool>); ++i)
 		{
 			int const Result = glm::mix(TestBool[i].x, TestBool[i].y, TestBool[i].a);
-			Error += GLM_CHECK(Result == TestBool[i].Result);
+			Error += GLM_CHECK_EQ(Result, TestBool[i].Result);
 		}
 	}
 
@@ -664,7 +664,7 @@ static int test_mix()
 		for(std::size_t i = 0; i < sizeof(TestInt) / sizeof(test_mix_entry<int, int>); ++i)
 		{
 			int const Result = glm::mix(TestInt[i].x, TestInt[i].y, TestInt[i].a);
-			Error += GLM_CHECK(Result == TestInt[i].Result);
+			Error += GLM_CHECK_EQ(Result, TestInt[i].Result);
 		}
 	}
 

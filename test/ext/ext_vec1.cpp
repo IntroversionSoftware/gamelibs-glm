@@ -64,10 +64,10 @@ static int test_vec1_ctor()
 		glm::ivec1 A = glm::vec1(2.0f);
 
 		glm::ivec1 E(glm::dvec1(2.0));
-		Error += GLM_CHECK(A == E);
+		Error += GLM_CHECK_EQ(A, E);
 
 		glm::ivec1 F(glm::ivec1(2));
-		Error += GLM_CHECK(A == F);
+		Error += GLM_CHECK_EQ(A, F);
 	}
 
 	return Error;
@@ -77,17 +77,17 @@ static int test_vec1_size()
 {
 	int Error = 0;
 
-	Error += GLM_CHECK(sizeof(glm::vec1) == sizeof(glm::mediump_vec1));
-	Error += GLM_CHECK(4 == sizeof(glm::mediump_vec1));
-	Error += GLM_CHECK(sizeof(glm::dvec1) == sizeof(glm::highp_dvec1));
-	Error += GLM_CHECK(8 == sizeof(glm::highp_dvec1));
-	Error += GLM_CHECK(glm::vec1().length() == 1);
-	Error += GLM_CHECK(glm::dvec1().length() == 1);
-	Error += GLM_CHECK(glm::vec1::length() == 1);
-	Error += GLM_CHECK(glm::dvec1::length() == 1);
+	Error += GLM_CHECK_EQ(sizeof(glm::vec1), sizeof(glm::mediump_vec1));
+	Error += GLM_CHECK_EQ(4, sizeof(glm::mediump_vec1));
+	Error += GLM_CHECK_EQ(sizeof(glm::dvec1), sizeof(glm::highp_dvec1));
+	Error += GLM_CHECK_EQ(8, sizeof(glm::highp_dvec1));
+	Error += GLM_CHECK_EQ(glm::vec1().length(), 1);
+	Error += GLM_CHECK_EQ(glm::dvec1().length(), 1);
+	Error += GLM_CHECK_EQ(glm::vec1::length(), 1);
+	Error += GLM_CHECK_EQ(glm::dvec1::length(), 1);
 
 	GLM_CONSTEXPR glm::length_t Length = glm::vec1::length();
-	Error += GLM_CHECK(Length == 1);
+	Error += GLM_CHECK_EQ(Length, 1);
 
 	return Error;
 }
@@ -112,9 +112,9 @@ static int test_vec1_operator_increment()
 	int i3 = ++i1;
 	int i4 = i2++;
 
-	Error += GLM_CHECK(i0 == i4);
-	Error += GLM_CHECK(i1 == i2);
-	Error += GLM_CHECK(i1 == i3);
+	Error += GLM_CHECK_EQ(i0, i4);
+	Error += GLM_CHECK_EQ(i1, i2);
+	Error += GLM_CHECK_EQ(i1, i3);
 
 	return Error;
 }
@@ -130,9 +130,9 @@ static int test_bvec1_ctor()
 	glm::bvec1 E = A && C;
 	glm::bvec1 F = A || C;
 
-	Error += GLM_CHECK(D == glm::bvec1(true));
-	Error += GLM_CHECK(E == glm::bvec1(false));
-	Error += GLM_CHECK(F == glm::bvec1(true));
+	Error += GLM_CHECK_EQ(D, glm::bvec1(true));
+	Error += GLM_CHECK_EQ(E, glm::bvec1(false));
+	Error += GLM_CHECK_EQ(F, glm::bvec1(true));
 
 	bool G = A == C;
 	bool H = A != C;

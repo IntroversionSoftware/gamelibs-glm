@@ -24,16 +24,16 @@ static int test_operators()
 		genType const B(1);
 
 		genType const C = A + B;
-		Error += GLM_CHECK(C == genType(2));
+		Error += GLM_CHECK_EQ(C, genType(2));
 
 		genType const D = A - B;
-		Error += GLM_CHECK(D == genType(0));
+		Error += GLM_CHECK_EQ(D, genType(0));
 
 		genType const E = A * B;
-		Error += GLM_CHECK(E == genType(1));
+		Error += GLM_CHECK_EQ(E, genType(1));
 
 		genType const F = A / B;
-		Error += GLM_CHECK(F == genType(1));
+		Error += GLM_CHECK_EQ(F, genType(1));
 	}
 
 	{
@@ -41,7 +41,7 @@ static int test_operators()
 		genType const B(2);
 
 		genType const C = A % B;
-		Error += GLM_CHECK(C == genType(1));
+		Error += GLM_CHECK_EQ(C, genType(1));
 	}
 
 	{
@@ -50,19 +50,19 @@ static int test_operators()
 		genType const C(0);
 
 		genType const I = A & B;
-		Error += GLM_CHECK(I == genType(1));
+		Error += GLM_CHECK_EQ(I, genType(1));
 		genType const D = A & C;
-		Error += GLM_CHECK(D == genType(0));
+		Error += GLM_CHECK_EQ(D, genType(0));
 
 		genType const E = A | B;
-		Error += GLM_CHECK(E == genType(1));
+		Error += GLM_CHECK_EQ(E, genType(1));
 		genType const F = A | C;
-		Error += GLM_CHECK(F == genType(1));
+		Error += GLM_CHECK_EQ(F, genType(1));
 
 		genType const G = A ^ B;
-		Error += GLM_CHECK(G == genType(0));
+		Error += GLM_CHECK_EQ(G, genType(0));
 		genType const H = A ^ C;
-		Error += GLM_CHECK(H == genType(1));
+		Error += GLM_CHECK_EQ(H, genType(1));
 	}
 
 	{
@@ -70,9 +70,9 @@ static int test_operators()
 		genType C(2);
 
 		genType D = B << B;
-		Error += GLM_CHECK(D == genType(2));
+		Error += GLM_CHECK_EQ(D, genType(2));
 		genType E = C >> B;
-		Error += GLM_CHECK(E == genType(1));
+		Error += GLM_CHECK_EQ(E, genType(1));
 	}
 
 	return Error;
@@ -88,20 +88,20 @@ static int test_ctor()
 	genType const A = genType(1);
 
 	genType const E(genType(1));
-	Error += GLM_CHECK(A == E);
+	Error += GLM_CHECK_EQ(A, E);
 
 	genType const F(E);
-	Error += GLM_CHECK(A == F);
+	Error += GLM_CHECK_EQ(A, F);
 
 	genType const B = genType(1);
 	genType const G(glm::vec<2, T>(1));
-	Error += GLM_CHECK(B == G);
+	Error += GLM_CHECK_EQ(B, G);
 
 	genType const H(glm::vec<3, T>(1));
-	Error += GLM_CHECK(B == H);
+	Error += GLM_CHECK_EQ(B, H);
 
 	genType const I(glm::vec<4, T>(1));
-	Error += GLM_CHECK(B == I);
+	Error += GLM_CHECK_EQ(B, I);
 
 	return Error;
 }
@@ -111,9 +111,9 @@ static int test_size()
 {
 	int Error = 0;
 
-	Error += GLM_CHECK(sizeof(typename genType::value_type) == sizeof(genType));
-	Error += GLM_CHECK(genType().length() == 1);
-	Error += GLM_CHECK(genType::length() == 1);
+	Error += GLM_CHECK_EQ(sizeof(typename genType::value_type), sizeof(genType));
+	Error += GLM_CHECK_EQ(genType().length(), 1);
+	Error += GLM_CHECK_EQ(genType::length(), 1);
 
 	return Error;
 }
@@ -127,8 +127,8 @@ static int test_relational()
 	genType const B(1);
 	genType const C(0);
 
-	Error += GLM_CHECK(A == B);
-	Error += GLM_CHECK(A != C);
+	Error += GLM_CHECK_EQ(A, B);
+	Error += GLM_CHECK_NE(A, C);
 	Error += GLM_CHECK(all(equal(A, B)));
 	Error += GLM_CHECK(any(notEqual(A, C)));
 

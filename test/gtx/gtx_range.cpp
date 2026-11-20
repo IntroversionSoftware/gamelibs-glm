@@ -21,8 +21,8 @@ static int test_vec()
 			Result[count] = x;
 			count++;
 		}
-		Error += GLM_CHECK(count == 3);
-		Error += GLM_CHECK(v == Result);
+		Error += GLM_CHECK_EQ(count, 3);
+		Error += GLM_CHECK_EQ(v, Result);
 	}
 
 	{
@@ -50,8 +50,8 @@ static int test_mat()
 			count++;
 			Sum += x;
 		}
-		Error += GLM_CHECK(count == 12);
-		Error += GLM_CHECK(glm::equal(Sum, 3.0f, 0.001f));
+		Error += GLM_CHECK_EQ(count, 12);
+		Error += GLM_CHECK_NEAR(Sum, 3.0f, 0.001f);
 	}
 
 	{
@@ -59,7 +59,7 @@ static int test_mat()
 
 		for (float& x : m) { x = 0; }
 		glm::vec4 v(1, 1, 1, 1);
-		Error += GLM_CHECK(glm::all(glm::equal(glm::mat4x3(m) * v, glm::vec3(0, 0, 0), glm::epsilon<float>())));
+		Error += GLM_CHECK_NEAR(glm::mat4x3(m) * v, glm::vec3(0, 0, 0), glm::epsilon<float>());
 	}
 
 	// A matrix of any qualifier can be read through a packed copy.
@@ -73,8 +73,8 @@ static int test_mat()
 			count++;
 			Sum += x;
 		}
-		Error += GLM_CHECK(count == 12);
-		Error += GLM_CHECK(glm::equal(Sum, 3.0f, 0.001f));
+		Error += GLM_CHECK_EQ(count, 12);
+		Error += GLM_CHECK_NEAR(Sum, 3.0f, 0.001f);
 	}
 
 	return Error;

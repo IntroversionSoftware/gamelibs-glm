@@ -30,8 +30,8 @@ static int test_equal()
 
 	int Error = 0;
 
-	Error += GLM_CHECK(glm::all(glm::equal(vecType(A), vecType(B), Epsilon1)));
-	Error += GLM_CHECK(glm::all(glm::equal(vecType(A), vecType(B), vecType(Epsilon1))));
+	Error += GLM_CHECK_NEAR(vecType(A), vecType(B), Epsilon1);
+	Error += GLM_CHECK_NEAR(vecType(A), vecType(B), vecType(Epsilon1));
 
 	Error += GLM_CHECK(!glm::any(glm::equal(vecType(A), vecType(B), Epsilon2)));
 	Error += GLM_CHECK(!glm::any(glm::equal(vecType(A), vecType(B), vecType(Epsilon2))));
@@ -71,13 +71,13 @@ static int test_equal_ulps()
 	int Error = 0;
 
 	T const ULP1Plus = glm::nextFloat(One);
-	Error += GLM_CHECK(glm::all(glm::equal(Ones, vec4(ULP1Plus), 1)));
+	Error += GLM_CHECK_NEAR(Ones, vec4(ULP1Plus), 1);
 
 	T const ULP2Plus = glm::nextFloat(ULP1Plus);
 	Error += GLM_CHECK(!glm::all(glm::equal(Ones, vec4(ULP2Plus), 1)));
 
 	T const ULP1Minus = glm::prevFloat(One);
-	Error += GLM_CHECK(glm::all(glm::equal(Ones, vec4(ULP1Minus), 1)));
+	Error += GLM_CHECK_NEAR(Ones, vec4(ULP1Minus), 1);
 
 	T const ULP2Minus = glm::prevFloat(ULP1Minus);
 	Error += GLM_CHECK(!glm::all(glm::equal(Ones, vec4(ULP2Minus), 1)));

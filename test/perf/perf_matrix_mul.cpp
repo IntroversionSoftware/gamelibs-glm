@@ -87,7 +87,7 @@ static int comp_mat2_mul_mat2(std::size_t Samples)
 	{
 		packedMatType const A = SISD[i];
 		packedMatType const B = SIMD[i];
-		Error += GLM_CHECK(glm::all(glm::equal(A, B, static_cast<T>(0.001))));
+		Error += GLM_CHECK_NEAR(A, B, static_cast<T>(0.001));
 	}
 
 	return Error;

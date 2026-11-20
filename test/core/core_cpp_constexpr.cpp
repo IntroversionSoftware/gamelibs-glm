@@ -739,7 +739,7 @@ static int test_mat3x3()
 	static_assert(glm::mat3x3::length() == 3, "GLM: Failed constexpr");
 
 	constexpr glm::mat3x3 const Z(1.0f);
-	Error += GLM_CHECK(glm::all(glm::equal(Z, glm::mat3x3(1.0f), glm::epsilon<float>())));
+	Error += GLM_CHECK_NEAR(Z, glm::mat3x3(1.0f), glm::epsilon<float>());
 
 	return Error;
 }
@@ -751,7 +751,7 @@ static int test_mat3x4()
 	static_assert(glm::mat3x4::length() == 3, "GLM: Failed constexpr");
 
 	constexpr glm::mat3x4 const Z(1.0f);
-	Error += GLM_CHECK(glm::all(glm::equal(Z, glm::mat3x4(1.0f), glm::epsilon<float>())));
+	Error += GLM_CHECK_NEAR(Z, glm::mat3x4(1.0f), glm::epsilon<float>());
 
 	return Error;
 }
@@ -763,7 +763,7 @@ static int test_mat4x2()
 	static_assert(glm::mat4x2::length() == 4, "GLM: Failed constexpr");
 
 	constexpr glm::mat4x2 const Z(1.0f);
-	Error += GLM_CHECK(glm::all(glm::equal(Z, glm::mat4x2(1.0f), glm::epsilon<float>())));
+	Error += GLM_CHECK_NEAR(Z, glm::mat4x2(1.0f), glm::epsilon<float>());
 
 	return Error;
 }
@@ -775,7 +775,7 @@ static int test_mat4x3()
 	static_assert(glm::mat4x3::length() == 4, "GLM: Failed constexpr");
 
 	constexpr glm::mat4x3 const Z(1.0f);
-	Error += GLM_CHECK(glm::all(glm::equal(Z, glm::mat4x3(1.0f), glm::epsilon<float>())));
+	Error += GLM_CHECK_NEAR(Z, glm::mat4x3(1.0f), glm::epsilon<float>());
 
 	return Error;
 }
@@ -791,7 +791,7 @@ static int test_mat4x4()
 	static_assert(glm::all(C), "GLM: Failed constexpr");
 
 	constexpr glm::mat4 const Z(1.0f);
-	Error += GLM_CHECK(glm::all(glm::equal(Z, glm::mat4(1.0f), glm::epsilon<float>())));
+	Error += GLM_CHECK_NEAR(Z, glm::mat4(1.0f), glm::epsilon<float>());
 
 	return Error;
 }

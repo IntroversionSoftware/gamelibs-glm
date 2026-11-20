@@ -60,7 +60,7 @@ static int comp_mat2_mul_vec2(std::size_t Samples)
 	{
 		packedVecType const A = SISD[i];
 		packedVecType const B = packedVecType(SIMD[i]);
-		Error += GLM_CHECK(glm::all(glm::equal(A, B, static_cast<T>(0.001))));
+		Error += GLM_CHECK_NEAR(A, B, static_cast<T>(0.001));
 	}
 
 	return Error;
@@ -91,7 +91,7 @@ static int comp_mat3_mul_vec3(std::size_t Samples)
 	{
 		packedVecType const A = SISD[i];
 		packedVecType const B = SIMD[i];
-		Error += GLM_CHECK(glm::all(glm::equal(A, B, static_cast<T>(0.001))));
+		Error += GLM_CHECK_NEAR(A, B, static_cast<T>(0.001));
 	}
 
 	return Error;
@@ -117,7 +117,7 @@ static int comp_mat4_mul_vec4(std::size_t Samples)
 	{
 		packedVecType const A = SISD[i];
 		packedVecType const B = SIMD[i];
-		Error += GLM_CHECK(glm::all(glm::equal(A, B, static_cast<T>(0.001))));
+		Error += GLM_CHECK_NEAR(A, B, static_cast<T>(0.001));
 	}
 
 	return Error;

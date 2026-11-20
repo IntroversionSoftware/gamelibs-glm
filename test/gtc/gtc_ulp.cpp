@@ -12,12 +12,12 @@ static int test_ulp_float_dist()
 	float B = glm::next_float(A);
 	Error += GLM_CHECK(glm::notEqual(A, B, 0));
 	float C = glm::prev_float(B);
-	Error += GLM_CHECK(glm::equal(A, C, 0));
+	Error += GLM_CHECK_NEAR(A, C, 0);
 
 	int D = glm::float_distance(A, B);
-	Error += GLM_CHECK(D == 1);
+	Error += GLM_CHECK_EQ(D, 1);
 	int E = glm::float_distance(A, C);
-	Error += GLM_CHECK(E == 0);
+	Error += GLM_CHECK_EQ(E, 0);
 
 	return Error;
 }
@@ -33,12 +33,12 @@ static int test_ulp_float_step()
 		float B = glm::next_float(A, i);
 		Error += GLM_CHECK(glm::notEqual(A, B, 0));
 		float C = glm::prev_float(B, i);
-		Error += GLM_CHECK(glm::equal(A, C, 0));
+		Error += GLM_CHECK_NEAR(A, C, 0);
 
 		int D = glm::float_distance(A, B);
-		Error += GLM_CHECK(D == i);
+		Error += GLM_CHECK_EQ(D, i);
 		int E = glm::float_distance(A, C);
-		Error += GLM_CHECK(E == 0);
+		Error += GLM_CHECK_EQ(E, 0);
 	}
 
 	return Error;
@@ -53,12 +53,12 @@ static int test_ulp_double_dist()
 	double B = glm::next_float(A);
 	Error += GLM_CHECK(glm::notEqual(A, B, 0));
 	double C = glm::prev_float(B);
-	Error += GLM_CHECK(glm::equal(A, C, 0));
+	Error += GLM_CHECK_NEAR(A, C, 0);
 
 	glm::int64 const D = glm::float_distance(A, B);
-	Error += GLM_CHECK(D == 1);
+	Error += GLM_CHECK_EQ(D, 1);
 	glm::int64 const E = glm::float_distance(A, C);
-	Error += GLM_CHECK(E == 0);
+	Error += GLM_CHECK_EQ(E, 0);
 
 	return Error;
 }
@@ -74,12 +74,12 @@ static int test_ulp_double_step()
 		double B = glm::next_float(A, i);
 		Error += GLM_CHECK(glm::notEqual(A, B, 0));
 		double C = glm::prev_float(B, i);
-		Error += GLM_CHECK(glm::equal(A, C, 0));
+		Error += GLM_CHECK_NEAR(A, C, 0);
 
 		glm::int64 const D = glm::float_distance(A, B);
-		Error += GLM_CHECK(D == i);
+		Error += GLM_CHECK_EQ(D, i);
 		glm::int64 const E = glm::float_distance(A, C);
-		Error += GLM_CHECK(E == 0);
+		Error += GLM_CHECK_EQ(E, 0);
 	}
 
 	return Error;

@@ -20,7 +20,7 @@ int test_packUnorm()
 		glm::vec2 B(A[i]);
 		glm::u16vec2 C = glm::packUnorm<glm::uint16>(B);
 		glm::vec2 D = glm::unpackUnorm<float>(C);
-		Error += GLM_CHECK(glm::all(glm::equal(B, D, 1.0f / 255.f)));
+		Error += GLM_CHECK_NEAR(B, D, 1.0f / 255.f);
 		assert(!Error);
 	}
 
@@ -41,7 +41,7 @@ int test_packSnorm()
 		glm::vec2 B(A[i]);
 		glm::i16vec2 C = glm::packSnorm<glm::int16>(B);
 		glm::vec2 D = glm::unpackSnorm<float>(C);
-		Error += GLM_CHECK(glm::all(glm::equal(B, D, 1.0f / 32767.0f * 2.0f)));
+		Error += GLM_CHECK_NEAR(B, D, 1.0f / 32767.0f * 2.0f);
 		assert(!Error);
 	}
 
