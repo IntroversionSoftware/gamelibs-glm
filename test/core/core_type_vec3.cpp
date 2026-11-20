@@ -348,35 +348,35 @@ static int test_vec3_swizzle3_2()
 		//u = v.rgb;    //Illegal
 		//u = v.stp;    //Illegal
 
-		u = v.xx;       Error += (u.x == 1 && u.y == 1) ? 0 : 1;
-		u = v.xy;       Error += (u.x == 1 && u.y == 2) ? 0 : 1;
-		u = v.xz;       Error += (u.x == 1 && u.y == 3) ? 0 : 1;
-		u = v.yx;       Error += (u.x == 2 && u.y == 1) ? 0 : 1;
-		u = v.yy;       Error += (u.x == 2 && u.y == 2) ? 0 : 1;
-		u = v.yz;       Error += (u.x == 2 && u.y == 3) ? 0 : 1;
-		u = v.zx;       Error += (u.x == 3 && u.y == 1) ? 0 : 1;
-		u = v.zy;       Error += (u.x == 3 && u.y == 2) ? 0 : 1;
-		u = v.zz;       Error += (u.x == 3 && u.y == 3) ? 0 : 1;
+		u = v.xx;       Error += GLM_CHECK_EQ(u, glm::ivec2(1, 1));
+		u = v.xy;       Error += GLM_CHECK_EQ(u, glm::ivec2(1, 2));
+		u = v.xz;       Error += GLM_CHECK_EQ(u, glm::ivec2(1, 3));
+		u = v.yx;       Error += GLM_CHECK_EQ(u, glm::ivec2(2, 1));
+		u = v.yy;       Error += GLM_CHECK_EQ(u, glm::ivec2(2, 2));
+		u = v.yz;       Error += GLM_CHECK_EQ(u, glm::ivec2(2, 3));
+		u = v.zx;       Error += GLM_CHECK_EQ(u, glm::ivec2(3, 1));
+		u = v.zy;       Error += GLM_CHECK_EQ(u, glm::ivec2(3, 2));
+		u = v.zz;       Error += GLM_CHECK_EQ(u, glm::ivec2(3, 3));
 
-		u = v.rr;       Error += (u.r == 1 && u.g == 1) ? 0 : 1;
-		u = v.rg;       Error += (u.r == 1 && u.g == 2) ? 0 : 1;
-		u = v.rb;       Error += (u.r == 1 && u.g == 3) ? 0 : 1;
-		u = v.gr;       Error += (u.r == 2 && u.g == 1) ? 0 : 1;
-		u = v.gg;       Error += (u.r == 2 && u.g == 2) ? 0 : 1;
-		u = v.gb;       Error += (u.r == 2 && u.g == 3) ? 0 : 1;
-		u = v.br;       Error += (u.r == 3 && u.g == 1) ? 0 : 1;
-		u = v.bg;       Error += (u.r == 3 && u.g == 2) ? 0 : 1;
-		u = v.bb;       Error += (u.r == 3 && u.g == 3) ? 0 : 1;
+		u = v.rr;       Error += GLM_CHECK_EQ(u, glm::ivec2(1, 1));
+		u = v.rg;       Error += GLM_CHECK_EQ(u, glm::ivec2(1, 2));
+		u = v.rb;       Error += GLM_CHECK_EQ(u, glm::ivec2(1, 3));
+		u = v.gr;       Error += GLM_CHECK_EQ(u, glm::ivec2(2, 1));
+		u = v.gg;       Error += GLM_CHECK_EQ(u, glm::ivec2(2, 2));
+		u = v.gb;       Error += GLM_CHECK_EQ(u, glm::ivec2(2, 3));
+		u = v.br;       Error += GLM_CHECK_EQ(u, glm::ivec2(3, 1));
+		u = v.bg;       Error += GLM_CHECK_EQ(u, glm::ivec2(3, 2));
+		u = v.bb;       Error += GLM_CHECK_EQ(u, glm::ivec2(3, 3));
 
-		u = v.ss;       Error += (u.s == 1 && u.t == 1) ? 0 : 1;
-		u = v.st;       Error += (u.s == 1 && u.t == 2) ? 0 : 1;
-		u = v.sp;       Error += (u.s == 1 && u.t == 3) ? 0 : 1;
-		u = v.ts;       Error += (u.s == 2 && u.t == 1) ? 0 : 1;
-		u = v.tt;       Error += (u.s == 2 && u.t == 2) ? 0 : 1;
-		u = v.tp;       Error += (u.s == 2 && u.t == 3) ? 0 : 1;
-		u = v.ps;       Error += (u.s == 3 && u.t == 1) ? 0 : 1;
-		u = v.pt;       Error += (u.s == 3 && u.t == 2) ? 0 : 1;
-		u = v.pp;       Error += (u.s == 3 && u.t == 3) ? 0 : 1;
+		u = v.ss;       Error += GLM_CHECK_EQ(u, glm::ivec2(1, 1));
+		u = v.st;       Error += GLM_CHECK_EQ(u, glm::ivec2(1, 2));
+		u = v.sp;       Error += GLM_CHECK_EQ(u, glm::ivec2(1, 3));
+		u = v.ts;       Error += GLM_CHECK_EQ(u, glm::ivec2(2, 1));
+		u = v.tt;       Error += GLM_CHECK_EQ(u, glm::ivec2(2, 2));
+		u = v.tp;       Error += GLM_CHECK_EQ(u, glm::ivec2(2, 3));
+		u = v.ps;       Error += GLM_CHECK_EQ(u, glm::ivec2(3, 1));
+		u = v.pt;       Error += GLM_CHECK_EQ(u, glm::ivec2(3, 2));
+		u = v.pp;       Error += GLM_CHECK_EQ(u, glm::ivec2(3, 3));
 		// Mixed member aliases are not valid
 		//u = v.rx;     //Illegal
 		//u = v.sy;     //Illegal
@@ -384,13 +384,13 @@ static int test_vec3_swizzle3_2()
 		u = glm::ivec2(1, 2);
 		v = glm::ivec3(1, 2, 3);
 		//v.xx = u;     //Illegal
-		v.xy = u;       Error += (v.x == 1 && v.y == 2 && v.z == 3) ? 0 : 1;
-		v.xz = u;       Error += (v.x == 1 && v.y == 2 && v.z == 2) ? 0 : 1;
-		v.yx = u;       Error += (v.x == 2 && v.y == 1 && v.z == 2) ? 0 : 1;
+		v.xy = u;       Error += GLM_CHECK_EQ(v, glm::ivec3(1, 2, 3));
+		v.xz = u;       Error += GLM_CHECK_EQ(v, glm::ivec3(1, 2, 2));
+		v.yx = u;       Error += GLM_CHECK_EQ(v, glm::ivec3(2, 1, 2));
 		//v.yy = u;     //Illegal
-		v.yz = u;       Error += (v.x == 2 && v.y == 1 && v.z == 2) ? 0 : 1;
-		v.zx = u;       Error += (v.x == 2 && v.y == 1 && v.z == 1) ? 0 : 1;
-		v.zy = u;       Error += (v.x == 2 && v.y == 2 && v.z == 1) ? 0 : 1;
+		v.yz = u;       Error += GLM_CHECK_EQ(v, glm::ivec3(2, 1, 2));
+		v.zx = u;       Error += GLM_CHECK_EQ(v, glm::ivec3(2, 1, 1));
+		v.zy = u;       Error += GLM_CHECK_EQ(v, glm::ivec3(2, 2, 1));
 		//v.zz = u;     //Illegal
 	}
 #	endif//GLM_CONFIG_SWIZZLE == GLM_SWIZZLE_OPERATOR
@@ -407,19 +407,19 @@ static int test_vec3_swizzle3_3()
 		glm::ivec3 v(1, 2, 3);
 		glm::ivec3 u;
 
-		u = v;          Error += (u.x == 1 && u.y == 2 && u.z == 3) ? 0 : 1;
+		u = v;          Error += GLM_CHECK_EQ(u, glm::ivec3(1, 2, 3));
 
-		u = v.xyz;      Error += (u.x == 1 && u.y == 2 && u.z == 3) ? 0 : 1;
-		u = v.zyx;      Error += (u.x == 3 && u.y == 2 && u.z == 1) ? 0 : 1;
-		u.zyx = v;      Error += (u.x == 3 && u.y == 2 && u.z == 1) ? 0 : 1;
+		u = v.xyz;      Error += GLM_CHECK_EQ(u, glm::ivec3(1, 2, 3));
+		u = v.zyx;      Error += GLM_CHECK_EQ(u, glm::ivec3(3, 2, 1));
+		u.zyx = v;      Error += GLM_CHECK_EQ(u, glm::ivec3(3, 2, 1));
 
-		u = v.rgb;      Error += (u.x == 1 && u.y == 2 && u.z == 3) ? 0 : 1;
-		u = v.bgr;      Error += (u.x == 3 && u.y == 2 && u.z == 1) ? 0 : 1;
-		u.bgr = v;      Error += (u.x == 3 && u.y == 2 && u.z == 1) ? 0 : 1;
+		u = v.rgb;      Error += GLM_CHECK_EQ(u, glm::ivec3(1, 2, 3));
+		u = v.bgr;      Error += GLM_CHECK_EQ(u, glm::ivec3(3, 2, 1));
+		u.bgr = v;      Error += GLM_CHECK_EQ(u, glm::ivec3(3, 2, 1));
 
-		u = v.stp;      Error += (u.x == 1 && u.y == 2 && u.z == 3) ? 0 : 1;
-		u = v.pts;      Error += (u.x == 3 && u.y == 2 && u.z == 1) ? 0 : 1;
-		u.pts = v;      Error += (u.x == 3 && u.y == 2 && u.z == 1) ? 0 : 1;
+		u = v.stp;      Error += GLM_CHECK_EQ(u, glm::ivec3(1, 2, 3));
+		u = v.pts;      Error += GLM_CHECK_EQ(u, glm::ivec3(3, 2, 1));
+		u.pts = v;      Error += GLM_CHECK_EQ(u, glm::ivec3(3, 2, 1));
 	}
 #	endif//GLM_LANG
 
@@ -438,26 +438,26 @@ static int test_vec3_swizzle_operators()
 		glm::ivec3 q;
 
 		// Swizzle, swizzle binary operators
-		q = u.xyz + v.xyz;          Error += (q == (u + v)) ? 0 : 1;
-		q = (u.zyx + v.zyx).zyx;    Error += (q == (u + v)) ? 0 : 1;
-		q = (u.xyz - v.xyz);        Error += (q == (u - v)) ? 0 : 1;
-		q = (u.xyz * v.xyz);        Error += (q == (u * v)) ? 0 : 1;
-		q = (u.xxx * v.xxx);        Error += (q == glm::ivec3(u.x * v.x)) ? 0 : 1;
-		q = (u.xyz / v.xyz);        Error += (q == (u / v)) ? 0 : 1;
+		q = u.xyz + v.xyz;          Error += GLM_CHECK_EQ(q, (u + v));
+		q = (u.zyx + v.zyx).zyx;    Error += GLM_CHECK_EQ(q, (u + v));
+		q = (u.xyz - v.xyz);        Error += GLM_CHECK_EQ(q, (u - v));
+		q = (u.xyz * v.xyz);        Error += GLM_CHECK_EQ(q, (u * v));
+		q = (u.xxx * v.xxx);        Error += GLM_CHECK_EQ(q, glm::ivec3(u.x * v.x));
+		q = (u.xyz / v.xyz);        Error += GLM_CHECK_EQ(q, (u / v));
 
 		// vec, swizzle binary operators
-		q = u + v.xyz;              Error += (q == (u + v)) ? 0 : 1;
-		q = (u - v.xyz);            Error += (q == (u - v)) ? 0 : 1;
-		q = (u * v.xyz);            Error += (q == (u * v)) ? 0 : 1;
-		q = (u * v.xxx);            Error += (q == v.x * u) ? 0 : 1;
-		q = (u / v.xyz);            Error += (q == (u / v)) ? 0 : 1;
+		q = u + v.xyz;              Error += GLM_CHECK_EQ(q, (u + v));
+		q = (u - v.xyz);            Error += GLM_CHECK_EQ(q, (u - v));
+		q = (u * v.xyz);            Error += GLM_CHECK_EQ(q, (u * v));
+		q = (u * v.xxx);            Error += GLM_CHECK_EQ(q, v.x * u);
+		q = (u / v.xyz);            Error += GLM_CHECK_EQ(q, (u / v));
 
 		// swizzle,vec binary operators
-		q = u.xyz + v;              Error += (q == (u + v)) ? 0 : 1;
-		q = (u.xyz - v);            Error += (q == (u - v)) ? 0 : 1;
-		q = (u.xyz * v);            Error += (q == (u * v)) ? 0 : 1;
-		q = (u.xxx * v);            Error += (q == u.x * v) ? 0 : 1;
-		q = (u.xyz / v);            Error += (q == (u / v)) ? 0 : 1;
+		q = u.xyz + v;              Error += GLM_CHECK_EQ(q, (u + v));
+		q = (u.xyz - v);            Error += GLM_CHECK_EQ(q, (u - v));
+		q = (u.xyz * v);            Error += GLM_CHECK_EQ(q, (u * v));
+		q = (u.xxx * v);            Error += GLM_CHECK_EQ(q, u.x * v);
+		q = (u.xyz / v);            Error += GLM_CHECK_EQ(q, (u / v));
 	}
 #	endif//GLM_LANG
 
@@ -486,25 +486,25 @@ static int test_vec3_swizzle_functions()
 		// vec2
 		glm::vec2 a(1, 2);
 		glm::vec2 b(10, 20);
-		r = glm::dot(a, b);                 Error += (int(r) == 50) ? 0 : 1;
-		r = glm::dot(glm::vec2(a.xy()), glm::vec2(b.xy()));       Error += (int(r) == 50) ? 0 : 1;
-		r = glm::dot(glm::vec2(a.xy()), glm::vec2(b.yy()));       Error += (int(r) == 60) ? 0 : 1;
+		r = glm::dot(a, b);                 Error += GLM_CHECK_EQ(int(r), 50);
+		r = glm::dot(glm::vec2(a.xy()), glm::vec2(b.xy()));       Error += GLM_CHECK_EQ(int(r), 50);
+		r = glm::dot(glm::vec2(a.xy()), glm::vec2(b.yy()));       Error += GLM_CHECK_EQ(int(r), 60);
 
 		// vec3
 		glm::vec3 u = glm::vec3(1, 2, 3);
 		glm::vec3 v = glm::vec3(10, 20, 30);
-		r = glm::dot(u, v);                 Error += (int(r) == 140) ? 0 : 1;
-		r = glm::dot(u.xyz(), v.zyz());     Error += (int(r) == 160) ? 0 : 1;
-		r = glm::dot(u, v.zyx());           Error += (int(r) == 100) ? 0 : 1;
-		r = glm::dot(u.xyz(), v);           Error += (int(r) == 140) ? 0 : 1;
-		r = glm::dot(u.xy(), v.xy());       Error += (int(r) == 50) ? 0 : 1;
+		r = glm::dot(u, v);                 Error += GLM_CHECK_EQ(int(r), 140);
+		r = glm::dot(u.xyz(), v.zyz());     Error += GLM_CHECK_EQ(int(r), 160);
+		r = glm::dot(u, v.zyx());           Error += GLM_CHECK_EQ(int(r), 100);
+		r = glm::dot(u.xyz(), v);           Error += GLM_CHECK_EQ(int(r), 140);
+		r = glm::dot(u.xy(), v.xy());       Error += GLM_CHECK_EQ(int(r), 50);
 
 		// vec4
 		glm::vec4 s = glm::vec4(1, 2, 3, 4);
 		glm::vec4 t = glm::vec4(10, 20, 30, 40);
-		r = glm::dot(s, t);                 Error += (int(r) == 300) ? 0 : 1;
-		r = glm::dot(s.xyzw(), t.xyzw());   Error += (int(r) == 300) ? 0 : 1;
-		r = glm::dot(s.xyz(), t.xyz());     Error += (int(r) == 140) ? 0 : 1;
+		r = glm::dot(s, t);                 Error += GLM_CHECK_EQ(int(r), 300);
+		r = glm::dot(s.xyzw(), t.xyzw());   Error += GLM_CHECK_EQ(int(r), 300);
+		r = glm::dot(s.xyz(), t.xyz());     Error += GLM_CHECK_EQ(int(r), 140);
 	}
 #	endif//GLM_CONFIG_SWIZZLE == GLM_SWIZZLE_OPERATOR || GLM_CONFIG_SWIZZLE == GLM_SWIZZLE_FUNCTION
 

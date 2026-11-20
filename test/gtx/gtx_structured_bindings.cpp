@@ -7,14 +7,19 @@
 static int test_vec1() {
 	glm::vec1 v(0);
 	float& x = glm::get<0>(v);
-	return (&x != &v.x);
+	int Error = 0;
+	Error += GLM_CHECK_EQ(&x, &v.x);
+	return Error;
 }
 
 static int test_vec2() {
 	glm::vec2 v(0);
 	float& x = glm::get<0>(v);
 	float& y = glm::get<1>(v);
-	return (&x != &v.x) + (&y != &v.y);
+	int Error = 0;
+	Error += GLM_CHECK_EQ(&x, &v.x);
+	Error += GLM_CHECK_EQ(&y, &v.y);
+	return Error;
 }
 
 static int test_vec3() {
@@ -22,7 +27,11 @@ static int test_vec3() {
 	float& x = glm::get<0>(v);
 	float& y = glm::get<1>(v);
 	float& z = glm::get<2>(v);
-	return (&x != &v.x) + (&y != &v.y) + (&z != &v.z);
+	int Error = 0;
+	Error += GLM_CHECK_EQ(&x, &v.x);
+	Error += GLM_CHECK_EQ(&y, &v.y);
+	Error += GLM_CHECK_EQ(&z, &v.z);
+	return Error;
 }
 
 static int test_vec4() {
@@ -32,20 +41,30 @@ static int test_vec4() {
 	float& z = glm::get<2>(v);
 	float& w = glm::get<3>(v);
 
-	return (&x != &v.x) + (&y != &v.y) + (&z != &v.z) + (&w != &v.w);
+	int Error = 0;
+	Error += GLM_CHECK_EQ(&x, &v.x);
+	Error += GLM_CHECK_EQ(&y, &v.y);
+	Error += GLM_CHECK_EQ(&z, &v.z);
+	Error += GLM_CHECK_EQ(&w, &v.w);
+	return Error;
 }
 
 static int test_const_vec1() {
 	glm::vec1 const v(0);
 	float const& x = glm::get<0>(v);
-	return (&x != &v.x);
+	int Error = 0;
+	Error += GLM_CHECK_EQ(&x, &v.x);
+	return Error;
 }
 
 static int test_const_vec2() {
 	glm::vec2 const v(0);
 	float const& x = glm::get<0>(v);
 	float const& y = glm::get<1>(v);
-	return (&x != &v.x) + (&y != &v.y);
+	int Error = 0;
+	Error += GLM_CHECK_EQ(&x, &v.x);
+	Error += GLM_CHECK_EQ(&y, &v.y);
+	return Error;
 }
 
 static int test_const_vec3() {
@@ -53,7 +72,11 @@ static int test_const_vec3() {
 	float const& x = glm::get<0>(v);
 	float const& y = glm::get<1>(v);
 	float const& z = glm::get<2>(v);
-	return (&x != &v.x) + (&y != &v.y) + (&z != &v.z);
+	int Error = 0;
+	Error += GLM_CHECK_EQ(&x, &v.x);
+	Error += GLM_CHECK_EQ(&y, &v.y);
+	Error += GLM_CHECK_EQ(&z, &v.z);
+	return Error;
 }
 
 static int test_const_vec4() {
@@ -63,7 +86,12 @@ static int test_const_vec4() {
 	float const& z = glm::get<2>(v);
 	float const& w = glm::get<3>(v);
 
-	return (&x != &v.x) + (&y != &v.y) + (&z != &v.z) + (&w != &v.w);
+	int Error = 0;
+	Error += GLM_CHECK_EQ(&x, &v.x);
+	Error += GLM_CHECK_EQ(&y, &v.y);
+	Error += GLM_CHECK_EQ(&z, &v.z);
+	Error += GLM_CHECK_EQ(&w, &v.w);
+	return Error;
 }
 
 
@@ -80,7 +108,12 @@ static int test_quat() {
 	float& z = glm::get<2>(q);
 	float& w = glm::get<3>(q);
 #endif
-	return (&x != &q.x) + (&y != &q.y) + (&z != &q.z) + (&w != &q.w);
+	int Error = 0;
+	Error += GLM_CHECK_EQ(&x, &q.x);
+	Error += GLM_CHECK_EQ(&y, &q.y);
+	Error += GLM_CHECK_EQ(&z, &q.z);
+	Error += GLM_CHECK_EQ(&w, &q.w);
+	return Error;
 }
 
 static int test_const_quat() {
@@ -96,7 +129,12 @@ static int test_const_quat() {
 	float const& z = glm::get<2>(q);
 	float const& w = glm::get<3>(q);
 #endif
-	return (&x != &q.x) + (&y != &q.y) + (&z != &q.z) + (&w != &q.w);
+	int Error = 0;
+	Error += GLM_CHECK_EQ(&x, &q.x);
+	Error += GLM_CHECK_EQ(&y, &q.y);
+	Error += GLM_CHECK_EQ(&z, &q.z);
+	Error += GLM_CHECK_EQ(&w, &q.w);
+	return Error;
 }
 
 
@@ -106,7 +144,10 @@ static int test_mat2xR() {
 	Mat m(0);
 	typename Mat::col_type& c1 = glm::get<0>(m);
 	typename Mat::col_type& c2 = glm::get<1>(m);
-	return (&c1 != &m[0]) + (&c2 != &m[1]);
+	int Error = 0;
+	Error += GLM_CHECK_EQ(&c1, &m[0]);
+	Error += GLM_CHECK_EQ(&c2, &m[1]);
+	return Error;
 }
 template<glm::length_t R>
 static int test_const_mat2xR() {
@@ -114,7 +155,10 @@ static int test_const_mat2xR() {
 	Mat const m(0);
 	typename Mat::col_type const& c1 = glm::get<0>(m);
 	typename Mat::col_type const& c2 = glm::get<1>(m);
-	return (&c1 != &m[0]) + (&c2 != &m[1]);
+	int Error = 0;
+	Error += GLM_CHECK_EQ(&c1, &m[0]);
+	Error += GLM_CHECK_EQ(&c2, &m[1]);
+	return Error;
 }
 
 template<glm::length_t R>
@@ -124,7 +168,11 @@ static int test_mat3xR() {
 	typename Mat::col_type& c1 = glm::get<0>(m);
 	typename Mat::col_type& c2 = glm::get<1>(m);
 	typename Mat::col_type& c3 = glm::get<2>(m);
-	return (&c1 != &m[0]) + (&c2 != &m[1]) + (&c3 != &m[2]);
+	int Error = 0;
+	Error += GLM_CHECK_EQ(&c1, &m[0]);
+	Error += GLM_CHECK_EQ(&c2, &m[1]);
+	Error += GLM_CHECK_EQ(&c3, &m[2]);
+	return Error;
 }
 
 template<glm::length_t R>
@@ -134,7 +182,11 @@ static int test_const_mat3xR() {
     typename Mat::col_type const& c1 = glm::get<0>(m);
     typename Mat::col_type const& c2 = glm::get<1>(m);
     typename Mat::col_type const& c3 = glm::get<2>(m);
-	return (&c1 != &m[0]) + (&c2 != &m[1]) + (&c3 != &m[2]);
+	int Error = 0;
+	Error += GLM_CHECK_EQ(&c1, &m[0]);
+	Error += GLM_CHECK_EQ(&c2, &m[1]);
+	Error += GLM_CHECK_EQ(&c3, &m[2]);
+	return Error;
 }
 
 template<glm::length_t R>
@@ -146,7 +198,12 @@ static int test_mat4xR() {
 	typename Mat::col_type& c3 = glm::get<2>(m);
 	typename Mat::col_type& c4 = glm::get<3>(m);
 
-	return (&c1 != &m[0]) + (&c2 != &m[1]) + (&c3 != &m[2]) + (&c4 != &m[3]);
+	int Error = 0;
+	Error += GLM_CHECK_EQ(&c1, &m[0]);
+	Error += GLM_CHECK_EQ(&c2, &m[1]);
+	Error += GLM_CHECK_EQ(&c3, &m[2]);
+	Error += GLM_CHECK_EQ(&c4, &m[3]);
+	return Error;
 }
 
 template<glm::length_t R>
@@ -158,98 +215,155 @@ static int test_const_mat4xR() {
 	typename Mat::col_type const& c3 = glm::get<2>(m);
 	typename Mat::col_type const& c4 = glm::get<3>(m);
 
-	return (&c1 != &m[0]) + (&c2 != &m[1]) + (&c3 != &m[2]) + (&c4 != &m[3]);
+	int Error = 0;
+	Error += GLM_CHECK_EQ(&c1, &m[0]);
+	Error += GLM_CHECK_EQ(&c2, &m[1]);
+	Error += GLM_CHECK_EQ(&c3, &m[2]);
+	Error += GLM_CHECK_EQ(&c4, &m[3]);
+	return Error;
 }
 #if defined(__cpp_structured_bindings)
 #if __cpp_structured_bindings >= 201606L
 static int test_structured_vec1() {
 	glm::vec1 v(0);
 	auto& [x] = v;
-	return (&x != &v.x);
+	int Error = 0;
+	Error += GLM_CHECK_EQ(&x, &v.x);
+	return Error;
 }
 
 static int test_structured_vec2() {
 	glm::vec2 v(0);
 	auto& [x, y] = v;
-	return (&x != &v.x) + (&y != &v.y);
+	int Error = 0;
+	Error += GLM_CHECK_EQ(&x, &v.x);
+	Error += GLM_CHECK_EQ(&y, &v.y);
+	return Error;
 }
 
 static int test_structured_vec3() {
 	glm::vec3 v(0);
 	auto& [x, y, z] = v;
-	return (&x != &v.x) + (&y != &v.y) + (&z != &v.z);
+	int Error = 0;
+	Error += GLM_CHECK_EQ(&x, &v.x);
+	Error += GLM_CHECK_EQ(&y, &v.y);
+	Error += GLM_CHECK_EQ(&z, &v.z);
+	return Error;
 }
 
 static int test_structured_vec4() {
 	glm::vec4 v(0);
 	auto& [x, y, z, w] = v;
-	return (&x != &v.x) + (&y != &v.y) + (&z != &v.z) + (&w != &v.w);
+	int Error = 0;
+	Error += GLM_CHECK_EQ(&x, &v.x);
+	Error += GLM_CHECK_EQ(&y, &v.y);
+	Error += GLM_CHECK_EQ(&z, &v.z);
+	Error += GLM_CHECK_EQ(&w, &v.w);
+	return Error;
 }
 
 static int test_const_structured_vec1() {
 	glm::vec1 const v(0);
 	auto const& [x] = v;
-	return (&x != &v.x);
+	int Error = 0;
+	Error += GLM_CHECK_EQ(&x, &v.x);
+	return Error;
 }
 
 static int test_const_structured_vec2() {
 	glm::vec2 const v(0);
 	auto const& [x, y] = v;
-	return (&x != &v.x) + (&y != &v.y);
+	int Error = 0;
+	Error += GLM_CHECK_EQ(&x, &v.x);
+	Error += GLM_CHECK_EQ(&y, &v.y);
+	return Error;
 }
 
 static int test_const_structured_vec3() {
 	glm::vec3 const v(0);
 	auto const& [x, y, z] = v;
-	return (&x != &v.x) + (&y != &v.y) + (&z != &v.z);
+	int Error = 0;
+	Error += GLM_CHECK_EQ(&x, &v.x);
+	Error += GLM_CHECK_EQ(&y, &v.y);
+	Error += GLM_CHECK_EQ(&z, &v.z);
+	return Error;
 }
 
 static int test_const_structured_vec4() {
 	glm::vec4 const v(0);
 	auto const& [x, y, z, w] = v;
-	return (&x != &v.x) + (&y != &v.y) + (&z != &v.z) + (&w != &v.w);
+	int Error = 0;
+	Error += GLM_CHECK_EQ(&x, &v.x);
+	Error += GLM_CHECK_EQ(&y, &v.y);
+	Error += GLM_CHECK_EQ(&z, &v.z);
+	Error += GLM_CHECK_EQ(&w, &v.w);
+	return Error;
 }
 
 template<glm::length_t R>
 static int test_structured_mat2xR() {
 	glm::mat<2,R,float,glm::defaultp> m(0);
 	auto& [c1, c2] = m;
-	return (&c1 != &m[0]) + (&c2 != &m[1]);
+	int Error = 0;
+	Error += GLM_CHECK_EQ(&c1, &m[0]);
+	Error += GLM_CHECK_EQ(&c2, &m[1]);
+	return Error;
 }
 
 template<glm::length_t R>
 static int test_const_structured_mat2xR() {
 	glm::mat<2, R, float, glm::defaultp> const m(0);
 	auto const& [c1, c2] = m;
-	return (&c1 != &m[0]) + (&c2 != &m[1]);
+	int Error = 0;
+	Error += GLM_CHECK_EQ(&c1, &m[0]);
+	Error += GLM_CHECK_EQ(&c2, &m[1]);
+	return Error;
 }
 
 template<glm::length_t R>
 static int test_structured_mat3xR() {
 	glm::mat<3, R, float, glm::defaultp> m(0);
 	auto& [c1, c2,c3] = m;
-	return (&c1 != &m[0]) + (&c2 != &m[1]) + (&c3 != &m[2]);
+	int Error = 0;
+	Error += GLM_CHECK_EQ(&c1, &m[0]);
+	Error += GLM_CHECK_EQ(&c2, &m[1]);
+	Error += GLM_CHECK_EQ(&c3, &m[2]);
+	return Error;
 }
 
 template<glm::length_t R>
 static int test_const_structured_mat3xR() {
 	glm::mat<3, R, float, glm::defaultp> const m(0);
 	auto const& [c1, c2, c3] = m;
-	return (&c1 != &m[0]) + (&c2 != &m[1]) + (&c3 != &m[2]);
+	int Error = 0;
+	Error += GLM_CHECK_EQ(&c1, &m[0]);
+	Error += GLM_CHECK_EQ(&c2, &m[1]);
+	Error += GLM_CHECK_EQ(&c3, &m[2]);
+	return Error;
 }
 
 template<glm::length_t R>
 static int test_structured_mat4xR() {
 	glm::mat<4, R, float, glm::defaultp> m(0);
 	auto& [c1, c2, c3,c4] = m;
-	return (&c1 != &m[0]) + (&c2 != &m[1]) + (&c3 != &m[2]) + (&c4 != &m[3]);
+	int Error = 0;
+	Error += GLM_CHECK_EQ(&c1, &m[0]);
+	Error += GLM_CHECK_EQ(&c2, &m[1]);
+	Error += GLM_CHECK_EQ(&c3, &m[2]);
+	Error += GLM_CHECK_EQ(&c4, &m[3]);
+	return Error;
 }
 
 template<glm::length_t R>
 static int test_const_structured_mat4xR() {
 	glm::mat<4, R, float, glm::defaultp> const m(0);
 	auto const& [c1, c2, c3, c4] = m;
-	return (&c1 != &m[0]) + (&c2 != &m[1]) + (&c3 != &m[2]) + (&c4 != &m[3]);
+	int Error = 0;
+	Error += GLM_CHECK_EQ(&c1, &m[0]);
+	Error += GLM_CHECK_EQ(&c2, &m[1]);
+	Error += GLM_CHECK_EQ(&c3, &m[2]);
+	Error += GLM_CHECK_EQ(&c4, &m[3]);
+	return Error;
 }
 
 static int test_structured_quat() {
@@ -259,7 +373,12 @@ static int test_structured_quat() {
 #else
 	auto& [x, y, z, w] = q;
 #endif
-	return (&x != &q.x) + (&y != &q.y) + (&z != &q.z) + (&w != &q.w);
+	int Error = 0;
+	Error += GLM_CHECK_EQ(&x, &q.x);
+	Error += GLM_CHECK_EQ(&y, &q.y);
+	Error += GLM_CHECK_EQ(&z, &q.z);
+	Error += GLM_CHECK_EQ(&w, &q.w);
+	return Error;
 }
 
 static int test_const_structured_quat() {
@@ -269,7 +388,12 @@ static int test_const_structured_quat() {
 #else
 	auto const& [x, y, z, w] = q;
 #endif
-	return (&x != &q.x) + (&y != &q.y) + (&z != &q.z) + (&w != &q.w);
+	int Error = 0;
+	Error += GLM_CHECK_EQ(&x, &q.x);
+	Error += GLM_CHECK_EQ(&y, &q.y);
+	Error += GLM_CHECK_EQ(&z, &q.z);
+	Error += GLM_CHECK_EQ(&w, &q.w);
+	return Error;
 }
 
 #endif

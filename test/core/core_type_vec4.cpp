@@ -694,7 +694,7 @@ namespace heap
 		delete p;
 
 		// An aligned vec4 member is placed on a 16-byte boundary after the two floats.
-		Error += sizeof(B) == (glm::detail::is_aligned<glm::defaultp>::value ? sizeof(glm::vec4) * 2 : sizeof(glm::vec4) + sizeof(float) * 2) ? 0 : 1;
+		Error += GLM_CHECK_EQ(sizeof(B), glm::detail::is_aligned<glm::defaultp>::value ? sizeof(glm::vec4) * 2 : sizeof(glm::vec4) + sizeof(float) * 2);
 
 		return Error;
 	}

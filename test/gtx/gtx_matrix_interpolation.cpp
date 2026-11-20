@@ -63,7 +63,7 @@ static int testForAxisAngle(glm::vec<3, T, glm::defaultp> const axisTrue, T cons
             glm::compMax(glm::abs(errMat[3]))
         ));
 
-    return maxErr < eps ? 0 : 1;
+    return glm_test::context(GLM_CHECK_LT(maxErr, eps), "axisTrue", axisTrue, "angleTrue", angleTrue);
 }
 
 static int test_axisAngle2()

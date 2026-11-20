@@ -293,10 +293,11 @@ static int test_operators()
 {
 	glm::ivec3 A(1);
 	glm::ivec3 B(1);
-	bool R = A != B;
-	bool S = A == B;
 
-	return (S && !R) ? 0 : 1;
+	int Error = 0;
+	Error += GLM_CHECK(A == B);
+	Error += GLM_CHECK(!(A != B));
+	return Error;
 }
 
 int main()
