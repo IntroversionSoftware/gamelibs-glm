@@ -384,6 +384,16 @@
 #endif
 
 #if GLM_HAS_IS_CONSTANT_EVALUATED
+// `if consteval` is only used where __cpp_if_consteval says the compiler supports it, so Clang's
+// -Wpre-c++23-compat (-Wpre-c++2b-compat before Clang 17) warning about it doesn't apply.
+#if defined(GLM_IS_CONSTANT_EVALUATED_CONSTEVAL) && defined(__clang__)
+#	pragma clang diagnostic push
+#	if __has_warning("-Wpre-c++23-compat")
+#		pragma clang diagnostic ignored "-Wpre-c++23-compat"
+#	elif __has_warning("-Wpre-c++2b-compat")
+#		pragma clang diagnostic ignored "-Wpre-c++2b-compat"
+#	endif
+#endif
 namespace glm{
 namespace detail
 {
@@ -397,6 +407,9 @@ namespace detail
 	}
 }//namespace detail
 }//namespace glm
+#if defined(GLM_IS_CONSTANT_EVALUATED_CONSTEVAL) && defined(__clang__)
+#	pragma clang diagnostic pop
+#endif
 #endif
 
 ///////////////////////////////////////////////////////////////////////////////////
