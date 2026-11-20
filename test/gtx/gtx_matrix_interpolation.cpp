@@ -3,8 +3,9 @@
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/component_wise.hpp>
 #include <glm/gtx/matrix_interpolation.hpp>
+#include <glm/ext/scalar_relational.hpp>
+#include <glm/ext/vector_relational.hpp>
 
-#include <iostream>
 #include <limits>
 #include <math.h>
 
@@ -25,16 +26,19 @@ static int test_axisAngle()
 	glm::mat4 const m1rot = glm::extractMatrixRotation(m1);
 	glm::mat4 const dltRotation = m2 * glm::transpose(m1rot);
 
+	// m1 and m2 rotate about Y by 174 and 173 degrees, so the difference is 1 degree about -Y. Their
+	// entries are rounded to 6 digits and not quite orthonormal, which puts the trace of dltRotation
+	// just past 3: axisAngle clamps the angle to 0 rather than returning NaN.
 	glm::vec3 dltAxis(0.0f);
 	float dltAngle = 0.0f;
 	glm::axisAngle(dltRotation, dltAxis, dltAngle);
 
-	std::cout << "dltAxis: (" << dltAxis.x << ", " << dltAxis.y << ", " << dltAxis.z << "), dltAngle: " << dltAngle << std::endl;
+	Error += GLM_CHECK_NEAR(dltAxis, glm::vec3(0.0f, -1.0f, 0.0f), 0.001f);
+	Error += GLM_CHECK_GE(dltAngle, 0.0f);
+	Error += GLM_CHECK_LE(dltAngle, glm::radians(1.0f) + 0.001f);
 
 	glm::quat q = glm::quat_cast(dltRotation);
-	std::cout << "q: (" << q.x << ", " << q.y << ", " << q.z << ", " << q.w << ")" << std::endl;
-	float yaw = glm::yaw(q);
-	std::cout << "Yaw: " << yaw << std::endl;
+	Error += glm_test::context(GLM_CHECK_NEAR(glm::yaw(q), -glm::radians(1.0f), 0.001f), "q", q);
 
 	return Error;
 }

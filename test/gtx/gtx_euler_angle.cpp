@@ -6,9 +6,8 @@
 #include <glm/gtx/matrix_cross_product.hpp>
 #include <glm/gtx/matrix_operation.hpp>
 #include <glm/gtc/epsilon.hpp>
-#include <glm/gtx/string_cast.hpp>
 #include <glm/gtx/euler_angles.hpp>
-#include <cstdio>
+#include <glm/ext/matrix_relational.hpp>
 #include <vector>
 #include <utility>
 
@@ -345,27 +344,27 @@ namespace test_eulerAngleYXZ
 {
 	static int test()
 	{
+		int Error = 0;
+
 		glm::f32 first =  1.046f;
 		glm::f32 second = 0.52f;
 		glm::f32 third = -0.785f;
 
 		glm::fmat4 rotationEuler = glm::eulerAngleYXZ(first, second, third);
 
-		glm::fmat4 rotationInvertedY  = glm::eulerAngleY(-1.f*first) * glm::eulerAngleX(second) * glm::eulerAngleZ(third);
-		glm::fmat4 rotationDumb = glm::fmat4();
+		// The same as rotating about Y, then X, then Z
+		glm::fmat4 rotationDumb(1.0f);
 		rotationDumb = glm::rotate(rotationDumb, first, glm::fvec3(0,1,0));
 		rotationDumb = glm::rotate(rotationDumb, second, glm::fvec3(1,0,0));
 		rotationDumb = glm::rotate(rotationDumb, third, glm::fvec3(0,0,1));
+		Error += GLM_CHECK_NEAR(glm::fmat3(rotationEuler), glm::fmat3(rotationDumb), 0.00001f);
 
-		std::printf("%s\n", glm::to_string(glm::fmat3(rotationEuler)).c_str());
-		std::printf("%s\n", glm::to_string(glm::fmat3(rotationDumb)).c_str());
-		std::printf("%s\n", glm::to_string(glm::fmat3(rotationInvertedY)).c_str());
+		// and not with the Y angle negated
+		glm::fmat4 rotationInvertedY  = glm::eulerAngleY(-1.f*first) * glm::eulerAngleX(second) * glm::eulerAngleZ(third);
+		Error += glm_test::context(GLM_CHECK(!glm_test::all_of(glm::equal(glm::fmat3(rotationEuler), glm::fmat3(rotationInvertedY), 0.00001f))),
+			"rotationEuler", glm::fmat3(rotationEuler), "rotationInvertedY", glm::fmat3(rotationInvertedY));
 
-		std::printf("\nRESIDUAL\n");
-		std::printf("%s\n", glm::to_string(glm::fmat3(rotationEuler-(rotationDumb))).c_str());
-		std::printf("%s\n", glm::to_string(glm::fmat3(rotationEuler-(rotationInvertedY))).c_str());
-
-		return 0;
+		return Error;
 	}
 }//namespace eulerAngleYXZ
 

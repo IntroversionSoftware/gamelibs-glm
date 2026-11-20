@@ -41,7 +41,28 @@ struct vec2
 // Visual C++ has a bug generating the error: fatal error C1001: An internal error has occurred in the compiler.
 // vec2 Bar;
 
+#if GLM_CONFIG_ANONYMOUS_STRUCT == GLM_ENABLE
+static int test_vec2()
+{
+	int Error = 0;
+
+	vec2 const Foo;
+	Error += GLM_CHECK_EQ(Foo.x, 0.0f);
+	Error += GLM_CHECK_EQ(Foo.y, 0.0f);
+
+	return Error;
+}
+#endif
+
 int main()
 {
-	return 0;
+#if GLM_CONFIG_ANONYMOUS_STRUCT == GLM_ENABLE
+	int Error = 0;
+
+	Error += GLM_TEST(test_vec2());
+
+	return GLM_TEST_FINISH(Error);
+#else
+	return GLM_TEST_SKIP_ALL("anonymous structs are disabled");
+#endif
 }

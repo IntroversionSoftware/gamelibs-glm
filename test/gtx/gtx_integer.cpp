@@ -30,14 +30,9 @@ static int test_log2()
 		glm::uint A = glm::log2(glm::uint(1 << i));
 		glm::uint B = glm::uint(glm::log2(double(1 << i)));
 
-		//Error += glm::equalEpsilon(double(A), B, 1.0) ? 0 : 1;
-		Error += GLM_CHECK_LE(glm::abs(double(A) - B), 24);
-		assert(!Error);
-
-		std::printf("Log2(%d) error A=%u, B=%u\n", 1 << i, A, B);
+		// Powers of two: both are exact
+		Error += GLM_CHECK_EQ(A, B);
 	}
-
-	std::printf("log2 error=%d\n", Error);
 
 	return Error;
 }
