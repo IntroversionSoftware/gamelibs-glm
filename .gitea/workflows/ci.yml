@@ -5,7 +5,9 @@
 # - every x86 SIMD path, with both GCC and Clang. Clang's "auto" detection picks the Clang vector
 #   extensions path, so the SSE/AVX intrinsics paths are forced with GLM_FORCE_<ISA> to test them too;
 # - AArch64 (NEON intrinsics and Clang vectors) cross-compiled and run under qemu-user;
-# - a few of those again with -ffast-math, which tests that need NaN/Inf skip (exit code 77).
+# - a few of those again with -ffast-math, which tests that need NaN/Inf skip (exit code 77);
+# - Clang with libc++, as on macOS, which unlike libstdc++ doesn't bring in headers such as
+#   <algorithm> through others: a missing include compiles everywhere else.
 #
 # Runner differences from GitHub-hosted runners this relies on or avoids:
 # - The job container may be root without sudo, and comes with few build tools, so they are
@@ -28,7 +30,7 @@ env:
 
 jobs:
   linux-x86:
-    name: x86-64 ${{ matrix.cc }} ${{ matrix.simd }} c++${{ matrix.std }} ${{ matrix.build }}${{ matrix.math == 'fast' && ' fast-math' || '' }}
+    name: x86-64 ${{ matrix.cc }} ${{ matrix.simd }} c++${{ matrix.std }} ${{ matrix.build }}${{ matrix.math == 'fast' && ' fast-math' || '' }}${{ matrix.stdlib == 'libc++' && ' libc++' || '' }}
     runs-on: ubuntu-latest
     timeout-minutes: 60
     strategy:
@@ -38,25 +40,28 @@ jobs:
         simd: [pure, pure-aligned, sse2, sse4.1, avx, avx2, avx2-ext, vectors]
         std: [20]
         build: [Release]
-        # A dimension rather than a key only the include entries have, so those add jobs instead of
-        # being merged into the matching ieee ones.
+        # Dimensions rather than keys only the include entries have, so those add jobs instead of
+        # being merged into the matching ieee/libstdc++ ones.
         math: [ieee]
+        stdlib: [libstdc++]
         exclude:
           - cc: gcc
             simd: vectors
         include:
-          - { cc: gcc, simd: pure, std: 17, build: Debug, math: ieee }
-          - { cc: gcc, simd: avx2, std: 17, build: Release, math: ieee }
-          - { cc: clang, simd: vectors, std: 17, build: Debug, math: ieee }
-          - { cc: clang, simd: avx2, std: 20, build: Debug, math: ieee }
-          - { cc: gcc, simd: avx2, std: 20, build: Release, math: fast }
-          - { cc: clang, simd: avx2, std: 20, build: Release, math: fast }
-          - { cc: clang, simd: vectors, std: 20, build: Release, math: fast }
+          - { cc: gcc, simd: pure, std: 17, build: Debug, math: ieee, stdlib: libstdc++ }
+          - { cc: gcc, simd: avx2, std: 17, build: Release, math: ieee, stdlib: libstdc++ }
+          - { cc: clang, simd: vectors, std: 17, build: Debug, math: ieee, stdlib: libstdc++ }
+          - { cc: clang, simd: avx2, std: 20, build: Debug, math: ieee, stdlib: libstdc++ }
+          - { cc: gcc, simd: avx2, std: 20, build: Release, math: fast, stdlib: libstdc++ }
+          - { cc: clang, simd: avx2, std: 20, build: Release, math: fast, stdlib: libstdc++ }
+          - { cc: clang, simd: vectors, std: 20, build: Release, math: fast, stdlib: libstdc++ }
+          # The macOS combination: Clang's vector path with libc++
+          - { cc: clang, simd: vectors, std: 20, build: Release, math: ieee, stdlib: libc++ }
     steps:
       - uses: actions/checkout@v4
 
       - name: Install toolchain
-        run: sh .gitea/ci/install-toolchain.sh ${{ matrix.cc == 'clang' && '--clang' || '' }} g++
+        run: sh .gitea/ci/install-toolchain.sh ${{ matrix.cc == 'clang' && '--clang' || '' }} ${{ matrix.stdlib == 'libc++' && '--libcxx' || '' }} g++
 
       - name: Configure
         run: |
@@ -73,6 +78,7 @@ jobs:
             vectors)      SIMD="-DGLM_ENABLE_SIMD_CLANG=ON";  FLAGS="-mavx2 -mfma" ;;
           esac
           if [ "${{ matrix.math }}" = fast ]; then FLAGS="$FLAGS -ffast-math"; fi
+          if [ "${{ matrix.stdlib }}" = libc++ ]; then FLAGS="$FLAGS -stdlib=libc++"; fi
           cmake -S . -B build -G Ninja \
             -DCMAKE_CXX_COMPILER=$CXX \
             -DCMAKE_BUILD_TYPE=${{ matrix.build }} \

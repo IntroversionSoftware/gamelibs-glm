@@ -1,15 +1,21 @@
 #!/bin/sh
 # Install the CI build toolchain on a Debian/Ubuntu runner image.
-# Usage: install-toolchain.sh [--clang] <extra apt packages...>
+# Usage: install-toolchain.sh [--clang] [--libcxx] <extra apt packages...>
 # Installs cmake, ninja and the extra packages; with --clang, also clang-$CLANG_VERSION, from the
-# distribution if it has that version, otherwise from apt.llvm.org.
+# distribution if it has that version, otherwise from apt.llvm.org; with --libcxx, also that
+# version's libc++ (for -stdlib=libc++), from the same place.
 set -eu
 
 CLANG=0
-if [ "${1:-}" = --clang ]; then
-	CLANG=1
+LIBCXX=0
+while [ $# -gt 0 ]; do
+	case "$1" in
+		--clang) CLANG=1 ;;
+		--libcxx) LIBCXX=1 ;;
+		*) break ;;
+	esac
 	shift
-fi
+done
 
 SUDO=
 [ "$(id -u)" = 0 ] || SUDO=sudo
@@ -31,6 +37,10 @@ if [ "$CLANG" = 1 ]; then
 			$SUDO tee /etc/apt/sources.list.d/apt.llvm.org.list > /dev/null
 		$SUDO apt-get update -qq
 	fi
-	$SUDO apt-get install -y -qq --no-install-recommends "clang-$CLANG_VERSION"
+	PACKAGES="clang-$CLANG_VERSION"
+	if [ "$LIBCXX" = 1 ]; then
+		PACKAGES="$PACKAGES libc++-$CLANG_VERSION-dev libc++abi-$CLANG_VERSION-dev"
+	fi
+	$SUDO apt-get install -y -qq --no-install-recommends $PACKAGES
 	"clang++-$CLANG_VERSION" --version | head -1
 fi
