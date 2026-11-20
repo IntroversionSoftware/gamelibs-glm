@@ -1,3 +1,4 @@
+#include "glm_test.hpp"
 #include <glm/ext/matrix_uint3x2_sized.hpp>
 
 static_assert(sizeof(glm::u8mat3x2) == 6, "uint8 size isn't 1 byte on this platform");
@@ -9,9 +10,9 @@ static int test_comp()
 {
 	int Error = 0;
 
-	Error += sizeof(glm::u8mat3x2) < sizeof(glm::u16mat3x2) ? 0 : 1;
-	Error += sizeof(glm::u16mat3x2) < sizeof(glm::u32mat3x2) ? 0 : 1;
-	Error += sizeof(glm::u32mat3x2) < sizeof(glm::u64mat3x2) ? 0 : 1;
+	Error += GLM_CHECK(sizeof(glm::u8mat3x2) < sizeof(glm::u16mat3x2));
+	Error += GLM_CHECK(sizeof(glm::u16mat3x2) < sizeof(glm::u32mat3x2));
+	Error += GLM_CHECK(sizeof(glm::u32mat3x2) < sizeof(glm::u64mat3x2));
 
 	return Error;
 }
@@ -20,7 +21,7 @@ int main()
 {
 	int Error = 0;
 
-	Error += test_comp();
+	Error += GLM_TEST(test_comp());
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }

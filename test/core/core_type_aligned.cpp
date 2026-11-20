@@ -1,3 +1,4 @@
+#include "glm_test.hpp"
 #include <glm/detail/setup.hpp>
 
 #if GLM_PLATFORM & GLM_PLATFORM_APPLE // Fail on Github macOS-latest (macOS-13 was fine)
@@ -29,18 +30,18 @@ static int test_storage_aligned()
 	int Error = 0;
 
 	size_t size1_aligned = sizeof(glm::detail::storage<1, int, true>::type);
-	Error += size1_aligned == sizeof(int) * 1 ? 0 : 1;
+	Error += GLM_CHECK(size1_aligned == sizeof(int) * 1);
 	size_t size2_aligned = sizeof(glm::detail::storage<2, int, true>::type);
-	Error += size2_aligned == sizeof(int) * 2 ? 0 : 1;
+	Error += GLM_CHECK(size2_aligned == sizeof(int) * 2);
 	size_t size4_aligned = sizeof(glm::detail::storage<4, int, true>::type);
-	Error += size4_aligned == sizeof(int) * 4 ? 0 : 1;
+	Error += GLM_CHECK(size4_aligned == sizeof(int) * 4);
 
 	size_t align1_aligned = alignof(glm::detail::storage<1, int, true>::type);
-	Error += align1_aligned == 4 ? 0 : 1;
+	Error += GLM_CHECK(align1_aligned == 4);
 	size_t align2_aligned = alignof(glm::detail::storage<2, int, true>::type);
-	Error += align2_aligned == 8 ? 0 : 1;
+	Error += GLM_CHECK(align2_aligned == 8);
 	size_t align4_aligned = alignof(glm::detail::storage<4, int, true>::type);
-	Error += align4_aligned == 16 ? 0 : 1;
+	Error += GLM_CHECK(align4_aligned == 16);
 
 	return Error;
 }
@@ -50,13 +51,13 @@ static int test_storage_unaligned()
 	int Error = 0;
 
 	size_t align1_unaligned = alignof(glm::detail::storage<1, int, false>::type);
-	Error += align1_unaligned == sizeof(int) ? 0 : 1;
+	Error += GLM_CHECK(align1_unaligned == sizeof(int));
 	size_t align2_unaligned = alignof(glm::detail::storage<2, int, false>::type);
-	Error += align2_unaligned == sizeof(int) ? 0 : 1;
+	Error += GLM_CHECK(align2_unaligned == sizeof(int));
 	size_t align3_unaligned = alignof(glm::detail::storage<3, int, false>::type);
-	Error += align3_unaligned == sizeof(int) ? 0 : 1;
+	Error += GLM_CHECK(align3_unaligned == sizeof(int));
 	size_t align4_unaligned = alignof(glm::detail::storage<4, int, false>::type);
-	Error += align4_unaligned == sizeof(int) ? 0 : 1;
+	Error += GLM_CHECK(align4_unaligned == sizeof(int));
 
 	return Error;
 }
@@ -82,7 +83,7 @@ static int test_vec3_aligned()
 #endif
 
 	std::size_t const Size1 = sizeof(Struct1);
-	Error += Size1 == 48 ? 0 : 1;
+	Error += GLM_CHECK(Size1 == 48);
 
 #if GLM_COMPILER & GLM_COMPILER_CLANG
 #	pragma clang diagnostic push
@@ -106,7 +107,7 @@ static int test_vec3_aligned()
 #endif
 
 	std::size_t const Size2 = sizeof(Struct2);
-	Error += Size2 == 48 ? 0 : 1;
+	Error += GLM_CHECK(Size2 == 48);
 
 	return Error;
 }
@@ -118,12 +119,12 @@ int main()
 	int Error = 0;
 
 #	if GLM_CONFIG_ALIGNED_GENTYPES == GLM_ENABLE
-		Error += test_storage_aligned();
-		Error += test_storage_unaligned();
-		Error += test_vec3_aligned();
+		Error += GLM_TEST(test_storage_aligned());
+		Error += GLM_TEST(test_storage_unaligned());
+		Error += GLM_TEST(test_vec3_aligned());
 #	endif
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }
 
 #endif//GLM_PLATFORM & GLM_PLATFORM_APPLE

@@ -1,4 +1,5 @@
 ﻿#include <glm/gtc/constants.hpp>
+#include "glm_test.hpp"
 #include <glm/ext/quaternion_geometric.hpp>
 #include <glm/ext/quaternion_float.hpp>
 #include <glm/ext/quaternion_trigonometric.hpp>
@@ -306,15 +307,15 @@ int main()
 #endif
 		<< std::endl << std::endl;
 
-	Error += test_length();
-	Error += test_normalize();
-	Error += test_dot();
-	Error += test_cross();
+	Error += GLM_TEST(test_length());
+	Error += GLM_TEST(test_normalize());
+	Error += GLM_TEST(test_dot());
+	Error += GLM_TEST(test_cross());
 
 	if (Error == 0)
 		std::cout << "\nAll tests passed!" << std::endl;
 	else
 		std::cout << "\nFailed tests: " << Error << std::endl;
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }

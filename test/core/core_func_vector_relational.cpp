@@ -1,3 +1,4 @@
+#include "glm_test.hpp"
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
@@ -10,22 +11,22 @@ static int test_not()
 
 	{
 		glm::bvec1 v(false);
-		Error += glm::all(glm::not_(v)) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::not_(v)));
 	}
 
 	{
 		glm::bvec2 v(false);
-		Error += glm::all(glm::not_(v)) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::not_(v)));
 	}
 
 	{
 		glm::bvec3 v(false);
-		Error += glm::all(glm::not_(v)) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::not_(v)));
 	}
 
 	{
 		glm::bvec4 v(false);
-		Error += glm::all(glm::not_(v)) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::not_(v)));
 	}
 
 	return Error;
@@ -38,49 +39,49 @@ static int test_less()
 	{
 		glm::vec2 const A(1, 2);
 		glm::vec2 const B(2, 3);
-		Error += glm::all(glm::lessThan(A, B)) ? 0: 1;
-		Error += glm::all(glm::lessThanEqual(A, B)) ? 0: 1;
+		Error += GLM_CHECK(glm::all(glm::lessThan(A, B)));
+		Error += GLM_CHECK(glm::all(glm::lessThanEqual(A, B)));
 	}
 
 	{
 		glm::vec3 const A(1, 2, 3);
 		glm::vec3 const B(2, 3, 4);
-		Error += glm::all(glm::lessThan(A, B)) ? 0: 1;
-		Error += glm::all(glm::lessThanEqual(A, B)) ? 0: 1;
+		Error += GLM_CHECK(glm::all(glm::lessThan(A, B)));
+		Error += GLM_CHECK(glm::all(glm::lessThanEqual(A, B)));
 	}
 
 	{
 		glm::vec4 const A(1, 2, 3, 4);
 		glm::vec4 const B(2, 3, 4, 5);
-		Error += glm::all(glm::lessThan(A, B)) ? 0: 1;
-		Error += glm::all(glm::lessThanEqual(A, B)) ? 0: 1;
+		Error += GLM_CHECK(glm::all(glm::lessThan(A, B)));
+		Error += GLM_CHECK(glm::all(glm::lessThanEqual(A, B)));
 	}
 
 	{
 		glm::ivec2 const A(1, 2);
 		glm::ivec2 const B(2, 3);
-		Error += glm::all(glm::lessThan(A, B)) ? 0: 1;
+		Error += GLM_CHECK(glm::all(glm::lessThan(A, B)));
 
 		glm::ivec2 const C(1, 3);
-		Error += glm::all(glm::lessThanEqual(A, C)) ? 0: 1;
+		Error += GLM_CHECK(glm::all(glm::lessThanEqual(A, C)));
 	}
 
 	{
 		glm::ivec3 const A(1, 2, 3);
 		glm::ivec3 const B(2, 3, 4);
-		Error += glm::all(glm::lessThan(A, B)) ? 0: 1;
+		Error += GLM_CHECK(glm::all(glm::lessThan(A, B)));
 
 		glm::ivec3 const C(1, 3, 4);
-		Error += glm::all(glm::lessThanEqual(A, C)) ? 0: 1;
+		Error += GLM_CHECK(glm::all(glm::lessThanEqual(A, C)));
 	}
 
 	{
 		glm::ivec4 const A(1, 2, 3, 4);
 		glm::ivec4 const B(2, 3, 4, 5);
-		Error += glm::all(glm::lessThan(A, B)) ? 0: 1;
+		Error += GLM_CHECK(glm::all(glm::lessThan(A, B)));
 
 		glm::ivec4 const C(1, 3, 4, 5);
-		Error += glm::all(glm::lessThanEqual(A, C)) ? 0: 1;
+		Error += GLM_CHECK(glm::all(glm::lessThanEqual(A, C)));
 	}
 
 	return Error;
@@ -93,49 +94,49 @@ static int test_greater()
 	{
 		glm::vec2 const A(1, 2);
 		glm::vec2 const B(2, 3);
-		Error += glm::all(glm::greaterThan(B, A)) ? 0: 1;
-		Error += glm::all(glm::greaterThanEqual(B, A)) ? 0: 1;
+		Error += GLM_CHECK(glm::all(glm::greaterThan(B, A)));
+		Error += GLM_CHECK(glm::all(glm::greaterThanEqual(B, A)));
 	}
 
 	{
 		glm::vec3 const A(1, 2, 3);
 		glm::vec3 const B(2, 3, 4);
-		Error += glm::all(glm::greaterThan(B, A)) ? 0: 1;
-		Error += glm::all(glm::greaterThanEqual(B, A)) ? 0: 1;
+		Error += GLM_CHECK(glm::all(glm::greaterThan(B, A)));
+		Error += GLM_CHECK(glm::all(glm::greaterThanEqual(B, A)));
 	}
 
 	{
 		glm::vec4 const A(1, 2, 3, 4);
 		glm::vec4 const B(2, 3, 4, 5);
-		Error += glm::all(glm::greaterThan(B, A)) ? 0: 1;
-		Error += glm::all(glm::greaterThanEqual(B, A)) ? 0: 1;
+		Error += GLM_CHECK(glm::all(glm::greaterThan(B, A)));
+		Error += GLM_CHECK(glm::all(glm::greaterThanEqual(B, A)));
 	}
 
 	{
 		glm::ivec2 const A(1, 2);
 		glm::ivec2 const B(2, 3);
-		Error += glm::all(glm::greaterThan(B, A)) ? 0: 1;
+		Error += GLM_CHECK(glm::all(glm::greaterThan(B, A)));
 
 		glm::ivec2 const C(1, 3);
-		Error += glm::all(glm::greaterThanEqual(C, A)) ? 0: 1;
+		Error += GLM_CHECK(glm::all(glm::greaterThanEqual(C, A)));
 	}
 
 	{
 		glm::ivec3 const A(1, 2, 3);
 		glm::ivec3 const B(2, 3, 4);
-		Error += glm::all(glm::greaterThan(B, A)) ? 0: 1;
+		Error += GLM_CHECK(glm::all(glm::greaterThan(B, A)));
 
 		glm::ivec3 const C(1, 3, 4);
-		Error += glm::all(glm::greaterThanEqual(C, A)) ? 0: 1;
+		Error += GLM_CHECK(glm::all(glm::greaterThanEqual(C, A)));
 	}
 
 	{
 		glm::ivec4 const A(1, 2, 3, 4);
 		glm::ivec4 const B(2, 3, 4, 5);
-		Error += glm::all(glm::greaterThan(B, A)) ? 0: 1;
+		Error += GLM_CHECK(glm::all(glm::greaterThan(B, A)));
 
 		glm::ivec4 const C(1, 3, 4, 5);
-		Error += glm::all(glm::greaterThanEqual(C, A)) ? 0: 1;
+		Error += GLM_CHECK(glm::all(glm::greaterThanEqual(C, A)));
 	}
 
 	return Error;
@@ -148,19 +149,19 @@ static int test_equal()
 	{
 		glm::ivec2 const A(1, 2);
 		glm::ivec2 const B(1, 2);
-		Error += glm::all(glm::equal(B, A)) ? 0: 1;
+		Error += GLM_CHECK(glm::all(glm::equal(B, A)));
 	}
 
 	{
 		glm::ivec3 const A(1, 2, 3);
 		glm::ivec3 const B(1, 2, 3);
-		Error += glm::all(glm::equal(B, A)) ? 0: 1;
+		Error += GLM_CHECK(glm::all(glm::equal(B, A)));
 	}
 
 	{
 		glm::ivec4 const A(1, 2, 3, 4);
 		glm::ivec4 const B(1, 2, 3, 4);
-		Error += glm::all(glm::equal(B, A)) ? 0: 1;
+		Error += GLM_CHECK(glm::all(glm::equal(B, A)));
 	}
 
 	return Error;
@@ -170,11 +171,11 @@ int main()
 {
 	int Error = 0;
 
-	Error += test_not();
-	Error += test_less();
-	Error += test_greater();
-	Error += test_equal();
+	Error += GLM_TEST(test_not());
+	Error += GLM_TEST(test_less());
+	Error += GLM_TEST(test_greater());
+	Error += GLM_TEST(test_equal());
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }
 

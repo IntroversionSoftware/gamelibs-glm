@@ -1,4 +1,5 @@
 #define GLM_FORCE_SWIZZLE
+#include "glm_test.hpp"
 #include <glm/vector_relational.hpp>
 #include <glm/gtc/vec1.hpp>
 #include <vector>
@@ -26,7 +27,7 @@ static int test_vec1_operators()
 		bool R = A != B;
 		bool S = A == B;
 
-		Error += (S && !R) ? 0 : 1;
+		Error += GLM_CHECK((S && !R));
 	}
 
 	{
@@ -38,7 +39,7 @@ static int test_vec1_operators()
 		bool R = A != B;
 		bool S = A == B;
 
-		Error += (S && !R) ? 0 : 1;
+		Error += GLM_CHECK((S && !R));
 	}
 
 	return Error;
@@ -51,22 +52,22 @@ static int test_vec1_ctor()
 	{
 	//	Error += std::is_trivially_default_constructible<glm::vec1>::value ? 0 : 1;
 	//	Error += std::is_trivially_copy_assignable<glm::vec1>::value ? 0 : 1;
-		Error += std::is_trivially_copyable<glm::vec1>::value ? 0 : 1;
-		Error += std::is_trivially_copyable<glm::dvec1>::value ? 0 : 1;
-		Error += std::is_trivially_copyable<glm::ivec1>::value ? 0 : 1;
-		Error += std::is_trivially_copyable<glm::uvec1>::value ? 0 : 1;
+		Error += GLM_CHECK(std::is_trivially_copyable<glm::vec1>::value);
+		Error += GLM_CHECK(std::is_trivially_copyable<glm::dvec1>::value);
+		Error += GLM_CHECK(std::is_trivially_copyable<glm::ivec1>::value);
+		Error += GLM_CHECK(std::is_trivially_copyable<glm::uvec1>::value);
 
-		Error += std::is_copy_constructible<glm::vec1>::value ? 0 : 1;
+		Error += GLM_CHECK(std::is_copy_constructible<glm::vec1>::value);
 	}
 
 	{
 		glm::ivec1 A = glm::vec1(2.0f);
 
 		glm::ivec1 E(glm::dvec1(2.0));
-		Error += A == E ? 0 : 1;
+		Error += GLM_CHECK(A == E);
 
 		glm::ivec1 F(glm::ivec1(2));
-		Error += A == F ? 0 : 1;
+		Error += GLM_CHECK(A == F);
 	}
 
 	return Error;
@@ -76,17 +77,17 @@ static int test_vec1_size()
 {
 	int Error = 0;
 
-	Error += sizeof(glm::vec1) == sizeof(glm::mediump_vec1) ? 0 : 1;
-	Error += 4 == sizeof(glm::mediump_vec1) ? 0 : 1;
-	Error += sizeof(glm::dvec1) == sizeof(glm::highp_dvec1) ? 0 : 1;
-	Error += 8 == sizeof(glm::highp_dvec1) ? 0 : 1;
-	Error += glm::vec1().length() == 1 ? 0 : 1;
-	Error += glm::dvec1().length() == 1 ? 0 : 1;
-	Error += glm::vec1::length() == 1 ? 0 : 1;
-	Error += glm::dvec1::length() == 1 ? 0 : 1;
+	Error += GLM_CHECK(sizeof(glm::vec1) == sizeof(glm::mediump_vec1));
+	Error += GLM_CHECK(4 == sizeof(glm::mediump_vec1));
+	Error += GLM_CHECK(sizeof(glm::dvec1) == sizeof(glm::highp_dvec1));
+	Error += GLM_CHECK(8 == sizeof(glm::highp_dvec1));
+	Error += GLM_CHECK(glm::vec1().length() == 1);
+	Error += GLM_CHECK(glm::dvec1().length() == 1);
+	Error += GLM_CHECK(glm::vec1::length() == 1);
+	Error += GLM_CHECK(glm::dvec1::length() == 1);
 
 	GLM_CONSTEXPR glm::length_t Length = glm::vec1::length();
-	Error += Length == 1 ? 0 : 1;
+	Error += GLM_CHECK(Length == 1);
 
 	return Error;
 }
@@ -101,9 +102,9 @@ static int test_vec1_operator_increment()
 	glm::ivec1 v3 = ++v1;
 	glm::ivec1 v4 = v2++;
 
-	Error += glm::all(glm::equal(v0, v4)) ? 0 : 1;
-	Error += glm::all(glm::equal(v1, v2)) ? 0 : 1;
-	Error += glm::all(glm::equal(v1, v3)) ? 0 : 1;
+	Error += GLM_CHECK(glm::all(glm::equal(v0, v4)));
+	Error += GLM_CHECK(glm::all(glm::equal(v1, v2)));
+	Error += GLM_CHECK(glm::all(glm::equal(v1, v3)));
 
 	int i0(1);
 	int i1(i0);
@@ -111,9 +112,9 @@ static int test_vec1_operator_increment()
 	int i3 = ++i1;
 	int i4 = i2++;
 
-	Error += i0 == i4 ? 0 : 1;
-	Error += i1 == i2 ? 0 : 1;
-	Error += i1 == i3 ? 0 : 1;
+	Error += GLM_CHECK(i0 == i4);
+	Error += GLM_CHECK(i1 == i2);
+	Error += GLM_CHECK(i1 == i3);
 
 	return Error;
 }
@@ -129,14 +130,14 @@ static int test_bvec1_ctor()
 	glm::bvec1 E = A && C;
 	glm::bvec1 F = A || C;
 
-	Error += D == glm::bvec1(true) ? 0 : 1;
-	Error += E == glm::bvec1(false) ? 0 : 1;
-	Error += F == glm::bvec1(true) ? 0 : 1;
+	Error += GLM_CHECK(D == glm::bvec1(true));
+	Error += GLM_CHECK(E == glm::bvec1(false));
+	Error += GLM_CHECK(F == glm::bvec1(true));
 
 	bool G = A == C;
 	bool H = A != C;
-	Error += !G ? 0 : 1;
-	Error += H ? 0 : 1;
+	Error += GLM_CHECK(!G);
+	Error += GLM_CHECK(H);
 
 	return Error;
 }
@@ -149,11 +150,11 @@ int main()
 
 	int Error = 0;
 
-	Error += test_vec1_size();
-	Error += test_vec1_ctor();
-	Error += test_bvec1_ctor();
-	Error += test_vec1_operators();
-	Error += test_vec1_operator_increment();
+	Error += GLM_TEST(test_vec1_size());
+	Error += GLM_TEST(test_vec1_ctor());
+	Error += GLM_TEST(test_bvec1_ctor());
+	Error += GLM_TEST(test_vec1_operators());
+	Error += GLM_TEST(test_vec1_operator_increment());
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }

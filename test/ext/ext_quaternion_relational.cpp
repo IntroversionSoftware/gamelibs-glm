@@ -1,3 +1,4 @@
+#include "glm_test.hpp"
 #include <glm/gtc/constants.hpp>
 #include <glm/ext/quaternion_relational.hpp>
 #include <glm/ext/quaternion_float.hpp>
@@ -162,21 +163,21 @@ int main()
 		<< std::endl << std::endl;
 
 	std::cout << "Testing equal function:" << std::endl;
-	Error += test_equal<glm::quat>();
-	Error += test_equal<glm::lowp_quat>();
-	Error += test_equal<glm::mediump_quat>();
-	Error += test_equal<glm::highp_quat>();
+	Error += GLM_TEST(test_equal<glm::quat>());
+	Error += GLM_TEST(test_equal<glm::lowp_quat>());
+	Error += GLM_TEST(test_equal<glm::mediump_quat>());
+	Error += GLM_TEST(test_equal<glm::highp_quat>());
 
 	std::cout << "\nTesting notEqual function:" << std::endl;
-	Error += test_notEqual<glm::quat>();
-	Error += test_notEqual<glm::lowp_quat>();
-	Error += test_notEqual<glm::mediump_quat>();
-	Error += test_notEqual<glm::highp_quat>();
+	Error += GLM_TEST(test_notEqual<glm::quat>());
+	Error += GLM_TEST(test_notEqual<glm::lowp_quat>());
+	Error += GLM_TEST(test_notEqual<glm::mediump_quat>());
+	Error += GLM_TEST(test_notEqual<glm::highp_quat>());
 
 	if (Error == 0)
 		std::cout << "\nAll tests passed!" << std::endl;
 	else
 		std::cout << "\nFailed tests: " << Error << std::endl;
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }

@@ -29,6 +29,7 @@
 /// @author Christophe Riccio
 ///////////////////////////////////////////////////////////////////////////////////
 
+#include "glm_test.hpp"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
@@ -302,14 +303,14 @@ int main()
 	glm::simdVec4 B(5.0f, 6.0f, 7.0f, 8.0f);
 	//__m128 C = _mm_shuffle_ps(A.Data, B.Data, _MM_SHUFFLE(1, 0, 1, 0));
 
-	Error += test_compute_glm();
-	Error += test_compute_gtx();
+	Error += GLM_TEST(test_compute_glm());
+	Error += GLM_TEST(test_compute_gtx());
 	float Det = glm::determinant(glm::simdMat4(1.0));
-	Error += Det == 1.0f ? 0 : 1;
+	Error += GLM_CHECK(Det == 1.0f);
 
 	glm::simdMat4 D = glm::matrixCompMult(glm::simdMat4(1.0), glm::simdMat4(1.0));
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }
 
 #else
@@ -318,7 +319,7 @@ int main()
 {
 	int Error = 0;
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }
 
 #endif//(GLM_ARCH != GLM_ARCH_PURE)

@@ -1,4 +1,5 @@
 #define GLM_ENABLE_EXPERIMENTAL 1
+#include "glm_test.hpp"
 #include <glm/ext/matrix_relational.hpp>
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/ext/matrix_float4x4.hpp>
@@ -423,5 +424,5 @@ int main()
 	std::cout << "Total errors: " << Error << "\n";
 	std::cout << (Error ? "FAILED\n" : "ALL TESTS PASSED\n");
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }

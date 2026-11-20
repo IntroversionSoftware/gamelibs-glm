@@ -1,3 +1,4 @@
+#include "glm_test.hpp"
 #include <glm/ext/scalar_integer.hpp>
 #include <glm/ext/scalar_int_sized.hpp>
 #include <glm/ext/scalar_uint_sized.hpp>
@@ -43,7 +44,7 @@ namespace isPowerOfTwo
 		for(std::size_t i = 0, n = sizeof(Data) / sizeof(type<glm::int16>); i < n; ++i)
 		{
 			bool Result = glm::isPowerOfTwo(Data[i].Value);
-			Error += Data[i].Return == Result ? 0 : 1;
+			Error += GLM_CHECK(Data[i].Return == Result);
 		}
 
 		return Error;
@@ -66,7 +67,7 @@ namespace isPowerOfTwo
 		for(std::size_t i = 0, n = sizeof(Data) / sizeof(type<glm::uint16>); i < n; ++i)
 		{
 			bool Result = glm::isPowerOfTwo(Data[i].Value);
-			Error += Data[i].Return == Result ? 0 : 1;
+			Error += GLM_CHECK(Data[i].Return == Result);
 		}
 
 		return Error;
@@ -89,7 +90,7 @@ namespace isPowerOfTwo
 		for(std::size_t i = 0, n = sizeof(Data) / sizeof(type<int>); i < n; ++i)
 		{
 			bool Result = glm::isPowerOfTwo(Data[i].Value);
-			Error += Data[i].Return == Result ? 0 : 1;
+			Error += GLM_CHECK(Data[i].Return == Result);
 		}
 
 		return Error;
@@ -112,7 +113,7 @@ namespace isPowerOfTwo
 		for(std::size_t i = 0, n = sizeof(Data) / sizeof(type<glm::uint>); i < n; ++i)
 		{
 			bool Result = glm::isPowerOfTwo(Data[i].Value);
-			Error += Data[i].Return == Result ? 0 : 1;
+			Error += GLM_CHECK(Data[i].Return == Result);
 		}
 
 		return Error;
@@ -184,7 +185,7 @@ namespace nextPowerOfTwo_advanced
 		for(std::size_t i = 0, n = sizeof(Data) / sizeof(type<glm::int32>); i < n; ++i)
 		{
 			glm::int32 Result = glm::nextPowerOfTwo(Data[i].Value);
-			Error += Data[i].Return == Result ? 0 : 1;
+			Error += GLM_CHECK(Data[i].Return == Result);
 		}
 
 		return Error;
@@ -211,7 +212,7 @@ namespace nextPowerOfTwo_advanced
 		for(std::size_t i = 0, n = sizeof(Data) / sizeof(type<glm::uint32>); i < n; ++i)
 		{
 			glm::uint32 Result = glm::nextPowerOfTwo(Data[i].Value);
-			Error += Data[i].Return == Result ? 0 : 1;
+			Error += GLM_CHECK(Data[i].Return == Result);
 		}
 
 		return Error;
@@ -261,16 +262,16 @@ namespace prevPowerOfTwo
 		int Error = 0;
 
 		T const A = glm::prevPowerOfTwo(static_cast<T>(7));
-		Error += A == static_cast<T>(4) ? 0 : 1;
+		Error += GLM_CHECK(A == static_cast<T>(4));
 
 		T const B = glm::prevPowerOfTwo(static_cast<T>(15));
-		Error += B == static_cast<T>(8) ? 0 : 1;
+		Error += GLM_CHECK(B == static_cast<T>(8));
 
 		T const C = glm::prevPowerOfTwo(static_cast<T>(31));
-		Error += C == static_cast<T>(16) ? 0 : 1;
+		Error += GLM_CHECK(C == static_cast<T>(16));
 
 		T const D = glm::prevPowerOfTwo(static_cast<T>(32));
-		Error += D == static_cast<T>(32) ? 0 : 1;
+		Error += GLM_CHECK(D == static_cast<T>(32));
 
 		return Error;
 	}
@@ -301,16 +302,16 @@ namespace nextPowerOfTwo
 		int Error = 0;
 
 		T const A = glm::nextPowerOfTwo(static_cast<T>(7));
-		Error += A == static_cast<T>(8) ? 0 : 1;
+		Error += GLM_CHECK(A == static_cast<T>(8));
 
 		T const B = glm::nextPowerOfTwo(static_cast<T>(15));
-		Error += B == static_cast<T>(16) ? 0 : 1;
+		Error += GLM_CHECK(B == static_cast<T>(16));
 
 		T const C = glm::nextPowerOfTwo(static_cast<T>(31));
-		Error += C == static_cast<T>(32) ? 0 : 1;
+		Error += GLM_CHECK(C == static_cast<T>(32));
 
 		T const D = glm::nextPowerOfTwo(static_cast<T>(32));
-		Error += D == static_cast<T>(32) ? 0 : 1;
+		Error += GLM_CHECK(D == static_cast<T>(32));
 
 		return Error;
 	}
@@ -357,7 +358,7 @@ namespace prevMultiple
 		for(std::size_t i = 0, n = sizeof(Data) / sizeof(type<T>); i < n; ++i)
 		{
 			T const Result = glm::prevMultiple(Data[i].Source, Data[i].Multiple);
-			Error += Data[i].Return == Result ? 0 : 1;
+			Error += GLM_CHECK(Data[i].Return == Result);
 		}
 
 		return Error;
@@ -571,11 +572,11 @@ namespace nextMultiple
 		for(std::size_t i = 0, n = sizeof(Data) / sizeof(type<T>); i < n; ++i)
 		{
 			T const Result0 = glm::nextMultiple(Data[i].Source, Data[i].Multiple);
-			Error += Data[i].Return == Result0 ? 0 : 1;
+			Error += GLM_CHECK(Data[i].Return == Result0);
 			assert(!Error);
 
 			T const Result1 = nextMultipleMod(Data[i].Source, Data[i].Multiple);
-			Error += Data[i].Return == Result1 ? 0 : 1;
+			Error += GLM_CHECK(Data[i].Return == Result1);
 			assert(!Error);
 		}
 
@@ -661,7 +662,7 @@ namespace findNSB
 		for (std::size_t i = 0, n = sizeof(Data) / sizeof(type<T>); i < n; ++i)
 		{
 			int const Result0 = glm::findNSB(Data[i].Source, Data[i].SignificantBitCount);
-			Error += Data[i].Return == Result0 ? 0 : 1;
+			Error += GLM_CHECK(Data[i].Return == Result0);
 			assert(!Error);
 		}
 
@@ -690,19 +691,19 @@ int main()
 {
 	int Error = 0;
 
-	Error += findNSB::test();
+	Error += GLM_TEST(findNSB::test());
 
-	Error += isPowerOfTwo::test();
-	Error += prevPowerOfTwo::test();
-	Error += nextPowerOfTwo::test();
-	Error += nextPowerOfTwo_advanced::test();
-	Error += prevMultiple::test();
-	Error += nextMultiple::test();
+	Error += GLM_TEST(isPowerOfTwo::test());
+	Error += GLM_TEST(prevPowerOfTwo::test());
+	Error += GLM_TEST(nextPowerOfTwo::test());
+	Error += GLM_TEST(nextPowerOfTwo_advanced::test());
+	Error += GLM_TEST(prevMultiple::test());
+	Error += GLM_TEST(nextMultiple::test());
 
-	Error += nextPowerOfTwo_advanced::perf();
-	Error += nextMultiple::perf();
+	Error += GLM_TEST(nextPowerOfTwo_advanced::perf());
+	Error += GLM_TEST(nextMultiple::perf());
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }
 
 #else

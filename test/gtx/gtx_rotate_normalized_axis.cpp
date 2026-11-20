@@ -1,9 +1,10 @@
 #define GLM_ENABLE_EXPERIMENTAL
+#include "glm_test.hpp"
 #include <glm/gtx/rotate_normalized_axis.hpp>
 
 int main()
 {
 	int Error(0);
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }

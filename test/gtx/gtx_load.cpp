@@ -1,3 +1,4 @@
+#include "glm_test.hpp"
 #include <glm/glm.hpp>
 /*
 #if GLM_CONFIG_SIMD == GLM_ENABLE
@@ -106,7 +107,7 @@ int test_vec4_load()
 
 	float Data[] = {1.f, 2.f, 3.f, 4.f};
 	glm::aligned_vec4 const V = glm::loadu(Data);
-	Error += glm::all(glm::equal(V, glm::aligned_vec4(1.f, 2.f, 3.f, 4.f), glm::epsilon<float>())) ? 0 : 1;
+	Error += GLM_CHECK(glm::all(glm::equal(V, glm::aligned_vec4(1.f, 2.f, 3.f, 4.f), glm::epsilon<float>())));
 
 	return Error;
 }
@@ -117,8 +118,8 @@ int main()
 	int Error = 0;
 /*
 #	if GLM_CONFIG_SIMD == GLM_ENABLE
-		Error += test_vec4_load();
+		Error += GLM_TEST(test_vec4_load());
 #	endif
 */
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }

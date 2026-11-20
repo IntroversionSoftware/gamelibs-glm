@@ -1,3 +1,4 @@
+#include "glm_test.hpp"
 #include <glm/ext/vector_integer.hpp>
 #include <glm/ext/vector_int1.hpp>
 #include <glm/ext/vector_int1_sized.hpp>
@@ -15,7 +16,7 @@ static int test_operators()
 
 		bool const R = A != B;
 		bool const S = A == B;
-		Error += (S && !R) ? 0 : 1;
+		Error += GLM_CHECK((S && !R));
 	}
 
 	{
@@ -23,16 +24,16 @@ static int test_operators()
 		genType const B(1);
 
 		genType const C = A + B;
-		Error += C == genType(2) ? 0 : 1;
+		Error += GLM_CHECK(C == genType(2));
 
 		genType const D = A - B;
-		Error += D == genType(0) ? 0 : 1;
+		Error += GLM_CHECK(D == genType(0));
 
 		genType const E = A * B;
-		Error += E == genType(1) ? 0 : 1;
+		Error += GLM_CHECK(E == genType(1));
 
 		genType const F = A / B;
-		Error += F == genType(1) ? 0 : 1;
+		Error += GLM_CHECK(F == genType(1));
 	}
 
 	{
@@ -40,7 +41,7 @@ static int test_operators()
 		genType const B(2);
 
 		genType const C = A % B;
-		Error += C == genType(1) ? 0 : 1;
+		Error += GLM_CHECK(C == genType(1));
 	}
 
 	{
@@ -49,19 +50,19 @@ static int test_operators()
 		genType const C(0);
 
 		genType const I = A & B;
-		Error += I == genType(1) ? 0 : 1;
+		Error += GLM_CHECK(I == genType(1));
 		genType const D = A & C;
-		Error += D == genType(0) ? 0 : 1;
+		Error += GLM_CHECK(D == genType(0));
 
 		genType const E = A | B;
-		Error += E == genType(1) ? 0 : 1;
+		Error += GLM_CHECK(E == genType(1));
 		genType const F = A | C;
-		Error += F == genType(1) ? 0 : 1;
+		Error += GLM_CHECK(F == genType(1));
 
 		genType const G = A ^ B;
-		Error += G == genType(0) ? 0 : 1;
+		Error += GLM_CHECK(G == genType(0));
 		genType const H = A ^ C;
-		Error += H == genType(1) ? 0 : 1;
+		Error += GLM_CHECK(H == genType(1));
 	}
 
 	{
@@ -69,9 +70,9 @@ static int test_operators()
 		genType C(2);
 
 		genType D = B << B;
-		Error += D == genType(2) ? 0 : 1;
+		Error += GLM_CHECK(D == genType(2));
 		genType E = C >> B;
-		Error += E == genType(1) ? 0 : 1;
+		Error += GLM_CHECK(E == genType(1));
 	}
 
 	return Error;
@@ -87,20 +88,20 @@ static int test_ctor()
 	genType const A = genType(1);
 
 	genType const E(genType(1));
-	Error += A == E ? 0 : 1;
+	Error += GLM_CHECK(A == E);
 
 	genType const F(E);
-	Error += A == F ? 0 : 1;
+	Error += GLM_CHECK(A == F);
 
 	genType const B = genType(1);
 	genType const G(glm::vec<2, T>(1));
-	Error += B == G ? 0 : 1;
+	Error += GLM_CHECK(B == G);
 
 	genType const H(glm::vec<3, T>(1));
-	Error += B == H ? 0 : 1;
+	Error += GLM_CHECK(B == H);
 
 	genType const I(glm::vec<4, T>(1));
-	Error += B == I ? 0 : 1;
+	Error += GLM_CHECK(B == I);
 
 	return Error;
 }
@@ -110,9 +111,9 @@ static int test_size()
 {
 	int Error = 0;
 
-	Error += sizeof(typename genType::value_type) == sizeof(genType) ? 0 : 1;
-	Error += genType().length() == 1 ? 0 : 1;
-	Error += genType::length() == 1 ? 0 : 1;
+	Error += GLM_CHECK(sizeof(typename genType::value_type) == sizeof(genType));
+	Error += GLM_CHECK(genType().length() == 1);
+	Error += GLM_CHECK(genType::length() == 1);
 
 	return Error;
 }
@@ -126,10 +127,10 @@ static int test_relational()
 	genType const B(1);
 	genType const C(0);
 
-	Error += A == B ? 0 : 1;
-	Error += A != C ? 0 : 1;
-	Error += all(equal(A, B)) ? 0 : 1;
-	Error += any(notEqual(A, C)) ? 0 : 1;
+	Error += GLM_CHECK(A == B);
+	Error += GLM_CHECK(A != C);
+	Error += GLM_CHECK(all(equal(A, B)));
+	Error += GLM_CHECK(any(notEqual(A, C)));
 
 	return Error;
 }
@@ -138,53 +139,53 @@ int main()
 {
 	int Error = 0;
 
-	Error += test_operators<glm::ivec1>();
-	Error += test_operators<glm::i8vec1>();
-	Error += test_operators<glm::i16vec1>();
-	Error += test_operators<glm::i32vec1>();
-	Error += test_operators<glm::i64vec1>();
+	Error += GLM_TEST(test_operators<glm::ivec1>());
+	Error += GLM_TEST(test_operators<glm::i8vec1>());
+	Error += GLM_TEST(test_operators<glm::i16vec1>());
+	Error += GLM_TEST(test_operators<glm::i32vec1>());
+	Error += GLM_TEST(test_operators<glm::i64vec1>());
 
-	Error += test_ctor<glm::ivec1>();
-	Error += test_ctor<glm::i8vec1>();
-	Error += test_ctor<glm::i16vec1>();
-	Error += test_ctor<glm::i32vec1>();
-	Error += test_ctor<glm::i64vec1>();
+	Error += GLM_TEST(test_ctor<glm::ivec1>());
+	Error += GLM_TEST(test_ctor<glm::i8vec1>());
+	Error += GLM_TEST(test_ctor<glm::i16vec1>());
+	Error += GLM_TEST(test_ctor<glm::i32vec1>());
+	Error += GLM_TEST(test_ctor<glm::i64vec1>());
 
-	Error += test_size<glm::ivec1>();
-	Error += test_size<glm::i8vec1>();
-	Error += test_size<glm::i16vec1>();
-	Error += test_size<glm::i32vec1>();
-	Error += test_size<glm::i64vec1>();
+	Error += GLM_TEST(test_size<glm::ivec1>());
+	Error += GLM_TEST(test_size<glm::i8vec1>());
+	Error += GLM_TEST(test_size<glm::i16vec1>());
+	Error += GLM_TEST(test_size<glm::i32vec1>());
+	Error += GLM_TEST(test_size<glm::i64vec1>());
 
-	Error += test_relational<glm::ivec1>();
-	Error += test_relational<glm::i8vec1>();
-	Error += test_relational<glm::i16vec1>();
-	Error += test_relational<glm::i32vec1>();
-	Error += test_relational<glm::i64vec1>();
+	Error += GLM_TEST(test_relational<glm::ivec1>());
+	Error += GLM_TEST(test_relational<glm::i8vec1>());
+	Error += GLM_TEST(test_relational<glm::i16vec1>());
+	Error += GLM_TEST(test_relational<glm::i32vec1>());
+	Error += GLM_TEST(test_relational<glm::i64vec1>());
 
-	Error += test_operators<glm::uvec1>();
-	Error += test_operators<glm::u8vec1>();
-	Error += test_operators<glm::u16vec1>();
-	Error += test_operators<glm::u32vec1>();
-	Error += test_operators<glm::u64vec1>();
+	Error += GLM_TEST(test_operators<glm::uvec1>());
+	Error += GLM_TEST(test_operators<glm::u8vec1>());
+	Error += GLM_TEST(test_operators<glm::u16vec1>());
+	Error += GLM_TEST(test_operators<glm::u32vec1>());
+	Error += GLM_TEST(test_operators<glm::u64vec1>());
 
-	Error += test_ctor<glm::uvec1>();
-	Error += test_ctor<glm::u8vec1>();
-	Error += test_ctor<glm::u16vec1>();
-	Error += test_ctor<glm::u32vec1>();
-	Error += test_ctor<glm::u64vec1>();
+	Error += GLM_TEST(test_ctor<glm::uvec1>());
+	Error += GLM_TEST(test_ctor<glm::u8vec1>());
+	Error += GLM_TEST(test_ctor<glm::u16vec1>());
+	Error += GLM_TEST(test_ctor<glm::u32vec1>());
+	Error += GLM_TEST(test_ctor<glm::u64vec1>());
 
-	Error += test_size<glm::uvec1>();
-	Error += test_size<glm::u8vec1>();
-	Error += test_size<glm::u16vec1>();
-	Error += test_size<glm::u32vec1>();
-	Error += test_size<glm::u64vec1>();
+	Error += GLM_TEST(test_size<glm::uvec1>());
+	Error += GLM_TEST(test_size<glm::u8vec1>());
+	Error += GLM_TEST(test_size<glm::u16vec1>());
+	Error += GLM_TEST(test_size<glm::u32vec1>());
+	Error += GLM_TEST(test_size<glm::u64vec1>());
 
-	Error += test_relational<glm::uvec1>();
-	Error += test_relational<glm::u8vec1>();
-	Error += test_relational<glm::u16vec1>();
-	Error += test_relational<glm::u32vec1>();
-	Error += test_relational<glm::u64vec1>();
+	Error += GLM_TEST(test_relational<glm::uvec1>());
+	Error += GLM_TEST(test_relational<glm::u8vec1>());
+	Error += GLM_TEST(test_relational<glm::u16vec1>());
+	Error += GLM_TEST(test_relational<glm::u32vec1>());
+	Error += GLM_TEST(test_relational<glm::u64vec1>());
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }

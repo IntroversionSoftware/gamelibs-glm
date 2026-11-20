@@ -1,4 +1,5 @@
 ﻿#include <glm/ext/quaternion_trigonometric.hpp>
+#include "glm_test.hpp"
 #include <glm/ext/quaternion_float.hpp>
 #include <glm/ext/vector_relational.hpp>
 #include <glm/ext/scalar_relational.hpp>
@@ -231,13 +232,13 @@ int main()
 #endif
 		<< std::endl << std::endl;
 
-	Error += test_angle();
-	Error += test_angleAxis();
+	Error += GLM_TEST(test_angle());
+	Error += GLM_TEST(test_angleAxis());
 
 	if (Error == 0)
 		std::cout << "\nAll tests passed!" << std::endl;
 	else
 		std::cout << "\nFailed tests: " << Error << std::endl;
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }

@@ -1,4 +1,5 @@
 #define GLM_ENABLE_EXPERIMENTAL
+#include "glm_test.hpp"
 #include <glm/gtx/functions.hpp>
 #include <glm/ext/vector_float2.hpp>
 #include <vector>
@@ -29,9 +30,9 @@ int main()
 {
 	int Error = 0;
 
-	Error += test_gauss_1d();
-	Error += test_gauss_2d();
+	Error += GLM_TEST(test_gauss_1d());
+	Error += GLM_TEST(test_gauss_2d());
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }
 

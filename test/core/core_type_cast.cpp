@@ -1,3 +1,4 @@
+#include "glm_test.hpp"
 #include <glm/gtc/constants.hpp>
 #include <glm/ext/vector_relational.hpp>
 #include <glm/glm.hpp>
@@ -25,10 +26,10 @@ static int test_vec2_cast()
 	glm::mediump_vec2 G = static_cast<glm::mediump_vec2>(A);
 	glm::highp_vec2 H = static_cast<glm::highp_vec2>(A);
 
-	Error += glm::all(glm::equal(A, E, glm::epsilon<float>())) ? 0 : 1;
-	Error += glm::all(glm::equal(B, F, glm::epsilon<float>())) ? 0 : 1;
-	Error += glm::all(glm::equal(C, G, glm::epsilon<float>())) ? 0 : 1;
-	Error += glm::all(glm::equal(D, H, glm::epsilon<float>())) ? 0 : 1;
+	Error += GLM_CHECK(glm::all(glm::equal(A, E, glm::epsilon<float>())));
+	Error += GLM_CHECK(glm::all(glm::equal(B, F, glm::epsilon<float>())));
+	Error += GLM_CHECK(glm::all(glm::equal(C, G, glm::epsilon<float>())));
+	Error += GLM_CHECK(glm::all(glm::equal(D, H, glm::epsilon<float>())));
 
 	my_vec2 I;
 	I.x = 1.0f;
@@ -36,11 +37,11 @@ static int test_vec2_cast()
 	glm::vec2 J0 = static_cast<glm::vec2>(I);
 	glm::vec2 J1(1.0f, 2.0f);
 
-	Error += glm::all(glm::equal(J1, J0, glm::epsilon<float>())) ? 0 : 1;
+	Error += GLM_CHECK(glm::all(glm::equal(J1, J0, glm::epsilon<float>())));
 
 	glm::vec2 K(7.8f);
 	glm::vec2 L(7.8f, 7.8f);
-	Error += glm::all(glm::equal(K, L, glm::epsilon<float>())) ? 0 : 1;
+	Error += GLM_CHECK(glm::all(glm::equal(K, L, glm::epsilon<float>())));
 
 	return Error;
 }
@@ -59,10 +60,10 @@ static int test_vec3_cast()
 
 	int Error(0);
 
-	Error += glm::all(glm::equal(A, E, glm::epsilon<float>())) ? 0 : 1;
-	Error += glm::all(glm::equal(B, F, glm::epsilon<float>())) ? 0 : 1;
-	Error += glm::all(glm::equal(C, G, glm::epsilon<float>())) ? 0 : 1;
-	Error += glm::all(glm::equal(D, H, glm::epsilon<float>())) ? 0 : 1;
+	Error += GLM_CHECK(glm::all(glm::equal(A, E, glm::epsilon<float>())));
+	Error += GLM_CHECK(glm::all(glm::equal(B, F, glm::epsilon<float>())));
+	Error += GLM_CHECK(glm::all(glm::equal(C, G, glm::epsilon<float>())));
+	Error += GLM_CHECK(glm::all(glm::equal(D, H, glm::epsilon<float>())));
 
 	return Error;
 }
@@ -81,10 +82,10 @@ static int test_vec4_cast()
 
 	int Error(0);
 
-	Error += glm::all(glm::equal(A, E, glm::epsilon<float>())) ? 0 : 1;
-	Error += glm::all(glm::equal(B, F, glm::epsilon<float>())) ? 0 : 1;
-	Error += glm::all(glm::equal(C, G, glm::epsilon<float>())) ? 0 : 1;
-	Error += glm::all(glm::equal(D, H, glm::epsilon<float>())) ? 0 : 1;
+	Error += GLM_CHECK(glm::all(glm::equal(A, E, glm::epsilon<float>())));
+	Error += GLM_CHECK(glm::all(glm::equal(B, F, glm::epsilon<float>())));
+	Error += GLM_CHECK(glm::all(glm::equal(C, G, glm::epsilon<float>())));
+	Error += GLM_CHECK(glm::all(glm::equal(D, H, glm::epsilon<float>())));
 
 	return Error;
 }
@@ -145,10 +146,10 @@ int main()
 {
 	int Error = 0;
 
-	Error += test_std_copy();
-	Error += test_vec2_cast();
-	Error += test_vec3_cast();
-	Error += test_vec4_cast();
+	Error += GLM_TEST(test_std_copy());
+	Error += GLM_TEST(test_vec2_cast());
+	Error += GLM_TEST(test_vec3_cast());
+	Error += GLM_TEST(test_vec4_cast());
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }

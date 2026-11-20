@@ -1,3 +1,4 @@
+#include "glm_test.hpp"
 #include <glm/ext/scalar_packing.hpp>
 #include <glm/ext/scalar_relational.hpp>
 
@@ -21,8 +22,8 @@ int main()
 {
 	int Error = 0;
 
-	Error += test_packUnorm();
-	Error += test_packSnorm();
+	Error += GLM_TEST(test_packUnorm());
+	Error += GLM_TEST(test_packSnorm());
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }

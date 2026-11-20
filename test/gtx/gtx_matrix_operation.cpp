@@ -1,4 +1,5 @@
 #define GLM_ENABLE_EXPERIMENTAL
+#include "glm_test.hpp"
 #include <glm/glm.hpp>
 #include <glm/gtc/epsilon.hpp>
 #include <glm/gtx/matrix_operation.hpp>
@@ -80,7 +81,7 @@ int main()
 {
 	int Error = 0;
 
-	Error += test_adjugate();
+	Error += GLM_TEST(test_adjugate());
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }

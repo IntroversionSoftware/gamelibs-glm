@@ -1,3 +1,4 @@
+#include "glm_test.hpp"
 #include <glm/glm.hpp>
 #include <cstdio>
 #include <cstdlib>     // To define "exit", req'd by XLC.

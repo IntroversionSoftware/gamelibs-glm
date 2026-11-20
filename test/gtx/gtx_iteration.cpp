@@ -1,4 +1,5 @@
 #define GLM_ENABLE_EXPERIMENTAL
+#include "glm_test.hpp"
 #include <glm/gtx/iteration.hpp>
 #include <iterator>
 #include <algorithm>
@@ -197,24 +198,24 @@ int main()
 	Error += (4 * 3 != get_rev_iter_distance<const pmat<4, 3>>());
 	Error += (4 * 4 != get_rev_iter_distance<const pmat<4, 4>>());
 
-	Error += sumVec<1>();
-	Error += sumVec<2>();
-	Error += sumVec<3>();
-	Error += sumVec<4>();
+	Error += GLM_TEST(sumVec<1>());
+	Error += GLM_TEST(sumVec<2>());
+	Error += GLM_TEST(sumVec<3>());
+	Error += GLM_TEST(sumVec<4>());
 
-	Error += sumMat<2, 2>();
-	Error += sumMat<2, 3>();
-	Error += sumMat<2, 4>();
+	Error += GLM_TEST(sumMat<2, 2>());
+	Error += GLM_TEST(sumMat<2, 3>());
+	Error += GLM_TEST(sumMat<2, 4>());
 
-	Error += sumMat<3, 2>();
-	Error += sumMat<3, 3>();
-	Error += sumMat<3, 4>();
+	Error += GLM_TEST(sumMat<3, 2>());
+	Error += GLM_TEST(sumMat<3, 3>());
+	Error += GLM_TEST(sumMat<3, 4>());
 
-	Error += sumMat<4, 2>();
-	Error += sumMat<4, 3>();
-	Error += sumMat<4, 4>();
+	Error += GLM_TEST(sumMat<4, 2>());
+	Error += GLM_TEST(sumMat<4, 3>());
+	Error += GLM_TEST(sumMat<4, 4>());
 
-	Error += sumQuat();
+	Error += GLM_TEST(sumQuat());
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }

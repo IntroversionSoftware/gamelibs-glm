@@ -1,3 +1,4 @@
+#include "glm_test.hpp"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/constants.hpp>
 #include <glm/ext/matrix_relational.hpp>
@@ -151,11 +152,11 @@ int main()
 {
 	int Error = 0;
 
-	Error += test_translate();
-	Error += test_tweakedInfinitePerspective();
-	Error += test_pick();
-	Error += test_perspective();
-	Error += test_infinitePerspective();
+	Error += GLM_TEST(test_translate());
+	Error += GLM_TEST(test_tweakedInfinitePerspective());
+	Error += GLM_TEST(test_pick());
+	Error += GLM_TEST(test_perspective());
+	Error += GLM_TEST(test_infinitePerspective());
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }

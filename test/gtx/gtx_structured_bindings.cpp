@@ -1,4 +1,5 @@
 #define GLM_ENABLE_EXPERIMENTAL
+#include "glm_test.hpp"
 #include <glm/gtx/structured_bindings.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/vec1.hpp>
@@ -276,91 +277,91 @@ static int test_const_structured_quat() {
 int main()
 {
 	int Error = 0;
-	Error += test_vec1();
-	Error += test_vec2();
-	Error += test_vec3();
-	Error += test_vec4();
+	Error += GLM_TEST(test_vec1());
+	Error += GLM_TEST(test_vec2());
+	Error += GLM_TEST(test_vec3());
+	Error += GLM_TEST(test_vec4());
 
-	Error += test_const_vec1();
-	Error += test_const_vec2();
-	Error += test_const_vec3();
-	Error += test_const_vec4();
-
-
-	Error += test_quat();
-	Error += test_const_quat();
+	Error += GLM_TEST(test_const_vec1());
+	Error += GLM_TEST(test_const_vec2());
+	Error += GLM_TEST(test_const_vec3());
+	Error += GLM_TEST(test_const_vec4());
 
 
-	Error += test_mat2xR<2>();
-	Error += test_const_mat2xR<2>();
+	Error += GLM_TEST(test_quat());
+	Error += GLM_TEST(test_const_quat());
 
-	Error += test_mat2xR<3>();
-	Error += test_const_mat2xR<3>();
 
-	Error += test_mat2xR<4>();
-	Error += test_const_mat2xR<4>();
+	Error += GLM_TEST(test_mat2xR<2>());
+	Error += GLM_TEST(test_const_mat2xR<2>());
 
-	Error += test_mat3xR<2>();
-	Error += test_const_mat3xR<2>();
+	Error += GLM_TEST(test_mat2xR<3>());
+	Error += GLM_TEST(test_const_mat2xR<3>());
 
-	Error += test_mat3xR<3>();
-	Error += test_const_mat3xR<3>();
+	Error += GLM_TEST(test_mat2xR<4>());
+	Error += GLM_TEST(test_const_mat2xR<4>());
 
-	Error += test_mat3xR<4>();
-	Error += test_const_mat3xR<4>();
+	Error += GLM_TEST(test_mat3xR<2>());
+	Error += GLM_TEST(test_const_mat3xR<2>());
 
-	Error += test_mat4xR<2>();
-	Error += test_const_mat4xR<2>();
+	Error += GLM_TEST(test_mat3xR<3>());
+	Error += GLM_TEST(test_const_mat3xR<3>());
 
-	Error += test_mat4xR<3>();
-	Error += test_const_mat4xR<3>();
+	Error += GLM_TEST(test_mat3xR<4>());
+	Error += GLM_TEST(test_const_mat3xR<4>());
 
-	Error += test_mat4xR<4>();
-	Error += test_const_mat4xR<4>();
+	Error += GLM_TEST(test_mat4xR<2>());
+	Error += GLM_TEST(test_const_mat4xR<2>());
+
+	Error += GLM_TEST(test_mat4xR<3>());
+	Error += GLM_TEST(test_const_mat4xR<3>());
+
+	Error += GLM_TEST(test_mat4xR<4>());
+	Error += GLM_TEST(test_const_mat4xR<4>());
 
 #ifdef __cpp_structured_bindings
 #if __cpp_structured_bindings >= 201606L
-	Error += test_structured_vec1();
-	Error += test_structured_vec2();
-	Error += test_structured_vec3();
-	Error += test_structured_vec4();
+	Error += GLM_TEST(test_structured_vec1());
+	Error += GLM_TEST(test_structured_vec2());
+	Error += GLM_TEST(test_structured_vec3());
+	Error += GLM_TEST(test_structured_vec4());
 
-	Error += test_const_structured_vec1();
-	Error += test_const_structured_vec2();
-	Error += test_const_structured_vec3();
-	Error += test_const_structured_vec4();
+	Error += GLM_TEST(test_const_structured_vec1());
+	Error += GLM_TEST(test_const_structured_vec2());
+	Error += GLM_TEST(test_const_structured_vec3());
+	Error += GLM_TEST(test_const_structured_vec4());
 
-	Error += test_structured_quat();
-	Error += test_const_structured_quat();
+	Error += GLM_TEST(test_structured_quat());
+	Error += GLM_TEST(test_const_structured_quat());
 
-	Error += test_structured_mat2xR<2>();
-	Error += test_const_structured_mat2xR<2>();
+	Error += GLM_TEST(test_structured_mat2xR<2>());
+	Error += GLM_TEST(test_const_structured_mat2xR<2>());
 
-	Error += test_structured_mat2xR<3>();
-	Error += test_const_structured_mat2xR<3>();
+	Error += GLM_TEST(test_structured_mat2xR<3>());
+	Error += GLM_TEST(test_const_structured_mat2xR<3>());
 
-	Error += test_structured_mat2xR<4>();
-	Error += test_const_structured_mat2xR<4>();
+	Error += GLM_TEST(test_structured_mat2xR<4>());
+	Error += GLM_TEST(test_const_structured_mat2xR<4>());
 
-	Error += test_structured_mat3xR<2>();
-	Error += test_const_structured_mat3xR<2>();
+	Error += GLM_TEST(test_structured_mat3xR<2>());
+	Error += GLM_TEST(test_const_structured_mat3xR<2>());
 
-	Error += test_structured_mat3xR<3>();
-	Error += test_const_structured_mat3xR<3>();
+	Error += GLM_TEST(test_structured_mat3xR<3>());
+	Error += GLM_TEST(test_const_structured_mat3xR<3>());
 
-	Error += test_structured_mat3xR<4>();
-	Error += test_const_structured_mat3xR<4>();
+	Error += GLM_TEST(test_structured_mat3xR<4>());
+	Error += GLM_TEST(test_const_structured_mat3xR<4>());
 
-	Error += test_structured_mat4xR<2>();
-	Error += test_const_structured_mat4xR<2>();
+	Error += GLM_TEST(test_structured_mat4xR<2>());
+	Error += GLM_TEST(test_const_structured_mat4xR<2>());
 
-	Error += test_structured_mat4xR<3>();
-	Error += test_const_structured_mat4xR<3>();
+	Error += GLM_TEST(test_structured_mat4xR<3>());
+	Error += GLM_TEST(test_const_structured_mat4xR<3>());
 
-	Error += test_structured_mat4xR<4>();
-	Error += test_const_structured_mat4xR<4>();
+	Error += GLM_TEST(test_structured_mat4xR<4>());
+	Error += GLM_TEST(test_const_structured_mat4xR<4>());
 
 #endif
 #endif
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }

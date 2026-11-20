@@ -1,6 +1,7 @@
 #if !defined(GLM_FORCE_PURE) && !defined(GLM_FORCE_DEFAULT_ALIGNED_GENTYPES)
 #define GLM_FORCE_DEFAULT_ALIGNED_GENTYPES
 #endif
+#include "glm_test.hpp"
 #include <glm/gtc/random.hpp>
 #include <glm/gtc/epsilon.hpp>
 #include <glm/gtc/type_precision.hpp>
@@ -34,8 +35,8 @@ static int test_linearRand()
 				assert(!Error);
 			}
 
-			Error += glm::all(glm::equal(AMin, glm::u8vec2(Min))) ? 0 : 1;
-			Error += glm::all(glm::equal(AMax, glm::u8vec2(Max))) ? 0 : 1;
+			Error += GLM_CHECK(glm::all(glm::equal(AMin, glm::u8vec2(Min))));
+			Error += GLM_CHECK(glm::all(glm::equal(AMax, glm::u8vec2(Max))));
 			assert(!Error);
 		}
 
@@ -55,8 +56,8 @@ static int test_linearRand()
 				assert(!Error);
 			}
 
-			Error += glm::all(glm::equal(BMin, glm::u16vec2(Min))) ? 0 : 1;
-			Error += glm::all(glm::equal(BMax, glm::u16vec2(Max))) ? 0 : 1;
+			Error += GLM_CHECK(glm::all(glm::equal(BMin, glm::u16vec2(Min))));
+			Error += GLM_CHECK(glm::all(glm::equal(BMax, glm::u16vec2(Max))));
 			assert(!Error);
 		}
 
@@ -76,8 +77,8 @@ static int test_linearRand()
 				assert(!Error);
 			}
 
-			Error += glm::all(glm::equal(CMin, glm::u32vec2(Min))) ? 0 : 1;
-			Error += glm::all(glm::equal(CMax, glm::u32vec2(Max))) ? 0 : 1;
+			Error += GLM_CHECK(glm::all(glm::equal(CMin, glm::u32vec2(Min))));
+			Error += GLM_CHECK(glm::all(glm::equal(CMax, glm::u32vec2(Max))));
 			assert(!Error);
 		}
 
@@ -97,8 +98,8 @@ static int test_linearRand()
 				assert(!Error);
 			}
 
-			Error += glm::all(glm::equal(DMin, glm::u64vec2(Min))) ? 0 : 1;
-			Error += glm::all(glm::equal(DMax, glm::u64vec2(Max))) ? 0 : 1;
+			Error += GLM_CHECK(glm::all(glm::equal(DMin, glm::u64vec2(Min))));
+			Error += GLM_CHECK(glm::all(glm::equal(DMax, glm::u64vec2(Max))));
 			assert(!Error);
 		}
 	}
@@ -120,8 +121,8 @@ static int test_linearRand()
 				assert(!Error);
 			}
 
-			Error += glm::all(glm::equal(AMin, glm::i8vec2(Min))) ? 0 : 1;
-			Error += glm::all(glm::equal(AMax, glm::i8vec2(Max))) ? 0 : 1;
+			Error += GLM_CHECK(glm::all(glm::equal(AMin, glm::i8vec2(Min))));
+			Error += GLM_CHECK(glm::all(glm::equal(AMax, glm::i8vec2(Max))));
 			assert(!Error);
 		}
 
@@ -141,8 +142,8 @@ static int test_linearRand()
 				assert(!Error);
 			}
 
-			Error += glm::all(glm::equal(BMin, glm::i16vec2(Min))) ? 0 : 1;
-			Error += glm::all(glm::equal(BMax, glm::i16vec2(Max))) ? 0 : 1;
+			Error += GLM_CHECK(glm::all(glm::equal(BMin, glm::i16vec2(Min))));
+			Error += GLM_CHECK(glm::all(glm::equal(BMax, glm::i16vec2(Max))));
 			assert(!Error);
 		}
 
@@ -162,8 +163,8 @@ static int test_linearRand()
 				assert(!Error);
 			}
 
-			Error += glm::all(glm::equal(CMin, glm::i32vec2(Min))) ? 0 : 1;
-			Error += glm::all(glm::equal(CMax, glm::i32vec2(Max))) ? 0 : 1;
+			Error += GLM_CHECK(glm::all(glm::equal(CMin, glm::i32vec2(Min))));
+			Error += GLM_CHECK(glm::all(glm::equal(CMax, glm::i32vec2(Max))));
 			assert(!Error);
 		}
 
@@ -183,8 +184,8 @@ static int test_linearRand()
 				assert(!Error);
 			}
 
-			Error += glm::all(glm::equal(DMin, glm::i64vec2(Min))) ? 0 : 1;
-			Error += glm::all(glm::equal(DMax, glm::i64vec2(Max))) ? 0 : 1;
+			Error += GLM_CHECK(glm::all(glm::equal(DMin, glm::i64vec2(Min))));
+			Error += GLM_CHECK(glm::all(glm::equal(DMax, glm::i64vec2(Max))));
 			assert(!Error);
 		}
 	}
@@ -238,8 +239,8 @@ static int test_circularRand()
 			ResultDouble += glm::length(glm::circularRand(Radius));
 		}
 
-		Error += glm::epsilonEqual(ResultFloat, float(Max), 0.01f) ? 0 : 1;
-		Error += glm::epsilonEqual(ResultDouble, double(Max) * double(Radius), 0.01) ? 0 : 1;
+		Error += GLM_CHECK(glm::epsilonEqual(ResultFloat, float(Max), 0.01f));
+		Error += GLM_CHECK(glm::epsilonEqual(ResultDouble, double(Max) * double(Radius), 0.01));
 		assert(!Error);
 	}
 
@@ -269,12 +270,12 @@ static int test_sphericalRand()
 			ResultDoubleC += glm::length(glm::sphericalRand(3.0));
 		}
 
-		Error += glm::epsilonEqual(ResultFloatA, float(Max), 0.01f) ? 0 : 1;
-		Error += glm::epsilonEqual(ResultDoubleA, double(Max), 0.0001) ? 0 : 1;
-		Error += glm::epsilonEqual(ResultFloatB, float(Max * 2), 0.01f) ? 0 : 1;
-		Error += glm::epsilonEqual(ResultDoubleB, double(Max * 2), 0.0001) ? 0 : 1;
-		Error += glm::epsilonEqual(ResultFloatC, float(Max * 3), 0.01f) ? 0 : 1;
-		Error += glm::epsilonEqual(ResultDoubleC, double(Max * 3), 0.01) ? 0 : 1;
+		Error += GLM_CHECK(glm::epsilonEqual(ResultFloatA, float(Max), 0.01f));
+		Error += GLM_CHECK(glm::epsilonEqual(ResultDoubleA, double(Max), 0.0001));
+		Error += GLM_CHECK(glm::epsilonEqual(ResultFloatB, float(Max * 2), 0.01f));
+		Error += GLM_CHECK(glm::epsilonEqual(ResultDoubleB, double(Max * 2), 0.0001));
+		Error += GLM_CHECK(glm::epsilonEqual(ResultFloatC, float(Max * 3), 0.01f));
+		Error += GLM_CHECK(glm::epsilonEqual(ResultDoubleC, double(Max * 3), 0.01));
 		assert(!Error);
 	}
 
@@ -295,8 +296,8 @@ static int test_diskRand()
 			ResultDouble += glm::length(glm::diskRand(2.0));
 		}
 
-		Error += ResultFloat < float(TestSamples) * 2.f ? 0 : 1;
-		Error += ResultDouble < double(TestSamples) * 2.0 ? 0 : 1;
+		Error += GLM_CHECK(ResultFloat < float(TestSamples) * 2.f);
+		Error += GLM_CHECK(ResultDouble < double(TestSamples) * 2.0);
 		assert(!Error);
 	}
 
@@ -317,8 +318,8 @@ static int test_ballRand()
 			ResultDouble += glm::length(glm::ballRand(2.0));
 		}
 
-		Error += ResultFloat < float(TestSamples) * 2.f ? 0 : 1;
-		Error += ResultDouble < double(TestSamples) * 2.0 ? 0 : 1;
+		Error += GLM_CHECK(ResultFloat < float(TestSamples) * 2.f);
+		Error += GLM_CHECK(ResultDouble < double(TestSamples) * 2.0);
 		assert(!Error);
 	}
 
@@ -369,15 +370,15 @@ int main()
 {
 	int Error = 0;
 
-	Error += test_linearRand();
-	Error += test_circularRand();
-	Error += test_sphericalRand();
-	Error += test_diskRand();
-	Error += test_ballRand();
+	Error += GLM_TEST(test_linearRand());
+	Error += GLM_TEST(test_circularRand());
+	Error += GLM_TEST(test_sphericalRand());
+	Error += GLM_TEST(test_diskRand());
+	Error += GLM_TEST(test_ballRand());
 /*
 #if(GLM_LANG & GLM_LANG_CXX0X_FLAG)
-	Error += test_grid();
+	Error += GLM_TEST(test_grid());
 #endif
 */
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }

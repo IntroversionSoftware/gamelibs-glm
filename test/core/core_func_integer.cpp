@@ -1,3 +1,4 @@
+#include "glm_test.hpp"
 #include <glm/integer.hpp>
 #include <glm/vector_relational.hpp>
 #include <glm/ext/vector_int1.hpp>
@@ -755,7 +756,7 @@ namespace findMSB
 		for(std::size_t i = 0; i < sizeof(Data) / sizeof(type<int, int>); ++i)
 		{
 			int Result = glm::findMSB(Data[i].Value);
-			Error += Data[i].Return == Result ? 0 : 1;
+			Error += GLM_CHECK(Data[i].Return == Result);
 		}
 
 		std::clock_t Timestamps1 = std::clock();
@@ -764,7 +765,7 @@ namespace findMSB
 		for(std::size_t i = 0; i < sizeof(Data) / sizeof(type<int, int>); ++i)
 		{
 			int Result = findMSB_nlz1(Data[i].Value);
-			Error += Data[i].Return == Result ? 0 : 1;
+			Error += GLM_CHECK(Data[i].Return == Result);
 		}
 
 		std::clock_t Timestamps2 = std::clock();
@@ -773,7 +774,7 @@ namespace findMSB
 		for(std::size_t i = 0; i < sizeof(Data) / sizeof(type<int, int>); ++i)
 		{
 			int Result = findMSB_nlz2(static_cast<unsigned int>(Data[i].Value));
-			Error += Data[i].Return == Result ? 0 : 1;
+			Error += GLM_CHECK(Data[i].Return == Result);
 		}
 
 		std::clock_t Timestamps3 = std::clock();
@@ -782,7 +783,7 @@ namespace findMSB
 		for(std::size_t i = 0; i < sizeof(Data) / sizeof(type<int, int>); ++i)
 		{
 			int Result = findMSB_095(static_cast<unsigned int>(Data[i].Value));
-			Error += Data[i].Return == Result ? 0 : 1;
+			Error += GLM_CHECK(Data[i].Return == Result);
 		}
 
 		std::clock_t Timestamps4 = std::clock();
@@ -792,7 +793,7 @@ namespace findMSB
 			for(std::size_t i = 0; i < sizeof(Data) / sizeof(type<int, int>); ++i)
 			{
 				int Result = findMSB_intrinsic(Data[i].Value);
-				Error += Data[i].Return == Result ? 0 : 1;
+				Error += GLM_CHECK(Data[i].Return == Result);
 			}
 #		endif//GLM_HAS_BITSCAN_WINDOWS
 
@@ -802,7 +803,7 @@ namespace findMSB
 		for(std::size_t i = 0; i < sizeof(Data) / sizeof(type<int, int>); ++i)
 		{
 			int Result = findMSB_pop(static_cast<unsigned int>(Data[i].Value));
-			Error += Data[i].Return == Result ? 0 : 1;
+			Error += GLM_CHECK(Data[i].Return == Result);
 		}
 
 		std::clock_t Timestamps6 = std::clock();
@@ -812,7 +813,7 @@ namespace findMSB
 			for(std::size_t i = 0; i < sizeof(Data) / sizeof(type<int, int>); ++i)
 			{
 				int Result = findMSB_avx(Data[i].Value);
-				Error += Data[i].Return == Result ? 0 : 1;
+				Error += GLM_CHECK(Data[i].Return == Result);
 			}
 
 			std::clock_t Timestamps7 = std::clock();
@@ -1208,7 +1209,7 @@ namespace findLSB
 		for(std::size_t i = 0; i < sizeof(DataI32) / sizeof(entry); ++i)
 		{
 			int Result = glm::findLSB(DataI32[i].Value);
-			Error += DataI32[i].Return == Result ? 0 : 1;
+			Error += GLM_CHECK(DataI32[i].Return == Result);
 		}
 
 		std::clock_t Timestamps1 = std::clock();
@@ -1217,7 +1218,7 @@ namespace findLSB
 		for(std::size_t i = 0; i < sizeof(DataI32) / sizeof(entry); ++i)
 		{
 			int Result = findLSB_095(DataI32[i].Value);
-			Error += DataI32[i].Return == Result ? 0 : 1;
+			Error += GLM_CHECK(DataI32[i].Return == Result);
 		}
 
 		std::clock_t Timestamps2 = std::clock();
@@ -1227,7 +1228,7 @@ namespace findLSB
 			for(std::size_t i = 0; i < sizeof(DataI32) / sizeof(entry); ++i)
 			{
 				int Result = findLSB_intrinsic(DataI32[i].Value);
-				Error += DataI32[i].Return == Result ? 0 : 1;
+				Error += GLM_CHECK(DataI32[i].Return == Result);
 			}
 #		endif
 
@@ -1237,7 +1238,7 @@ namespace findLSB
 		for(std::size_t i = 0; i < sizeof(DataI32) / sizeof(entry); ++i)
 		{
 			int Result = findLSB_ntz2(DataI32[i].Value);
-			Error += DataI32[i].Return == Result ? 0 : 1;
+			Error += GLM_CHECK(DataI32[i].Return == Result);
 		}
 
 		std::clock_t Timestamps4 = std::clock();
@@ -1246,7 +1247,7 @@ namespace findLSB
 		for(std::size_t i = 0; i < sizeof(DataI32) / sizeof(entry); ++i)
 		{
 			int Result = findLSB_branchfree(DataI32[i].Value);
-			Error += DataI32[i].Return == Result ? 0 : 1;
+			Error += GLM_CHECK(DataI32[i].Return == Result);
 		}
 
 		std::clock_t Timestamps5 = std::clock();
@@ -1918,16 +1919,16 @@ int main()
 
 	int Error = 0;
 
-	Error += ::bitCount::test();
-	Error += ::bitfieldReverse::test();
-	Error += ::findMSB::test();
-	Error += ::findLSB::test();
-	Error += ::umulExtended::test();
-	Error += ::imulExtended::test();
-	Error += ::uaddCarry::test();
-	Error += ::usubBorrow::test();
-	Error += ::bitfieldInsert::test();
-	Error += ::bitfieldExtract::test();
+	Error += GLM_TEST(::bitCount::test());
+	Error += GLM_TEST(::bitfieldReverse::test());
+	Error += GLM_TEST(::findMSB::test());
+	Error += GLM_TEST(::findLSB::test());
+	Error += GLM_TEST(::umulExtended::test());
+	Error += GLM_TEST(::imulExtended::test());
+	Error += GLM_TEST(::uaddCarry::test());
+	Error += GLM_TEST(::usubBorrow::test());
+	Error += GLM_TEST(::bitfieldInsert::test());
+	Error += GLM_TEST(::bitfieldExtract::test());
 
 #ifdef GLM_TEST_PERF
 #	ifdef NDEBUG
@@ -1952,5 +1953,5 @@ int main()
 	std::cout << "Total errors: " << Error << "\n";
 	std::cout << "=======================================\n";
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }

@@ -1,4 +1,5 @@
 #define GLM_FORCE_SIZE_T_LENGTH
+#include "glm_test.hpp"
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 
@@ -16,7 +17,7 @@ int main()
 	int Error = 0;
 
 	glm::ivec4 v(1);
-	Error += add(v, v) == glm::ivec4(2) ? 0 : 1;
+	Error += GLM_CHECK(add(v, v) == glm::ivec4(2));
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }

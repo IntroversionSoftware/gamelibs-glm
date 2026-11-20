@@ -8,6 +8,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #define GLM_FORCE_RADIANS
+#include "glm_test.hpp"
 #include <glm/gtc/user_defined_type.hpp>
 
 int test_make_pointer_vec()
@@ -24,7 +25,7 @@ int main()
 {
 	int Error = 0;
 
-	Error += test_make_pointer_vec();
+	Error += GLM_TEST(test_make_pointer_vec());
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }

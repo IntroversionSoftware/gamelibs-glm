@@ -1,4 +1,5 @@
 #define GLM_FORCE_SWIZZLE
+#include "glm_test.hpp"
 #include <glm/ext/scalar_relational.hpp>
 #include <glm/ext/vector_relational.hpp>
 #include <glm/glm.hpp>
@@ -13,8 +14,8 @@ static int test_ivec2_swizzle()
 		glm::ivec2 B = A.yx();
 		glm::ivec2 C = B.yx();
 
-		Error += A != B ? 0 : 1;
-		Error += A == C ? 0 : 1;
+		Error += GLM_CHECK(A != B);
+		Error += GLM_CHECK(A == C);
 	}
 #	endif//GLM_CONFIG_SWIZZLE
 
@@ -24,20 +25,20 @@ static int test_ivec2_swizzle()
 		glm::ivec2 B = A.yx;
 		glm::ivec2 C = A.yx;
 
-		Error += A != B ? 0 : 1;
-		Error += B == C ? 0 : 1;
+		Error += GLM_CHECK(A != B);
+		Error += GLM_CHECK(B == C);
 
 		B.xy = B.yx;
 		C.xy = C.yx;
 
-		Error += B == C ? 0 : 1;
+		Error += GLM_CHECK(B == C);
 
 		glm::ivec2 D(0, 0);
 		D.yx = A.xy;
-		Error += A.yx() == D ? 0 : 1;
+		Error += GLM_CHECK(A.yx() == D);
 
 		glm::ivec2 E = A.yx;
-		Error += E == D ? 0 : 1;
+		Error += GLM_CHECK(E == D);
 	}
 #	endif//GLM_CONFIG_SWIZZLE
 
@@ -54,8 +55,8 @@ static int test_ivec3_swizzle()
 		glm::ivec3 B = A.zyx();
 		glm::ivec3 C = B.zyx();
 
-		Error += A != B ? 0 : 1;
-		Error += A == C ? 0 : 1;
+		Error += GLM_CHECK(A != B);
+		Error += GLM_CHECK(A == C);
 	}
 #	endif
 
@@ -65,44 +66,44 @@ static int test_ivec3_swizzle()
 		glm::ivec2 B = A.yx;
 		glm::ivec2 C = A.yx;
 
-		Error += A.yx() == B ? 0 : 1;
-		Error += B == C ? 0 : 1;
+		Error += GLM_CHECK(A.yx() == B);
+		Error += GLM_CHECK(B == C);
 
 		B.xy = B.yx;
 		C.xy = C.yx;
 
-		Error += B == C ? 0 : 1;
+		Error += GLM_CHECK(B == C);
 
 		glm::ivec2 D(0, 0);
 		D.yx = A.xy;
 
-		Error += A.yx() == D ? 0 : 1;
+		Error += GLM_CHECK(A.yx() == D);
 
 		glm::ivec2 E(0, 0);
 		E.xy = A.xy();
 
-		Error += E == A.xy() ? 0 : 1;
-		Error += E.xy() == A.xy() ? 0 : 1;
+		Error += GLM_CHECK(E == A.xy());
+		Error += GLM_CHECK(E.xy() == A.xy());
 
 		glm::ivec3 const F = A.xxx + A.xxx;
-		Error += F == glm::ivec3(2) ? 0 : 1;
+		Error += GLM_CHECK(F == glm::ivec3(2));
 
 		glm::ivec3 const G = A.xxx - A.xxx;
-		Error += G == glm::ivec3(0) ? 0 : 1;
+		Error += GLM_CHECK(G == glm::ivec3(0));
 
 		glm::ivec3 const H = A.xxx * A.xxx;
-		Error += H == glm::ivec3(1) ? 0 : 1;
+		Error += GLM_CHECK(H == glm::ivec3(1));
 
 		glm::ivec3 const I = A.xxx / A.xxx;
-		Error += I == glm::ivec3(1) ? 0 : 1;
+		Error += GLM_CHECK(I == glm::ivec3(1));
 
 		glm::ivec3 J(1, 2, 3);
 		J.xyz += glm::ivec3(1);
-		Error += J == glm::ivec3(2, 3, 4) ? 0 : 1;
+		Error += GLM_CHECK(J == glm::ivec3(2, 3, 4));
 
 		glm::ivec3 K(1, 2, 3);
 		K.xyz += A.xyz;
-		Error += K == glm::ivec3(2, 4, 6) ? 0 : 1;
+		Error += GLM_CHECK(K == glm::ivec3(2, 4, 6));
 	}
 #	endif
 
@@ -119,8 +120,8 @@ static int test_ivec4_swizzle()
 		glm::ivec4 B = A.wzyx();
 		glm::ivec4 C = B.wzyx();
 
-		Error += A != B ? 0 : 1;
-		Error += A == C ? 0 : 1;
+		Error += GLM_CHECK(A != B);
+		Error += GLM_CHECK(A == C);
 	}
 #	endif
 
@@ -137,11 +138,11 @@ static int test_vec4_swizzle()
 		glm::vec4 B = A.wzyx();
 		glm::vec4 C = B.wzyx();
 
-		Error += glm::any(glm::notEqual(A, B, 0.0001f)) ? 0 : 1;
-		Error += glm::all(glm::equal(A, C, 0.0001f)) ? 0 : 1;
+		Error += GLM_CHECK(glm::any(glm::notEqual(A, B, 0.0001f)));
+		Error += GLM_CHECK(glm::all(glm::equal(A, C, 0.0001f)));
 
 		float D = glm::dot(C.wzyx(), C.xyzw());
-		Error += glm::equal(D, 20.f, 0.001f) ? 0 : 1;
+		Error += GLM_CHECK(glm::equal(D, 20.f, 0.001f));
 	}
 #	endif
 
@@ -152,12 +153,12 @@ int main()
 {
 	int Error = 0;
 
-	Error += test_ivec2_swizzle();
-	Error += test_ivec3_swizzle();
-	Error += test_ivec4_swizzle();
-	Error += test_vec4_swizzle();
+	Error += GLM_TEST(test_ivec2_swizzle());
+	Error += GLM_TEST(test_ivec3_swizzle());
+	Error += GLM_TEST(test_ivec4_swizzle());
+	Error += GLM_TEST(test_vec4_swizzle());
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }
 
 

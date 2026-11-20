@@ -29,6 +29,7 @@
 /// @author Christophe Riccio
 ///////////////////////////////////////////////////////////////////////////////////
 
+#include "glm_test.hpp"
 #include <glm/glm.hpp>
 #include <glm/gtx/simd_vec4.hpp>
 #include <cstdio>
@@ -65,7 +66,7 @@ int main()
 {
 	int Error = 0;
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }
 
 #endif//(GLM_ARCH != GLM_ARCH_PURE)

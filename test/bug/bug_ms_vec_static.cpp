@@ -1,3 +1,4 @@
+#include "glm_test.hpp"
 #include <glm/glm.hpp>
 
 #if GLM_CONFIG_ANONYMOUS_STRUCT == GLM_ENABLE

@@ -1,4 +1,5 @@
 #define GLM_FORCE_INLINE
+#include "glm_test.hpp"
 #include <glm/ext/matrix_float2x2.hpp>
 #include <glm/ext/matrix_double2x2.hpp>
 #include <glm/ext/matrix_float3x3.hpp>
@@ -78,7 +79,7 @@ static int comp_vec2_mul_mat2(std::size_t Samples)
 	{
 		packedVecType const A = SISD[i];
 		packedVecType const B = packedVecType(SIMD[i]);
-		Error += glm::all(glm::equal(A, B, static_cast<T>(0.001))) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(A, B, static_cast<T>(0.001))));
 	}
 
 	return Error;
@@ -104,7 +105,7 @@ static int comp_vec3_mul_mat3(std::size_t Samples)
 	{
 		packedVecType const A = SISD[i];
 		packedVecType const B = SIMD[i];
-		Error += glm::all(glm::equal(A, B, static_cast<T>(0.001))) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(A, B, static_cast<T>(0.001))));
 	}
 
 	return Error;
@@ -130,7 +131,7 @@ static int comp_vec4_mul_mat4(std::size_t Samples)
 	{
 		packedVecType const A = SISD[i];
 		packedVecType const B = SIMD[i];
-		Error += glm::all(glm::equal(A, B, static_cast<T>(0.001))) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(A, B, static_cast<T>(0.001))));
 	}
 
 	return Error;
@@ -143,43 +144,43 @@ int main()
 	int Error = 0;
 
 	std::printf("vec2 * mat2:\n");
-	Error += comp_vec2_mul_mat2<glm::mat2, glm::vec2, glm::aligned_mat2, glm::aligned_vec2, false>(Samples);
+	Error += GLM_TEST(comp_vec2_mul_mat2<glm::mat2, glm::vec2, glm::aligned_mat2, glm::aligned_vec2, false>(Samples));
 
 	std::printf("dvec2 * dmat2:\n");
-	Error += comp_vec2_mul_mat2<glm::dmat2, glm::dvec2,glm::aligned_dmat2, glm::aligned_dvec2, false>(Samples);
+	Error += GLM_TEST(comp_vec2_mul_mat2<glm::dmat2, glm::dvec2,glm::aligned_dmat2, glm::aligned_dvec2, false>(Samples));
 
 	std::printf("vec3 * mat3:\n");
-	Error += comp_vec3_mul_mat3<glm::mat3, glm::vec3, glm::aligned_mat3, glm::aligned_vec3, false>(Samples);
+	Error += GLM_TEST(comp_vec3_mul_mat3<glm::mat3, glm::vec3, glm::aligned_mat3, glm::aligned_vec3, false>(Samples));
 
 	std::printf("dvec3 * dmat3:\n");
-	Error += comp_vec3_mul_mat3<glm::dmat3, glm::dvec3, glm::aligned_dmat3, glm::aligned_dvec3, false>(Samples);
+	Error += GLM_TEST(comp_vec3_mul_mat3<glm::dmat3, glm::dvec3, glm::aligned_dmat3, glm::aligned_dvec3, false>(Samples));
 
 	std::printf("vec4 * mat4:\n");
-	Error += comp_vec4_mul_mat4<glm::mat4, glm::vec4, glm::aligned_mat4, glm::aligned_vec4, false>(Samples);
+	Error += GLM_TEST(comp_vec4_mul_mat4<glm::mat4, glm::vec4, glm::aligned_mat4, glm::aligned_vec4, false>(Samples));
 
 	std::printf("dvec4 * dmat4:\n");
-	Error += comp_vec4_mul_mat4<glm::dmat4, glm::dvec4, glm::aligned_dmat4, glm::aligned_dvec4, false>(Samples);
+	Error += GLM_TEST(comp_vec4_mul_mat4<glm::dmat4, glm::dvec4, glm::aligned_dmat4, glm::aligned_dvec4, false>(Samples));
 
 
 	std::printf("mat2 * vec2:\n");
-	Error += comp_vec2_mul_mat2<glm::mat2, glm::vec2, glm::aligned_mat2, glm::aligned_vec2, true>(Samples);
+	Error += GLM_TEST(comp_vec2_mul_mat2<glm::mat2, glm::vec2, glm::aligned_mat2, glm::aligned_vec2, true>(Samples));
 
 	std::printf("dmat2 * dvec2 :\n");
-	Error += comp_vec2_mul_mat2<glm::dmat2, glm::dvec2, glm::aligned_dmat2, glm::aligned_dvec2, true>(Samples);
+	Error += GLM_TEST(comp_vec2_mul_mat2<glm::dmat2, glm::dvec2, glm::aligned_dmat2, glm::aligned_dvec2, true>(Samples));
 
 	std::printf("mat3 * vec3:\n");
-	Error += comp_vec3_mul_mat3<glm::mat3, glm::vec3, glm::aligned_mat3, glm::aligned_vec3, true>(Samples);
+	Error += GLM_TEST(comp_vec3_mul_mat3<glm::mat3, glm::vec3, glm::aligned_mat3, glm::aligned_vec3, true>(Samples));
 
 	std::printf("dmat3 * dvec3 :\n");
-	Error += comp_vec3_mul_mat3<glm::dmat3, glm::dvec3, glm::aligned_dmat3, glm::aligned_dvec3, true>(Samples);
+	Error += GLM_TEST(comp_vec3_mul_mat3<glm::dmat3, glm::dvec3, glm::aligned_dmat3, glm::aligned_dvec3, true>(Samples));
 
 	std::printf("mat4 * vec4 :\n");
-	Error += comp_vec4_mul_mat4<glm::mat4, glm::vec4, glm::aligned_mat4, glm::aligned_vec4, true>(Samples);
+	Error += GLM_TEST(comp_vec4_mul_mat4<glm::mat4, glm::vec4, glm::aligned_mat4, glm::aligned_vec4, true>(Samples));
 
 	std::printf("dmat4 * dvec4 :\n");
-	Error += comp_vec4_mul_mat4<glm::dmat4, glm::dvec4, glm::aligned_dmat4, glm::aligned_dvec4, true>(Samples);
+	Error += GLM_TEST(comp_vec4_mul_mat4<glm::dmat4, glm::dvec4, glm::aligned_dmat4, glm::aligned_dvec4, true>(Samples));
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }
 
 #else

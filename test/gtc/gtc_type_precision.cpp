@@ -3,6 +3,7 @@
 #ifdef GLM_FORCE_DEFAULT_ALIGNED_GENTYPES
 #	undef GLM_FORCE_DEFAULT_ALIGNED_GENTYPES
 #endif
+#include "glm_test.hpp"
 #include <glm/gtc/type_precision.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtc/constants.hpp>
@@ -243,9 +244,9 @@ static int test_fvec_precision()
 		glm::mediump_f32vec2 v3(v1);
 		glm::highp_f32vec2 v4(v1);
 
-		Error += glm::all(glm::equal(v1, glm::f32vec2(v2), glm::epsilon<float>())) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::f32vec2(v3), glm::epsilon<float>())) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::f32vec2(v4), glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::f32vec2(v2), glm::epsilon<float>())));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::f32vec2(v3), glm::epsilon<float>())));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::f32vec2(v4), glm::epsilon<float>())));
 	}
 
 	{
@@ -254,9 +255,9 @@ static int test_fvec_precision()
 		glm::mediump_f32vec3 v3(v1);
 		glm::highp_f32vec3 v4(v1);
 
-		Error += glm::all(glm::equal(v1, glm::f32vec3(v2), glm::epsilon<float>())) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::f32vec3(v3), glm::epsilon<float>())) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::f32vec3(v4), glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::f32vec3(v2), glm::epsilon<float>())));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::f32vec3(v3), glm::epsilon<float>())));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::f32vec3(v4), glm::epsilon<float>())));
 	}
 
 	{
@@ -265,9 +266,9 @@ static int test_fvec_precision()
 		glm::mediump_f32vec4 v3(v1);
 		glm::highp_f32vec4 v4(v1);
 
-		Error += glm::all(glm::equal(v1, glm::f32vec4(v2), glm::epsilon<float>())) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::f32vec4(v3), glm::epsilon<float>())) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::f32vec4(v4), glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::f32vec4(v2), glm::epsilon<float>())));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::f32vec4(v3), glm::epsilon<float>())));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::f32vec4(v4), glm::epsilon<float>())));
 	}
 
 	return Error;
@@ -283,9 +284,9 @@ static int test_dvec_precision()
 		glm::mediump_f64vec2 v3(v1);
 		glm::highp_f64vec2 v4(v1);
 
-		Error += glm::all(glm::equal(v1, glm::f64vec2(v2), glm::epsilon<double>())) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::f64vec2(v3), glm::epsilon<double>())) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::f64vec2(v4), glm::epsilon<double>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::f64vec2(v2), glm::epsilon<double>())));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::f64vec2(v3), glm::epsilon<double>())));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::f64vec2(v4), glm::epsilon<double>())));
 	}
 
 	{
@@ -294,9 +295,9 @@ static int test_dvec_precision()
 		glm::mediump_f64vec3 v3(v1);
 		glm::highp_f64vec3 v4(v1);
 
-		Error += glm::all(glm::equal(v1, glm::f64vec3(v2), glm::epsilon<double>())) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::f64vec3(v3), glm::epsilon<double>())) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::f64vec3(v4), glm::epsilon<double>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::f64vec3(v2), glm::epsilon<double>())));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::f64vec3(v3), glm::epsilon<double>())));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::f64vec3(v4), glm::epsilon<double>())));
 	}
 
 	{
@@ -305,9 +306,9 @@ static int test_dvec_precision()
 		glm::mediump_f64vec4 v3(v1);
 		glm::highp_f64vec4 v4(v1);
 
-		Error += glm::all(glm::equal(v1, glm::f64vec4(v2), glm::epsilon<double>())) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::f64vec4(v3), glm::epsilon<double>())) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::f64vec4(v4), glm::epsilon<double>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::f64vec4(v2), glm::epsilon<double>())));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::f64vec4(v3), glm::epsilon<double>())));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::f64vec4(v4), glm::epsilon<double>())));
 	}
 
 	return Error;
@@ -382,9 +383,9 @@ static int test_ivec_precision()
 		glm::mediump_i8vec2 v3(v1);
 		glm::highp_i8vec2 v4(v1);
 
-		Error += glm::all(glm::equal(v1, glm::i8vec2(v2))) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::i8vec2(v3))) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::i8vec2(v4))) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::i8vec2(v2))));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::i8vec2(v3))));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::i8vec2(v4))));
 	}
 
 	{
@@ -393,9 +394,9 @@ static int test_ivec_precision()
 		glm::mediump_i8vec3 v3(v1);
 		glm::highp_i8vec3 v4(v1);
 
-		Error += glm::all(glm::equal(v1, glm::i8vec3(v2))) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::i8vec3(v3))) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::i8vec3(v4))) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::i8vec3(v2))));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::i8vec3(v3))));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::i8vec3(v4))));
 	}
 
 	{
@@ -404,9 +405,9 @@ static int test_ivec_precision()
 		glm::mediump_i8vec4 v3(v1);
 		glm::highp_i8vec4 v4(v1);
 
-		Error += glm::all(glm::equal(v1, glm::i8vec4(v2))) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::i8vec4(v3))) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::i8vec4(v4))) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::i8vec4(v2))));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::i8vec4(v3))));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::i8vec4(v4))));
 	}
 
 	{
@@ -415,9 +416,9 @@ static int test_ivec_precision()
 		glm::mediump_i16vec2 v3(v1);
 		glm::highp_i16vec2 v4(v1);
 
-		Error += glm::all(glm::equal(v1, glm::i16vec2(v2))) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::i16vec2(v3))) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::i16vec2(v4))) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::i16vec2(v2))));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::i16vec2(v3))));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::i16vec2(v4))));
 	}
 
 	{
@@ -426,9 +427,9 @@ static int test_ivec_precision()
 		glm::mediump_i16vec3 v3(v1);
 		glm::highp_i16vec3 v4(v1);
 
-		Error += glm::all(glm::equal(v1, glm::i16vec3(v2))) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::i16vec3(v3))) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::i16vec3(v4))) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::i16vec3(v2))));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::i16vec3(v3))));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::i16vec3(v4))));
 	}
 
 	{
@@ -437,9 +438,9 @@ static int test_ivec_precision()
 		glm::mediump_i16vec4 v3(v1);
 		glm::highp_i16vec4 v4(v1);
 
-		Error += glm::all(glm::equal(v1, glm::i16vec4(v2))) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::i16vec4(v3))) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::i16vec4(v4))) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::i16vec4(v2))));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::i16vec4(v3))));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::i16vec4(v4))));
 	}
 
 	{
@@ -448,9 +449,9 @@ static int test_ivec_precision()
 		glm::mediump_i32vec2 v3(v1);
 		glm::highp_i32vec2 v4(v1);
 
-		Error += glm::all(glm::equal(v1, glm::i32vec2(v2))) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::i32vec2(v3))) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::i32vec2(v4))) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::i32vec2(v2))));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::i32vec2(v3))));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::i32vec2(v4))));
 	}
 
 	{
@@ -459,9 +460,9 @@ static int test_ivec_precision()
 		glm::mediump_i32vec3 v3(v1);
 		glm::highp_i32vec3 v4(v1);
 
-		Error += glm::all(glm::equal(v1, glm::i32vec3(v2))) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::i32vec3(v3))) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::i32vec3(v4))) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::i32vec3(v2))));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::i32vec3(v3))));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::i32vec3(v4))));
 	}
 
 	{
@@ -470,9 +471,9 @@ static int test_ivec_precision()
 		glm::mediump_i32vec4 v3(v1);
 		glm::highp_i32vec4 v4(v1);
 
-		Error += glm::all(glm::equal(v1, glm::i32vec4(v2))) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::i32vec4(v3))) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::i32vec4(v4))) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::i32vec4(v2))));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::i32vec4(v3))));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::i32vec4(v4))));
 	}
 
 	{
@@ -481,9 +482,9 @@ static int test_ivec_precision()
 		glm::mediump_i64vec2 v3(v1);
 		glm::highp_i64vec2 v4(v1);
 
-		Error += glm::all(glm::equal(v1, glm::i64vec2(v2))) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::i64vec2(v3))) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::i64vec2(v4))) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::i64vec2(v2))));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::i64vec2(v3))));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::i64vec2(v4))));
 	}
 
 	{
@@ -492,9 +493,9 @@ static int test_ivec_precision()
 		glm::mediump_i64vec3 v3(v1);
 		glm::highp_i64vec3 v4(v1);
 
-		Error += glm::all(glm::equal(v1, glm::i64vec3(v2))) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::i64vec3(v3))) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::i64vec3(v4))) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::i64vec3(v2))));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::i64vec3(v3))));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::i64vec3(v4))));
 	}
 
 	{
@@ -503,9 +504,9 @@ static int test_ivec_precision()
 		glm::mediump_i64vec4 v3(v1);
 		glm::highp_i64vec4 v4(v1);
 
-		Error += glm::all(glm::equal(v1, glm::i64vec4(v2))) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::i64vec4(v3))) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::i64vec4(v4))) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::i64vec4(v2))));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::i64vec4(v3))));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::i64vec4(v4))));
 	}
 
 	return Error;
@@ -580,9 +581,9 @@ static int test_uvec_precision()
 		glm::mediump_u8vec2 v3(v1);
 		glm::highp_u8vec2 v4(v1);
 
-		Error += glm::all(glm::equal(v1, glm::u8vec2(v2))) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::u8vec2(v3))) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::u8vec2(v4))) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::u8vec2(v2))));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::u8vec2(v3))));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::u8vec2(v4))));
 	}
 
 	{
@@ -591,9 +592,9 @@ static int test_uvec_precision()
 		glm::mediump_u8vec3 v3(v1);
 		glm::highp_u8vec3 v4(v1);
 
-		Error += glm::all(glm::equal(v1, glm::u8vec3(v2))) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::u8vec3(v3))) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::u8vec3(v4))) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::u8vec3(v2))));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::u8vec3(v3))));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::u8vec3(v4))));
 	}
 
 	{
@@ -602,9 +603,9 @@ static int test_uvec_precision()
 		glm::mediump_u8vec4 v3(v1);
 		glm::highp_u8vec4 v4(v1);
 
-		Error += glm::all(glm::equal(v1, glm::u8vec4(v2))) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::u8vec4(v3))) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::u8vec4(v4))) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::u8vec4(v2))));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::u8vec4(v3))));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::u8vec4(v4))));
 	}
 
 	{
@@ -613,9 +614,9 @@ static int test_uvec_precision()
 		glm::mediump_u16vec2 v3(v1);
 		glm::highp_u16vec2 v4(v1);
 
-		Error += glm::all(glm::equal(v1, glm::u16vec2(v2))) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::u16vec2(v3))) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::u16vec2(v4))) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::u16vec2(v2))));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::u16vec2(v3))));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::u16vec2(v4))));
 	}
 
 	{
@@ -624,9 +625,9 @@ static int test_uvec_precision()
 		glm::mediump_u16vec3 v3(v1);
 		glm::highp_u16vec3 v4(v1);
 
-		Error += glm::all(glm::equal(v1, glm::u16vec3(v2))) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::u16vec3(v3))) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::u16vec3(v4))) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::u16vec3(v2))));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::u16vec3(v3))));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::u16vec3(v4))));
 	}
 
 	{
@@ -635,9 +636,9 @@ static int test_uvec_precision()
 		glm::mediump_u16vec4 v3(v1);
 		glm::highp_u16vec4 v4(v1);
 
-		Error += glm::all(glm::equal(v1, glm::u16vec4(v2))) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::u16vec4(v3))) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::u16vec4(v4))) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::u16vec4(v2))));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::u16vec4(v3))));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::u16vec4(v4))));
 	}
 
 	{
@@ -646,9 +647,9 @@ static int test_uvec_precision()
 		glm::mediump_u32vec2 v3(v1);
 		glm::highp_u32vec2 v4(v1);
 
-		Error += glm::all(glm::equal(v1, glm::u32vec2(v2))) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::u32vec2(v3))) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::u32vec2(v4))) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::u32vec2(v2))));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::u32vec2(v3))));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::u32vec2(v4))));
 	}
 
 	{
@@ -657,9 +658,9 @@ static int test_uvec_precision()
 		glm::mediump_u32vec3 v3(v1);
 		glm::highp_u32vec3 v4(v1);
 
-		Error += glm::all(glm::equal(v1, glm::u32vec3(v2))) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::u32vec3(v3))) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::u32vec3(v4))) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::u32vec3(v2))));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::u32vec3(v3))));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::u32vec3(v4))));
 	}
 
 	{
@@ -668,9 +669,9 @@ static int test_uvec_precision()
 		glm::mediump_u32vec4 v3(v1);
 		glm::highp_u32vec4 v4(v1);
 
-		Error += glm::all(glm::equal(v1, glm::u32vec4(v2))) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::u32vec4(v3))) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::u32vec4(v4))) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::u32vec4(v2))));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::u32vec4(v3))));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::u32vec4(v4))));
 	}
 
 	{
@@ -679,9 +680,9 @@ static int test_uvec_precision()
 		glm::mediump_u64vec2 v3(v1);
 		glm::highp_u64vec2 v4(v1);
 
-		Error += glm::all(glm::equal(v1, glm::u64vec2(v2))) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::u64vec2(v3))) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::u64vec2(v4))) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::u64vec2(v2))));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::u64vec2(v3))));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::u64vec2(v4))));
 	}
 
 	{
@@ -690,9 +691,9 @@ static int test_uvec_precision()
 		glm::mediump_u64vec3 v3(v1);
 		glm::highp_u64vec3 v4(v1);
 
-		Error += glm::all(glm::equal(v1, glm::u64vec3(v2))) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::u64vec3(v3))) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::u64vec3(v4))) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::u64vec3(v2))));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::u64vec3(v3))));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::u64vec3(v4))));
 	}
 
 	{
@@ -701,9 +702,9 @@ static int test_uvec_precision()
 		glm::mediump_u64vec4 v3(v1);
 		glm::highp_u64vec4 v4(v1);
 
-		Error += glm::all(glm::equal(v1, glm::u64vec4(v2))) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::u64vec4(v3))) ? 0 : 1;
-		Error += glm::all(glm::equal(v1, glm::u64vec4(v4))) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::u64vec4(v2))));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::u64vec4(v3))));
+		Error += GLM_CHECK(glm::all(glm::equal(v1, glm::u64vec4(v4))));
 	}
 
 	return Error;
@@ -964,9 +965,9 @@ static int test_quat_precision()
 		glm::f32quat q3(qB);
 		glm::f32quat q4(qC);
 
-		Error += glm::all(glm::equal(q1, q2, glm::epsilon<float>())) ? 0 : 1;
-		Error += glm::all(glm::equal(q1, q3, glm::epsilon<float>())) ? 0 : 1;
-		Error += glm::all(glm::equal(q1, q4, glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(q1, q2, glm::epsilon<float>())));
+		Error += GLM_CHECK(glm::all(glm::equal(q1, q3, glm::epsilon<float>())));
+		Error += GLM_CHECK(glm::all(glm::equal(q1, q4, glm::epsilon<float>())));
 	}
 
 	return Error;
@@ -978,16 +979,16 @@ static int test_fvec_conversion()
 
 	{
 		glm::highp_vec4 a = glm::vec4(1, 2, 3, 4);
-		Error += glm::all(glm::equal(a, glm::vec4(1, 2, 3, 4), glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(a, glm::vec4(1, 2, 3, 4), glm::epsilon<float>())));
 
 		glm::mediump_vec4 b = glm::vec4(1, 2, 3, 4);
 		glm::lowp_vec4 c = b;
 		glm::mediump_vec4 d = c;
-		Error += glm::all(glm::equal(b, d, glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(b, d, glm::epsilon<float>())));
 
 		glm::lowp_ivec4 e = glm::ivec4(d);
 		glm::lowp_ivec3 f = glm::ivec3(e);
-		Error += glm::all(glm::equal(f, glm::lowp_ivec3(1, 2, 3))) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(f, glm::lowp_ivec3(1, 2, 3))));
 	}
 
 	return Error;
@@ -1020,27 +1021,27 @@ int main()
 {
 	int Error = 0;
 
-	Error += test_scalar_size();
-	Error += test_fvec_size();
+	Error += GLM_TEST(test_scalar_size());
+	Error += GLM_TEST(test_fvec_size());
 
-	Error += test_fvec_precision();
-	Error += test_fvec_conversion();
+	Error += GLM_TEST(test_fvec_precision());
+	Error += GLM_TEST(test_fvec_conversion());
 
-	Error += test_dvec_precision();
+	Error += GLM_TEST(test_dvec_precision());
 
-	Error += test_uvec_size();
-	Error += test_uvec_precision();
-	Error += test_ivec_size();
-	Error += test_ivec_precision();
+	Error += GLM_TEST(test_uvec_size());
+	Error += GLM_TEST(test_uvec_precision());
+	Error += GLM_TEST(test_ivec_size());
+	Error += GLM_TEST(test_ivec_precision());
 
-	Error += test_fmat_size();
-	Error += test_dmat_size();
-	Error += test_quat_size();
-	Error += test_quat_precision();
+	Error += GLM_TEST(test_fmat_size());
+	Error += GLM_TEST(test_dmat_size());
+	Error += GLM_TEST(test_quat_size());
+	Error += GLM_TEST(test_quat_precision());
 
 #	if GLM_HAS_OPENMP
-		Error += test_openmp();
+		Error += GLM_TEST(test_openmp());
 #	endif//
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }

@@ -1,3 +1,4 @@
+#include "glm_test.hpp"
 #include <glm/gtc/matrix_inverse.hpp>
 #include <glm/gtc/epsilon.hpp>
 
@@ -16,8 +17,8 @@ static int test_affine()
 
 		for(glm::length_t i = 0; i < A.length(); ++i)
 		{
-			Error += glm::all(glm::epsilonEqual(M[i], R[i], 0.01f)) ? 0 : 1;
-			Error += glm::all(glm::epsilonEqual(A[i], I[i], 0.01f)) ? 0 : 1;
+			Error += GLM_CHECK(glm::all(glm::epsilonEqual(M[i], R[i], 0.01f)));
+			Error += GLM_CHECK(glm::all(glm::epsilonEqual(A[i], I[i], 0.01f)));
 		}
 	}
 
@@ -33,8 +34,8 @@ static int test_affine()
 
 		for(glm::length_t i = 0; i < A.length(); ++i)
 		{
-			Error += glm::all(glm::epsilonEqual(M[i], R[i], 0.01f)) ? 0 : 1;
-			Error += glm::all(glm::epsilonEqual(A[i], I[i], 0.01f)) ? 0 : 1;
+			Error += GLM_CHECK(glm::all(glm::epsilonEqual(M[i], R[i], 0.01f)));
+			Error += GLM_CHECK(glm::all(glm::epsilonEqual(A[i], I[i], 0.01f)));
 		}
 	}
 
@@ -45,7 +46,7 @@ int main()
 {
 	int Error = 0;
 
-	Error += test_affine();
+	Error += GLM_TEST(test_affine());
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }

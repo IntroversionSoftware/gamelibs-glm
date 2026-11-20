@@ -1,3 +1,4 @@
+#include "glm_test.hpp"
 #include <glm/ext/vector_packing.hpp>
 #include <glm/ext/vector_relational.hpp>
 #include <glm/ext/vector_uint2_sized.hpp>
@@ -19,7 +20,7 @@ int test_packUnorm()
 		glm::vec2 B(A[i]);
 		glm::u16vec2 C = glm::packUnorm<glm::uint16>(B);
 		glm::vec2 D = glm::unpackUnorm<float>(C);
-		Error += glm::all(glm::equal(B, D, 1.0f / 255.f)) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(B, D, 1.0f / 255.f)));
 		assert(!Error);
 	}
 
@@ -40,7 +41,7 @@ int test_packSnorm()
 		glm::vec2 B(A[i]);
 		glm::i16vec2 C = glm::packSnorm<glm::int16>(B);
 		glm::vec2 D = glm::unpackSnorm<float>(C);
-		Error += glm::all(glm::equal(B, D, 1.0f / 32767.0f * 2.0f)) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(B, D, 1.0f / 32767.0f * 2.0f)));
 		assert(!Error);
 	}
 
@@ -51,8 +52,8 @@ int main()
 {
 	int Error = 0;
 
-	Error += test_packUnorm();
-	Error += test_packSnorm();
+	Error += GLM_TEST(test_packUnorm());
+	Error += GLM_TEST(test_packSnorm());
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }

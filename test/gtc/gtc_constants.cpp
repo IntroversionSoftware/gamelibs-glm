@@ -1,3 +1,4 @@
+#include "glm_test.hpp"
 #include <glm/gtc/constants.hpp>
 
 static int test_epsilon()
@@ -6,12 +7,12 @@ static int test_epsilon()
 
 	{
 		float Test = glm::epsilon<float>();
-		Error += Test > 0.0f ? 0 : 1;
+		Error += GLM_CHECK(Test > 0.0f);
 	}
 
 	{
 		double Test = glm::epsilon<double>();
-		Error += Test > 0.0 ? 0 : 1;
+		Error += GLM_CHECK(Test > 0.0);
 	}
 
 	return Error;
@@ -24,7 +25,7 @@ int main()
 	//float MinHalf = 0.0f;
 	//while (glm::half(MinHalf) == glm::half(0.0f))
 	//	MinHalf += std::numeric_limits<float>::epsilon();
-	Error += test_epsilon();
+	Error += GLM_TEST(test_epsilon());
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }

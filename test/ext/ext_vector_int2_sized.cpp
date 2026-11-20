@@ -1,3 +1,4 @@
+#include "glm_test.hpp"
 #include <glm/ext/vector_int2_sized.hpp>
 
 static_assert(sizeof(glm::i8vec2) == 2, "int8 size isn't 1 byte on this platform");
@@ -9,10 +10,10 @@ static int test_size()
 {
 	int Error = 0;
 
-	Error += sizeof(glm::i8vec2) == 2 ? 0 : 1;
-	Error += sizeof(glm::i16vec2) == 4 ? 0 : 1;
-	Error += sizeof(glm::i32vec2) == 8 ? 0 : 1;
-	Error += sizeof(glm::i64vec2) == 16 ? 0 : 1;
+	Error += GLM_CHECK(sizeof(glm::i8vec2) == 2);
+	Error += GLM_CHECK(sizeof(glm::i16vec2) == 4);
+	Error += GLM_CHECK(sizeof(glm::i32vec2) == 8);
+	Error += GLM_CHECK(sizeof(glm::i64vec2) == 16);
 
 	return Error;
 }
@@ -21,9 +22,9 @@ static int test_comp()
 {
 	int Error = 0;
 
-	Error += sizeof(glm::i8vec2) < sizeof(glm::i16vec2) ? 0 : 1;
-	Error += sizeof(glm::i16vec2) < sizeof(glm::i32vec2) ? 0 : 1;
-	Error += sizeof(glm::i32vec2) < sizeof(glm::i64vec2) ? 0 : 1;
+	Error += GLM_CHECK(sizeof(glm::i8vec2) < sizeof(glm::i16vec2));
+	Error += GLM_CHECK(sizeof(glm::i16vec2) < sizeof(glm::i32vec2));
+	Error += GLM_CHECK(sizeof(glm::i32vec2) < sizeof(glm::i64vec2));
 
 	return Error;
 }
@@ -32,8 +33,8 @@ int main()
 {
 	int Error = 0;
 
-	Error += test_size();
-	Error += test_comp();
+	Error += GLM_TEST(test_size());
+	Error += GLM_TEST(test_comp());
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }

@@ -1,5 +1,6 @@
 #define GLM_ENABLE_EXPERIMENTAL 1
 
+#include "glm_test.hpp"
 #include <glm/trigonometric.hpp>
 #include <glm/common.hpp>
 #include <glm/gtc/epsilon.hpp>
@@ -884,5 +885,5 @@ int main() {
 
 	std::cout << "Total execution time: " << duration << " ms" << std::endl;
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }

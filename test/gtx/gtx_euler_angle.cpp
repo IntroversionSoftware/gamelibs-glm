@@ -1,6 +1,7 @@
 // Code sample from Filippo Ramaciotti
 
 #define GLM_ENABLE_EXPERIMENTAL
+#include "glm_test.hpp"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/matrix_cross_product.hpp>
 #include <glm/gtx/matrix_operation.hpp>
@@ -28,12 +29,12 @@ namespace test_eulerAngleX
 		glm::vec4 const Y5 = glm::eulerAngleXZ(Angle, 0.0f) * Y;
 		glm::vec4 const Y6 = glm::eulerAngleZX(0.0f, Angle) * Y;
 		glm::vec4 const Y7 = glm::eulerAngleYXZ(0.0f, Angle, 0.0f) * Y;
-		Error += glm::all(glm::epsilonEqual(Y1, Y2, 0.00001f)) ? 0 : 1;
-		Error += glm::all(glm::epsilonEqual(Y1, Y3, 0.00001f)) ? 0 : 1;
-		Error += glm::all(glm::epsilonEqual(Y1, Y4, 0.00001f)) ? 0 : 1;
-		Error += glm::all(glm::epsilonEqual(Y1, Y5, 0.00001f)) ? 0 : 1;
-		Error += glm::all(glm::epsilonEqual(Y1, Y6, 0.00001f)) ? 0 : 1;
-		Error += glm::all(glm::epsilonEqual(Y1, Y7, 0.00001f)) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(Y1, Y2, 0.00001f)));
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(Y1, Y3, 0.00001f)));
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(Y1, Y4, 0.00001f)));
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(Y1, Y5, 0.00001f)));
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(Y1, Y6, 0.00001f)));
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(Y1, Y7, 0.00001f)));
 
 		glm::vec4 const Z(0.0f, 0.0f, 1.0f, 1.0f);
 		glm::vec4 const Z1 = glm::rotate(glm::mat4(1.0f), Angle, X) * Z;
@@ -43,12 +44,12 @@ namespace test_eulerAngleX
 		glm::vec4 const Z5 = glm::eulerAngleXZ(Angle, 0.0f) * Z;
 		glm::vec4 const Z6 = glm::eulerAngleZX(0.0f, Angle) * Z;
 		glm::vec4 const Z7 = glm::eulerAngleYXZ(0.0f, Angle, 0.0f) * Z;
-		Error += glm::all(glm::epsilonEqual(Z1, Z2, 0.00001f)) ? 0 : 1;
-		Error += glm::all(glm::epsilonEqual(Z1, Z3, 0.00001f)) ? 0 : 1;
-		Error += glm::all(glm::epsilonEqual(Z1, Z4, 0.00001f)) ? 0 : 1;
-		Error += glm::all(glm::epsilonEqual(Z1, Z5, 0.00001f)) ? 0 : 1;
-		Error += glm::all(glm::epsilonEqual(Z1, Z6, 0.00001f)) ? 0 : 1;
-		Error += glm::all(glm::epsilonEqual(Z1, Z7, 0.00001f)) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(Z1, Z2, 0.00001f)));
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(Z1, Z3, 0.00001f)));
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(Z1, Z4, 0.00001f)));
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(Z1, Z5, 0.00001f)));
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(Z1, Z6, 0.00001f)));
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(Z1, Z7, 0.00001f)));
 
 		return Error;
 	}
@@ -71,12 +72,12 @@ namespace test_eulerAngleY
 		glm::vec4 const X5 = glm::eulerAngleYZ(Angle, 0.0f) * X;
 		glm::vec4 const X6 = glm::eulerAngleZY(0.0f, Angle) * X;
 		glm::vec4 const X7 = glm::eulerAngleYXZ(Angle, 0.0f, 0.0f) * X;
-		Error += glm::all(glm::epsilonEqual(X1, X2, 0.00001f)) ? 0 : 1;
-		Error += glm::all(glm::epsilonEqual(X1, X3, 0.00001f)) ? 0 : 1;
-		Error += glm::all(glm::epsilonEqual(X1, X4, 0.00001f)) ? 0 : 1;
-		Error += glm::all(glm::epsilonEqual(X1, X5, 0.00001f)) ? 0 : 1;
-		Error += glm::all(glm::epsilonEqual(X1, X6, 0.00001f)) ? 0 : 1;
-		Error += glm::all(glm::epsilonEqual(X1, X7, 0.00001f)) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(X1, X2, 0.00001f)));
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(X1, X3, 0.00001f)));
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(X1, X4, 0.00001f)));
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(X1, X5, 0.00001f)));
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(X1, X6, 0.00001f)));
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(X1, X7, 0.00001f)));
 
 		glm::vec4 const Z(0.0f, 0.0f, 1.0f, 1.0f);
 		glm::vec4 const Z1 = glm::eulerAngleY(Angle) * Z;
@@ -86,12 +87,12 @@ namespace test_eulerAngleY
 		glm::vec4 const Z5 = glm::eulerAngleYZ(Angle, 0.0f) * Z;
 		glm::vec4 const Z6 = glm::eulerAngleZY(0.0f, Angle) * Z;
 		glm::vec4 const Z7 = glm::eulerAngleYXZ(Angle, 0.0f, 0.0f) * Z;
-		Error += glm::all(glm::epsilonEqual(Z1, Z2, 0.00001f)) ? 0 : 1;
-		Error += glm::all(glm::epsilonEqual(Z1, Z3, 0.00001f)) ? 0 : 1;
-		Error += glm::all(glm::epsilonEqual(Z1, Z4, 0.00001f)) ? 0 : 1;
-		Error += glm::all(glm::epsilonEqual(Z1, Z5, 0.00001f)) ? 0 : 1;
-		Error += glm::all(glm::epsilonEqual(Z1, Z6, 0.00001f)) ? 0 : 1;
-		Error += glm::all(glm::epsilonEqual(Z1, Z7, 0.00001f)) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(Z1, Z2, 0.00001f)));
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(Z1, Z3, 0.00001f)));
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(Z1, Z4, 0.00001f)));
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(Z1, Z5, 0.00001f)));
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(Z1, Z6, 0.00001f)));
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(Z1, Z7, 0.00001f)));
 
 		return Error;
 	}
@@ -114,12 +115,12 @@ namespace test_eulerAngleZ
 		glm::vec4 const X5 = glm::eulerAngleZY(Angle, 0.0f) * X;
 		glm::vec4 const X6 = glm::eulerAngleYZ(0.0f, Angle) * X;
 		glm::vec4 const X7 = glm::eulerAngleYXZ(0.0f, 0.0f, Angle) * X;
-		Error += glm::all(glm::epsilonEqual(X1, X2, 0.00001f)) ? 0 : 1;
-		Error += glm::all(glm::epsilonEqual(X1, X3, 0.00001f)) ? 0 : 1;
-		Error += glm::all(glm::epsilonEqual(X1, X4, 0.00001f)) ? 0 : 1;
-		Error += glm::all(glm::epsilonEqual(X1, X5, 0.00001f)) ? 0 : 1;
-		Error += glm::all(glm::epsilonEqual(X1, X6, 0.00001f)) ? 0 : 1;
-		Error += glm::all(glm::epsilonEqual(X1, X7, 0.00001f)) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(X1, X2, 0.00001f)));
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(X1, X3, 0.00001f)));
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(X1, X4, 0.00001f)));
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(X1, X5, 0.00001f)));
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(X1, X6, 0.00001f)));
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(X1, X7, 0.00001f)));
 
 		glm::vec4 const Y(1.0f, 0.0f, 0.0f, 1.0f);
 		glm::vec4 const Z1 = glm::rotate(glm::mat4(1.0f), Angle, Z) * Y;
@@ -129,12 +130,12 @@ namespace test_eulerAngleZ
 		glm::vec4 const Z5 = glm::eulerAngleZY(Angle, 0.0f) * Y;
 		glm::vec4 const Z6 = glm::eulerAngleYZ(0.0f, Angle) * Y;
 		glm::vec4 const Z7 = glm::eulerAngleYXZ(0.0f, 0.0f, Angle) * Y;
-		Error += glm::all(glm::epsilonEqual(Z1, Z2, 0.00001f)) ? 0 : 1;
-		Error += glm::all(glm::epsilonEqual(Z1, Z3, 0.00001f)) ? 0 : 1;
-		Error += glm::all(glm::epsilonEqual(Z1, Z4, 0.00001f)) ? 0 : 1;
-		Error += glm::all(glm::epsilonEqual(Z1, Z5, 0.00001f)) ? 0 : 1;
-		Error += glm::all(glm::epsilonEqual(Z1, Z6, 0.00001f)) ? 0 : 1;
-		Error += glm::all(glm::epsilonEqual(Z1, Z7, 0.00001f)) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(Z1, Z2, 0.00001f)));
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(Z1, Z3, 0.00001f)));
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(Z1, Z4, 0.00001f)));
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(Z1, Z5, 0.00001f)));
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(Z1, Z6, 0.00001f)));
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(Z1, Z7, 0.00001f)));
 
 		return Error;
 	}
@@ -189,7 +190,7 @@ namespace test_derivedEulerAngles
 			glm::mat4 const rotMt = glm::transpose(rotationFunc(pair.first));
 			glm::mat4 const derivedRotM = testDerivedFunc(pair.first, pair.second);
 
-			Error += epsilonEqual(W, derivedRotM * rotMt, 0.00001f) ? 0 : 1;
+			Error += GLM_CHECK(epsilonEqual(W, derivedRotM * rotMt, 0.00001f));
 		}
 
 		return Error;
@@ -213,8 +214,8 @@ namespace test_eulerAngleXY
 		glm::vec4 const V1 = (glm::rotate(glm::mat4(1.0f), AngleX, axisX) * glm::rotate(glm::mat4(1.0f), AngleY, axisY)) * V;
 		glm::vec4 const V2 = glm::eulerAngleXY(AngleX, AngleY) * V;
 		glm::vec4 const V3 = glm::eulerAngleX(AngleX) * glm::eulerAngleY(AngleY) * V;
-		Error += glm::all(glm::epsilonEqual(V1, V2, 0.00001f)) ? 0 : 1;
-		Error += glm::all(glm::epsilonEqual(V1, V3, 0.00001f)) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(V1, V2, 0.00001f)));
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(V1, V3, 0.00001f)));
 
 		return Error;
 	}
@@ -237,8 +238,8 @@ namespace test_eulerAngleYX
 		glm::vec4 const V1 = (glm::rotate(glm::mat4(1.0f), AngleY, axisY) * glm::rotate(glm::mat4(1.0f), AngleX, axisX)) * V;
 		glm::vec4 const V2 = glm::eulerAngleYX(AngleY, AngleX) * V;
 		glm::vec4 const V3 = glm::eulerAngleY(AngleY) * glm::eulerAngleX(AngleX) * V;
-		Error += glm::all(glm::epsilonEqual(V1, V2, 0.00001f)) ? 0 : 1;
-		Error += glm::all(glm::epsilonEqual(V1, V3, 0.00001f)) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(V1, V2, 0.00001f)));
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(V1, V3, 0.00001f)));
 
 		return Error;
 	}
@@ -261,8 +262,8 @@ namespace test_eulerAngleXZ
 		glm::vec4 const V1 = (glm::rotate(glm::mat4(1.0f), AngleX, axisX) * glm::rotate(glm::mat4(1.0f), AngleZ, axisZ)) * V;
 		glm::vec4 const V2 = glm::eulerAngleXZ(AngleX, AngleZ) * V;
 		glm::vec4 const V3 = glm::eulerAngleX(AngleX) * glm::eulerAngleZ(AngleZ) * V;
-		Error += glm::all(glm::epsilonEqual(V1, V2, 0.00001f)) ? 0 : 1;
-		Error += glm::all(glm::epsilonEqual(V1, V3, 0.00001f)) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(V1, V2, 0.00001f)));
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(V1, V3, 0.00001f)));
 
 		return Error;
 	}
@@ -285,8 +286,8 @@ namespace test_eulerAngleZX
 		glm::vec4 const V1 = (glm::rotate(glm::mat4(1.0f), AngleZ, axisZ) * glm::rotate(glm::mat4(1.0f), AngleX, axisX)) * V;
 		glm::vec4 const V2 = glm::eulerAngleZX(AngleZ, AngleX) * V;
 		glm::vec4 const V3 = glm::eulerAngleZ(AngleZ) * glm::eulerAngleX(AngleX) * V;
-		Error += glm::all(glm::epsilonEqual(V1, V2, 0.00001f)) ? 0 : 1;
-		Error += glm::all(glm::epsilonEqual(V1, V3, 0.00001f)) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(V1, V2, 0.00001f)));
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(V1, V3, 0.00001f)));
 
 		return Error;
 	}
@@ -309,8 +310,8 @@ namespace test_eulerAngleYZ
 		glm::vec4 const V1 = (glm::rotate(glm::mat4(1.0f), AngleY, axisY) * glm::rotate(glm::mat4(1.0f), AngleZ, axisZ)) * V;
 		glm::vec4 const V2 = glm::eulerAngleYZ(AngleY, AngleZ) * V;
 		glm::vec4 const V3 = glm::eulerAngleY(AngleY) * glm::eulerAngleZ(AngleZ) * V;
-		Error += glm::all(glm::epsilonEqual(V1, V2, 0.00001f)) ? 0 : 1;
-		Error += glm::all(glm::epsilonEqual(V1, V3, 0.00001f)) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(V1, V2, 0.00001f)));
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(V1, V3, 0.00001f)));
 
 		return Error;
 	}
@@ -333,8 +334,8 @@ namespace test_eulerAngleZY
 		glm::vec4 const V1 = (glm::rotate(glm::mat4(1.0f), AngleZ, axisZ) * glm::rotate(glm::mat4(1.0f), AngleY, axisY)) * V;
 		glm::vec4 const V2 = glm::eulerAngleZY(AngleZ, AngleY) * V;
 		glm::vec4 const V3 = glm::eulerAngleZ(AngleZ) * glm::eulerAngleY(AngleY) * V;
-		Error += glm::all(glm::epsilonEqual(V1, V2, 0.00001f)) ? 0 : 1;
-		Error += glm::all(glm::epsilonEqual(V1, V3, 0.00001f)) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(V1, V2, 0.00001f)));
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(V1, V3, 0.00001f)));
 
 		return Error;
 	}
@@ -420,7 +421,7 @@ namespace test_eulerAngles
 			glm::vec4 const V1 = rotationEuler * V;
 			glm::vec4 const V2 = rotationDumb * V;
 
-			Error += glm::all(glm::epsilonEqual(V1, V2, 0.00001f)) ? 0 : 1;
+			Error += GLM_CHECK(glm::all(glm::epsilonEqual(V1, V2, 0.00001f)));
 		}
 
 		return Error;
@@ -478,7 +479,7 @@ namespace test_extractsEulerAngles
 			glm::vec4 const V1 = rotation * V;
 			glm::vec4 const V2 = extractedRotation * V;
 
-			Error += glm::all(glm::epsilonEqual(V1, V2, 0.00001f)) ? 0 : 1;
+			Error += GLM_CHECK(glm::all(glm::epsilonEqual(V1, V2, 0.00001f)));
 		}
 
 		return Error;
@@ -494,44 +495,44 @@ int main()
 	glm::vec3 const Y(0.0f, 1.0f, 0.0f);
 	glm::vec3 const Z(0.0f, 0.0f, 1.0f);
 
-	Error += test_eulerAngleX::test();
-	Error += test_eulerAngleY::test();
-	Error += test_eulerAngleZ::test();
+	Error += GLM_TEST(test_eulerAngleX::test());
+	Error += GLM_TEST(test_eulerAngleY::test());
+	Error += GLM_TEST(test_eulerAngleZ::test());
 
-	Error += test_derivedEulerAngles::test(glm::eulerAngleX<value>, glm::derivedEulerAngleX<value>, X);
-	Error += test_derivedEulerAngles::test(glm::eulerAngleY<value>, glm::derivedEulerAngleY<value>, Y);
-	Error += test_derivedEulerAngles::test(glm::eulerAngleZ<value>, glm::derivedEulerAngleZ<value>, Z);
+	Error += GLM_TEST(test_derivedEulerAngles::test(glm::eulerAngleX<value>, glm::derivedEulerAngleX<value>, X));
+	Error += GLM_TEST(test_derivedEulerAngles::test(glm::eulerAngleY<value>, glm::derivedEulerAngleY<value>, Y));
+	Error += GLM_TEST(test_derivedEulerAngles::test(glm::eulerAngleZ<value>, glm::derivedEulerAngleZ<value>, Z));
 
-	Error += test_eulerAngleXY::test();
-	Error += test_eulerAngleYX::test();
-	Error += test_eulerAngleXZ::test();
-	Error += test_eulerAngleZX::test();
-	Error += test_eulerAngleYZ::test();
-	Error += test_eulerAngleZY::test();
-	Error += test_eulerAngleYXZ::test();
+	Error += GLM_TEST(test_eulerAngleXY::test());
+	Error += GLM_TEST(test_eulerAngleYX::test());
+	Error += GLM_TEST(test_eulerAngleXZ::test());
+	Error += GLM_TEST(test_eulerAngleZX::test());
+	Error += GLM_TEST(test_eulerAngleYZ::test());
+	Error += GLM_TEST(test_eulerAngleZY::test());
+	Error += GLM_TEST(test_eulerAngleYXZ::test());
 
-	Error += test_eulerAngles::test(glm::eulerAngleXZX<value>, X, Z, X);
-	Error += test_eulerAngles::test(glm::eulerAngleXYX<value>, X, Y, X);
-	Error += test_eulerAngles::test(glm::eulerAngleYXY<value>, Y, X, Y);
-	Error += test_eulerAngles::test(glm::eulerAngleYZY<value>, Y, Z, Y);
-	Error += test_eulerAngles::test(glm::eulerAngleZYZ<value>, Z, Y, Z);
-	Error += test_eulerAngles::test(glm::eulerAngleZXZ<value>, Z, X, Z);
-	Error += test_eulerAngles::test(glm::eulerAngleXZY<value>, X, Z, Y);
-	Error += test_eulerAngles::test(glm::eulerAngleYZX<value>, Y, Z, X);
-	Error += test_eulerAngles::test(glm::eulerAngleZYX<value>, Z, Y, X);
-	Error += test_eulerAngles::test(glm::eulerAngleZXY<value>, Z, X, Y);
+	Error += GLM_TEST(test_eulerAngles::test(glm::eulerAngleXZX<value>, X, Z, X));
+	Error += GLM_TEST(test_eulerAngles::test(glm::eulerAngleXYX<value>, X, Y, X));
+	Error += GLM_TEST(test_eulerAngles::test(glm::eulerAngleYXY<value>, Y, X, Y));
+	Error += GLM_TEST(test_eulerAngles::test(glm::eulerAngleYZY<value>, Y, Z, Y));
+	Error += GLM_TEST(test_eulerAngles::test(glm::eulerAngleZYZ<value>, Z, Y, Z));
+	Error += GLM_TEST(test_eulerAngles::test(glm::eulerAngleZXZ<value>, Z, X, Z));
+	Error += GLM_TEST(test_eulerAngles::test(glm::eulerAngleXZY<value>, X, Z, Y));
+	Error += GLM_TEST(test_eulerAngles::test(glm::eulerAngleYZX<value>, Y, Z, X));
+	Error += GLM_TEST(test_eulerAngles::test(glm::eulerAngleZYX<value>, Z, Y, X));
+	Error += GLM_TEST(test_eulerAngles::test(glm::eulerAngleZXY<value>, Z, X, Y));
 
-	Error += test_extractsEulerAngles::test(glm::eulerAngleYXZ<value>, glm::extractEulerAngleYXZ<value>);
-	Error += test_extractsEulerAngles::test(glm::eulerAngleXZX<value>, glm::extractEulerAngleXZX<value>);
-	Error += test_extractsEulerAngles::test(glm::eulerAngleXYX<value>, glm::extractEulerAngleXYX<value>);
-	Error += test_extractsEulerAngles::test(glm::eulerAngleYXY<value>, glm::extractEulerAngleYXY<value>);
-	Error += test_extractsEulerAngles::test(glm::eulerAngleYZY<value>, glm::extractEulerAngleYZY<value>);
-	Error += test_extractsEulerAngles::test(glm::eulerAngleZYZ<value>, glm::extractEulerAngleZYZ<value>);
-	Error += test_extractsEulerAngles::test(glm::eulerAngleZXZ<value>, glm::extractEulerAngleZXZ<value>);
-	Error += test_extractsEulerAngles::test(glm::eulerAngleXZY<value>, glm::extractEulerAngleXZY<value>);
-	Error += test_extractsEulerAngles::test(glm::eulerAngleYZX<value>, glm::extractEulerAngleYZX<value>);
-	Error += test_extractsEulerAngles::test(glm::eulerAngleZYX<value>, glm::extractEulerAngleZYX<value>);
-	Error += test_extractsEulerAngles::test(glm::eulerAngleZXY<value>, glm::extractEulerAngleZXY<value>);
+	Error += GLM_TEST(test_extractsEulerAngles::test(glm::eulerAngleYXZ<value>, glm::extractEulerAngleYXZ<value>));
+	Error += GLM_TEST(test_extractsEulerAngles::test(glm::eulerAngleXZX<value>, glm::extractEulerAngleXZX<value>));
+	Error += GLM_TEST(test_extractsEulerAngles::test(glm::eulerAngleXYX<value>, glm::extractEulerAngleXYX<value>));
+	Error += GLM_TEST(test_extractsEulerAngles::test(glm::eulerAngleYXY<value>, glm::extractEulerAngleYXY<value>));
+	Error += GLM_TEST(test_extractsEulerAngles::test(glm::eulerAngleYZY<value>, glm::extractEulerAngleYZY<value>));
+	Error += GLM_TEST(test_extractsEulerAngles::test(glm::eulerAngleZYZ<value>, glm::extractEulerAngleZYZ<value>));
+	Error += GLM_TEST(test_extractsEulerAngles::test(glm::eulerAngleZXZ<value>, glm::extractEulerAngleZXZ<value>));
+	Error += GLM_TEST(test_extractsEulerAngles::test(glm::eulerAngleXZY<value>, glm::extractEulerAngleXZY<value>));
+	Error += GLM_TEST(test_extractsEulerAngles::test(glm::eulerAngleYZX<value>, glm::extractEulerAngleYZX<value>));
+	Error += GLM_TEST(test_extractsEulerAngles::test(glm::eulerAngleZYX<value>, glm::extractEulerAngleZYX<value>));
+	Error += GLM_TEST(test_extractsEulerAngles::test(glm::eulerAngleZXY<value>, glm::extractEulerAngleZXY<value>));
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }

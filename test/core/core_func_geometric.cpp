@@ -1,3 +1,4 @@
+#include "glm_test.hpp"
 #include <glm/geometric.hpp>
 #include <glm/trigonometric.hpp>
 #include <glm/ext/scalar_relational.hpp>
@@ -22,10 +23,10 @@ namespace length
 
 		int Error = 0;
 
-		Error += glm::abs(Length1 - 1.0f) < std::numeric_limits<float>::epsilon() ? 0 : 1;
-		Error += glm::abs(Length2 - 1.0f) < std::numeric_limits<float>::epsilon() ? 0 : 1;
-		Error += glm::abs(Length3 - 1.0f) < std::numeric_limits<float>::epsilon() ? 0 : 1;
-		Error += glm::abs(Length4 - 1.0f) < std::numeric_limits<float>::epsilon() ? 0 : 1;
+		Error += GLM_CHECK(glm::abs(Length1 - 1.0f) < std::numeric_limits<float>::epsilon());
+		Error += GLM_CHECK(glm::abs(Length2 - 1.0f) < std::numeric_limits<float>::epsilon());
+		Error += GLM_CHECK(glm::abs(Length3 - 1.0f) < std::numeric_limits<float>::epsilon());
+		Error += GLM_CHECK(glm::abs(Length4 - 1.0f) < std::numeric_limits<float>::epsilon());
 
 		return Error;
 	}
@@ -42,10 +43,10 @@ namespace distance
 
 		int Error = 0;
 
-		Error += glm::abs(Distance1) < std::numeric_limits<float>::epsilon() ? 0 : 1;
-		Error += glm::abs(Distance2) < std::numeric_limits<float>::epsilon() ? 0 : 1;
-		Error += glm::abs(Distance3) < std::numeric_limits<float>::epsilon() ? 0 : 1;
-		Error += glm::abs(Distance4) < std::numeric_limits<float>::epsilon() ? 0 : 1;
+		Error += GLM_CHECK(glm::abs(Distance1) < std::numeric_limits<float>::epsilon());
+		Error += GLM_CHECK(glm::abs(Distance2) < std::numeric_limits<float>::epsilon());
+		Error += GLM_CHECK(glm::abs(Distance3) < std::numeric_limits<float>::epsilon());
+		Error += GLM_CHECK(glm::abs(Distance4) < std::numeric_limits<float>::epsilon());
 
 		return Error;
 	}
@@ -62,10 +63,10 @@ namespace dot
 
 		int Error = 0;
 
-		Error += glm::abs(Dot1 - 1.0f) < std::numeric_limits<float>::epsilon() ? 0 : 1;
-		Error += glm::abs(Dot2 - 2.0f) < std::numeric_limits<float>::epsilon() ? 0 : 1;
-		Error += glm::abs(Dot3 - 3.0f) < std::numeric_limits<float>::epsilon() ? 0 : 1;
-		Error += glm::abs(Dot4 - 4.0f) < std::numeric_limits<float>::epsilon() ? 0 : 1;
+		Error += GLM_CHECK(glm::abs(Dot1 - 1.0f) < std::numeric_limits<float>::epsilon());
+		Error += GLM_CHECK(glm::abs(Dot2 - 2.0f) < std::numeric_limits<float>::epsilon());
+		Error += GLM_CHECK(glm::abs(Dot3 - 3.0f) < std::numeric_limits<float>::epsilon());
+		Error += GLM_CHECK(glm::abs(Dot4 - 4.0f) < std::numeric_limits<float>::epsilon());
 
 		return Error;
 	}
@@ -80,8 +81,8 @@ namespace cross
 
 		int Error = 0;
 
-		Error += glm::all(glm::lessThan(glm::abs(Cross1 - glm::vec3(0, 0, 1)), glm::vec3(std::numeric_limits<float>::epsilon()))) ? 0 : 1;
-		Error += glm::all(glm::lessThan(glm::abs(Cross2 - glm::vec3(0, 0,-1)), glm::vec3(std::numeric_limits<float>::epsilon()))) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::lessThan(glm::abs(Cross1 - glm::vec3(0, 0, 1)), glm::vec3(std::numeric_limits<float>::epsilon()))));
+		Error += GLM_CHECK(glm::all(glm::lessThan(glm::abs(Cross2 - glm::vec3(0, 0,-1)), glm::vec3(std::numeric_limits<float>::epsilon()))));
 
 		return Error;
 	}
@@ -96,8 +97,8 @@ namespace normalize
 		glm::vec3 Normalize1 = glm::normalize(glm::vec3(1, 0, 0));
 		glm::vec3 Normalize2 = glm::normalize(glm::vec3(2, 0, 0));
 
-		Error += glm::all(glm::lessThan(glm::abs(Normalize1 - glm::vec3(1, 0, 0)), glm::vec3(std::numeric_limits<float>::epsilon()))) ? 0 : 1;
-		Error += glm::all(glm::lessThan(glm::abs(Normalize2 - glm::vec3(1, 0, 0)), glm::vec3(std::numeric_limits<float>::epsilon()))) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::lessThan(glm::abs(Normalize1 - glm::vec3(1, 0, 0)), glm::vec3(std::numeric_limits<float>::epsilon()))));
+		Error += GLM_CHECK(glm::all(glm::lessThan(glm::abs(Normalize2 - glm::vec3(1, 0, 0)), glm::vec3(std::numeric_limits<float>::epsilon()))));
 
 		glm::vec3 ro = glm::vec3(glm::cos(5.f) * 3.f, 2.f, glm::sin(5.f) * 3.f);
 		glm::vec3 w = glm::normalize(glm::vec3(0, -0.2f, 0) - ro);
@@ -105,7 +106,7 @@ namespace normalize
 		glm::vec3 v = glm::cross(u, w);
 		glm::vec3 x = glm::cross(w, u);
 
-		Error += glm::all(glm::equal(x + v, glm::vec3(0), 0.01f)) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(x + v, glm::vec3(0), 0.01f)));
 
 		return Error;
 	}
@@ -123,7 +124,7 @@ namespace faceforward
 			glm::vec3 Nref(0.0f, 0.0f, 1.0f);
 			glm::vec3 F = glm::faceforward(N, I, Nref);
 
-			Error += glm::all(glm::equal(F, glm::vec3(0.0, 0.0, -1.0), 0.0001f)) ? 0 : 1;
+			Error += GLM_CHECK(glm::all(glm::equal(F, glm::vec3(0.0, 0.0, -1.0), 0.0001f)));
 		}
 
 		return Error;
@@ -140,14 +141,14 @@ namespace reflect
 			glm::vec2 A(1.0f,-1.0f);
 			glm::vec2 B(0.0f, 1.0f);
 			glm::vec2 C = glm::reflect(A, B);
-			Error += glm::all(glm::equal(C, glm::vec2(1.0, 1.0), 0.0001f)) ? 0 : 1;
+			Error += GLM_CHECK(glm::all(glm::equal(C, glm::vec2(1.0, 1.0), 0.0001f)));
 		}
 
 		{
 			glm::dvec2 A(1.0f,-1.0f);
 			glm::dvec2 B(0.0f, 1.0f);
 			glm::dvec2 C = glm::reflect(A, B);
-			Error += glm::all(glm::equal(C, glm::dvec2(1.0, 1.0), 0.0001)) ? 0 : 1;
+			Error += GLM_CHECK(glm::all(glm::equal(C, glm::dvec2(1.0, 1.0), 0.0001)));
 		}
 
 		return Error;
@@ -164,28 +165,28 @@ namespace refract
 			float A(-1.0f);
 			float B(1.0f);
 			float C = glm::refract(A, B, 0.5f);
-			Error += glm::equal(C, -1.0f, 0.0001f) ? 0 : 1;
+			Error += GLM_CHECK(glm::equal(C, -1.0f, 0.0001f));
 		}
 
 		{
 			glm::vec2 A(0.0f,-1.0f);
 			glm::vec2 B(0.0f, 1.0f);
 			glm::vec2 C = glm::refract(A, B, 0.5f);
-			Error += glm::all(glm::equal(C, glm::vec2(0.0, -1.0), 0.0001f)) ? 0 : 1;
+			Error += GLM_CHECK(glm::all(glm::equal(C, glm::vec2(0.0, -1.0), 0.0001f)));
 		}
 
 		{
 			glm::dvec2 A(0.0f,-1.0f);
 			glm::dvec2 B(0.0f, 1.0f);
 			glm::dvec2 C = glm::refract(A, B, 0.5);
-			Error += glm::all(glm::equal(C, glm::dvec2(0.0, -1.0), 0.0001)) ? 0 : 1;
+			Error += GLM_CHECK(glm::all(glm::equal(C, glm::dvec2(0.0, -1.0), 0.0001)));
 		}
 
 		{
 			glm::vec4 A(0.0f, -1.0f, 0.0f, 0.0f);
 			glm::vec4 B(0.0f, 1.0f, 0.0f, 0.0f);
 			glm::vec4 C = glm::refract(A, B, 0.5f);
-			Error += glm::all(glm::equal(C, glm::vec4(0.0, -1.0, 0.0f, 0.0f), 0.0001f)) ? 0 : 1;
+			Error += GLM_CHECK(glm::all(glm::equal(C, glm::vec4(0.0, -1.0, 0.0f, 0.0f), 0.0001f)));
 		}
 
 		return Error;
@@ -196,15 +197,15 @@ int main()
 {
 	int Error(0);
 
-	Error += length::test();
-	Error += distance::test();
-	Error += dot::test();
-	Error += cross::test();
-	Error += normalize::test();
-	Error += faceforward::test();
-	Error += reflect::test();
-	Error += refract::test();
+	Error += GLM_TEST(length::test());
+	Error += GLM_TEST(distance::test());
+	Error += GLM_TEST(dot::test());
+	Error += GLM_TEST(cross::test());
+	Error += GLM_TEST(normalize::test());
+	Error += GLM_TEST(faceforward::test());
+	Error += GLM_TEST(reflect::test());
+	Error += GLM_TEST(refract::test());
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }
 

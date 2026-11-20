@@ -7,6 +7,7 @@
 // File    : test/gtx/random.cpp
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
+#include "glm_test.hpp"
 #include <glm/glm.hpp>
 #include <glm/gtx/random.hpp>
 #include <glm/gtx/epsilon.hpp>
@@ -46,8 +47,8 @@ int test_normalizedRand2()
 			ResultDouble += glm::length(glm::normalizedRand2<double>());
 		}
 
-		Error += glm::equalEpsilon(ResultFloat, float(Max), 0.000001f) ? 0 : 1;
-		Error += glm::equalEpsilon(ResultDouble, double(Max), 0.000001) ? 0 : 1;
+		Error += GLM_CHECK(glm::equalEpsilon(ResultFloat, float(Max), 0.000001f));
+		Error += GLM_CHECK(glm::equalEpsilon(ResultDouble, double(Max), 0.000001));
 		assert(!Error);
 	}
 
@@ -76,12 +77,12 @@ int test_normalizedRand3()
 			ResultDoubleC += glm::length(glm::normalizedRand3(1.0, 3.0));
 		}
 
-		Error += glm::equalEpsilon(ResultFloatA, float(Max), 0.0001f) ? 0 : 1;
-		Error += glm::equalEpsilon(ResultDoubleA, double(Max), 0.0001) ? 0 : 1;
-		Error += glm::equalEpsilon(ResultFloatB, float(Max * 2), 0.0001f) ? 0 : 1;
-		Error += glm::equalEpsilon(ResultDoubleB, double(Max * 2), 0.0001) ? 0 : 1;
-		Error += (ResultFloatC >= float(Max) && ResultFloatC <= float(Max * 3)) ? 0 : 1;
-		Error += (ResultDoubleC >= double(Max) && ResultDoubleC <= double(Max * 3)) ? 0 : 1;
+		Error += GLM_CHECK(glm::equalEpsilon(ResultFloatA, float(Max), 0.0001f));
+		Error += GLM_CHECK(glm::equalEpsilon(ResultDoubleA, double(Max), 0.0001));
+		Error += GLM_CHECK(glm::equalEpsilon(ResultFloatB, float(Max * 2), 0.0001f));
+		Error += GLM_CHECK(glm::equalEpsilon(ResultDoubleB, double(Max * 2), 0.0001));
+		Error += GLM_CHECK((ResultFloatC >= float(Max) && ResultFloatC <= float(Max * 3)));
+		Error += GLM_CHECK((ResultDoubleC >= double(Max) && ResultDoubleC <= double(Max * 3)));
 	}
 
 	return Error;
@@ -91,9 +92,9 @@ int main()
 {
 	int Error = 0;
 
-	Error += test_signedRand1();
-	Error += test_normalizedRand2();
-	Error += test_normalizedRand3();
+	Error += GLM_TEST(test_signedRand1());
+	Error += GLM_TEST(test_normalizedRand2());
+	Error += GLM_TEST(test_normalizedRand3());
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }

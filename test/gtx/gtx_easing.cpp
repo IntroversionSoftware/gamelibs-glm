@@ -1,4 +1,5 @@
 #define GLM_ENABLE_EXPERIMENTAL
+#include "glm_test.hpp"
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtx/easing.hpp>
@@ -86,6 +87,6 @@ int main()
 	_test_easing<float>();
 	_test_easing<double>();
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }
 
