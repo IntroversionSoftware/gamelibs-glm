@@ -180,7 +180,8 @@ GLM_FUNC_QUALIFIER __m128 glm_vec4_refract(glm_vec4 I, glm_vec4 N, glm_vec4 eta)
 	glm_vec4 const mul2 = _mm_mul_ps(mul0, sub1);				// eta * eta * (1.0 - dot(N, I) * dot(N, I))
 	glm_vec4 const sub0 = _mm_sub_ps(_mm_set1_ps(1.0f), mul2);  // 1.0 - eta * eta * (1.0 - dot(N, I) * dot(N, I))
 
-	if(_mm_movemask_ps(_mm_cmplt_ss(sub0, _mm_set1_ps(0.0f))) == 0)
+	// Total internal reflection when k < 0. cmplt_ss only sets lane 0; the other lanes are copies of sub0.
+	if(_mm_movemask_ps(_mm_cmplt_ss(sub0, _mm_set1_ps(0.0f))) & 1)
 		return _mm_set1_ps(0.0f);
 
 	glm_vec4 const sqt0 = _mm_sqrt_ps(sub0);
