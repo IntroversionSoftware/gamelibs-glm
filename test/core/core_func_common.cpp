@@ -356,7 +356,7 @@ namespace min_
 
 			std::clock_t Timestamp1 = std::clock();
 
-			std::printf("min_tern Time %d clocks\n", static_cast<int>(Timestamp1 - Timestamp0));
+			glm_test::info("min_tern Time %d clocks\n", static_cast<int>(Timestamp1 - Timestamp0));
 		}
 
 		glm::int32 SumB = 0;
@@ -369,7 +369,7 @@ namespace min_
 
 			std::clock_t Timestamp1 = std::clock();
 
-			std::printf("min_int Time %d clocks\n", static_cast<int>(Timestamp1 - Timestamp0));
+			glm_test::info("min_int Time %d clocks\n", static_cast<int>(Timestamp1 - Timestamp0));
 		}
 
 		Error += GLM_CHECK_EQ(SumA, SumB);
@@ -1227,12 +1227,12 @@ namespace sign
 
 		std::clock_t Timestamp6 = std::clock();
 
-		std::printf("sign_cmp(rand) Time %d clocks\n", static_cast<int>(Timestamp1 - Timestamp0));
-		std::printf("sign_if(rand) Time %d clocks\n", static_cast<int>(Timestamp2 - Timestamp1));
-		std::printf("sign_alu1(rand) Time %d clocks\n", static_cast<int>(Timestamp3 - Timestamp2));
-		std::printf("sign_alu2(rand) Time %d clocks\n", static_cast<int>(Timestamp4 - Timestamp3));
-		std::printf("sign_sub(rand) Time %d clocks\n", static_cast<int>(Timestamp5 - Timestamp4));
-		std::printf("glm::sign(rand) Time %d clocks\n", static_cast<int>(Timestamp6 - Timestamp5));
+		glm_test::info("sign_cmp(rand) Time %d clocks\n", static_cast<int>(Timestamp1 - Timestamp0));
+		glm_test::info("sign_if(rand) Time %d clocks\n", static_cast<int>(Timestamp2 - Timestamp1));
+		glm_test::info("sign_alu1(rand) Time %d clocks\n", static_cast<int>(Timestamp3 - Timestamp2));
+		glm_test::info("sign_alu2(rand) Time %d clocks\n", static_cast<int>(Timestamp4 - Timestamp3));
+		glm_test::info("sign_sub(rand) Time %d clocks\n", static_cast<int>(Timestamp5 - Timestamp4));
+		glm_test::info("glm::sign(rand) Time %d clocks\n", static_cast<int>(Timestamp6 - Timestamp5));
 
 		return Error;
 	}
@@ -1275,11 +1275,11 @@ namespace sign
 
 		std::clock_t Timestamp5 = std::clock();
 
-		std::printf("sign_cmp(linear) Time %d clocks\n", static_cast<int>(Timestamp1 - Timestamp0));
-		std::printf("sign_if(linear) Time %d clocks\n", static_cast<int>(Timestamp2 - Timestamp1));
-		std::printf("sign_alu1(linear) Time %d clocks\n", static_cast<int>(Timestamp3 - Timestamp2));
-		std::printf("sign_alu2(linear) Time %d clocks\n", static_cast<int>(Timestamp4 - Timestamp3));
-		std::printf("sign_sub(linear) Time %d clocks\n", static_cast<int>(Timestamp5 - Timestamp4));
+		glm_test::info("sign_cmp(linear) Time %d clocks\n", static_cast<int>(Timestamp1 - Timestamp0));
+		glm_test::info("sign_if(linear) Time %d clocks\n", static_cast<int>(Timestamp2 - Timestamp1));
+		glm_test::info("sign_alu1(linear) Time %d clocks\n", static_cast<int>(Timestamp3 - Timestamp2));
+		glm_test::info("sign_alu2(linear) Time %d clocks\n", static_cast<int>(Timestamp4 - Timestamp3));
+		glm_test::info("sign_sub(linear) Time %d clocks\n", static_cast<int>(Timestamp5 - Timestamp4));
 
 		return Error;
 	}
@@ -1318,13 +1318,13 @@ namespace sign
 
 		std::clock_t Timestamp5 = std::clock();
 
-		std::printf("Sum %d\n", static_cast<int>(Sum));
+		glm_test::info("Sum %d\n", static_cast<int>(Sum));
 
-		std::printf("sign_cmp(linear_cal) Time %d clocks\n", static_cast<int>(Timestamp1 - Timestamp0));
-		std::printf("sign_if(linear_cal) Time %d clocks\n", static_cast<int>(Timestamp2 - Timestamp1));
-		std::printf("sign_alu1(linear_cal) Time %d clocks\n", static_cast<int>(Timestamp3 - Timestamp2));
-		std::printf("sign_alu2(linear_cal) Time %d clocks\n", static_cast<int>(Timestamp4 - Timestamp3));
-		std::printf("sign_sub(linear_cal) Time %d clocks\n", static_cast<int>(Timestamp5 - Timestamp4));
+		glm_test::info("sign_cmp(linear_cal) Time %d clocks\n", static_cast<int>(Timestamp1 - Timestamp0));
+		glm_test::info("sign_if(linear_cal) Time %d clocks\n", static_cast<int>(Timestamp2 - Timestamp1));
+		glm_test::info("sign_alu1(linear_cal) Time %d clocks\n", static_cast<int>(Timestamp3 - Timestamp2));
+		glm_test::info("sign_alu2(linear_cal) Time %d clocks\n", static_cast<int>(Timestamp4 - Timestamp3));
+		glm_test::info("sign_sub(linear_cal) Time %d clocks\n", static_cast<int>(Timestamp5 - Timestamp4));
 
 		return Error;
 	}

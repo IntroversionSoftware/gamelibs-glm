@@ -3,29 +3,13 @@
 #include "glm_test.hpp"
 #include <glm/trigonometric.hpp>
 #include <glm/common.hpp>
-#include <glm/gtc/epsilon.hpp>
-#include <glm/gtx/string_cast.hpp>
 #include <glm/ext/vector_relational.hpp>
 
-#include <chrono>
 #include <cmath>
-#include <functional>
-#include <iomanip>
-#include <iostream>
 #include <limits>
 #include <string>
 #include <vector>
 
-
-// Helper function to get qualifier name as string
-static std::string_view qualifier_name(glm::qualifier Q) {
-	// Not a switch: the precision names alias the aligned qualifiers under
-	// GLM_FORCE_DEFAULT_ALIGNED_GENTYPES, and MSVC's /Wall flags unlisted enumerators.
-	if (Q == glm::highp) return "highp";
-	if (Q == glm::mediump) return "mediump";
-	if (Q == glm::lowp) return "lowp";
-	return "unknownp";
-}
 
 // Function to generate appropriate test angles based on function type
 template<typename T>
@@ -194,7 +178,31 @@ FunctionTestInfo<T> get_function_test_info(const std::string& func_name) {
 
 namespace trig_test {
 
-	// Main test function template for any trig function
+	// Epsilon by precision qualifier: an absolute error up to magnitude 1, relative above it.
+	template<typename T, glm::qualifier Q>
+	T epsilon()
+	{
+		if constexpr (Q == glm::highp)
+			return static_cast<T>(1e-6);
+		else if constexpr (Q == glm::mediump)
+			return static_cast<T>(1e-3);
+		else
+			return static_cast<T>(1e-1);
+	}
+
+	template<typename T>
+	T tolerance(T eps, T expected)
+	{
+		return eps * glm::max(static_cast<T>(1), std::abs(expected));
+	}
+
+	template<typename T, glm::qualifier Q>
+	glm::tvec4<T, Q> tolerance(T eps, glm::tvec4<T, Q> const& expected)
+	{
+		return eps * glm::max(glm::tvec4<T, Q>(1), glm::abs(expected));
+	}
+
+	// Test one trig function against its std:: reference
 	template<typename T, glm::qualifier Q, typename StdFunc, typename GlmScalarFunc, typename GlmVectorFunc>
 	int test_function(
 		const std::string& func_name,
@@ -204,254 +212,118 @@ namespace trig_test {
 	) {
 		int Error = 0;
 
-		// Header with clear type and precision info
-		std::cout << "===== " << func_name << " Test: " << typeid(T).name() << " with "
-			<< qualifier_name(Q) << " precision =====" << std::endl;
-
-		// Get test info for this function
 		auto test_info = get_function_test_info<T>(func_name);
-
-		// Generate test angles appropriate for this function
 		auto test_angles = generate_test_angles<T>(func_name);
-
-		// Set epsilon based on precision qualifier: an absolute error up to magnitude 1, relative above it
-		T eps;
-		if constexpr (Q == glm::highp) {
-			eps = static_cast<T>(1e-6);  // 0.0001% to 0.0002% error margin
-		}
-		else if constexpr (Q == glm::mediump) {
-			eps = static_cast<T>(1e-3);  // 0.1% to 0.2% error margin
-		}
-		else {
-			eps = static_cast<T>(1e-1);  // ~10% error margin
-		}
-
-		std::cout << "  Using epsilon: " << eps << std::endl;
+		T const eps = epsilon<T, Q>();
 
 		// Scalar tests
-		std::cout << "  Testing scalar " << func_name << "..." << std::endl;
 		for (T a : test_angles) {
-			// Skip invalid inputs
-			if (!test_info.validate_input(a)) {
+			if (!test_info.validate_input(a))
 				continue;
-			}
 
 			T expected = std_func(a);
 			T actual = glm_scalar(a);
 
-			// Check for NaN or Inf results
+			// Both non-finite (NaN or Inf) is fine; one of them is a mismatch
 			bool expected_is_finite = std::isfinite(expected);
 			bool actual_is_finite = std::isfinite(actual);
-
-			if (!expected_is_finite && !actual_is_finite) {
-				// Both are non-finite (NaN or Inf), which is fine
+			if (!expected_is_finite && !actual_is_finite)
 				continue;
-			}
-
-			if (expected_is_finite != actual_is_finite) {
-				std::cout << "    FAIL: " << func_name << "(" << a << ") finiteness mismatch: "
-					<< "std is " << (expected_is_finite ? "finite" : "non-finite")
-					<< ", glm is " << (actual_is_finite ? "finite" : "non-finite") << std::endl;
-				Error++;
+			Error += glm_test::context(GLM_CHECK_EQ(actual_is_finite, expected_is_finite), "a", a, "actual", actual, "expected", expected);
+			if (expected_is_finite != actual_is_finite)
 				continue;
-			}
 
-			if (!glm::epsilonEqual(actual, expected, eps * glm::max(static_cast<T>(1), std::abs(expected)))) {
-				std::cout << "    FAIL: " << func_name << "(" << a << ") = " << actual
-					<< ", expected " << expected
-					<< ", diff = " << std::abs(actual - expected) << std::endl;
-				Error++;
-			}
+			Error += glm_test::context(GLM_CHECK_LT(std::abs(actual - expected), tolerance(eps, expected)), "a", a, "actual", actual, "expected", expected);
 		}
 
 		// Vector tests
-		std::cout << "  Testing vector " << func_name << "..." << std::endl;
 		for (T a : test_angles) {
-			// Skip invalid inputs
-			if (!test_info.validate_input(a)) {
+			if (!test_info.validate_input(a))
 				continue;
-			}
 
 			glm::tvec4<T, Q> v(a);
 			glm::tvec4<T, Q> expected_v(std_func(a));
 			glm::tvec4<T, Q> actual_v = glm_vector(v);
 
-			// Check for NaN or Inf results
 			bool expected_is_finite = std::isfinite(expected_v.x);
 			bool actual_is_finite = std::isfinite(actual_v.x);
-
-			if (!expected_is_finite && !actual_is_finite) {
-				// Both are non-finite, which is fine
+			if (!expected_is_finite && !actual_is_finite)
 				continue;
-			}
-
-			if (expected_is_finite != actual_is_finite) {
-				std::cout << "    FAIL: vec4(" << func_name << "(" << a << ")) finiteness mismatch" << std::endl;
-				Error++;
+			Error += glm_test::context(GLM_CHECK_EQ(actual_is_finite, expected_is_finite), "a", a, "actual_v", actual_v, "expected_v", expected_v);
+			if (expected_is_finite != actual_is_finite)
 				continue;
-			}
 
-			if (glm::any(glm::greaterThan(glm::abs(actual_v - expected_v), eps * glm::max(glm::tvec4<T, Q>(1), glm::abs(expected_v))))) {
-				std::cout << "    FAIL: " << func_name << "(vec4(" << a << ")) = "
-					<< glm::to_string(actual_v) << ", expected "
-					<< glm::to_string(expected_v) << std::endl;
-				Error++;
-			}
+			Error += glm_test::context(GLM_CHECK(!glm::any(glm::greaterThan(glm::abs(actual_v - expected_v), tolerance(eps, expected_v)))),
+				"a", a, "actual_v", actual_v, "expected_v", expected_v);
 		}
 
-		// Mixed vector test (if we have enough valid inputs)
-		if (test_angles.size() >= 4) {
-			std::cout << "  Testing mixed vector " << func_name << "..." << std::endl;
+		// Mixed vector test: the first 4 valid inputs, one per component
+		std::vector<T> valid_angles;
+		for (T a : test_angles) {
+			if (test_info.validate_input(a))
+				valid_angles.push_back(a);
+			if (valid_angles.size() == 4)
+				break;
+		}
+		if (valid_angles.size() == 4) {
+			glm::tvec4<T, Q> vec_angles(valid_angles[0], valid_angles[1], valid_angles[2], valid_angles[3]);
+			glm::tvec4<T, Q> expected_vec(
+				std_func(valid_angles[0]),
+				std_func(valid_angles[1]),
+				std_func(valid_angles[2]),
+				std_func(valid_angles[3])
+			);
+			glm::tvec4<T, Q> actual_vec = glm_vector(vec_angles);
 
-			// Find 4 valid angles for the test
-			std::vector<T> valid_angles;
-			for (T a : test_angles) {
-				if (test_info.validate_input(a) && valid_angles.size() < 4) {
-					valid_angles.push_back(a);
-				}
-				if (valid_angles.size() == 4) break;
-			}
-
-			if (valid_angles.size() == 4) {
-				glm::tvec4<T, Q> vec_angles(valid_angles[0], valid_angles[1], valid_angles[2], valid_angles[3]);
-				glm::tvec4<T, Q> expected_vec(
-					std_func(valid_angles[0]),
-					std_func(valid_angles[1]),
-					std_func(valid_angles[2]),
-					std_func(valid_angles[3])
-				);
-				glm::tvec4<T, Q> actual_vec = glm_vector(vec_angles);
-
-				if (glm::any(glm::greaterThan(glm::abs(actual_vec - expected_vec), eps * glm::max(glm::tvec4<T, Q>(1), glm::abs(expected_vec))))) {
-					std::cout << "    FAIL: " << func_name << "(mixed_vec) = "
-						<< glm::to_string(actual_vec) << ", expected "
-						<< glm::to_string(expected_vec) << std::endl;
-					// Show individual components for easier debugging
-					for (int i = 0; i < 4; i++) {
-						std::cout << "      Component " << i << " (" << vec_angles[i] << "): " << actual_vec[i]
-							<< " vs " << expected_vec[i]
-							<< ", diff = " << std::abs(actual_vec[i] - expected_vec[i]) << std::endl;
-					}
-					Error++;
-				}
-			}
-			else {
-				std::cout << "    SKIP: Not enough valid inputs for mixed vector test" << std::endl;
-			}
+			Error += glm_test::context(GLM_CHECK(!glm::any(glm::greaterThan(glm::abs(actual_vec - expected_vec), tolerance(eps, expected_vec)))),
+				"vec_angles", vec_angles, "actual_vec", actual_vec, "expected_vec", expected_vec);
 		}
 
-		// Edge case tests
-		if (!test_info.edge_cases.empty()) {
-			std::cout << "  Testing " << func_name << " edge cases..." << std::endl;
-			for (size_t i = 0; i < test_info.edge_cases.size(); ++i) {
-				T input = test_info.edge_cases[i];
-				T expected = test_info.edge_case_results[i];
-				T actual = glm_scalar(input);
+		// Edge cases
+		for (size_t i = 0; i < test_info.edge_cases.size(); ++i) {
+			T input = test_info.edge_cases[i];
+			T expected = test_info.edge_case_results[i];
+			T actual = glm_scalar(input);
 
-				if (!glm::epsilonEqual(actual, expected, eps * glm::max(static_cast<T>(1), std::abs(expected)))) {
-					std::cout << "    FAIL: " << func_name << "(" << input << ") edge case = " << actual
-						<< ", expected " << expected
-						<< ", diff = " << std::abs(actual - expected) << std::endl;
-					Error++;
-				}
-			}
+			Error += glm_test::context(GLM_CHECK_LT(std::abs(actual - expected), tolerance(eps, expected)), "input", input, "actual", actual, "expected", expected);
 		}
-
-		// Summary
-		if (Error == 0) {
-			std::cout << "  PASSED: All " << func_name << " tests for " << typeid(T).name()
-				<< " with " << qualifier_name(Q) << " precision" << std::endl;
-		}
-		else {
-			std::cout << "  FAILED: " << Error << " error(s) in " << func_name << " tests for "
-				<< typeid(T).name() << " with " << qualifier_name(Q)
-				<< " precision" << std::endl;
-		}
-		std::cout << std::endl;  // Add some spacing between test sections
 
 		return Error;
 	}
 
-	// Helper function for two-argument functions (e.g., atan2)
+	// Test a two-argument function (atan2) against its std:: reference
 	template<typename T, glm::qualifier Q, typename StdFunc, typename GlmScalarFunc, typename GlmVectorFunc>
 	int test_function2(
-		const std::string& func_name,
 		StdFunc std_func,         // Reference std:: function (e.g., std::atan2)
 		GlmScalarFunc glm_scalar, // GLM scalar function (e.g., glm::atan<T, Q>)
 		GlmVectorFunc glm_vector  // GLM vector function (e.g., glm::atan for vectors)
 	) {
 		int Error = 0;
 
-		// Header with clear type and precision info
-		std::cout << "===== " << func_name << " Test: " << typeid(T).name() << " with "
-			<< qualifier_name(Q) << " precision =====" << std::endl;
-
-		// Generate test values
 		std::vector<T> test_values = {
 			static_cast<T>(-1.0), static_cast<T>(-0.5), static_cast<T>(0.0),
 			static_cast<T>(0.5), static_cast<T>(1.0)
 		};
+		T const eps = epsilon<T, Q>();
 
-		// Set epsilon based on precision qualifier: an absolute error up to magnitude 1, relative above it
-		T eps;
-		if constexpr (Q == glm::highp) {
-			eps = static_cast<T>(1e-6);
-		}
-		else if constexpr (Q == glm::mediump) {
-			eps = static_cast<T>(1e-3);
-		}
-		else {
-			eps = static_cast<T>(1e-1);
-		}
-
-		std::cout << "  Using epsilon: " << eps << std::endl;
-
-		// Scalar tests
-		std::cout << "  Testing scalar " << func_name << "..." << std::endl;
+		// Scalar and vector tests; (0, 0) is skipped
 		for (T y : test_values) {
 			for (T x : test_values) {
-				// Skip (0,0) for atan2
-				if (func_name == "atan2" && y == 0 && x == 0) {
+				if (y == 0 && x == 0)
 					continue;
-				}
 
 				T expected = std_func(y, x);
 				T actual = glm_scalar(y, x);
+				Error += glm_test::context(GLM_CHECK_LT(std::abs(actual - expected), tolerance(eps, expected)), "y", y, "x", x, "actual", actual, "expected", expected);
 
-				if (!glm::epsilonEqual(actual, expected, eps * glm::max(static_cast<T>(1), std::abs(expected)))) {
-					std::cout << "    FAIL: " << func_name << "(" << y << ", " << x << ") = " << actual
-						<< ", expected " << expected
-						<< ", diff = " << std::abs(actual - expected) << std::endl;
-					Error++;
-				}
-			}
-		}
-
-		// Vector tests
-		std::cout << "  Testing vector " << func_name << "..." << std::endl;
-		for (T y : test_values) {
-			for (T x : test_values) {
-				// Skip (0,0) for atan2
-				if (func_name == "atan2" && y == 0 && x == 0) {
-					continue;
-				}
-
-				glm::tvec4<T, Q> v_y(y);
-				glm::tvec4<T, Q> v_x(x);
-				glm::tvec4<T, Q> expected_v(std_func(y, x));
-				glm::tvec4<T, Q> actual_v = glm_vector(v_y, v_x);
-
-				if (glm::any(glm::greaterThan(glm::abs(actual_v - expected_v), eps * glm::max(glm::tvec4<T, Q>(1), glm::abs(expected_v))))) {
-					std::cout << "    FAIL: " << func_name << "(vec4(" << y << "), vec4(" << x << ")) = "
-						<< glm::to_string(actual_v) << ", expected "
-						<< glm::to_string(expected_v) << std::endl;
-					Error++;
-				}
+				glm::tvec4<T, Q> expected_v(expected);
+				glm::tvec4<T, Q> actual_v = glm_vector(glm::tvec4<T, Q>(y), glm::tvec4<T, Q>(x));
+				Error += glm_test::context(GLM_CHECK(!glm::any(glm::greaterThan(glm::abs(actual_v - expected_v), tolerance(eps, expected_v)))),
+					"y", y, "x", x, "actual_v", actual_v, "expected_v", expected_v);
 			}
 		}
 
 		// Mixed vector test
-		std::cout << "  Testing mixed vector " << func_name << "..." << std::endl;
 		{
 			glm::tvec4<T, Q> y_vec(test_values[0], test_values[1], test_values[2], test_values[3]);
 			glm::tvec4<T, Q> x_vec(test_values[1], test_values[2], test_values[3], test_values[4]);
@@ -464,30 +336,9 @@ namespace trig_test {
 			);
 			glm::tvec4<T, Q> actual_vec = glm_vector(y_vec, x_vec);
 
-			if (glm::any(glm::greaterThan(glm::abs(actual_vec - expected_vec), eps * glm::max(glm::tvec4<T, Q>(1), glm::abs(expected_vec))))) {
-				std::cout << "    FAIL: " << func_name << "(mixed_vec_y, mixed_vec_x) = "
-					<< glm::to_string(actual_vec) << ", expected "
-					<< glm::to_string(expected_vec) << std::endl;
-				for (int i = 0; i < 4; i++) {
-					std::cout << "      Component " << i << " (" << y_vec[i] << ", " << x_vec[i] << "): "
-						<< actual_vec[i] << " vs " << expected_vec[i]
-						<< ", diff = " << std::abs(actual_vec[i] - expected_vec[i]) << std::endl;
-				}
-				Error++;
-			}
+			Error += glm_test::context(GLM_CHECK(!glm::any(glm::greaterThan(glm::abs(actual_vec - expected_vec), tolerance(eps, expected_vec)))),
+				"y_vec", y_vec, "x_vec", x_vec, "actual_vec", actual_vec, "expected_vec", expected_vec);
 		}
-
-		// Summary
-		if (Error == 0) {
-			std::cout << "  PASSED: All " << func_name << " tests for " << typeid(T).name()
-				<< " with " << qualifier_name(Q) << " precision" << std::endl;
-		}
-		else {
-			std::cout << "  FAILED: " << Error << " error(s) in " << func_name << " tests for "
-				<< typeid(T).name() << " with " << qualifier_name(Q)
-				<< " precision" << std::endl;
-		}
-		std::cout << std::endl;
 
 		return Error;
 	}
@@ -564,7 +415,6 @@ namespace trig_test {
 	template<typename T, glm::qualifier Q>
 	int test_atan2() {
 		return test_function2<T, Q>(
-			"atan2",
 			[](T y, T x) { return std::atan2(y, x); },
 			[](T y, T x) { return glm::atan<T, Q>(y, x); },
 			[](glm::tvec4<T, Q> y, glm::tvec4<T, Q> x) { return glm::atan(y, x); }
@@ -661,220 +511,33 @@ namespace trig_test {
 
 } // namespace trig_test
 
-int main() {
-	auto start_time = std::chrono::high_resolution_clock::now();
+#define TRIG_TEST(fn) \
+	Error += GLM_TEST(trig_test::fn<float, glm::highp>()); \
+	Error += GLM_TEST(trig_test::fn<float, glm::mediump>()); \
+	Error += GLM_TEST(trig_test::fn<float, glm::lowp>()); \
+	Error += GLM_TEST(trig_test::fn<double, glm::highp>()); \
+	Error += GLM_TEST(trig_test::fn<double, glm::mediump>()); \
+	Error += GLM_TEST(trig_test::fn<double, glm::lowp>())
+
+int main()
+{
 	int Error = 0;
 
-	std::cout << "= GLM TRIGONOMETRIC FUNCTIONS TEST SUITE =" << std::endl;
-
-	// Define the list of tests to run
-	struct TestInfo {
-		std::string name;
-		std::function<int()> test_float_highp;
-		std::function<int()> test_float_mediump;
-		std::function<int()> test_float_lowp;
-		std::function<int()> test_double_highp;
-		std::function<int()> test_double_mediump;
-		std::function<int()> test_double_lowp;
-	};
-
-	std::vector<TestInfo> tests = {
-		{
-			"sin",
-			[]() { return trig_test::test_sin<float, glm::highp>(); },
-			[]() { return trig_test::test_sin<float, glm::mediump>(); },
-			[]() { return trig_test::test_sin<float, glm::lowp>(); },
-			[]() { return trig_test::test_sin<double, glm::highp>(); },
-			[]() { return trig_test::test_sin<double, glm::mediump>(); },
-			[]() { return trig_test::test_sin<double, glm::lowp>(); }
-		},
-		{
-			"cos",
-			[]() { return trig_test::test_cos<float, glm::highp>(); },
-			[]() { return trig_test::test_cos<float, glm::mediump>(); },
-			[]() { return trig_test::test_cos<float, glm::lowp>(); },
-			[]() { return trig_test::test_cos<double, glm::highp>(); },
-			[]() { return trig_test::test_cos<double, glm::mediump>(); },
-			[]() { return trig_test::test_cos<double, glm::lowp>(); }
-		},
-		{
-			"tan",
-			[]() { return trig_test::test_tan<float, glm::highp>(); },
-			[]() { return trig_test::test_tan<float, glm::mediump>(); },
-			[]() { return trig_test::test_tan<float, glm::lowp>(); },
-			[]() { return trig_test::test_tan<double, glm::highp>(); },
-			[]() { return trig_test::test_tan<double, glm::mediump>(); },
-			[]() { return trig_test::test_tan<double, glm::lowp>(); }
-		},
-		{
-			"asin",
-			[]() { return trig_test::test_asin<float, glm::highp>(); },
-			[]() { return trig_test::test_asin<float, glm::mediump>(); },
-			[]() { return trig_test::test_asin<float, glm::lowp>(); },
-			[]() { return trig_test::test_asin<double, glm::highp>(); },
-			[]() { return trig_test::test_asin<double, glm::mediump>(); },
-			[]() { return trig_test::test_asin<double, glm::lowp>(); }
-		},
-		{
-			"acos",
-			[]() { return trig_test::test_acos<float, glm::highp>(); },
-			[]() { return trig_test::test_acos<float, glm::mediump>(); },
-			[]() { return trig_test::test_acos<float, glm::lowp>(); },
-			[]() { return trig_test::test_acos<double, glm::highp>(); },
-			[]() { return trig_test::test_acos<double, glm::mediump>(); },
-			[]() { return trig_test::test_acos<double, glm::lowp>(); }
-		},
-		{
-			"atan",
-			[]() { return trig_test::test_atan<float, glm::highp>(); },
-			[]() { return trig_test::test_atan<float, glm::mediump>(); },
-			[]() { return trig_test::test_atan<float, glm::lowp>(); },
-			[]() { return trig_test::test_atan<double, glm::highp>(); },
-			[]() { return trig_test::test_atan<double, glm::mediump>(); },
-			[]() { return trig_test::test_atan<double, glm::lowp>(); }
-		},
-		{
-			"atan2",
-			[]() { return trig_test::test_atan2<float, glm::highp>(); },
-			[]() { return trig_test::test_atan2<float, glm::mediump>(); },
-			[]() { return trig_test::test_atan2<float, glm::lowp>(); },
-			[]() { return trig_test::test_atan2<double, glm::highp>(); },
-			[]() { return trig_test::test_atan2<double, glm::mediump>(); },
-			[]() { return trig_test::test_atan2<double, glm::lowp>(); }
-		},
-		{
-			"sinh",
-			[]() { return trig_test::test_sinh<float, glm::highp>(); },
-			[]() { return trig_test::test_sinh<float, glm::mediump>(); },
-			[]() { return trig_test::test_sinh<float, glm::lowp>(); },
-			[]() { return trig_test::test_sinh<double, glm::highp>(); },
-			[]() { return trig_test::test_sinh<double, glm::mediump>(); },
-			[]() { return trig_test::test_sinh<double, glm::lowp>(); }
-		},
-		{
-			"cosh",
-			[]() { return trig_test::test_cosh<float, glm::highp>(); },
-			[]() { return trig_test::test_cosh<float, glm::mediump>(); },
-			[]() { return trig_test::test_cosh<float, glm::lowp>(); },
-			[]() { return trig_test::test_cosh<double, glm::highp>(); },
-			[]() { return trig_test::test_cosh<double, glm::mediump>(); },
-			[]() { return trig_test::test_cosh<double, glm::lowp>(); }
-		},
-		{
-			"tanh",
-			[]() { return trig_test::test_tanh<float, glm::highp>(); },
-			[]() { return trig_test::test_tanh<float, glm::mediump>(); },
-			[]() { return trig_test::test_tanh<float, glm::lowp>(); },
-			[]() { return trig_test::test_tanh<double, glm::highp>(); },
-			[]() { return trig_test::test_tanh<double, glm::mediump>(); },
-			[]() { return trig_test::test_tanh<double, glm::lowp>(); }
-		},
-		{
-			"asinh",
-			[]() { return trig_test::test_asinh<float, glm::highp>(); },
-			[]() { return trig_test::test_asinh<float, glm::mediump>(); },
-			[]() { return trig_test::test_asinh<float, glm::lowp>(); },
-			[]() { return trig_test::test_asinh<double, glm::highp>(); },
-			[]() { return trig_test::test_asinh<double, glm::mediump>(); },
-			[]() { return trig_test::test_asinh<double, glm::lowp>(); }
-		},
-		{
-			"acosh",
-			[]() { return trig_test::test_acosh<float, glm::highp>(); },
-			[]() { return trig_test::test_acosh<float, glm::mediump>(); },
-			[]() { return trig_test::test_acosh<float, glm::lowp>(); },
-			[]() { return trig_test::test_acosh<double, glm::highp>(); },
-			[]() { return trig_test::test_acosh<double, glm::mediump>(); },
-			[]() { return trig_test::test_acosh<double, glm::lowp>(); }
-		},
-		{
-			"atanh",
-			[]() { return trig_test::test_atanh<float, glm::highp>(); },
-			[]() { return trig_test::test_atanh<float, glm::mediump>(); },
-			[]() { return trig_test::test_atanh<float, glm::lowp>(); },
-			[]() { return trig_test::test_atanh<double, glm::highp>(); },
-			[]() { return trig_test::test_atanh<double, glm::mediump>(); },
-			[]() { return trig_test::test_atanh<double, glm::lowp>(); }
-		},
-		{
-			"radians",
-			[]() { return trig_test::test_radians<float, glm::highp>(); },
-			[]() { return trig_test::test_radians<float, glm::mediump>(); },
-			[]() { return trig_test::test_radians<float, glm::lowp>(); },
-			[]() { return trig_test::test_radians<double, glm::highp>(); },
-			[]() { return trig_test::test_radians<double, glm::mediump>(); },
-			[]() { return trig_test::test_radians<double, glm::lowp>(); }
-		},
-		{
-			"degrees",
-			[]() { return trig_test::test_degrees<float, glm::highp>(); },
-			[]() { return trig_test::test_degrees<float, glm::mediump>(); },
-			[]() { return trig_test::test_degrees<float, glm::lowp>(); },
-			[]() { return trig_test::test_degrees<double, glm::highp>(); },
-			[]() { return trig_test::test_degrees<double, glm::mediump>(); },
-			[]() { return trig_test::test_degrees<double, glm::lowp>(); }
-		}
-	};
-
-	// Track test results
-	std::vector<std::pair<std::string, int>> test_results;
-
-	// Run all tests
-	for (const auto& test : tests) {
-		std::cout << "TESTING: " << test.name << std::endl;
-
-		int function_errors = 0;
-
-		// Float tests
-		function_errors += test.test_float_highp();
-		function_errors += test.test_float_mediump();
-		function_errors += test.test_float_lowp();
-
-		// Double tests
-		function_errors += test.test_double_highp();
-		function_errors += test.test_double_mediump();
-		function_errors += test.test_double_lowp();
-
-		// Update total error count
-		Error += function_errors;
-
-		// Store result for summary
-		test_results.push_back({ test.name, function_errors });
-
-		// Print function summary
-		std::cout << "\n" << test.name << " SUMMARY: ";
-		if (function_errors == 0) {
-			std::cout << "ALL TESTS PASSED" << std::endl;
-		}
-		else {
-			std::cout << function_errors << " ERROR(S) DETECTED" << std::endl;
-		}
-	}
-
-	// Calculate and print execution time
-	auto end_time = std::chrono::high_resolution_clock::now();
-	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count();
-
-	// Print final summary
-	std::cout << "TRIGONOMETRIC FUNCTIONS TEST SUMMARY" << std::endl;
-
-	std::cout << std::left << std::setw(15) << "Function" << " | " << std::setw(12) << "Status" << std::endl;
-
-	for (const auto& result : test_results) {
-		std::cout << std::left << std::setw(15) << result.first << " | "
-			<< std::setw(12) << (result.second == 0 ? "PASS" : "FAIL (" + std::to_string(result.second) + ")")
-			<< std::endl;
-	}
-
-	std::cout << "\n";
-	if (Error == 0) {
-		std::cout << "ALL TESTS PASSED SUCCESSFULLY!" << std::endl;
-	}
-	else {
-		std::cout << "TESTS FAILED WITH " << Error << " ERROR(S)" << std::endl;
-	}
-
-	std::cout << "Total execution time: " << duration << " ms" << std::endl;
+	TRIG_TEST(test_sin);
+	TRIG_TEST(test_cos);
+	TRIG_TEST(test_tan);
+	TRIG_TEST(test_asin);
+	TRIG_TEST(test_acos);
+	TRIG_TEST(test_atan);
+	TRIG_TEST(test_atan2);
+	TRIG_TEST(test_sinh);
+	TRIG_TEST(test_cosh);
+	TRIG_TEST(test_tanh);
+	TRIG_TEST(test_asinh);
+	TRIG_TEST(test_acosh);
+	TRIG_TEST(test_atanh);
+	TRIG_TEST(test_radians);
+	TRIG_TEST(test_degrees);
 
 	return GLM_TEST_FINISH(Error);
 }

@@ -259,8 +259,8 @@ namespace ceilPowerOfTwo_advanced
 
 		std::clock_t Timestramp2 = std::clock();
 
-		std::printf("ceilPowerOfTwo_loop: %d clocks\n", static_cast<int>(Timestramp1 - Timestramp0));
-		std::printf("glm::ceilPowerOfTwo: %d clocks\n", static_cast<int>(Timestramp2 - Timestramp1));
+		glm_test::info("ceilPowerOfTwo_loop: %d clocks\n", static_cast<int>(Timestramp1 - Timestramp0));
+		glm_test::info("glm::ceilPowerOfTwo: %d clocks\n", static_cast<int>(Timestramp2 - Timestramp1));
 
 		return Error;
 	}

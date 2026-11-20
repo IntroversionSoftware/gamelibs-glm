@@ -26,15 +26,7 @@ enum result
 	STATIC_ASSERT
 };
 
-// Helper for detailed logging
-#define LOG_TEST_START(test_name) \
-	std::cout << "\n=== RUNNING TEST: " << test_name << " ===" << std::endl
-
-#define LOG_TEST_RESULT(test_name, error_count) \
-	std::cout << "=== TEST " << test_name << ": " << \
-	(error_count > 0 ? "FAILED with " : "PASSED with ") << \
-	error_count << (error_count == 1 ? " error" : " errors") << " ===" << std::endl
-
+// Failure details for the table-driven tests
 #define LOG_ERROR(expected, actual, message) \
 	std::cout << "ERROR: " << message << "\n" \
 	<< "  Expected: " << expected << "\n" \
@@ -74,7 +66,6 @@ namespace bitfieldInsert
 
 	static int test()
 	{
-		LOG_TEST_START("bitfieldInsert");
 		int Error = 0;
 		glm::uint count = sizeof(Data32) / sizeof(typeU32);
 
@@ -98,7 +89,6 @@ namespace bitfieldInsert
 			}
 		}
 
-		LOG_TEST_RESULT("bitfieldInsert", Error);
 		return Error;
 	}
 }//bitfieldInsert
@@ -143,7 +133,6 @@ namespace bitfieldExtract
 
 	static int test()
 	{
-		LOG_TEST_START("bitfieldExtract");
 		int Error = 0;
 
 		glm::uint count = sizeof(Data32) / sizeof(typeU32);
@@ -175,7 +164,6 @@ namespace bitfieldExtract
 			}
 		}
 
-		LOG_TEST_RESULT("bitfieldExtract", Error);
 		return Error;
 	}
 }//extractField
@@ -504,7 +492,6 @@ namespace bitfieldReverse
 
 	static int test()
 	{
-		LOG_TEST_START("bitfieldReverse");
 		int Error = 0;
 
 		Error += test32_bitfieldReverse();
@@ -517,7 +504,6 @@ namespace bitfieldReverse
 		Error += test64_bitfieldReverseUint64();
 		Error += test64_bitfieldReverseOps();
 
-		LOG_TEST_RESULT("bitfieldReverse", Error);
 		return Error;
 	}
 
@@ -550,10 +536,10 @@ namespace bitfieldReverse
 
 		std::clock_t Timestamps4 = std::clock();
 
-		std::printf("glm::bitfieldReverse: %d clocks\n", static_cast<int>(Timestamps1 - Timestamps0));
-		std::printf("bitfieldReverseLoop: %d clocks\n", static_cast<int>(Timestamps2 - Timestamps1));
-		std::printf("bitfieldReverseUint32: %d clocks\n", static_cast<int>(Timestamps3 - Timestamps2));
-		std::printf("bitfieldReverseOps: %d clocks\n", static_cast<int>(Timestamps4 - Timestamps3));
+		glm_test::info("glm::bitfieldReverse: %d clocks\n", static_cast<int>(Timestamps1 - Timestamps0));
+		glm_test::info("bitfieldReverseLoop: %d clocks\n", static_cast<int>(Timestamps2 - Timestamps1));
+		glm_test::info("bitfieldReverseUint32: %d clocks\n", static_cast<int>(Timestamps3 - Timestamps2));
+		glm_test::info("bitfieldReverseOps: %d clocks\n", static_cast<int>(Timestamps4 - Timestamps3));
 
 		return Error;
 	}
@@ -587,10 +573,10 @@ namespace bitfieldReverse
 
 		std::clock_t Timestamps4 = std::clock();
 
-		std::printf("glm::bitfieldReverse - 64: %d clocks\n", static_cast<int>(Timestamps1 - Timestamps0));
-		std::printf("bitfieldReverseLoop - 64: %d clocks\n", static_cast<int>(Timestamps2 - Timestamps1));
-		std::printf("bitfieldReverseUint - 64: %d clocks\n", static_cast<int>(Timestamps3 - Timestamps2));
-		std::printf("bitfieldReverseOps - 64: %d clocks\n", static_cast<int>(Timestamps4 - Timestamps3));
+		glm_test::info("glm::bitfieldReverse - 64: %d clocks\n", static_cast<int>(Timestamps1 - Timestamps0));
+		glm_test::info("bitfieldReverseLoop - 64: %d clocks\n", static_cast<int>(Timestamps2 - Timestamps1));
+		glm_test::info("bitfieldReverseUint - 64: %d clocks\n", static_cast<int>(Timestamps3 - Timestamps2));
+		glm_test::info("bitfieldReverseOps - 64: %d clocks\n", static_cast<int>(Timestamps4 - Timestamps3));
 
 		return Error;
 	}
@@ -819,18 +805,18 @@ namespace findMSB
 			std::clock_t Timestamps7 = std::clock();
 #		endif//((GLM_ARCH & GLM_ARCH_AVX_BIT) && (GLM_COMPILER & GLM_COMPILER_VC))
 
-		std::printf("glm::findMSB: %d clocks\n", static_cast<int>(Timestamps1 - Timestamps0));
-		std::printf("findMSB - nlz1: %d clocks\n", static_cast<int>(Timestamps2 - Timestamps1));
-		std::printf("findMSB - nlz2: %d clocks\n", static_cast<int>(Timestamps3 - Timestamps2));
-		std::printf("findMSB - 0.9.5: %d clocks\n", static_cast<int>(Timestamps4 - Timestamps3));
+		glm_test::info("glm::findMSB: %d clocks\n", static_cast<int>(Timestamps1 - Timestamps0));
+		glm_test::info("findMSB - nlz1: %d clocks\n", static_cast<int>(Timestamps2 - Timestamps1));
+		glm_test::info("findMSB - nlz2: %d clocks\n", static_cast<int>(Timestamps3 - Timestamps2));
+		glm_test::info("findMSB - 0.9.5: %d clocks\n", static_cast<int>(Timestamps4 - Timestamps3));
 
 #		if GLM_HAS_BITSCAN_WINDOWS
-			std::printf("findMSB - intrinsics: %d clocks\n", static_cast<int>(Timestamps5 - Timestamps4));
+			glm_test::info("findMSB - intrinsics: %d clocks\n", static_cast<int>(Timestamps5 - Timestamps4));
 #		endif//GLM_HAS_BITSCAN_WINDOWS
-		std::printf("findMSB - pop: %d clocks\n", static_cast<int>(Timestamps6 - Timestamps5));
+		glm_test::info("findMSB - pop: %d clocks\n", static_cast<int>(Timestamps6 - Timestamps5));
 
 #		if ((GLM_ARCH & GLM_ARCH_AVX_BIT) && (GLM_COMPILER & GLM_COMPILER_VC))
-			std::printf("findMSB - avx tzcnt: %d clocks\n", static_cast<int>(Timestamps7 - Timestamps6));
+			glm_test::info("findMSB - avx tzcnt: %d clocks\n", static_cast<int>(Timestamps7 - Timestamps6));
 #		endif//((GLM_ARCH & GLM_ARCH_AVX_BIT) && (GLM_COMPILER & GLM_COMPILER_VC))
 
 		return Error;
@@ -1024,13 +1010,11 @@ namespace findMSB
 
 	static int test()
 	{
-		LOG_TEST_START("findMSB");
 		int Error(0);
 
 		Error += test_ivec4();
 		Error += test_int();
 
-		LOG_TEST_RESULT("findMSB", Error);
 		return Error;
 	}
 
@@ -1190,12 +1174,10 @@ namespace findLSB
 
 	static int test()
 	{
-		LOG_TEST_START("findLSB");
 		int Error(0);
 
 		Error += test_int();
 
-		LOG_TEST_RESULT("findLSB", Error);
 		return Error;
 	}
 
@@ -1252,15 +1234,15 @@ namespace findLSB
 
 		std::clock_t Timestamps5 = std::clock();
 
-		std::printf("glm::findLSB: %d clocks\n", static_cast<int>(Timestamps1 - Timestamps0));
-		std::printf("findLSB - 0.9.5: %d clocks\n", static_cast<int>(Timestamps2 - Timestamps1));
+		glm_test::info("glm::findLSB: %d clocks\n", static_cast<int>(Timestamps1 - Timestamps0));
+		glm_test::info("findLSB - 0.9.5: %d clocks\n", static_cast<int>(Timestamps2 - Timestamps1));
 
 #		if GLM_HAS_BITSCAN_WINDOWS
-			std::printf("findLSB - intrinsics: %d clocks\n", static_cast<int>(Timestamps3 - Timestamps2));
+			glm_test::info("findLSB - intrinsics: %d clocks\n", static_cast<int>(Timestamps3 - Timestamps2));
 #		endif
 
-		std::printf("findLSB - ntz2: %d clocks\n", static_cast<int>(Timestamps4 - Timestamps3));
-		std::printf("findLSB - branchfree: %d clocks\n", static_cast<int>(Timestamps5 - Timestamps4));
+		glm_test::info("findLSB - ntz2: %d clocks\n", static_cast<int>(Timestamps4 - Timestamps3));
+		glm_test::info("findLSB - branchfree: %d clocks\n", static_cast<int>(Timestamps5 - Timestamps4));
 
 		return Error;
 	}
@@ -1279,7 +1261,6 @@ namespace uaddCarry
 {
 	static int test()
 	{
-		LOG_TEST_START("uaddCarry");
 		int Error(0);
 
 		{
@@ -1351,7 +1332,6 @@ namespace uaddCarry
 			}
 		}
 
-		LOG_TEST_RESULT("uaddCarry", Error);
 		return Error;
 	}
 }//namespace uaddCarry
@@ -1360,7 +1340,6 @@ namespace usubBorrow
 {
 	static int test()
 	{
-		LOG_TEST_START("usubBorrow");
 		int Error(0);
 
 		{
@@ -1465,7 +1444,6 @@ namespace usubBorrow
 			}
 		}
 
-		LOG_TEST_RESULT("usubBorrow", Error);
 		return Error;
 	}
 }//namespace usubBorrow
@@ -1474,7 +1452,6 @@ namespace umulExtended
 {
 	static int test()
 	{
-		LOG_TEST_START("umulExtended");
 		int Error(0);
 
 		{
@@ -1584,7 +1561,6 @@ namespace umulExtended
 			}
 		}
 
-		LOG_TEST_RESULT("umulExtended", Error);
 		return Error;
 	}
 }//namespace umulExtended
@@ -1593,7 +1569,6 @@ namespace imulExtended
 {
 	static int test()
 	{
-		LOG_TEST_START("imulExtended");
 		int Error(0);
 
 		{
@@ -1703,7 +1678,6 @@ namespace imulExtended
 			}
 		}
 
-		LOG_TEST_RESULT("imulExtended", Error);
 		return Error;
 	}
 }//namespace imulExtended
@@ -1853,18 +1827,17 @@ namespace bitCount
 
 		std::clock_t TimestampsF = std::clock();
 
-		std::printf("bitCount - TimeIf %d\n", static_cast<int>(TimestampsB - TimestampsA));
-		std::printf("bitCount - TimeVec %d\n", static_cast<int>(TimestampsC - TimestampsB));
-		std::printf("bitCount - TimeDefault %d\n", static_cast<int>(TimestampsD - TimestampsC));
-		std::printf("bitCount - TimeVec4 %d\n", static_cast<int>(TimestampsE - TimestampsD));
-		std::printf("bitCount - bitfield %d\n", static_cast<int>(TimestampsF - TimestampsE));
+		glm_test::info("bitCount - TimeIf %d\n", static_cast<int>(TimestampsB - TimestampsA));
+		glm_test::info("bitCount - TimeVec %d\n", static_cast<int>(TimestampsC - TimestampsB));
+		glm_test::info("bitCount - TimeDefault %d\n", static_cast<int>(TimestampsD - TimestampsC));
+		glm_test::info("bitCount - TimeVec4 %d\n", static_cast<int>(TimestampsE - TimestampsD));
+		glm_test::info("bitCount - bitfield %d\n", static_cast<int>(TimestampsF - TimestampsE));
 
 		return Error;
 	}
 
 	static int test()
 	{
-		LOG_TEST_START("bitCount");
 		int Error(0);
 
 		for(std::size_t i = 0, n = sizeof(DataI32) / sizeof(type<int>); i < n; ++i)
@@ -1906,14 +1879,12 @@ namespace bitCount
 			}
 		}
 
-		LOG_TEST_RESULT("bitCount", Error);
 		return Error;
 	}
 }//bitCount
 
 int main()
 {
-	std::cout << "GLM Integer Functions Test Suite\n";
 
 	int Error = 0;
 
@@ -1936,7 +1907,6 @@ int main()
 #	endif
 
 	if (Error == 0) {
-		std::cout << "Performance tests:\n";
 
 		::bitCount::perf(Samples);
 		::bitfieldReverse::perf(Samples);
@@ -1944,8 +1914,6 @@ int main()
 		::findLSB::perf(Samples);
 	}
 #endif
-
-	std::cout << "Total errors: " << Error << "\n";
 
 	return GLM_TEST_FINISH(Error);
 }
