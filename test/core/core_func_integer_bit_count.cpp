@@ -8,8 +8,6 @@
 
 #include <glm/glm.hpp>
 
-#ifdef NDEBUG
-
 #if (GLM_COMPILER & GLM_COMPILER_CLANG)
 #	pragma clang diagnostic push
 #	pragma clang diagnostic ignored "-Wsign-conversion"
@@ -177,141 +175,68 @@ static int pop9(unsigned x)
 	return static_cast<int>(y);
 }
 
-static int errors;
-static void error(int x, int y)
+// GLM's own
+static int glm_bitCount(unsigned x)
 {
-	errors = errors + 1;
-	std::printf("Error for x = %08x, got %08x\n", x, y);
+	return glm::bitCount(x);
 }
 
-#if (GLM_COMPILER & GLM_COMPILER_VC)
-#	pragma warning(push)
-#	pragma warning(disable: 4389)  // nonstandard extension used : nameless struct/union
-#endif
+// Inputs and their expected results, in pairs
+static unsigned const Table[] = {0,0, 1,1, 2,1, 3,2, 4,1, 5,2, 6,2, 7,3,
+	8,1, 9,2, 10,2, 11,3, 12,2, 13,3, 14,3, 15,4, 16,1, 17,2,
+	0x3F,6, 0x40,1, 0x41,2, 0x7f,7, 0x80,1, 0x81,2, 0xfe,7, 0xff,8,
+	0x4000,1, 0x4001,2, 0x7000,3, 0x7fff,15,
+	0x55555555,16, 0xAAAAAAAA, 16, 0xFF000000,8, 0xC0C0C0C0,8,
+	0x0FFFFFF0,24, 0x80000000,1, 0xFFFFFFFF,32};
+
+// Checks Function against the table, skipping inputs with bits outside Mask (some versions only handle
+// small inputs) and capping the expected result at Cap. With GLM_TEST_VERBOSE set, also times 1000000 passes
+// over the table.
+template<typename Fn>
+static int test(char const* Name, Fn Function, unsigned Mask = 0xFFFFFFFF, int Cap = 32)
+{
+	int Error = 0;
+
+	std::size_t const Count = sizeof(Table) / sizeof(Table[0]);
+	for (std::size_t i = 0; i < Count; i += 2)
+		if ((Table[i] & ~Mask) == 0)
+			Error += glm_test::context(GLM_CHECK_EQ(Function(Table[i]), glm::min(static_cast<int>(Table[i + 1]), Cap)), "x", Table[i]);
+
+	if (glm_test::verbose())
+	{
+		int Sum = 0;
+		std::clock_t const Begin = std::clock();
+		for (std::size_t k = 0; k < 1000000; ++k)
+			for (std::size_t i = 0; i < Count; i += 2)
+				if ((Table[i] & ~Mask) == 0)
+					Sum += Function(Table[i]);
+		std::clock_t const End = std::clock();
+		glm_test::info("%s: %d clocks (%d)\n", Name, static_cast<int>(End - Begin), Sum);
+	}
+
+	return Error;
+}
 
 int main()
 {
-	int i, n;
-	static unsigned test[] = {0,0, 1,1, 2,1, 3,2, 4,1, 5,2, 6,2, 7,3,
-		8,1, 9,2, 10,2, 11,3, 12,2, 13,3, 14,3, 15,4, 16,1, 17,2,
-		0x3F,6, 0x40,1, 0x41,2, 0x7f,7, 0x80,1, 0x81,2, 0xfe,7, 0xff,8,
-		0x4000,1, 0x4001,2, 0x7000,3, 0x7fff,15,
-		0x55555555,16, 0xAAAAAAAA, 16, 0xFF000000,8, 0xC0C0C0C0,8,
-		0x0FFFFFF0,24, 0x80000000,1, 0xFFFFFFFF,32};
+	int Error = 0;
 
-	std::size_t const Count = 1000000;
+	Error += GLM_TEST(test("glm", glm_bitCount));
+	Error += GLM_TEST(test("pop0", pop0));
+	Error += GLM_TEST(test("pop1", pop1));
+	Error += GLM_TEST(test("pop2", pop2));
+	Error += GLM_TEST(test("pop3", pop3));
+	Error += GLM_TEST(test("pop4", pop4));
+	Error += GLM_TEST(test("pop5", pop5));
+	Error += GLM_TEST(test("pop5a", pop5a));
+	Error += GLM_TEST(test("pop6", pop6));
+	Error += GLM_TEST(test("pop7", pop7, 0xFF));
+	Error += GLM_TEST(test("pop8", pop8, 0x7F));
+	Error += GLM_TEST(test("pop9", pop9, 0x7FFF));
 
-	n = sizeof(test)/4;
-
-	std::clock_t TimestampBeg = 0;
-	std::clock_t TimestampEnd = 0;
-
-	TimestampBeg = std::clock();
-	for (std::size_t k = 0; k < Count; ++k)
-	for (i = 0; i < n; i += 2) {
-		if (pop0(test[i]) != static_cast<int>(test[i+1])) error(test[i], pop0(test[i]));}
-	TimestampEnd = std::clock();
-
-	std::printf("pop0: %d clocks\n", static_cast<int>(TimestampEnd - TimestampBeg));
-
-	TimestampBeg = std::clock();
-	for (std::size_t k = 0; k < Count; ++k)
-	for (i = 0; i < n; i += 2) {
-		if (pop1(test[i]) != static_cast<int>(test[i+1])) error(test[i], pop1(test[i]));}
-	TimestampEnd = std::clock();
-
-	std::printf("pop1: %d clocks\n", static_cast<int>(TimestampEnd - TimestampBeg));
-
-	TimestampBeg = std::clock();
-	for (std::size_t k = 0; k < Count; ++k)
-	for (i = 0; i < n; i += 2) {
-		if (pop2(test[i]) != static_cast<int>(test[i+1])) error(test[i], pop2(test[i]));}
-	TimestampEnd = std::clock();
-
-	std::printf("pop2: %d clocks\n", static_cast<int>(TimestampEnd - TimestampBeg));
-
-	TimestampBeg = std::clock();
-	for (std::size_t k = 0; k < Count; ++k)
-	for (i = 0; i < n; i += 2) {
-		if (pop3(test[i]) != static_cast<int>(test[i+1])) error(test[i], pop3(test[i]));}
-	TimestampEnd = std::clock();
-
-	std::printf("pop3: %d clocks\n", static_cast<int>(TimestampEnd - TimestampBeg));
-
-	TimestampBeg = std::clock();
-	for (std::size_t k = 0; k < Count; ++k)
-	for (i = 0; i < n; i += 2) {
-		if (pop4(test[i]) != static_cast<int>(test[i+1])) error(test[i], pop4(test[i]));}
-	TimestampEnd = std::clock();
-
-	std::printf("pop4: %d clocks\n", static_cast<int>(TimestampEnd - TimestampBeg));
-
-	TimestampBeg = std::clock();
-	for (std::size_t k = 0; k < Count; ++k)
-	for (i = 0; i < n; i += 2) {
-		if (pop5(test[i]) != static_cast<int>(test[i+1])) error(test[i], pop5(test[i]));}
-	TimestampEnd = std::clock();
-
-	std::printf("pop5: %d clocks\n", static_cast<int>(TimestampEnd - TimestampBeg));
-
-	TimestampBeg = std::clock();
-	for (std::size_t k = 0; k < Count; ++k)
-	for (i = 0; i < n; i += 2) {
-		if (pop5a(test[i]) != static_cast<int>(test[i+1])) error(test[i], pop5a(test[i]));}
-	TimestampEnd = std::clock();
-
-	std::printf("pop5a: %d clocks\n", static_cast<int>(TimestampEnd - TimestampBeg));
-
-	TimestampBeg = std::clock();
-	for (std::size_t k = 0; k < Count; ++k)
-	for (i = 0; i < n; i += 2) {
-		if (pop6(test[i]) != static_cast<int>(test[i+1])) error(test[i], pop6(test[i]));}
-	TimestampEnd = std::clock();
-
-	std::printf("pop6: %d clocks\n", static_cast<int>(TimestampEnd - TimestampBeg));
-
-	TimestampBeg = std::clock();
-	for (std::size_t k = 0; k < Count; ++k)
-	for (i = 0; i < n; i += 2) {
-		if ((test[i] & 0xffffff00) == 0)
-		if (pop7(test[i]) != static_cast<int>(test[i+1])) error(test[i], pop7(test[i]));}
-	TimestampEnd = std::clock();
-
-	std::printf("pop7: %d clocks\n", static_cast<int>(TimestampEnd - TimestampBeg));
-
-	TimestampBeg = std::clock();
-	for (std::size_t k = 0; k < Count; ++k)
-	for (i = 0; i < n; i += 2) {
-		if ((test[i] & 0xffffff80) == 0)
-		if (pop8(test[i]) != static_cast<int>(test[i+1])) error(test[i], pop8(test[i]));}
-	TimestampEnd = std::clock();
-
-	std::printf("pop8: %d clocks\n", static_cast<int>(TimestampEnd - TimestampBeg));
-
-	TimestampBeg = std::clock();
-	for (std::size_t k = 0; k < Count; ++k)
-	for (i = 0; i < n; i += 2) {
-		if ((test[i] & 0xffff8000) == 0)
-		if (pop9(test[i]) != static_cast<int>(test[i+1])) error(test[i], pop9(test[i]));}
-	TimestampEnd = std::clock();
-
-	std::printf("pop9: %d clocks\n", static_cast<int>(TimestampEnd - TimestampBeg));
-
-	if (errors == 0)
-		std::printf("Passed all %d cases.\n", static_cast<int>(sizeof(test)/8));
+	return GLM_TEST_FINISH(Error);
 }
 
-#if (GLM_COMPILER & GLM_COMPILER_VC)
-#	pragma warning(pop)
-#elif (GLM_COMPILER & GLM_COMPILER_CLANG)
+#if (GLM_COMPILER & GLM_COMPILER_CLANG)
 #	pragma clang diagnostic pop
 #endif
-
-#else
-
-int main()
-{
-	return 0;
-}
-
-#endif//NDEBUG

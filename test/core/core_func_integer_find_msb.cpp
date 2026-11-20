@@ -4,8 +4,6 @@
 #include <cstdlib>     // To define "exit", req'd by XLC.
 #include <ctime>
 
-#ifdef NDEBUG
-
 #define LE 1            // 1 for little-endian, 0 for big-endian.
 
 static int pop(unsigned x) {
@@ -306,161 +304,70 @@ static int nlz10b(unsigned x)
 	return table[x >> 26];
 }
 
-static int errors;
-static void error(unsigned x, int y)
+// GLM's own: findMSB is 31 minus the number of leading zeros, and -1 for 0, so the same formula
+// gives nlz(0) = 32
+static int glm_findMSB(unsigned x)
 {
-	errors = errors + 1;
-	std::printf("Error for x = %08x, got %d\n", x, y);
+	return 31 - glm::findMSB(x);
 }
 
-#if defined(_MSC_VER)
-#	pragma warning(push)
-#	pragma warning(disable: 4389)  // nonstandard extension used : nameless struct/union
-#endif
+// Inputs and their expected results, in pairs
+static unsigned const Table[] = {0,32, 1,31, 2,30, 3,30, 4,29, 5,29, 6,29,
+	7,29, 8,28, 9,28, 16,27, 32,26, 64,25, 128,24, 255,24, 256,23,
+	512,22, 1024,21, 2048,20, 4096,19, 8192,18, 16384,17, 32768,16,
+	65536,15, 0x20000,14, 0x40000,13, 0x80000,12, 0x100000,11,
+	0x200000,10, 0x400000,9, 0x800000,8, 0x1000000,7, 0x2000000,6,
+	0x4000000,5, 0x8000000,4, 0x0FFFFFFF,4, 0x10000000,3,
+	0x3000FFFF,2, 0x50003333,1, 0x7FFFFFFF,1, 0x80000000,0,
+	0xFFFFFFFF,0};
+
+// Checks Function against the table, skipping inputs with bits outside Mask (some versions only handle
+// small inputs) and capping the expected result at Cap. With GLM_TEST_VERBOSE set, also times 1000 passes
+// over the table.
+template<typename Fn>
+static int test(char const* Name, Fn Function, unsigned Mask = 0xFFFFFFFF, int Cap = 32)
+{
+	int Error = 0;
+
+	std::size_t const Count = sizeof(Table) / sizeof(Table[0]);
+	for (std::size_t i = 0; i < Count; i += 2)
+		if ((Table[i] & ~Mask) == 0)
+			Error += glm_test::context(GLM_CHECK_EQ(Function(Table[i]), glm::min(static_cast<int>(Table[i + 1]), Cap)), "x", Table[i]);
+
+	if (glm_test::verbose())
+	{
+		int Sum = 0;
+		std::clock_t const Begin = std::clock();
+		for (std::size_t k = 0; k < 1000; ++k)
+			for (std::size_t i = 0; i < Count; i += 2)
+				if ((Table[i] & ~Mask) == 0)
+					Sum += Function(Table[i]);
+		std::clock_t const End = std::clock();
+		glm_test::info("%s: %d clocks (%d)\n", Name, static_cast<int>(End - Begin), Sum);
+	}
+
+	return Error;
+}
 
 int main()
 {
-	int i, n;
-	static unsigned test[] = {0,32, 1,31, 2,30, 3,30, 4,29, 5,29, 6,29,
-		7,29, 8,28, 9,28, 16,27, 32,26, 64,25, 128,24, 255,24, 256,23,
-		512,22, 1024,21, 2048,20, 4096,19, 8192,18, 16384,17, 32768,16,
-		65536,15, 0x20000,14, 0x40000,13, 0x80000,12, 0x100000,11,
-		0x200000,10, 0x400000,9, 0x800000,8, 0x1000000,7, 0x2000000,6,
-		0x4000000,5, 0x8000000,4, 0x0FFFFFFF,4, 0x10000000,3,
-		0x3000FFFF,2, 0x50003333,1, 0x7FFFFFFF,1, 0x80000000,0,
-		0xFFFFFFFF,0};
-	std::size_t const Count = 1000;
+	int Error = 0;
 
-	n = sizeof(test)/4;
+	Error += GLM_TEST(test("glm", glm_findMSB));
+	Error += GLM_TEST(test("nlz1", nlz1));
+	Error += GLM_TEST(test("nlz1a", nlz1a));
+	Error += GLM_TEST(test("nlz2", nlz2));
+	Error += GLM_TEST(test("nlz2a", nlz2a));
+	Error += GLM_TEST(test("nlz3", nlz3));
+	Error += GLM_TEST(test("nlz4", nlz4));
+	Error += GLM_TEST(test("nlz5", nlz5));
+	Error += GLM_TEST(test("nlz6", nlz6));
+	Error += GLM_TEST(test("nlz7", nlz7));
+	Error += GLM_TEST(test("nlz8", nlz8));
+	Error += GLM_TEST(test("nlz9", nlz9));
+	Error += GLM_TEST(test("nlz10", nlz10));
+	Error += GLM_TEST(test("nlz10a", nlz10a));
+	Error += GLM_TEST(test("nlz10b", nlz10b));
 
-	std::clock_t TimestampBeg = 0;
-	std::clock_t TimestampEnd = 0;
-
-	TimestampBeg = std::clock();
-	for (std::size_t k = 0; k < Count; ++k)
-	for (i = 0; i < n; i += 2) {
-		if (nlz1(test[i]) != static_cast<int>(test[i + 1])) error(test[i], nlz1(test[i]));}
-	TimestampEnd = std::clock();
-
-	std::printf("nlz1: %d clocks\n", static_cast<int>(TimestampEnd - TimestampBeg));
-
-	TimestampBeg = std::clock();
-	for (std::size_t k = 0; k < Count; ++k)
-	for (i = 0; i < n; i += 2) {
-		if (nlz1a(test[i]) != static_cast<int>(test[i + 1])) error(test[i], nlz1a(test[i]));}
-	TimestampEnd = std::clock();
-
-	std::printf("nlz1a: %d clocks\n", static_cast<int>(TimestampEnd - TimestampBeg));
-
-	TimestampBeg = std::clock();
-	for (std::size_t k = 0; k < Count; ++k)
-	for (i = 0; i < n; i += 2) {
-		if (nlz2(test[i]) != static_cast<int>(test[i + 1])) error(test[i], nlz2(test[i]));}
-	TimestampEnd = std::clock();
-
-	std::printf("nlz2: %d clocks\n", static_cast<int>(TimestampEnd - TimestampBeg));
-
-	TimestampBeg = std::clock();
-	for (std::size_t k = 0; k < Count; ++k)
-	for (i = 0; i < n; i += 2) {
-		if (nlz2a(test[i]) != static_cast<int>(test[i + 1])) error(test[i], nlz2a(test[i]));}
-	TimestampEnd = std::clock();
-
-	std::printf("nlz2a: %d clocks\n", static_cast<int>(TimestampEnd - TimestampBeg));
-
-	TimestampBeg = std::clock();
-	for (std::size_t k = 0; k < Count; ++k)
-	for (i = 0; i < n; i += 2) {
-		if (nlz3(test[i]) != static_cast<int>(test[i + 1])) error(test[i], nlz3(test[i]));}
-	TimestampEnd = std::clock();
-
-	std::printf("nlz3: %d clocks\n", static_cast<int>(TimestampEnd - TimestampBeg));
-
-	TimestampBeg = std::clock();
-	for (std::size_t k = 0; k < Count; ++k)
-	for (i = 0; i < n; i += 2) {
-		if (nlz4(test[i]) != static_cast<int>(test[i + 1])) error(test[i], nlz4(test[i]));}
-	TimestampEnd = std::clock();
-
-	std::printf("nlz4: %d clocks\n", static_cast<int>(TimestampEnd - TimestampBeg));
-
-	TimestampBeg = std::clock();
-	for (std::size_t k = 0; k < Count; ++k)
-	for (i = 0; i < n; i += 2) {
-		if (nlz5(test[i]) != static_cast<int>(test[i + 1])) error(test[i], nlz5(test[i]));}
-	TimestampEnd = std::clock();
-
-	std::printf("nlz5: %d clocks\n", static_cast<int>(TimestampEnd - TimestampBeg));
-
-	TimestampBeg = std::clock();
-	for (std::size_t k = 0; k < Count; ++k)
-	for (i = 0; i < n; i += 2) {
-		if (nlz6(test[i]) != static_cast<int>(test[i + 1])) error(test[i], nlz6(test[i]));}
-	TimestampEnd = std::clock();
-
-	std::printf("nlz6: %d clocks\n", static_cast<int>(TimestampEnd - TimestampBeg));
-
-	TimestampBeg = std::clock();
-	for (std::size_t k = 0; k < Count; ++k)
-	for (i = 0; i < n; i += 2) {
-		if (nlz7(test[i]) != static_cast<int>(test[i + 1])) error(test[i], nlz7(test[i]));}
-	TimestampEnd = std::clock();
-
-	std::printf("nlz7: %d clocks\n", static_cast<int>(TimestampEnd - TimestampBeg));
-
-	TimestampBeg = std::clock();
-	for (std::size_t k = 0; k < Count; ++k)
-	for (i = 0; i < n; i += 2) {
-		if (nlz8(test[i]) != static_cast<int>(test[i + 1])) error(test[i], nlz8(test[i]));}
-	TimestampEnd = std::clock();
-
-	std::printf("nlz8: %d clocks\n", static_cast<int>(TimestampEnd - TimestampBeg));
-
-	TimestampBeg = std::clock();
-	for (std::size_t k = 0; k < Count; ++k)
-	for (i = 0; i < n; i += 2) {
-		if (nlz9(test[i]) != static_cast<int>(test[i + 1])) error(test[i], nlz9(test[i]));}
-	TimestampEnd = std::clock();
-
-	std::printf("nlz9: %d clocks\n", static_cast<int>(TimestampEnd - TimestampBeg));
-
-	TimestampBeg = std::clock();
-	for (std::size_t k = 0; k < Count; ++k)
-	for (i = 0; i < n; i += 2) {
-		if (nlz10(test[i]) != static_cast<int>(test[i + 1])) error(test[i], nlz10(test[i]));}
-	TimestampEnd = std::clock();
-
-	std::printf("nlz10: %d clocks\n", static_cast<int>(TimestampEnd - TimestampBeg));
-
-	TimestampBeg = std::clock();
-	for (std::size_t k = 0; k < Count; ++k)
-	for (i = 0; i < n; i += 2) {
-		if (nlz10a(test[i]) != static_cast<int>(test[i + 1])) error(test[i], nlz10a(test[i]));}
-	TimestampEnd = std::clock();
-
-	std::printf("nlz10a: %d clocks\n", static_cast<int>(TimestampEnd - TimestampBeg));
-
-	TimestampBeg = std::clock();
-	for (std::size_t k = 0; k < Count; ++k)
-	for (i = 0; i < n; i += 2) {
-		if (nlz10b(test[i]) != static_cast<int>(test[i + 1])) error(test[i], nlz10b(test[i]));}
-	TimestampEnd = std::clock();
-
-	std::printf("nlz10b: %d clocks\n", static_cast<int>(TimestampEnd - TimestampBeg));
-
-	if (errors == 0)
-		std::printf("Passed all %d cases.\n", static_cast<int>(sizeof(test)/8));
+	return GLM_TEST_FINISH(Error);
 }
-
-#if defined(_MSC_VER)
-#	pragma warning(pop)
-#endif
-
-#else
-
-int main()
-{
-	return 0;
-}
-
-#endif//NDEBUG
