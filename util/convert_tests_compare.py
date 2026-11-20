@@ -8,6 +8,8 @@ with confidence stays a plain GLM_CHECK):
 - GLM_CHECK(glm::equal(a, b, eps))            -> GLM_CHECK_NEAR(a, b, eps)   (scalar form)
 - GLM_CHECK(a == b)                           -> GLM_CHECK_EQ(a, b), likewise != < <= > >=
 - GLM_CHECK(true == x) / GLM_CHECK(x == true) -> GLM_CHECK(x)
+- Error += a != b;  (a failure condition)     -> Error += GLM_CHECK_EQ(a, b);  likewise == -> NE.
+  Only these two: they're exact inverses for every value, where !(a < b) and a >= b differ for NaN.
 
 glm::epsilonEqual is left alone: it tests |a - b| < eps, where glm::equal tests <=.
 
@@ -21,6 +23,8 @@ import re
 import sys
 
 CHECK = re.compile(r'^(?P<head>.*?)GLM_CHECK\((?P<body>.*)\);(?P<tail>[ \t]*(?://.*)?)$')
+FAILURE = re.compile(r'^(?P<head>[ \t]*Error\s*\+=\s*)(?P<body>[^;]*);(?P<tail>[ \t]*(?://.*)?)$')
+INVERSE = {'!=': 'EQ', '==': 'NE'}
 MACROS = {'==': 'EQ', '!=': 'NE', '<': 'LT', '<=': 'LE', '>': 'GT', '>=': 'GE'}
 
 
@@ -135,11 +139,37 @@ def convert_body(body):
     return MACROS[op], [a, b]
 
 
+def convert_failure(body):
+    """`a != b` counted as an error -> ('EQ', [a, b]); `a == b` -> ('NE', [a, b])."""
+    body = body.strip()
+    if 'GLM_' in body:
+        return None
+    depth = depths(body)
+    if depth is None:
+        return None
+    ops = operators(body, depth)
+    if len(ops) != 1 or ops[0][1] not in INVERSE:
+        return None
+    pos, op = ops[0]
+    a, b = body[:pos].strip(), body[pos + len(op):].strip()
+    if not a or not b or not angles_balanced(a) or not angles_balanced(b):
+        return None
+    return INVERSE[op], [a, b]
+
+
 def convert(text):
     nl = '\r\n' if '\r\n' in text else '\n'
     lines = text.split(nl)
     stats = {}
     for i, line in enumerate(lines):
+        f = FAILURE.match(line)
+        if f:
+            result = convert_failure(f.group('body'))
+            if result is not None:
+                kind, args = result
+                lines[i] = f.group('head') + 'GLM_CHECK_' + kind + '(' + ', '.join(wrap(a) for a in args) + ');' + f.group('tail')
+                stats['failure ' + kind] = stats.get('failure ' + kind, 0) + 1
+                continue
         m = CHECK.match(line)
         if not m:
             continue

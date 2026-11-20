@@ -48,7 +48,7 @@ int rangedSumComp(GenTypc& genType, int compsum) {
 		int sum = 0;
 		for (const int& elem : genType)
 			sum += elem;
-		Error += sum != compsum;
+		Error += GLM_CHECK_EQ(sum, compsum);
 	}
 #endif
 #endif
@@ -56,14 +56,14 @@ int rangedSumComp(GenTypc& genType, int compsum) {
 		int sum = 0;
 		for (const int* it = begin(genType); it != end(genType); ++it)
 			sum += *it;
-		Error += sum != compsum;
+		Error += GLM_CHECK_EQ(sum, compsum);
 	}
 
 	{
 		int sum = 0;
 		for (std::reverse_iterator<const int*> it = rbegin(genType); it != rend(genType); ++it)
 			sum += *it;
-		Error += sum != compsum;
+		Error += GLM_CHECK_EQ(sum, compsum);
 	}
 	return Error;
 }
