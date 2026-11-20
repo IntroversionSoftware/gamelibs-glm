@@ -1,40 +1,11 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include "glm_test.hpp"
+#include <glm/ext/matrix_relational.hpp>
+#include <glm/ext/scalar_relational.hpp>
 #include <glm/ext/vector_relational.hpp>
 #include <glm/gtc/constants.hpp>
 #include <glm/gtc/epsilon.hpp>
 #include <glm/gtx/rotate_vector.hpp>
-#include <glm/gtx/string_cast.hpp>
-#include <iostream>
-
-// Helper function to print vector comparison for failure cases
-template<typename VecT>
-void print_vector_comparison(const VecT& actual, const VecT& expected, const char* test_name) {
-	std::cout << "---- " << test_name << " test failure ----\n";
-	std::cout << "Expected vector: " << glm::to_string(expected) << "\n";
-	std::cout << "Actual vector:   " << glm::to_string(actual) << "\n";
-
-	// For vectors, calculate and show the difference
-	auto diff = actual - expected;
-	std::cout << "Difference:      " << glm::to_string(diff) << "\n";
-
-}
-
-// Helper function to print matrix comparison for failure cases
-void print_matrix_comparison(const glm::mat4& actual, const glm::mat4& expected, const char* test_name) {
-	std::cout << "---- " << test_name << " test failure ----\n";
-	std::cout << "Expected matrix:\n" << glm::to_string(expected) << "\n";
-	std::cout << "Actual matrix:\n" << glm::to_string(actual) << "\n";
-
-	// Also print the difference to help identify small precision issues
-	glm::mat4 diff;
-	for (int col = 0; col < 4; ++col) {
-		for (int row = 0; row < 4; ++row) {
-			diff[col][row] = actual[col][row] - expected[col][row];
-		}
-	}
-	std::cout << "Difference (actual - expected):\n" << glm::to_string(diff) << "\n";
-}
 
 static int test_rotate()
 {
@@ -111,12 +82,7 @@ static int test_rotate()
 		// and the component of (1,0,0) along (1,1,1)/√3 is 1/√3, so the dot product is 1/3
 		float expected_dot = 1.0f / 3.0f;
 
-		if (glm::abs(cos_angle - expected_dot) > 0.0001f) {
-			std::cout << "Expected dot product: " << expected_dot << "\n";
-			std::cout << "Actual dot product:   " << cos_angle << "\n";
-			std::cout << "Vector: " << glm::to_string(B) << "\n";
-			Error += 1;
-		}
+		Error += glm_test::context(GLM_CHECK_NEAR(cos_angle, expected_dot, 0.0001f), "B", B);
 	}
 
 	// Test case 8: Rotate vec4 by 90 degrees around Z
@@ -302,30 +268,7 @@ static int test_orientation()
 			glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)
 		);
 
-		bool row0_match = glm::all(glm::equal(O[0], Expected[0], epsilon));
-		bool row1_match = glm::all(glm::equal(O[1], Expected[1], epsilon));
-		bool row2_match = glm::all(glm::equal(O[2], Expected[2], epsilon));
-		bool row3_match = glm::all(glm::equal(O[3], Expected[3], epsilon));
-
-		if (!row0_match || !row1_match || !row2_match || !row3_match) {
-			print_matrix_comparison(O, Expected, "Basic orientation");
-
-			// Detailed row-by-row comparison for better debugging
-			if (!row0_match) {
-				print_vector_comparison(O[0], Expected[0], "Orientation row 0");
-			}
-			if (!row1_match) {
-				print_vector_comparison(O[1], Expected[1], "Orientation row 1");
-			}
-			if (!row2_match) {
-				print_vector_comparison(O[2], Expected[2], "Orientation row 2");
-			}
-			if (!row3_match) {
-				print_vector_comparison(O[3], Expected[3], "Orientation row 3");
-			}
-
-			Error += 1;
-		}
+		Error += GLM_CHECK_NEAR(O, Expected, epsilon);
 	}
 
 	// Test case 2: Orientation with direction along one of the primary axes
@@ -341,20 +284,12 @@ static int test_orientation()
 			for (int j = 0; j < 3; ++j) {
 				if (i != j) {
 					float dot_product = glm::dot(glm::vec3(O[i]), glm::vec3(O[j]));
-					if (glm::abs(dot_product) > custom_epsilon) {
-						std::cout << "Columns " << i << " and " << j << " are not orthogonal\n";
-						std::cout << "Dot product: " << dot_product << "\n";
-						Error += 1;
-					}
+					Error += glm_test::context(GLM_CHECK_NEAR(dot_product, 0.0f, custom_epsilon), "i", i, "j", j);
 				}
 			}
 
 			float length = glm::length(glm::vec3(O[i]));
-			if (glm::abs(length - 1.0f) > custom_epsilon) {
-				std::cout << "Column " << i << " is not normalized\n";
-				std::cout << "Length: " << length << "\n";
-				Error += 1;
-			}
+			Error += glm_test::context(GLM_CHECK_NEAR(length, 1.0f, custom_epsilon), "i", i);
 		}
 
 		// Check that the transformation maps (0,0,1) to either (0,1,0) or (0,-1,0)
@@ -375,11 +310,7 @@ static int test_orientation()
 
 		for (int i = 0; i < 3; ++i) {
 			float length = glm::length(glm::vec3(O[i]));
-			if (glm::abs(length - 1.0f) > custom_epsilon) {
-				std::cout << "Column " << i << " is not normalized\n";
-				std::cout << "Length: " << length << "\n";
-				Error += 1;
-			}
+			Error += glm_test::context(GLM_CHECK_NEAR(length, 1.0f, custom_epsilon), "i", i);
 		}
 	}
 

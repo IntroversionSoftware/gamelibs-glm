@@ -6,16 +6,10 @@
 #include <glm/ext/quaternion_trigonometric.hpp>
 #include <glm/ext/scalar_constants.hpp>
 #include <glm/ext/scalar_relational.hpp>
-#include <iostream>
 
 // Helper function to create quaternions consistently regardless of internal layout
 static glm::quat make_quat(float w, float x, float y, float z) {
     return glm::quat::wxyz(w, x, y, z);
-}
-
-// Print quaternion components for debugging
-static void print_quat(const std::string& label, const glm::quat& q) {
-    std::cout << label << ": w=" << q.w << ", x=" << q.x << ", y=" << q.y << ", z=" << q.z << std::endl;
 }
 
 static int test_conjugate()
@@ -39,13 +33,8 @@ static int test_conjugate()
         glm::quat const A(glm::vec3(1, 0, 0), glm::vec3(0, 1, 0));
         glm::quat const C = glm::conjugate(A);
 
-        // Fix original test: A and C should NOT be equal
-        if (glm::all(glm::equal(A, C, glm::epsilon<float>()))) {
-            std::cout << "Error: Quaternion and its conjugate should not be equal" << std::endl;
-            print_quat("Original", A);
-            print_quat("Conjugate", C);
-            Error++;
-        }
+        // A quaternion with a vector part differs from its conjugate
+        Error += glm_test::context(GLM_CHECK(!glm::all(glm::equal(A, C, glm::epsilon<float>()))), "A", A, "C", C);
 
         // Conjugate of conjugate should equal original
         glm::quat const B = glm::conjugate(C);
@@ -70,10 +59,6 @@ static int test_mix()
     // Test with explicit quaternions rather than using constructors that might be affected by layout
     glm::quat const Q1 = glm::angleAxis(glm::radians(0.0f), glm::vec3(0, 0, 1));
     glm::quat const Q2 = glm::angleAxis(glm::radians(90.0f), glm::vec3(0, 0, 1));
-
-    // Print the test quaternions for debugging
-    print_quat("Q1 (0° rotation)", Q1);
-    print_quat("Q2 (90° rotation)", Q2);
 
     // Test mix
     {

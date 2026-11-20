@@ -6,16 +6,6 @@
 #include <glm/ext/vector_relational.hpp>
 #include <glm/ext/vector_float4.hpp>
 #include <glm/ext/vector_float3.hpp>
-#include <glm/gtx/string_cast.hpp>
-#include <iostream>
-
-// Helper function to print vector comparison for failure cases
-void print_vector_comparison(const glm::vec4& actual, const glm::vec4& expected, const char* test_name) {
-	std::cout << "---- " << test_name << " test failure ----\n";
-	std::cout << "Expected vector: " << glm::to_string(expected) << "\n";
-	std::cout << "Actual vector:   " << glm::to_string(actual) << "\n";
-	std::cout << "Difference:      " << glm::to_string(actual - expected) << "\n";
-}
 
 static int test_translate()
 {
@@ -251,14 +241,8 @@ static int test_rotate()
 		glm::vec4 const B = R * A;
 		glm::vec4 const Expected(0.0f, 1.0f, 0.0f, 1.0f);
 
-		if (!glm::all(glm::equal(B, Expected, epsilon))) {
-			print_vector_comparison(B, Expected, "Arbitrary axis rotation");
-			// This one might need a larger epsilon due to compound floating point errors
-			if (glm::all(glm::equal(B, Expected, 0.001f))) {
-				std::cout << "Note: This test passes with a larger epsilon (0.001)\n";
-				Error -= 1; // Reduce error count if it passes with larger epsilon
-			}
-		}
+		// Rotating about an arbitrary axis compounds rounding, so this allows more than epsilon
+		Error += GLM_CHECK_NEAR(B, Expected, 0.001f);
 	}
 
 	return Error;

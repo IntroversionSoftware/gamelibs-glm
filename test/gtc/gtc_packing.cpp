@@ -3,62 +3,8 @@
 #include <glm/gtc/packing.hpp>
 #include <glm/gtc/epsilon.hpp>
 #include <glm/ext/vector_relational.hpp>
-#include <cstdio>
 #include <vector>
 
-/*
-static void print_bits(float const& s)
-{
-	union
-	{
-		float f;
-		unsigned int i;
-	} uif;
-
-	uif.f = s;
-
-	std::printf("f32: ");
-	for(std::size_t j = sizeof(s) * 8; j > 0; --j)
-	{
-		if(j == 23 || j == 31)
-			std::printf(" ");
-		std::printf("%d", (uif.i & (1 << (j - 1))) ? 1 : 0);
-	}
-}
-
-static void print_10bits(glm::uint const& s)
-{
-	std::printf("10b: ");
-	for(std::size_t j = 10; j > 0; --j)
-	{
-		if(j == 5)
-			std::printf(" ");
-		std::printf("%d", (s & (1 << (j - 1))) ? 1 : 0);
-	}
-}
-
-static void print_11bits(glm::uint const& s)
-{
-	std::printf("11b: ");
-	for(std::size_t j = 11; j > 0; --j)
-	{
-		if(j == 6)
-			std::printf(" ");
-		std::printf("%d", (s & (1 << (j - 1))) ? 1 : 0);
-	}
-}
-
-static void print_value(float const& s)
-{
-	std::printf("%2.5f, ", static_cast<double>(s));
-	print_bits(s);
-	std::printf(", ");
-//	print_11bits(detail::floatTo11bit(s));
-//	std::printf(", ");
-//	print_10bits(detail::floatTo10bit(s));
-	std::printf("\n");
-}
-*/
 static int test_Half1x16()
 {
 	int Error = 0;

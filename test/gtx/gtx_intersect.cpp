@@ -61,38 +61,13 @@ static int test_intersectRayTriangle()
 
 			// Only check bary position and distance if we expect an intersection
 			if (expectedResult) {
-				bool baryMatch = glm::all(glm::epsilonEqual(
-					BaryPosition,
-					expectedBaryPosition,
-					std::numeric_limits<float>::epsilon() * 10.0f));
-
-				bool distanceMatch = glm::abs(Distance - expectedDistance) <=
-					std::numeric_limits<float>::epsilon() * 10.0f;
-
-				if (!baryMatch) {
-					printf("Test '%s' failed: Expected bary position (%f, %f), got (%f, %f)\n",
-						   testName,
-						   expectedBaryPosition.x, expectedBaryPosition.y,
-						   BaryPosition.x, BaryPosition.y);
-					Error++;
-				}
-
-				if (!distanceMatch) {
-					printf("Test '%s' failed: Expected distance %f, got %f\n",
-						   testName,
-						   expectedDistance,
-						   Distance);
-					Error++;
-				}
+				Error += glm_test::context(GLM_CHECK(glm::all(glm::epsilonEqual(BaryPosition, expectedBaryPosition, std::numeric_limits<float>::epsilon() * 10.0f))),
+					"test", testName, "BaryPosition", BaryPosition, "expectedBaryPosition", expectedBaryPosition);
+				Error += glm_test::context(GLM_CHECK_LE(glm::abs(Distance - expectedDistance), std::numeric_limits<float>::epsilon() * 10.0f),
+					"test", testName, "Distance", Distance, "expectedDistance", expectedDistance);
 			}
 
-			if (Result != expectedResult) {
-				printf("Test '%s' failed: Expected %s, got %s\n",
-					   testName,
-					   expectedResult ? "hit" : "miss",
-					   Result ? "hit" : "miss");
-				Error++;
-			}
+			Error += glm_test::context(GLM_CHECK_EQ(Result, expectedResult), "test", testName);
 		};
 
 	// ==========================================

@@ -11,16 +11,10 @@
 #include <glm/ext/vector_double3.hpp>
 #include <glm/ext/vector_double3_precision.hpp>
 #include <glm/ext/scalar_relational.hpp>
-#include <iostream>
 
 // Helper function to create quaternions consistently regardless of layout
 static glm::quat make_quat(float w, float x, float y, float z) {
 	return glm::quat::wxyz(w, x, y, z);
-}
-
-// Print quaternion components for debugging
-static void print_quat(const std::string& label, const glm::quat& q) {
-	std::cout << label << ": w=" << q.w << ", x=" << q.x << ", y=" << q.y << ", z=" << q.z << std::endl;
 }
 
 static int test_length()
@@ -199,12 +193,7 @@ static int test_cross()
 
 		// Verify that cross(a,b) != cross(b,a) for quaternions
 		glm::quat const C2 = glm::cross(B, A);
-		if (glm::all(glm::equal(C1, C2, Epsilon))) {
-			std::cout << "Error: Quaternion multiplication should not be commutative" << std::endl;
-			print_quat("A*B", C1);
-			print_quat("B*A", C2);
-			Error++;
-		}
+		Error += glm_test::context(GLM_CHECK(!glm::all(glm::equal(C1, C2, Epsilon))), "C1", C1, "C2", C2); // Quaternion multiplication should not be commutative
 	}
 
 	return Error;
