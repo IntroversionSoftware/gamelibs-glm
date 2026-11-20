@@ -298,6 +298,28 @@ static int test_combined_transforms()
 	return Error;
 }
 
+// scale and rotate combine the columns they change and leave the translation column alone, so an
+// infinite component elsewhere doesn't turn it into NaN (inf * 0).
+static int test_transform_special_values()
+{
+	GLM_TEST_REQUIRE_IEEE_SPECIALS();
+	int Error = 0;
+	float const Inf = std::numeric_limits<float>::infinity();
+
+	glm::mat4 M(1.0f);
+	M[0][0] = Inf;
+	M[3] = glm::vec4(1.0f, 2.0f, 3.0f, 1.0f);
+
+	glm::mat4 const S = glm::scale(M, glm::vec3(2.0f, 3.0f, 4.0f));
+	Error += GLM_CHECK_EQ(S[3], M[3]);
+	Error += GLM_CHECK_EQ(S[1], glm::vec4(0.0f, 3.0f, 0.0f, 0.0f));
+
+	glm::mat4 const R = glm::rotate(M, 0.5f, glm::vec3(0.0f, 0.0f, 1.0f));
+	Error += GLM_CHECK_EQ(R[3], M[3]);
+
+	return Error;
+}
+
 int main()
 {
 	int Error = 0;
@@ -306,6 +328,7 @@ int main()
 	Error += GLM_TEST(test_scale());
 	Error += GLM_TEST(test_rotate());
 	Error += GLM_TEST(test_combined_transforms());
+	Error += GLM_TEST(test_transform_special_values());
 
 	return GLM_TEST_FINISH(Error);
 }
