@@ -367,6 +367,39 @@
 #endif
 
 ///////////////////////////////////////////////////////////////////////////////////
+// detail::is_constant_evaluated(): std::is_constant_evaluated() without requiring C++20.
+// GLM_HAS_IS_CONSTANT_EVALUATED is 0 where the compiler can't tell, and callers then keep a path
+// that works in constant evaluation.
+
+#if defined(__cpp_if_consteval) && __cpp_if_consteval >= 202106L
+#	define GLM_HAS_IS_CONSTANT_EVALUATED 1
+#	define GLM_IS_CONSTANT_EVALUATED_CONSTEVAL 1
+#elif GLM_HAS_BUILTIN(__builtin_is_constant_evaluated) || \
+	(defined(__GNUC__) && !defined(__clang__) && __GNUC__ >= 9) || \
+	(defined(_MSC_VER) && !defined(__clang__) && _MSC_VER >= 1925)
+	// Clang, GCC 9+ and MSVC 19.25+ (VS 2019 16.5), in any language mode
+#	define GLM_HAS_IS_CONSTANT_EVALUATED 1
+#else
+#	define GLM_HAS_IS_CONSTANT_EVALUATED 0
+#endif
+
+#if GLM_HAS_IS_CONSTANT_EVALUATED
+namespace glm{
+namespace detail
+{
+	GLM_FUNC_QUALIFIER constexpr bool is_constant_evaluated() noexcept
+	{
+#	ifdef GLM_IS_CONSTANT_EVALUATED_CONSTEVAL
+		if consteval { return true; } else { return false; }
+#	else
+		return __builtin_is_constant_evaluated();
+#	endif
+	}
+}//namespace detail
+}//namespace glm
+#endif
+
+///////////////////////////////////////////////////////////////////////////////////
 // Length type: all length functions returns a length_t type.
 // When GLM_FORCE_SIZE_T_LENGTH is defined, length_t is a typedef of size_t otherwise
 // length_t is a typedef of int like GLSL defines it.

@@ -354,8 +354,8 @@ namespace detail
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR T& vec<4, T, Q>::operator[](typename vec<4, T, Q>::length_type i)
 	{
 		GLM_ASSERT_LENGTH(i, this->length());
-#if GLM_LANG & GLM_LANG_CXX20_FLAG
-		if (std::is_constant_evaluated())
+#if GLM_HAS_IS_CONSTANT_EVALUATED
+		if (detail::is_constant_evaluated())
 		{
 #endif
 			switch (i)
@@ -370,7 +370,7 @@ namespace detail
 			case 3:
 				return w;
 			}
-#if GLM_LANG & GLM_LANG_CXX20_FLAG
+#if GLM_HAS_IS_CONSTANT_EVALUATED
 		}
 		else {
 			return (&x)[i];
@@ -382,8 +382,8 @@ namespace detail
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR T const& vec<4, T, Q>::operator[](typename vec<4, T, Q>::length_type i) const
 	{
 		GLM_ASSERT_LENGTH(i, this->length());
-#if GLM_LANG & GLM_LANG_CXX20_FLAG
-		if (std::is_constant_evaluated())
+#if GLM_HAS_IS_CONSTANT_EVALUATED
+		if (detail::is_constant_evaluated())
 		{
 #endif
 			switch (i)
@@ -398,7 +398,7 @@ namespace detail
 			case 3:
 				return w;
 			}
-#if GLM_LANG & GLM_LANG_CXX20_FLAG
+#if GLM_HAS_IS_CONSTANT_EVALUATED
 		}
 		else {
 			return (&x)[i];
