@@ -95,6 +95,13 @@ static int test_normalize()
 		Error += GLM_CHECK_NEAR(N, Scaled, Epsilon); // Normalized quaternion direction incorrect
 	}
 
+	// Test 4: a short quaternion normalizes too; only a zero-length one gives the identity
+	{
+		glm::quat const A = make_quat(0, 1e-5f, 0, 0);
+		Error += GLM_CHECK_NEAR(glm::normalize(A), make_quat(0, 1, 0, 0), Epsilon);
+		Error += GLM_CHECK_EQ(glm::normalize(make_quat(0, 0, 0, 0)), make_quat(1, 0, 0, 0));
+	}
+
 	return Error;
 }
 
