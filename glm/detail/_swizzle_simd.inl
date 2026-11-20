@@ -40,16 +40,17 @@ namespace detail
 		__builtin_memcpy(p, &v, sizeof(V));
 	}
 
-	// The swizzled lanes of v, in swizzle order.
-	template<length_t N, int E0, int E1, int E2, int E3, typename V>
-	GLM_FUNC_QUALIFIER auto _swizzle_clang_gather(V const& v)
+	// The swizzled lanes of v, in swizzle order. Older Clang (e.g. 18) gives __builtin_shufflevector a
+	// vector type distinct from the ext_vector alias, so convert the results explicitly.
+	template<typename T, length_t N, int E0, int E1, int E2, int E3, typename V>
+	GLM_FUNC_QUALIFIER _swizzle_clang_vec<T, N> _swizzle_clang_gather(V const& v)
 	{
 		if constexpr (N == 2)
-			return __builtin_shufflevector(v, v, E0, E1);
+			return (_swizzle_clang_vec<T, N>)__builtin_shufflevector(v, v, E0, E1);
 		else if constexpr (N == 3)
-			return __builtin_shufflevector(v, v, E0, E1, E2);
+			return (_swizzle_clang_vec<T, N>)__builtin_shufflevector(v, v, E0, E1, E2);
 		else
-			return __builtin_shufflevector(v, v, E0, E1, E2, E3);
+			return (_swizzle_clang_vec<T, N>)__builtin_shufflevector(v, v, E0, E1, E2, E3);
 	}
 
 	// Lane J of the write-back shuffle: the new value from swizzle lane i (offset by Width, i.e. taken
@@ -69,12 +70,12 @@ namespace detail
 		V dst = _swizzle_clang_load<V>(p);
 
 		// Read the swizzled components before writing any, matching the scalar path's semantics.
-		_swizzle_clang_vec<T, N> const value = op(_swizzle_clang_gather<N, E0, E1, E2, E3>(dst), that);
+		_swizzle_clang_vec<T, N> const value = op(_swizzle_clang_gather<T, N, E0, E1, E2, E3>(dst), that);
 
 		// Widen the result to the access width (the padding lanes are never selected below), then merge
 		// it into the lanes the swizzle targets. Writable swizzles have no repeated indices.
-		V const wide = __builtin_shufflevector(value, value, (J < static_cast<int>(N) ? J : -1)...);
-		dst = __builtin_shufflevector(dst, wide, _swizzle_clang_scatter(N, E0, E1, E2, E3, sizeof...(J), J)...);
+		V const wide = (V)__builtin_shufflevector(value, value, (J < static_cast<int>(N) ? J : -1)...);
+		dst = (V)__builtin_shufflevector(dst, wide, _swizzle_clang_scatter(N, E0, E1, E2, E3, sizeof...(J), J)...);
 
 		_swizzle_clang_store(p, dst);
 	}
@@ -97,7 +98,7 @@ namespace detail
 			using V = _swizzle_clang_vec<T, _swizzle_clang_width(N, E0, E1, E2, E3)>;
 
 			vec<N, T, Q> Result;
-			Result.data = _swizzle_clang_gather<N, E0, E1, E2, E3>(_swizzle_clang_load<V>(this->_buffer));
+			Result.data = _swizzle_clang_gather<T, N, E0, E1, E2, E3>(_swizzle_clang_load<V>(this->_buffer));
 			return Result;
 		}
 	};
