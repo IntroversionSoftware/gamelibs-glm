@@ -4,8 +4,6 @@
 #include <cstdlib>     //To define "exit", req'd by XLC.
 #include <ctime>
 
-#ifdef NDEBUG
-
 static int pop(unsigned x)
 {
 	x = x - ((x >> 1) & 0x55555555);
@@ -281,176 +279,76 @@ static int ntz11(unsigned int n) {
 #	pragma warning(pop)
 #endif
 
-static int errors;
-static void error(unsigned x, int y) {
-   errors = errors + 1;
-   std::printf("Error for x = %08x, got %d\n", x, y);
+// GLM's own: findLSB is the number of trailing zeros, except for 0, where it's -1 (and ntz is 32)
+static int glm_findLSB(unsigned x)
+{
+	int const Result = glm::findLSB(x);
+	return Result < 0 ? 32 : Result;
 }
 
-#if defined(_MSC_VER)
-#	pragma warning(push)
-#	pragma warning(disable: 4389)  // nonstandard extension used : nameless struct/union
-#endif
-
-int main()
+// ntz5 takes a char, so it counts at most 8
+static int ntz5_unsigned(unsigned x)
 {
-	int i, m, n;
-	static unsigned test[] = {0,32, 1,0, 2,1, 3,0, 4,2, 5,0, 6,1,  7,0,
-		8,3, 9,0, 16,4, 32,5, 64,6, 128,7, 255,0, 256,8, 512,9, 1024,10,
-		2048,11, 4096,12, 8192,13, 16384,14, 32768,15, 65536,16,
-		0x20000,17, 0x40000,18, 0x80000,19, 0x100000,20, 0x200000,21,
-		0x400000,22, 0x800000,23, 0x1000000,24, 0x2000000,25,
-		0x4000000,26, 0x8000000,27, 0x10000000,28, 0x20000000,29,
-		0x40000000,30, 0x80000000,31, 0xFFFFFFF0,4, 0x3000FF00,8,
-		0xC0000000,30, 0x60000000,29, 0x00011000, 12};
+	return ntz5(static_cast<char>(x));
+}
 
-	std::size_t const Count = 1000;
+// Inputs and their expected results, in pairs
+static unsigned const Table[] = {0,32, 1,0, 2,1, 3,0, 4,2, 5,0, 6,1,  7,0,
+	8,3, 9,0, 16,4, 32,5, 64,6, 128,7, 255,0, 256,8, 512,9, 1024,10,
+	2048,11, 4096,12, 8192,13, 16384,14, 32768,15, 65536,16,
+	0x20000,17, 0x40000,18, 0x80000,19, 0x100000,20, 0x200000,21,
+	0x400000,22, 0x800000,23, 0x1000000,24, 0x2000000,25,
+	0x4000000,26, 0x8000000,27, 0x10000000,28, 0x20000000,29,
+	0x40000000,30, 0x80000000,31, 0xFFFFFFF0,4, 0x3000FF00,8,
+	0xC0000000,30, 0x60000000,29, 0x00011000, 12};
 
-	n = sizeof(test)/4;
+// Checks Function against the table, skipping inputs with bits outside Mask (some versions only handle
+// small inputs) and capping the expected result at Cap. With GLM_TEST_VERBOSE set, also times 1000 passes
+// over the table.
+template<typename Fn>
+static int test(char const* Name, Fn Function, unsigned Mask = 0xFFFFFFFF, int Cap = 32)
+{
+	int Error = 0;
 
-	std::clock_t TimestampBeg = 0;
-	std::clock_t TimestampEnd = 0;
+	std::size_t const Count = sizeof(Table) / sizeof(Table[0]);
+	for (std::size_t i = 0; i < Count; i += 2)
+		if ((Table[i] & ~Mask) == 0)
+			Error += glm_test::context(GLM_CHECK_EQ(Function(Table[i]), glm::min(static_cast<int>(Table[i + 1]), Cap)), "x", Table[i]);
 
-	TimestampBeg = std::clock();
-	for (std::size_t k = 0; k < Count; ++k)
-	for (i = 0; i < n; i += 2) {
-		if (ntz1(test[i]) != static_cast<int>(test[i+1])) error(test[i], ntz1(test[i]));}
-	TimestampEnd = std::clock();
-
-	std::printf("ntz1: %d clocks\n", static_cast<int>(TimestampEnd - TimestampBeg));
-
-	TimestampBeg = std::clock();
-	for (std::size_t k = 0; k < Count; ++k)
-	for (i = 0; i < n; i += 2) {
-		if (ntz2(test[i]) != static_cast<int>(test[i+1])) error(test[i], ntz2(test[i]));}
-	TimestampEnd = std::clock();
-
-	std::printf("ntz2: %d clocks\n", static_cast<int>(TimestampEnd - TimestampBeg));
-
-	TimestampBeg = std::clock();
-	for (std::size_t k = 0; k < Count; ++k)
-	for (i = 0; i < n; i += 2) {
-		if (ntz3(test[i]) != static_cast<int>(test[i+1])) error(test[i], ntz3(test[i]));}
-	TimestampEnd = std::clock();
-
-	std::printf("ntz3: %d clocks\n", static_cast<int>(TimestampEnd - TimestampBeg));
-
-	TimestampBeg = std::clock();
-	for (std::size_t k = 0; k < Count; ++k)
-	for (i = 0; i < n; i += 2) {
-		if (ntz4(test[i]) != static_cast<int>(test[i+1])) error(test[i], ntz4(test[i]));}
-	TimestampEnd = std::clock();
-
-	std::printf("ntz4: %d clocks\n", static_cast<int>(TimestampEnd - TimestampBeg));
-
-	TimestampBeg = std::clock();
-	for (std::size_t k = 0; k < Count; ++k)
-	for (i = 0; i < n; i += 2) {
-		if (ntz4a(test[i]) != static_cast<int>(test[i+1])) error(test[i], ntz4a(test[i]));}
-	TimestampEnd = std::clock();
-
-	std::printf("ntz4a: %d clocks\n", static_cast<int>(TimestampEnd - TimestampBeg));
-
-	TimestampBeg = std::clock();
-	for(std::size_t k = 0; k < Count; ++k)
-	for(i = 0; i < n; i += 2)
+	if (glm_test::verbose())
 	{
-		m = static_cast<int>(test[i+1]);
-		if(m > 8)
-			m = 8;
-		if(ntz5(static_cast<char>(test[i])) != m)
-			error(test[i], ntz5(static_cast<char>(test[i])));
+		int Sum = 0;
+		std::clock_t const Begin = std::clock();
+		for (std::size_t k = 0; k < 1000; ++k)
+			for (std::size_t i = 0; i < Count; i += 2)
+				if ((Table[i] & ~Mask) == 0)
+					Sum += Function(Table[i]);
+		std::clock_t const End = std::clock();
+		glm_test::info("%s: %d clocks (%d)\n", Name, static_cast<int>(End - Begin), Sum);
 	}
-	TimestampEnd = std::clock();
 
-	std::printf("ntz5: %d clocks\n", static_cast<int>(TimestampEnd - TimestampBeg));
-
-	TimestampBeg = std::clock();
-	for (std::size_t k = 0; k < Count; ++k)
-	for (i = 0; i < n; i += 2) {
-		if (ntz6(test[i]) != static_cast<int>(test[i+1])) error(test[i], ntz6(test[i]));}
-	TimestampEnd = std::clock();
-
-	std::printf("ntz6: %d clocks\n", static_cast<int>(TimestampEnd - TimestampBeg));
-
-	TimestampBeg = std::clock();
-	for (std::size_t k = 0; k < Count; ++k)
-	for (i = 0; i < n; i += 2) {
-		if (ntz6a(test[i]) != static_cast<int>(test[i+1])) error(test[i], ntz6a(test[i]));}
-	TimestampEnd = std::clock();
-
-	std::printf("ntz6a: %d clocks\n", static_cast<int>(TimestampEnd - TimestampBeg));
-
-	TimestampBeg = std::clock();
-	for (std::size_t k = 0; k < Count; ++k)
-	for (i = 0; i < n; i += 2) {
-		if (ntz7(test[i]) != static_cast<int>(test[i+1])) error(test[i], ntz7(test[i]));}
-	TimestampEnd = std::clock();
-
-	std::printf("ntz7: %d clocks\n", static_cast<int>(TimestampEnd - TimestampBeg));
-/*
-	TimestampBeg = std::clock();
-	for (std::size_t k = 0; k < Count; ++k)
-	for (i = 0; i < n; i += 2) {
-		if (ntz7_christophe(test[i]) != static_cast<int>(test[i+1])) error(test[i], ntz7(test[i]));}
-	TimestampEnd = std::clock();
-
-	std::printf("ntz7_christophe: %d clocks\n", static_cast<int>(TimestampEnd - TimestampBeg));
-*/
-	TimestampBeg = std::clock();
-	for (std::size_t k = 0; k < Count; ++k)
-	for (i = 0; i < n; i += 2) {
-		if (ntz8(test[i]) != static_cast<int>(test[i+1])) error(test[i], ntz8(test[i]));}
-	TimestampEnd = std::clock();
-
-	std::printf("ntz8: %d clocks\n", static_cast<int>(TimestampEnd - TimestampBeg));
-
-	TimestampBeg = std::clock();
-	for (std::size_t k = 0; k < Count; ++k)
-	for (i = 0; i < n; i += 2) {
-		if (ntz8a(test[i]) != static_cast<int>(test[i+1])) error(test[i], ntz8a(test[i]));}
-	TimestampEnd = std::clock();
-
-	std::printf("ntz8a: %d clocks\n", static_cast<int>(TimestampEnd - TimestampBeg));
-
-	TimestampBeg = std::clock();
-	for (std::size_t k = 0; k < Count; ++k)
-	for (i = 0; i < n; i += 2) {
-		if (ntz9(test[i]) != static_cast<int>(test[i+1])) error(test[i], ntz9(test[i]));}
-	TimestampEnd = std::clock();
-
-	std::printf("ntz9: %d clocks\n", static_cast<int>(TimestampEnd - TimestampBeg));
-
-	TimestampBeg = std::clock();
-	for (std::size_t k = 0; k < Count; ++k)
-	for (i = 0; i < n; i += 2) {
-		if (ntz10(test[i]) != static_cast<int>(test[i+1])) error(test[i], ntz10(test[i]));}
-	TimestampEnd = std::clock();
-
-	std::printf("ntz10: %d clocks\n", static_cast<int>(TimestampEnd - TimestampBeg));
-
-	TimestampBeg = std::clock();
-	for (std::size_t k = 0; k < Count; ++k)
-		for (i = 0; i < n; i += 2) {
-			if (ntz11(test[i]) != static_cast<int>(test[i + 1])) error(test[i], ntz11(test[i]));
-		}
-	TimestampEnd = std::clock();
-
-	std::printf("ntz11: %d clocks\n", static_cast<int>(TimestampEnd - TimestampBeg));
-
-	if (errors == 0)
-		std::printf("Passed all %d cases.\n", static_cast<int>(sizeof(test)/8));
+	return Error;
 }
-
-#if defined(_MSC_VER)
-#	pragma warning(pop)
-#endif
-
-#else
 
 int main()
 {
-	return 0;
-}
+	int Error = 0;
 
-#endif//NDEBUG
+	Error += GLM_TEST(test("glm", glm_findLSB));
+	Error += GLM_TEST(test("ntz1", ntz1));
+	Error += GLM_TEST(test("ntz2", ntz2));
+	Error += GLM_TEST(test("ntz3", ntz3));
+	Error += GLM_TEST(test("ntz4", ntz4));
+	Error += GLM_TEST(test("ntz4a", ntz4a));
+	Error += GLM_TEST(test("ntz5", ntz5_unsigned, 0xFFFFFFFF, 8));
+	Error += GLM_TEST(test("ntz6", ntz6));
+	Error += GLM_TEST(test("ntz6a", ntz6a));
+	Error += GLM_TEST(test("ntz7", ntz7));
+	Error += GLM_TEST(test("ntz8", ntz8));
+	Error += GLM_TEST(test("ntz8a", ntz8a));
+	Error += GLM_TEST(test("ntz9", ntz9));
+	Error += GLM_TEST(test("ntz10", ntz10));
+	Error += GLM_TEST(test("ntz11", ntz11));
+
+	return GLM_TEST_FINISH(Error);
+}
