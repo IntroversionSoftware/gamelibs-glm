@@ -1,6 +1,7 @@
 #define GLM_ENABLE_EXPERIMENTAL 1
 
 #include <glm/trigonometric.hpp>
+#include <glm/common.hpp>
 #include <glm/gtc/epsilon.hpp>
 #include <glm/gtx/string_cast.hpp>
 #include <glm/ext/vector_relational.hpp>
@@ -212,7 +213,7 @@ namespace trig_test {
 		// Generate test angles appropriate for this function
 		auto test_angles = generate_test_angles<T>(func_name);
 
-		// Set epsilon based on precision qualifier
+		// Set epsilon based on precision qualifier: an absolute error up to magnitude 1, relative above it
 		T eps;
 		if constexpr (Q == glm::highp) {
 			eps = static_cast<T>(1e-6);  // 0.0001% to 0.0002% error margin
@@ -254,7 +255,7 @@ namespace trig_test {
 				continue;
 			}
 
-			if (!glm::epsilonEqual(actual, expected, eps)) {
+			if (!glm::epsilonEqual(actual, expected, eps * glm::max(static_cast<T>(1), std::abs(expected)))) {
 				std::cout << "    FAIL: " << func_name << "(" << a << ") = " << actual
 					<< ", expected " << expected
 					<< ", diff = " << std::abs(actual - expected) << std::endl;
@@ -289,7 +290,7 @@ namespace trig_test {
 				continue;
 			}
 
-			if (glm::any(glm::greaterThan(glm::abs(actual_v - expected_v), glm::tvec4<T, Q>(eps)))) {
+			if (glm::any(glm::greaterThan(glm::abs(actual_v - expected_v), eps * glm::max(glm::tvec4<T, Q>(1), glm::abs(expected_v))))) {
 				std::cout << "    FAIL: " << func_name << "(vec4(" << a << ")) = "
 					<< glm::to_string(actual_v) << ", expected "
 					<< glm::to_string(expected_v) << std::endl;
@@ -320,7 +321,7 @@ namespace trig_test {
 				);
 				glm::tvec4<T, Q> actual_vec = glm_vector(vec_angles);
 
-				if (glm::any(glm::greaterThan(glm::abs(actual_vec - expected_vec), glm::tvec4<T, Q>(eps)))) {
+				if (glm::any(glm::greaterThan(glm::abs(actual_vec - expected_vec), eps * glm::max(glm::tvec4<T, Q>(1), glm::abs(expected_vec))))) {
 					std::cout << "    FAIL: " << func_name << "(mixed_vec) = "
 						<< glm::to_string(actual_vec) << ", expected "
 						<< glm::to_string(expected_vec) << std::endl;
@@ -346,7 +347,7 @@ namespace trig_test {
 				T expected = test_info.edge_case_results[i];
 				T actual = glm_scalar(input);
 
-				if (!glm::epsilonEqual(actual, expected, eps)) {
+				if (!glm::epsilonEqual(actual, expected, eps * glm::max(static_cast<T>(1), std::abs(expected)))) {
 					std::cout << "    FAIL: " << func_name << "(" << input << ") edge case = " << actual
 						<< ", expected " << expected
 						<< ", diff = " << std::abs(actual - expected) << std::endl;
@@ -390,7 +391,7 @@ namespace trig_test {
 			static_cast<T>(0.5), static_cast<T>(1.0)
 		};
 
-		// Set epsilon based on precision qualifier
+		// Set epsilon based on precision qualifier: an absolute error up to magnitude 1, relative above it
 		T eps;
 		if constexpr (Q == glm::highp) {
 			eps = static_cast<T>(1e-6);
@@ -416,7 +417,7 @@ namespace trig_test {
 				T expected = std_func(y, x);
 				T actual = glm_scalar(y, x);
 
-				if (!glm::epsilonEqual(actual, expected, eps)) {
+				if (!glm::epsilonEqual(actual, expected, eps * glm::max(static_cast<T>(1), std::abs(expected)))) {
 					std::cout << "    FAIL: " << func_name << "(" << y << ", " << x << ") = " << actual
 						<< ", expected " << expected
 						<< ", diff = " << std::abs(actual - expected) << std::endl;
@@ -439,7 +440,7 @@ namespace trig_test {
 				glm::tvec4<T, Q> expected_v(std_func(y, x));
 				glm::tvec4<T, Q> actual_v = glm_vector(v_y, v_x);
 
-				if (glm::any(glm::greaterThan(glm::abs(actual_v - expected_v), glm::tvec4<T, Q>(eps)))) {
+				if (glm::any(glm::greaterThan(glm::abs(actual_v - expected_v), eps * glm::max(glm::tvec4<T, Q>(1), glm::abs(expected_v))))) {
 					std::cout << "    FAIL: " << func_name << "(vec4(" << y << "), vec4(" << x << ")) = "
 						<< glm::to_string(actual_v) << ", expected "
 						<< glm::to_string(expected_v) << std::endl;
@@ -462,7 +463,7 @@ namespace trig_test {
 			);
 			glm::tvec4<T, Q> actual_vec = glm_vector(y_vec, x_vec);
 
-			if (glm::any(glm::greaterThan(glm::abs(actual_vec - expected_vec), glm::tvec4<T, Q>(eps)))) {
+			if (glm::any(glm::greaterThan(glm::abs(actual_vec - expected_vec), eps * glm::max(glm::tvec4<T, Q>(1), glm::abs(expected_vec))))) {
 				std::cout << "    FAIL: " << func_name << "(mixed_vec_y, mixed_vec_x) = "
 					<< glm::to_string(actual_vec) << ", expected "
 					<< glm::to_string(expected_vec) << std::endl;

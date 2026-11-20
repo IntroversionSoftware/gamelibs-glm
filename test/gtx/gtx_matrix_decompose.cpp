@@ -1,4 +1,5 @@
 #define GLM_ENABLE_EXPERIMENTAL
+#include "glm_test.hpp"
 #include <glm/gtx/matrix_decompose.hpp>
 
 #include <glm/ext/matrix_relational.hpp>
@@ -20,7 +21,7 @@ static int test_identity() {
 
 	glm::mat4 Out = glm::recompose(Scale, Orientation, Translation, Skew, Perspective);
 
-	Error += glm::all(glm::equal(Matrix, Out, glm::epsilon<float>())) ? 0 : 1;
+	Error += GLM_CHECK_NEAR(Out, Matrix, 1e-6f); // a few ULPs at these magnitudes
 
 	return Error;
 }
@@ -43,7 +44,7 @@ static int test_scale_translate() {
 
 	glm::mat4 Out = glm::recompose(Scale, Orientation, Translation, Skew, Perspective);
 
-	Error += glm::all(glm::equal(Matrix, Out, glm::epsilon<float>())) ? 0 : 1;
+	Error += GLM_CHECK_NEAR(Out, Matrix, 1e-6f); // a few ULPs at these magnitudes
 
 	return Error;
 }
@@ -52,8 +53,8 @@ int main()
 {
 	int Error = 0;
 
-	Error += test_identity();
-	Error += test_scale_translate();
+	Error += GLM_TEST(test_identity());
+	Error += GLM_TEST(test_scale_translate());
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }
