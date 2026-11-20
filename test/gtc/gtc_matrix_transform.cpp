@@ -20,8 +20,8 @@ static int test_perspective()
 		glm::vec4 F = Projection * glm::vec4(0.f, 0.f, Far, 1.f);
 		N /= N.w;
 		F /= F.w;
-		Error += glm::notEqual(N.z, 0.f, Eps);
-		Error += glm::notEqual(F.z, 1.f, Eps);
+		Error += GLM_CHECK_NEAR(N.z, 0.f, Eps);
+		Error += GLM_CHECK_NEAR(F.z, 1.f, Eps);
 	}
 
 	Projection = glm::perspectiveLH_NO(glm::pi<float>() * 0.25f, 4.0f / 3.0f, Near, Far);
@@ -30,8 +30,8 @@ static int test_perspective()
 		glm::vec4 F = Projection * glm::vec4(0.f, 0.f, Far, 1.f);
 		N /= N.w;
 		F /= F.w;
-		Error += glm::notEqual(N.z, -1.f, Eps);
-		Error += glm::notEqual(F.z, 1.f, Eps);
+		Error += GLM_CHECK_NEAR(N.z, -1.f, Eps);
+		Error += GLM_CHECK_NEAR(F.z, 1.f, Eps);
 	}
 
 	Projection = glm::perspectiveRH_ZO(glm::pi<float>() * 0.25f, 4.0f / 3.0f, Near, Far);
@@ -40,8 +40,8 @@ static int test_perspective()
 		glm::vec4 F = Projection * glm::vec4(0.f, 0.f, -Far, 1.f);
 		N /= N.w;
 		F /= F.w;
-		Error += glm::notEqual(N.z, 0.f, Eps);
-		Error += glm::notEqual(F.z, 1.f, Eps);
+		Error += GLM_CHECK_NEAR(N.z, 0.f, Eps);
+		Error += GLM_CHECK_NEAR(F.z, 1.f, Eps);
 	}
 
 	Projection = glm::perspectiveRH_NO(glm::pi<float>() * 0.25f, 4.0f / 3.0f, Near, Far);
@@ -50,8 +50,8 @@ static int test_perspective()
 		glm::vec4 F = Projection * glm::vec4(0.f, 0.f, -Far, 1.f);
 		N /= N.w;
 		F /= F.w;
-		Error += glm::notEqual(N.z, -1.f, Eps);
-		Error += glm::notEqual(F.z, 1.f, Eps);
+		Error += GLM_CHECK_NEAR(N.z, -1.f, Eps);
+		Error += GLM_CHECK_NEAR(F.z, 1.f, Eps);
 	}
 
 	return Error;
@@ -73,8 +73,8 @@ static int test_infinitePerspective()
 		glm::vec4 F = Projection * glm::vec4(0.f, 0.f, Inf, 1.f);
 		N /= N.w;
 		F /= F.w;
-		Error += glm::notEqual(N.z, 0.f, Eps);
-		Error += glm::notEqual(F.z, 1.f, Eps);
+		Error += GLM_CHECK_NEAR(N.z, 0.f, Eps);
+		Error += GLM_CHECK_NEAR(F.z, 1.f, Eps);
 	}
 
 	Projection = glm::infinitePerspectiveLH_NO(glm::pi<float>() * 0.25f, 4.0f / 3.0f, Near);
@@ -83,8 +83,8 @@ static int test_infinitePerspective()
 		glm::vec4 F = Projection * glm::vec4(0.f, 0.f, Inf, 1.f);
 		N /= N.w;
 		F /= F.w;
-		Error += glm::notEqual(N.z, -1.f, Eps);
-		Error += glm::notEqual(F.z, 1.f, Eps);
+		Error += GLM_CHECK_NEAR(N.z, -1.f, Eps);
+		Error += GLM_CHECK_NEAR(F.z, 1.f, Eps);
 	}
 
 	Projection = glm::infinitePerspectiveRH_ZO(glm::pi<float>() * 0.25f, 4.0f / 3.0f, Near);
@@ -93,8 +93,8 @@ static int test_infinitePerspective()
 		glm::vec4 F = Projection * glm::vec4(0.f, 0.f, -Inf, 1.f);
 		N /= N.w;
 		F /= F.w;
-		Error += glm::notEqual(N.z, 0.f, Eps);
-		Error += glm::notEqual(F.z, 1.f, Eps);
+		Error += GLM_CHECK_NEAR(N.z, 0.f, Eps);
+		Error += GLM_CHECK_NEAR(F.z, 1.f, Eps);
 	}
 
 	Projection = glm::infinitePerspectiveRH_NO(glm::pi<float>() * 0.25f, 4.0f / 3.0f, Near);
@@ -103,8 +103,8 @@ static int test_infinitePerspective()
 		glm::vec4 F = Projection * glm::vec4(0.f, 0.f, -Inf, 1.f);
 		N /= N.w;
 		F /= F.w;
-		Error += glm::notEqual(N.z, -1.f, Eps);
-		Error += glm::notEqual(F.z, 1.f, Eps);
+		Error += GLM_CHECK_NEAR(N.z, -1.f, Eps);
+		Error += GLM_CHECK_NEAR(F.z, 1.f, Eps);
 	}
 
 	return Error;
@@ -115,7 +115,7 @@ static int test_pick()
 	int Error = 0;
 
 	glm::mat4 Pick = glm::pickMatrix(glm::vec2(1, 2), glm::vec2(3, 4), glm::ivec4(0, 0, 320, 240));
-	Error += !glm::all(glm::notEqual(Pick, glm::mat4(2.0), 0.001f));
+	Error += glm_test::context(GLM_CHECK(glm::all(glm::notEqual(Pick, glm::mat4(2.0), 0.001f))), "Pick", Pick);
 
 	return Error;
 }
@@ -127,8 +127,8 @@ static int test_tweakedInfinitePerspective()
 	glm::mat4 ProjectionA = glm::tweakedInfinitePerspective(45.f, 640.f/480.f, 1.0f);
 	glm::mat4 ProjectionB = glm::tweakedInfinitePerspective(45.f, 640.f/480.f, 1.0f, 0.001f);
 
-	Error += !glm::all(glm::notEqual(ProjectionA, glm::mat4(1.0), 0.001f));
-	Error += !glm::all(glm::notEqual(ProjectionB, glm::mat4(1.0), 0.001f));
+	Error += glm_test::context(GLM_CHECK(glm::all(glm::notEqual(ProjectionA, glm::mat4(1.0), 0.001f))), "ProjectionA", ProjectionA);
+	Error += glm_test::context(GLM_CHECK(glm::all(glm::notEqual(ProjectionB, glm::mat4(1.0), 0.001f))), "ProjectionB", ProjectionB);
 
 	return Error;
 }
@@ -143,7 +143,7 @@ static int test_translate()
 
 	glm::bvec4 b = glm::notEqual(t, glm::lowp_mat4(1.0), 0.001f);
 
-	Error += !glm::all(b);
+	Error += glm_test::context(GLM_CHECK(glm::all(b)), "t", t);
 
 	return Error;
 }

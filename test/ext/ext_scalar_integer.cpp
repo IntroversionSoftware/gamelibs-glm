@@ -406,7 +406,7 @@ namespace nextMultiple
 		for(std::size_t i = 0, n = Results.size(); i < n; ++i)
 			Result += Results[i];
 
-		return Result > 0 ? 0 : 1;
+		return GLM_CHECK_GT(Result, 0);
 	}
 
 	template <typename T>
@@ -437,7 +437,7 @@ namespace nextMultiple
 		for(std::size_t i = 0, n = Results.size(); i < n; ++i)
 			Result += Results[i];
 
-		return Result > 0 ? 0 : 1;
+		return GLM_CHECK_GT(Result, 0);
 	}
 
 #if GLM_COMPILER & GLM_COMPILER_VC
@@ -480,7 +480,7 @@ namespace nextMultiple
 		for (std::size_t i = 0, n = Results.size(); i < n; ++i)
 			Result += Results[i];
 
-		return Result > 0 ? 0 : 1;
+		return GLM_CHECK_GT(Result, 0);
 	}
 
 	template <typename T>
@@ -510,7 +510,7 @@ namespace nextMultiple
 		for (std::size_t i = 0, n = Results.size(); i < n; ++i)
 			Result += Results[i];
 
-		return Result > 0.0f ? 0 : 1;
+		return GLM_CHECK_GT(Result, 0.0f);
 	}
 
 	template <typename T>
@@ -543,7 +543,7 @@ namespace nextMultiple
 		for (std::size_t i = 0, n = Results.size(); i < n; ++i)
 			Result += Results[i];
 
-		return Result > 0.0f ? 0 : 1;
+		return GLM_CHECK_GT(Result, 0.0f);
 	}
 
 	template<typename genIUType>

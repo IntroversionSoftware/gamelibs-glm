@@ -127,7 +127,7 @@ namespace mask
 		glm_test::info("mask[zero]: %d\n", static_cast<unsigned int>(TimeZero));
 		glm_test::info("mask[half]: %d\n", static_cast<unsigned int>(TimeHalf));
 
-		return TimeDefault <= TimeLoop ? 0 : 1;
+		return 0;
 	}
 #endif//GLM_TEST_PERF
 

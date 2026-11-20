@@ -78,12 +78,14 @@ int sumVec() {
 	}
 	glm::vec<L, int> const cv = v;
 
-	return (sumManual != std::accumulate(begin(v), end(v), 0))
-		+ (sumManual != std::accumulate(begin(cv), end(cv), 0))
-		+ (sumManual != std::accumulate(rbegin(v), rend(v), 0))
-		+ (sumManual != std::accumulate(rbegin(cv), rend(cv), 0))
-		+ rangedSumComp(v, sumManual)
-		+ rangedSumComp(cv, sumManual);
+	int Error = 0;
+	Error += GLM_CHECK_EQ(std::accumulate(begin(v), end(v), 0), sumManual);
+	Error += GLM_CHECK_EQ(std::accumulate(begin(cv), end(cv), 0), sumManual);
+	Error += GLM_CHECK_EQ(std::accumulate(rbegin(v), rend(v), 0), sumManual);
+	Error += GLM_CHECK_EQ(std::accumulate(rbegin(cv), rend(cv), 0), sumManual);
+	Error += rangedSumComp(v, sumManual);
+	Error += rangedSumComp(cv, sumManual);
+	return Error;
 }
 
 template<glm::length_t C, glm::length_t R>
@@ -97,106 +99,118 @@ int sumMat() {
 		}
 	}
 	glm::mat<C, R, int, glm::packed_highp> const cm = m;
-	return (sumManual != std::accumulate(begin(m), end(m), 0))
-		+ (sumManual != std::accumulate(begin(cm), end(cm), 0))
-		+ (sumManual != std::accumulate(rbegin(m), rend(m), 0))
-		+ (sumManual != std::accumulate(rbegin(cm), rend(cm), 0))
-		+ rangedSumComp(m, sumManual)
-		+ rangedSumComp(cm, sumManual);
+	int Error = 0;
+	Error += GLM_CHECK_EQ(std::accumulate(begin(m), end(m), 0), sumManual);
+	Error += GLM_CHECK_EQ(std::accumulate(begin(cm), end(cm), 0), sumManual);
+	Error += GLM_CHECK_EQ(std::accumulate(rbegin(m), rend(m), 0), sumManual);
+	Error += GLM_CHECK_EQ(std::accumulate(rbegin(cm), rend(cm), 0), sumManual);
+	Error += rangedSumComp(m, sumManual);
+	Error += rangedSumComp(cm, sumManual);
+	return Error;
 }
 
 static int sumQuat() {
 	glm::qua<int> q(0, 1, 2, 3);
 	glm::qua<int> const cq(0, 1, 2, 3);
 	const int sumManual = (0 + 1 + 2 + 3);
-	return (sumManual != std::accumulate(begin(q), end(q), 0))
-		+ (sumManual != std::accumulate(begin(cq), end(cq), 0))
-		+ (sumManual != std::accumulate(rbegin(q), rend(q), 0))
-		+ (sumManual != std::accumulate(rbegin(cq), rend(cq), 0))
-		+ rangedSumComp(q, sumManual)
-		+ rangedSumComp(cq, sumManual);
+	int Error = 0;
+	Error += GLM_CHECK_EQ(std::accumulate(begin(q), end(q), 0), sumManual);
+	Error += GLM_CHECK_EQ(std::accumulate(begin(cq), end(cq), 0), sumManual);
+	Error += GLM_CHECK_EQ(std::accumulate(rbegin(q), rend(q), 0), sumManual);
+	Error += GLM_CHECK_EQ(std::accumulate(rbegin(cq), rend(cq), 0), sumManual);
+	Error += rangedSumComp(q, sumManual);
+	Error += rangedSumComp(cq, sumManual);
+	return Error;
 }
 
+
+// Iterators span every component
+static int test_iter_distance()
+{
+	int Error = 0;
+
+	Error += GLM_CHECK_EQ(get_iter_distance<glm::vec1>(), 1);
+	Error += GLM_CHECK_EQ(get_iter_distance<glm::vec2>(), 2);
+	Error += GLM_CHECK_EQ(get_iter_distance<glm::vec3>(), 3);
+	Error += GLM_CHECK_EQ(get_iter_distance<glm::vec4>(), 4);
+	Error += GLM_CHECK_EQ(get_iter_distance<const glm::vec1>(), 1);
+	Error += GLM_CHECK_EQ(get_iter_distance<const glm::vec2>(), 2);
+	Error += GLM_CHECK_EQ(get_iter_distance<const glm::vec3>(), 3);
+	Error += GLM_CHECK_EQ(get_iter_distance<const glm::vec4>(), 4);
+
+	Error += GLM_CHECK_EQ(get_iter_distance<glm::quat>(), 4);
+	Error += GLM_CHECK_EQ(get_iter_distance<const glm::quat>(), 4);
+
+	Error += GLM_CHECK_EQ((get_iter_distance<pmat<2, 2>>()), 2 * 2);
+	Error += GLM_CHECK_EQ((get_iter_distance<pmat<2, 3>>()), 2 * 3);
+	Error += GLM_CHECK_EQ((get_iter_distance<pmat<2, 4>>()), 2 * 4);
+	Error += GLM_CHECK_EQ((get_iter_distance<const pmat<2, 2>>()), 2 * 2);
+	Error += GLM_CHECK_EQ((get_iter_distance<const pmat<2, 3>>()), 2 * 3);
+	Error += GLM_CHECK_EQ((get_iter_distance<const pmat<2, 4>>()), 2 * 4);
+
+	Error += GLM_CHECK_EQ((get_iter_distance<pmat<3, 2>>()), 3 * 2);
+	Error += GLM_CHECK_EQ((get_iter_distance<pmat<3, 3>>()), 3 * 3);
+	Error += GLM_CHECK_EQ((get_iter_distance<pmat<3, 4>>()), 3 * 4);
+	Error += GLM_CHECK_EQ((get_iter_distance<const pmat<3, 2>>()), 3 * 2);
+	Error += GLM_CHECK_EQ((get_iter_distance<const pmat<3, 3>>()), 3 * 3);
+	Error += GLM_CHECK_EQ((get_iter_distance<const pmat<3, 4>>()), 3 * 4);
+
+	Error += GLM_CHECK_EQ((get_iter_distance<pmat<4, 2>>()), 4 * 2);
+	Error += GLM_CHECK_EQ((get_iter_distance<pmat<4, 3>>()), 4 * 3);
+	Error += GLM_CHECK_EQ((get_iter_distance<pmat<4, 4>>()), 4 * 4);
+	Error += GLM_CHECK_EQ((get_iter_distance<const pmat<4, 2>>()), 4 * 2);
+	Error += GLM_CHECK_EQ((get_iter_distance<const pmat<4, 3>>()), 4 * 3);
+	Error += GLM_CHECK_EQ((get_iter_distance<const pmat<4, 4>>()), 4 * 4);
+
+	return Error;
+}
+
+static int test_rev_iter_distance()
+{
+	int Error = 0;
+
+	Error += GLM_CHECK_EQ(get_rev_iter_distance<glm::vec1>(), 1);
+	Error += GLM_CHECK_EQ(get_rev_iter_distance<glm::vec2>(), 2);
+	Error += GLM_CHECK_EQ(get_rev_iter_distance<glm::vec3>(), 3);
+	Error += GLM_CHECK_EQ(get_rev_iter_distance<glm::vec4>(), 4);
+	Error += GLM_CHECK_EQ(get_rev_iter_distance<const glm::vec1>(), 1);
+	Error += GLM_CHECK_EQ(get_rev_iter_distance<const glm::vec2>(), 2);
+	Error += GLM_CHECK_EQ(get_rev_iter_distance<const glm::vec3>(), 3);
+	Error += GLM_CHECK_EQ(get_rev_iter_distance<const glm::vec4>(), 4);
+
+	Error += GLM_CHECK_EQ(get_rev_iter_distance<glm::quat>(), 4);
+	Error += GLM_CHECK_EQ(get_rev_iter_distance<const glm::quat>(), 4);
+
+	Error += GLM_CHECK_EQ((get_rev_iter_distance<pmat<2, 2>>()), 2 * 2);
+	Error += GLM_CHECK_EQ((get_rev_iter_distance<pmat<2, 3>>()), 2 * 3);
+	Error += GLM_CHECK_EQ((get_rev_iter_distance<pmat<2, 4>>()), 2 * 4);
+	Error += GLM_CHECK_EQ((get_rev_iter_distance<const pmat<2, 2>>()), 2 * 2);
+	Error += GLM_CHECK_EQ((get_rev_iter_distance<const pmat<2, 3>>()), 2 * 3);
+	Error += GLM_CHECK_EQ((get_rev_iter_distance<const pmat<2, 4>>()), 2 * 4);
+
+	Error += GLM_CHECK_EQ((get_rev_iter_distance<pmat<3, 2>>()), 3 * 2);
+	Error += GLM_CHECK_EQ((get_rev_iter_distance<pmat<3, 3>>()), 3 * 3);
+	Error += GLM_CHECK_EQ((get_rev_iter_distance<pmat<3, 4>>()), 3 * 4);
+	Error += GLM_CHECK_EQ((get_rev_iter_distance<const pmat<3, 2>>()), 3 * 2);
+	Error += GLM_CHECK_EQ((get_rev_iter_distance<const pmat<3, 3>>()), 3 * 3);
+	Error += GLM_CHECK_EQ((get_rev_iter_distance<const pmat<3, 4>>()), 3 * 4);
+
+	Error += GLM_CHECK_EQ((get_rev_iter_distance<pmat<4, 2>>()), 4 * 2);
+	Error += GLM_CHECK_EQ((get_rev_iter_distance<pmat<4, 3>>()), 4 * 3);
+	Error += GLM_CHECK_EQ((get_rev_iter_distance<pmat<4, 4>>()), 4 * 4);
+	Error += GLM_CHECK_EQ((get_rev_iter_distance<const pmat<4, 2>>()), 4 * 2);
+	Error += GLM_CHECK_EQ((get_rev_iter_distance<const pmat<4, 3>>()), 4 * 3);
+	Error += GLM_CHECK_EQ((get_rev_iter_distance<const pmat<4, 4>>()), 4 * 4);
+
+	return Error;
+}
 
 int main()
 {
 	int Error = 0;
 
-	Error += (1 != get_iter_distance<glm::vec1>());
-	Error += (2 != get_iter_distance<glm::vec2>());
-	Error += (3 != get_iter_distance<glm::vec3>());
-	Error += (4 != get_iter_distance<glm::vec4>());
-
-	Error += (1 != get_iter_distance<const glm::vec1>());
-	Error += (2 != get_iter_distance<const glm::vec2>());
-	Error += (3 != get_iter_distance<const glm::vec3>());
-	Error += (4 != get_iter_distance<const glm::vec4>());
-
-	Error += (4 != get_iter_distance<glm::quat>());
-	Error += (4 != get_iter_distance<const glm::quat>());
-
-	Error += (2 * 2 != get_iter_distance<pmat<2, 2>>());
-	Error += (2 * 3 != get_iter_distance<pmat<2, 3>>());
-	Error += (2 * 4 != get_iter_distance<pmat<2, 4>>());
-
-	Error += (2 * 2 != get_iter_distance<const pmat<2, 2>>());
-	Error += (2 * 3 != get_iter_distance<const pmat<2, 3>>());
-	Error += (2 * 4 != get_iter_distance<const pmat<2, 4>>());
-
-	Error += (3 * 2 != get_iter_distance<pmat<3, 2>>());
-	Error += (3 * 3 != get_iter_distance<pmat<3, 3>>());
-	Error += (3 * 4 != get_iter_distance<pmat<3, 4>>());
-
-	Error += (3 * 2 != get_iter_distance<const pmat<3, 2>>());
-	Error += (3 * 3 != get_iter_distance<const pmat<3, 3>>());
-	Error += (3 * 4 != get_iter_distance<const pmat<3, 4>>());
-
-	Error += (4 * 2 != get_iter_distance<pmat<4, 2>>());
-	Error += (4 * 3 != get_iter_distance<pmat<4, 3>>());
-	Error += (4 * 4 != get_iter_distance<pmat<4, 4>>());
-
-	Error += (4 * 2 != get_iter_distance<const pmat<4, 2>>());
-	Error += (4 * 3 != get_iter_distance<const pmat<4, 3>>());
-	Error += (4 * 4 != get_iter_distance<const pmat<4, 4>>());
-
-
-	Error += (1 != get_rev_iter_distance<glm::vec1>());
-	Error += (2 != get_rev_iter_distance<glm::vec2>());
-	Error += (3 != get_rev_iter_distance<glm::vec3>());
-	Error += (4 != get_rev_iter_distance<glm::vec4>());
-
-	Error += (1 != get_rev_iter_distance<const glm::vec1>());
-	Error += (2 != get_rev_iter_distance<const glm::vec2>());
-	Error += (3 != get_rev_iter_distance<const glm::vec3>());
-	Error += (4 != get_rev_iter_distance<const glm::vec4>());
-
-	Error += (4 != get_rev_iter_distance<glm::quat>());
-	Error += (4 != get_rev_iter_distance<const glm::quat>());
-
-	Error += (2 * 2 != get_rev_iter_distance<pmat<2, 2>>());
-	Error += (2 * 3 != get_rev_iter_distance<pmat<2, 3>>());
-	Error += (2 * 4 != get_rev_iter_distance<pmat<2, 4>>());
-
-	Error += (2 * 2 != get_rev_iter_distance<const pmat<2, 2>>());
-	Error += (2 * 3 != get_rev_iter_distance<const pmat<2, 3>>());
-	Error += (2 * 4 != get_rev_iter_distance<const pmat<2, 4>>());
-
-
-	Error += (3 * 2 != get_rev_iter_distance<pmat<3, 2>>());
-	Error += (3 * 3 != get_rev_iter_distance<pmat<3, 3>>());
-	Error += (3 * 4 != get_rev_iter_distance<pmat<3, 4>>());
-
-	Error += (3 * 2 != get_rev_iter_distance<const pmat<3, 2>>());
-	Error += (3 * 3 != get_rev_iter_distance<const pmat<3, 3>>());
-	Error += (3 * 4 != get_rev_iter_distance<const pmat<3, 4>>());
-
-	Error += (4 * 2 != get_rev_iter_distance<pmat<4, 2>>());
-	Error += (4 * 3 != get_rev_iter_distance<pmat<4, 3>>());
-	Error += (4 * 4 != get_rev_iter_distance<pmat<4, 4>>());
-
-	Error += (4 * 2 != get_rev_iter_distance<const pmat<4, 2>>());
-	Error += (4 * 3 != get_rev_iter_distance<const pmat<4, 3>>());
-	Error += (4 * 4 != get_rev_iter_distance<const pmat<4, 4>>());
+	Error += GLM_TEST(test_iter_distance());
+	Error += GLM_TEST(test_rev_iter_distance());
 
 	Error += GLM_TEST(sumVec<1>());
 	Error += GLM_TEST(sumVec<2>());

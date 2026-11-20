@@ -1,6 +1,7 @@
 #include "glm_test.hpp"
 #include <glm/glm.hpp>
 #include <glm/gtc/epsilon.hpp>
+#include <glm/ext/matrix_relational.hpp>
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/transform2.hpp>
@@ -28,10 +29,7 @@ static int test_reflect2D()
 			static_cast<glm::mat3::row_type::value_type>(0)
 		);
 
-		Error += glm::all(glm::bvec3(
-			glm::all(glm::epsilonEqual(eam3[0], am3[0], glm::epsilon<float>())),
-			glm::all(glm::epsilonEqual(eam3[1], am3[1], glm::epsilon<float>())),
-			glm::all(glm::epsilonEqual(eam3[2], am3[2], glm::epsilon<float>())))) ? 0 : 1;
+		Error += GLM_CHECK_NEAR(eam3, am3, glm::epsilon<float>());
 	}
 
 	{
@@ -53,10 +51,7 @@ static int test_reflect2D()
 			static_cast<glm::mat3::row_type::value_type>(0)
 		);
 
-		Error += glm::all(glm::bvec3(
-			glm::all(glm::epsilonEqual(eam3[0], am3[0], glm::epsilon<float>())),
-			glm::all(glm::epsilonEqual(eam3[1], am3[1], glm::epsilon<float>())),
-			glm::all(glm::epsilonEqual(eam3[2], am3[2], glm::epsilon<float>())))) ? 0 : 1;
+		Error += GLM_CHECK_NEAR(eam3, am3, glm::epsilon<float>());
 	}
 		
 	return Error;
@@ -87,11 +82,7 @@ static int test_reflect3D()
 			static_cast<glm::mat4::row_type::value_type>(1)
 		);
 
-		Error += glm::all(glm::bvec4(
-			glm::all(glm::epsilonEqual(eam4[0], am4[0], glm::epsilon<float>())),
-			glm::all(glm::epsilonEqual(eam4[1], am4[1], glm::epsilon<float>())),
-			glm::all(glm::epsilonEqual(eam4[2], am4[2], glm::epsilon<float>())),
-			glm::all(glm::epsilonEqual(eam4[3], am4[3], glm::epsilon<float>())))) ? 0 : 1;
+		Error += GLM_CHECK_NEAR(eam4, am4, glm::epsilon<float>());
 	}
 
 	{
@@ -115,11 +106,7 @@ static int test_reflect3D()
 			static_cast<glm::mat4::row_type::value_type>(0)
 		);
 
-		Error += glm::all(glm::bvec4(
-			glm::all(glm::epsilonEqual(eam4[0], am4[0], glm::epsilon<float>())),
-			glm::all(glm::epsilonEqual(eam4[1], am4[1], glm::epsilon<float>())),
-			glm::all(glm::epsilonEqual(eam4[2], am4[2], glm::epsilon<float>())),
-			glm::all(glm::epsilonEqual(eam4[3], am4[3], glm::epsilon<float>())))) ? 0 : 1;
+		Error += GLM_CHECK_NEAR(eam4, am4, glm::epsilon<float>());
 	}
 
 	return Error;

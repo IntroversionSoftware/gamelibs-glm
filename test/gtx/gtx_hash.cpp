@@ -14,54 +14,51 @@
 
 #include <unordered_map>
 
-static int test_compile()
+// Two different keys in an unordered_map: hashing a copy finds the same entry, and the keys stay apart.
+template<typename T>
+static int test_map(T const& A, T const& B)
 {
     int Error = 0;
 
-    // Vector types
-    std::unordered_map<glm::ivec1, int> map_vec1;
-    Error += ++map_vec1[glm::ivec1(0)];
-    std::unordered_map<glm::ivec2, int> map_vec2;
-    Error += ++map_vec2[glm::ivec2(0)];
-    std::unordered_map<glm::ivec3, int> map_vec3;
-    Error += ++map_vec3[glm::ivec3(0)];
-    std::unordered_map<glm::ivec4, int> map_vec4;
-    Error += ++map_vec4[glm::ivec4(0)];
+    std::unordered_map<T, int> Map;
+    ++Map[A];
+    ++Map[T(A)];
+    ++Map[B];
 
-    // Quaternion types
-    std::unordered_map<glm::quat, int> map_quat;
-    Error += ++map_quat[glm::quat(0.0f, glm::vec3(0.0f))];
-    std::unordered_map<glm::dualquat, int> map_dualquat;
-    Error += ++map_dualquat[glm::dualquat(glm::vec3(0.0f))];
+    Error += GLM_CHECK_EQ(Map.size(), 2);
+    Error += GLM_CHECK_EQ(Map.count(A), 1);
+    Error += GLM_CHECK_EQ(Map.count(B), 1);
+    Error += GLM_CHECK_EQ(Map.find(A) != Map.end() ? Map.find(A)->second : 0, 2);
+    Error += GLM_CHECK_EQ(Map.find(B) != Map.end() ? Map.find(B)->second : 0, 1);
+    Error += GLM_CHECK_EQ(std::hash<T>()(A), std::hash<T>()(T(A)));
 
-    // Matrix types
-    std::unordered_map<glm::mat2x2, int> map_mat2x2;
-    Error += ++map_mat2x2[glm::mat2x2(0.0f)];
-    std::unordered_map<glm::mat2x3, int> map_mat2x3;
-    Error += ++map_mat2x3[glm::mat2x3(0.0f)];
-    std::unordered_map<glm::mat2x4, int> map_mat2x4;
-    Error += ++map_mat2x4[glm::mat2x4(0.0f)];
-    std::unordered_map<glm::mat3x2, int> map_mat3x2;
-    Error += ++map_mat3x2[glm::mat3x2(0.0f)];
-    std::unordered_map<glm::mat3x3, int> map_mat3x3;
-    Error += ++map_mat3x3[glm::mat3x3(0.0f)];
-    std::unordered_map<glm::mat3x4, int> map_mat3x4;
-    Error += ++map_mat3x4[glm::mat3x4(0.0f)];
-    std::unordered_map<glm::mat4x2, int> map_mat4x2;
-    Error += ++map_mat4x2[glm::mat4x2(0.0f)];
-    std::unordered_map<glm::mat4x3, int> map_mat4x3;
-    Error += ++map_mat4x3[glm::mat4x3(0.0f)];
-    std::unordered_map<glm::mat4x4, int> map_mat4x4;
-    Error += ++map_mat4x4[glm::mat4x4(0.0f)];
-
-    return Error > 0 ? 0 : 1;
+    return Error;
 }
 
 int main()
 {
     int Error = 0;
 
-    Error += GLM_TEST(test_compile());
+    // Vector types
+    Error += GLM_TEST(test_map(glm::ivec1(0), glm::ivec1(1)));
+    Error += GLM_TEST(test_map(glm::ivec2(0), glm::ivec2(1)));
+    Error += GLM_TEST(test_map(glm::ivec3(0), glm::ivec3(1)));
+    Error += GLM_TEST(test_map(glm::ivec4(0), glm::ivec4(1)));
+
+    // Quaternion types
+    Error += GLM_TEST(test_map(glm::quat(0.0f, glm::vec3(0.0f)), glm::quat(1.0f, glm::vec3(0.0f))));
+    Error += GLM_TEST(test_map(glm::dualquat(glm::vec3(0.0f)), glm::dualquat(glm::vec3(1.0f))));
+
+    // Matrix types
+    Error += GLM_TEST(test_map(glm::mat2x2(0.0f), glm::mat2x2(1.0f)));
+    Error += GLM_TEST(test_map(glm::mat2x3(0.0f), glm::mat2x3(1.0f)));
+    Error += GLM_TEST(test_map(glm::mat2x4(0.0f), glm::mat2x4(1.0f)));
+    Error += GLM_TEST(test_map(glm::mat3x2(0.0f), glm::mat3x2(1.0f)));
+    Error += GLM_TEST(test_map(glm::mat3x3(0.0f), glm::mat3x3(1.0f)));
+    Error += GLM_TEST(test_map(glm::mat3x4(0.0f), glm::mat3x4(1.0f)));
+    Error += GLM_TEST(test_map(glm::mat4x2(0.0f), glm::mat4x2(1.0f)));
+    Error += GLM_TEST(test_map(glm::mat4x3(0.0f), glm::mat4x3(1.0f)));
+    Error += GLM_TEST(test_map(glm::mat4x4(0.0f), glm::mat4x4(1.0f)));
 
     return GLM_TEST_FINISH(Error);
 }

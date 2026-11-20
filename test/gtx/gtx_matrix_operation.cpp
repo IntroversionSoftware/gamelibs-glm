@@ -2,6 +2,7 @@
 #include "glm_test.hpp"
 #include <glm/glm.hpp>
 #include <glm/gtc/epsilon.hpp>
+#include <glm/ext/matrix_relational.hpp>
 #include <glm/gtx/matrix_operation.hpp>
 #include <limits>
 
@@ -24,10 +25,7 @@ static int test_adjugate()
 
 	const glm::mat2 am2 = glm::adjugate(m2);
 
-	Error += glm::all(glm::bvec2(
-		glm::all(glm::epsilonEqual(am2[0], eam2[0], epsilon)),
-		glm::all(glm::epsilonEqual(am2[1], eam2[1], epsilon))
-	)) ? 0 : 1;
+	Error += GLM_CHECK_NEAR(am2, eam2, epsilon);
 
 	// mat3
 	const glm::mat3 m3(
@@ -44,11 +42,7 @@ static int test_adjugate()
 
 	const glm::mat3 am3 = glm::adjugate(m3);
 
-	Error += glm::all(glm::bvec3(
-		glm::all(glm::epsilonEqual(am3[0], eam3[0], epsilon)),
-		glm::all(glm::epsilonEqual(am3[1], eam3[1], epsilon)),
-		glm::all(glm::epsilonEqual(am3[2], eam3[2], epsilon))
-	)) ? 0 : 1;
+	Error += GLM_CHECK_NEAR(am3, eam3, epsilon);
 
 	// mat4
 	const glm::mat4 m4(
@@ -67,12 +61,7 @@ static int test_adjugate()
 
 	const glm::mat4 am4 = glm::adjugate(m4);
 
-	Error += glm::all(glm::bvec4(
-		glm::all(glm::epsilonEqual(am4[0], eam4[0], epsilon)),
-		glm::all(glm::epsilonEqual(am4[1], eam4[1], epsilon)),
-		glm::all(glm::epsilonEqual(am4[2], eam4[2], epsilon)),
-		glm::all(glm::epsilonEqual(am4[3], eam4[3], epsilon))
-	)) ? 0 : 1;
+	Error += GLM_CHECK_NEAR(am4, eam4, epsilon);
 
 	return Error;
 }

@@ -5,6 +5,7 @@
 #include <glm/gtc/random.hpp>
 #include <glm/gtc/epsilon.hpp>
 #include <glm/gtc/type_precision.hpp>
+#include <cmath>
 #if GLM_LANG & GLM_LANG_CXX0X_FLAG
 #	include <array>
 #endif
@@ -215,9 +216,13 @@ static int test_linearRand()
 			ResultDouble += glm::linearRand(-1.0, 1.0);
 		}
 
-		Error += glm::epsilonEqual(ResultFloat, 0.0f, 0.0001f);
-		Error += glm::epsilonEqual(ResultDouble, 0.0, 0.0001);
-		assert(!Error);
+		// The mean of n samples from [-1, 1] has a standard deviation of 1 / sqrt(3n): allow 5 of them,
+		// and require some spread (a generator stuck at 0 would pass the first check)
+		double const Spread = 5.0 / std::sqrt(3.0 * static_cast<double>(TestSamples));
+		Error += GLM_CHECK_LE(std::abs(static_cast<double>(ResultFloat) / TestSamples), Spread);
+		Error += GLM_CHECK_LE(std::abs(ResultDouble / TestSamples), Spread);
+		Error += GLM_CHECK_NE(ResultFloat, 0.0f);
+		Error += GLM_CHECK_NE(ResultDouble, 0.0);
 	}
 
 	return Error;

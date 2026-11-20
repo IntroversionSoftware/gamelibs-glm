@@ -25,7 +25,7 @@ static int test_mat3x3()
 	glm::dmat3 Inv0 = glm::inverse(Mat0);
 	glm::dmat3 Res0 = Mat0 * Inv0;
 
-	return glm::all(glm::equal(Res0, glm::dmat3(1.0), 0.01)) ? 0 : 1;
+	return GLM_CHECK_NEAR(Res0, glm::dmat3(1.0), 0.01);
 }
 
 static int test_operators()

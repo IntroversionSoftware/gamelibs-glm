@@ -369,7 +369,7 @@ static int test_copy_vec4_vec3()
 		Error += GLM_CHECK_NEAR(v.x, u.x, glm::epsilon<float>());
 		Error += GLM_CHECK_NEAR(v.y, u.y, glm::epsilon<float>());
 		Error += GLM_CHECK_NEAR(v.z, u.z, glm::epsilon<float>());
-		Error += glm::equal(v.w, 1.0f, glm::epsilon<float>()) ? 0 : 1;	;
+		Error += GLM_CHECK_NEAR(v.w, 1.0f, glm::epsilon<float>());
 	}
 
 	{
