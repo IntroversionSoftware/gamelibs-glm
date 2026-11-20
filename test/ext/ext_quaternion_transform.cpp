@@ -28,7 +28,6 @@ static int test_lookAt()
 	int Error(0);
 	float const Epsilon = glm::epsilon<float>();
 
-	std::cout << "Testing quatLookAt functions:" << std::endl;
 
 	// Define test vectors
 	glm::vec3 eye(0.0f);
@@ -178,7 +177,6 @@ static int test_rotation()
 	int Error(0);
 	float const Epsilon = glm::epsilon<float>();
 
-	std::cout << "\nTesting quaternion rotation functions:" << std::endl;
 
 	// Test case 1: Rotation from one vector to another
 	{
@@ -237,22 +235,8 @@ int main()
 {
 	int Error = 0;
 
-	std::cout << "=== Quaternion Transform Extension Tests ===" << std::endl;
-	std::cout << "Quaternion memory layout: " <<
-#ifdef GLM_FORCE_QUAT_DATA_WXYZ
-		"WXYZ"
-#else
-		"XYZW"
-#endif
-		<< std::endl << std::endl;
-
 	Error += GLM_TEST(test_lookAt());
 	Error += GLM_TEST(test_rotation());
-
-	if (Error == 0)
-		std::cout << "\nAll tests passed!" << std::endl;
-	else
-		std::cout << "\nFailed tests: " << Error << std::endl;
 
 	return GLM_TEST_FINISH(Error);
 }

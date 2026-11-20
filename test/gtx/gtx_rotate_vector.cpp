@@ -18,7 +18,6 @@ void print_vector_comparison(const VecT& actual, const VecT& expected, const cha
 	auto diff = actual - expected;
 	std::cout << "Difference:      " << glm::to_string(diff) << "\n";
 
-	std::cout << "----------------------------\n";
 }
 
 // Helper function to print matrix comparison for failure cases
@@ -35,7 +34,6 @@ void print_matrix_comparison(const glm::mat4& actual, const glm::mat4& expected,
 		}
 	}
 	std::cout << "Difference (actual - expected):\n" << glm::to_string(diff) << "\n";
-	std::cout << "----------------------------\n";
 }
 
 static int test_rotate()
@@ -48,10 +46,7 @@ static int test_rotate()
 		glm::vec2 const A = glm::rotate(glm::vec2(1, 0), glm::pi<float>() * 0.5f);
 		glm::vec2 const Expected(0.0f, 1.0f);
 
-		if (!glm::all(glm::equal(A, Expected, epsilon))) {
-			print_vector_comparison(A, Expected, "vec2 rotation 90°");
-			Error += 1;
-		}
+		Error += GLM_CHECK_NEAR(A, Expected, epsilon); // vec2 rotation 90°
 	}
 
 	// Test case 2: Rotate vec2 by 180 degrees
@@ -59,10 +54,7 @@ static int test_rotate()
 		glm::vec2 const A = glm::rotate(glm::vec2(1, 0), glm::pi<float>());
 		glm::vec2 const Expected(-1.0f, 0.0f);
 
-		if (!glm::all(glm::equal(A, Expected, epsilon))) {
-			print_vector_comparison(A, Expected, "vec2 rotation 180°");
-			Error += 1;
-		}
+		Error += GLM_CHECK_NEAR(A, Expected, epsilon); // vec2 rotation 180°
 	}
 
 	// Test case 3: Rotate vec2 by 360 degrees (full circle)
@@ -72,10 +64,7 @@ static int test_rotate()
 
 		// Use a slightly higher epsilon for this test due to accumulated floating point error
 		const float full_circle_epsilon = 0.0001f;
-		if (!glm::all(glm::equal(A, Expected, full_circle_epsilon))) {
-			print_vector_comparison(A, Expected, "vec2 rotation 360°");
-			Error += 1;
-		}
+		Error += GLM_CHECK_NEAR(A, Expected, full_circle_epsilon); // vec2 rotation 360°
 	}
 
 	// Test case 4: Rotate vec3 by 90 degrees around Z
@@ -83,10 +72,7 @@ static int test_rotate()
 		glm::vec3 const B = glm::rotate(glm::vec3(1, 0, 0), glm::pi<float>() * 0.5f, glm::vec3(0, 0, 1));
 		glm::vec3 const Expected(0.0f, 1.0f, 0.0f);
 
-		if (!glm::all(glm::equal(B, Expected, epsilon))) {
-			print_vector_comparison(B, Expected, "vec3 rotation 90° around Z");
-			Error += 1;
-		}
+		Error += GLM_CHECK_NEAR(B, Expected, epsilon); // vec3 rotation 90° around Z
 	}
 
 	// Test case 5: Rotate vec3 by 90 degrees around Y
@@ -94,10 +80,7 @@ static int test_rotate()
 		glm::vec3 const B = glm::rotate(glm::vec3(1, 0, 0), glm::pi<float>() * 0.5f, glm::vec3(0, 1, 0));
 		glm::vec3 const Expected(0.0f, 0.0f, -1.0f);
 
-		if (!glm::all(glm::equal(B, Expected, epsilon))) {
-			print_vector_comparison(B, Expected, "vec3 rotation 90° around Y");
-			Error += 1;
-		}
+		Error += GLM_CHECK_NEAR(B, Expected, epsilon); // vec3 rotation 90° around Y
 	}
 
 	// Test case 6: Rotate vec3 by 90 degrees around X
@@ -105,10 +88,7 @@ static int test_rotate()
 		glm::vec3 const B = glm::rotate(glm::vec3(0, 1, 0), glm::pi<float>() * 0.5f, glm::vec3(1, 0, 0));
 		glm::vec3 const Expected(0.0f, 0.0f, 1.0f);
 
-		if (!glm::all(glm::equal(B, Expected, epsilon))) {
-			print_vector_comparison(B, Expected, "vec3 rotation 90° around X");
-			Error += 1;
-		}
+		Error += GLM_CHECK_NEAR(B, Expected, epsilon); // vec3 rotation 90° around X
 	}
 
 	// Test case 7: Rotate vec3 by 90 degrees around arbitrary axis
@@ -132,7 +112,6 @@ static int test_rotate()
 		float expected_dot = 1.0f / 3.0f;
 
 		if (glm::abs(cos_angle - expected_dot) > 0.0001f) {
-			std::cout << "---- vec3 rotation arbitrary axis test failure ----\n";
 			std::cout << "Expected dot product: " << expected_dot << "\n";
 			std::cout << "Actual dot product:   " << cos_angle << "\n";
 			std::cout << "Vector: " << glm::to_string(B) << "\n";
@@ -145,10 +124,7 @@ static int test_rotate()
 		glm::vec4 const C = glm::rotate(glm::vec4(1, 0, 0, 1), glm::pi<float>() * 0.5f, glm::vec3(0, 0, 1));
 		glm::vec4 const Expected(0.0f, 1.0f, 0.0f, 1.0f);
 
-		if (!glm::all(glm::equal(C, Expected, epsilon))) {
-			print_vector_comparison(C, Expected, "vec4 rotation 90° around Z");
-			Error += 1;
-		}
+		Error += GLM_CHECK_NEAR(C, Expected, epsilon); // vec4 rotation 90° around Z
 	}
 
 	// Test case 9: Rotate normalized vs non-normalized axis
@@ -159,10 +135,7 @@ static int test_rotate()
 		glm::vec3 const B1 = glm::rotate(glm::vec3(1, 0, 0), glm::pi<float>() * 0.5f, normalized_axis);
 		glm::vec3 const B2 = glm::rotate(glm::vec3(1, 0, 0), glm::pi<float>() * 0.5f, non_normalized_axis);
 
-		if (!glm::all(glm::equal(B1, B2, epsilon))) {
-			print_vector_comparison(B1, B2, "Normalized vs non-normalized axis");
-			Error += 1;
-		}
+		Error += GLM_CHECK_NEAR(B1, B2, epsilon); // Normalized vs non-normalized axis
 	}
 
 	return Error;
@@ -179,10 +152,7 @@ static int test_rotateX()
 		glm::vec3 const D = glm::rotateX(V, glm::pi<float>() * 0.5f);
 		glm::vec3 const Expected(0.0f, 0.0f, 1.0f);
 
-		if (!glm::all(glm::equal(D, Expected, epsilon))) {
-			print_vector_comparison(D, Expected, "rotateX vec3 by 90°");
-			Error += 1;
-		}
+		Error += GLM_CHECK_NEAR(D, Expected, epsilon); // rotateX vec3 by 90°
 	}
 
 	// Test case 2: Rotate vec3 around X by 90 degrees - vector along X axis (should be invariant)
@@ -190,10 +160,7 @@ static int test_rotateX()
 		glm::vec3 const D = glm::rotateX(glm::vec3(1, 0, 0), glm::pi<float>() * 0.5f);
 		glm::vec3 const Expected(1.0f, 0.0f, 0.0f);
 
-		if (!glm::all(glm::equal(D, Expected, epsilon))) {
-			print_vector_comparison(D, Expected, "rotateX vec3 invariant axis");
-			Error += 1;
-		}
+		Error += GLM_CHECK_NEAR(D, Expected, epsilon); // rotateX vec3 invariant axis
 	}
 
 	// Test case 3: Rotate vec3 around X by 180 degrees
@@ -201,10 +168,7 @@ static int test_rotateX()
 		glm::vec3 const D = glm::rotateX(glm::vec3(0, 1, 0), glm::pi<float>());
 		glm::vec3 const Expected(0.0f, -1.0f, 0.0f);
 
-		if (!glm::all(glm::equal(D, Expected, epsilon))) {
-			print_vector_comparison(D, Expected, "rotateX vec3 by 180°");
-			Error += 1;
-		}
+		Error += GLM_CHECK_NEAR(D, Expected, epsilon); // rotateX vec3 by 180°
 	}
 
 	// Test case 4: Rotate vec4 around X by 90 degrees
@@ -212,10 +176,7 @@ static int test_rotateX()
 		glm::vec4 const E = glm::rotateX(glm::vec4(0, 1, 0, 1), glm::pi<float>() * 0.5f);
 		glm::vec4 const Expected(0.0f, 0.0f, 1.0f, 1.0f);
 
-		if (!glm::all(glm::equal(E, Expected, epsilon))) {
-			print_vector_comparison(E, Expected, "rotateX vec4 by 90°");
-			Error += 1;
-		}
+		Error += GLM_CHECK_NEAR(E, Expected, epsilon); // rotateX vec4 by 90°
 	}
 
 	// Test case 5: Rotate vec4 around X by 90 degrees - vector along X axis (should be invariant)
@@ -223,10 +184,7 @@ static int test_rotateX()
 		glm::vec4 const E = glm::rotateX(glm::vec4(1, 0, 0, 1), glm::pi<float>() * 0.5f);
 		glm::vec4 const Expected(1.0f, 0.0f, 0.0f, 1.0f);
 
-		if (!glm::all(glm::equal(E, Expected, epsilon))) {
-			print_vector_comparison(E, Expected, "rotateX vec4 invariant axis");
-			Error += 1;
-		}
+		Error += GLM_CHECK_NEAR(E, Expected, epsilon); // rotateX vec4 invariant axis
 	}
 
 	return Error;
@@ -242,10 +200,7 @@ static int test_rotateY()
 		glm::vec3 const F = glm::rotateY(glm::vec3(1, 0, 0), glm::pi<float>() * 0.5f);
 		glm::vec3 const Expected(0.0f, 0.0f, -1.0f);
 
-		if (!glm::all(glm::equal(F, Expected, epsilon))) {
-			print_vector_comparison(F, Expected, "rotateY vec3 by 90°");
-			Error += 1;
-		}
+		Error += GLM_CHECK_NEAR(F, Expected, epsilon); // rotateY vec3 by 90°
 	}
 
 	// Test case 2: Rotate vec3 around Y by 90 degrees - vector along Y axis (should be invariant)
@@ -253,10 +208,7 @@ static int test_rotateY()
 		glm::vec3 const F = glm::rotateY(glm::vec3(0, 1, 0), glm::pi<float>() * 0.5f);
 		glm::vec3 const Expected(0.0f, 1.0f, 0.0f);
 
-		if (!glm::all(glm::equal(F, Expected, epsilon))) {
-			print_vector_comparison(F, Expected, "rotateY vec3 invariant axis");
-			Error += 1;
-		}
+		Error += GLM_CHECK_NEAR(F, Expected, epsilon); // rotateY vec3 invariant axis
 	}
 
 	// Test case 3: Rotate vec3 around Y by 180 degrees
@@ -264,10 +216,7 @@ static int test_rotateY()
 		glm::vec3 const F = glm::rotateY(glm::vec3(1, 0, 0), glm::pi<float>());
 		glm::vec3 const Expected(-1.0f, 0.0f, 0.0f);
 
-		if (!glm::all(glm::equal(F, Expected, epsilon))) {
-			print_vector_comparison(F, Expected, "rotateY vec3 by 180°");
-			Error += 1;
-		}
+		Error += GLM_CHECK_NEAR(F, Expected, epsilon); // rotateY vec3 by 180°
 	}
 
 	// Test case 4: Rotate vec4 around Y by 90 degrees
@@ -275,10 +224,7 @@ static int test_rotateY()
 		glm::vec4 const G = glm::rotateY(glm::vec4(1, 0, 0, 1), glm::pi<float>() * 0.5f);
 		glm::vec4 const Expected(0.0f, 0.0f, -1.0f, 1.0f);
 
-		if (!glm::all(glm::equal(G, Expected, epsilon))) {
-			print_vector_comparison(G, Expected, "rotateY vec4 by 90°");
-			Error += 1;
-		}
+		Error += GLM_CHECK_NEAR(G, Expected, epsilon); // rotateY vec4 by 90°
 	}
 
 	// Test case 5: Rotate vec4 around Y by 90 degrees - vector along Y axis (should be invariant)
@@ -286,10 +232,7 @@ static int test_rotateY()
 		glm::vec4 const G = glm::rotateY(glm::vec4(0, 1, 0, 1), glm::pi<float>() * 0.5f);
 		glm::vec4 const Expected(0.0f, 1.0f, 0.0f, 1.0f);
 
-		if (!glm::all(glm::equal(G, Expected, epsilon))) {
-			print_vector_comparison(G, Expected, "rotateY vec4 invariant axis");
-			Error += 1;
-		}
+		Error += GLM_CHECK_NEAR(G, Expected, epsilon); // rotateY vec4 invariant axis
 	}
 
 	return Error;
@@ -305,10 +248,7 @@ static int test_rotateZ()
 		glm::vec3 const H = glm::rotateZ(glm::vec3(1, 0, 0), glm::pi<float>() * 0.5f);
 		glm::vec3 const Expected(0.0f, 1.0f, 0.0f);
 
-		if (!glm::all(glm::equal(H, Expected, epsilon))) {
-			print_vector_comparison(H, Expected, "rotateZ vec3 by 90°");
-			Error += 1;
-		}
+		Error += GLM_CHECK_NEAR(H, Expected, epsilon); // rotateZ vec3 by 90°
 	}
 
 	// Test case 2: Rotate vec3 around Z by 90 degrees - vector along Z axis (should be invariant)
@@ -316,10 +256,7 @@ static int test_rotateZ()
 		glm::vec3 const H = glm::rotateZ(glm::vec3(0, 0, 1), glm::pi<float>() * 0.5f);
 		glm::vec3 const Expected(0.0f, 0.0f, 1.0f);
 
-		if (!glm::all(glm::equal(H, Expected, epsilon))) {
-			print_vector_comparison(H, Expected, "rotateZ vec3 invariant axis");
-			Error += 1;
-		}
+		Error += GLM_CHECK_NEAR(H, Expected, epsilon); // rotateZ vec3 invariant axis
 	}
 
 	// Test case 3: Rotate vec3 around Z by 180 degrees
@@ -327,10 +264,7 @@ static int test_rotateZ()
 		glm::vec3 const H = glm::rotateZ(glm::vec3(1, 0, 0), glm::pi<float>());
 		glm::vec3 const Expected(-1.0f, 0.0f, 0.0f);
 
-		if (!glm::all(glm::equal(H, Expected, epsilon))) {
-			print_vector_comparison(H, Expected, "rotateZ vec3 by 180°");
-			Error += 1;
-		}
+		Error += GLM_CHECK_NEAR(H, Expected, epsilon); // rotateZ vec3 by 180°
 	}
 
 	// Test case 4: Rotate vec4 around Z by 90 degrees
@@ -338,10 +272,7 @@ static int test_rotateZ()
 		glm::vec4 const I = glm::rotateZ(glm::vec4(1, 0, 0, 1), glm::pi<float>() * 0.5f);
 		glm::vec4 const Expected(0.0f, 1.0f, 0.0f, 1.0f);
 
-		if (!glm::all(glm::equal(I, Expected, epsilon))) {
-			print_vector_comparison(I, Expected, "rotateZ vec4 by 90°");
-			Error += 1;
-		}
+		Error += GLM_CHECK_NEAR(I, Expected, epsilon); // rotateZ vec4 by 90°
 	}
 
 	// Test case 5: Rotate vec4 around Z by 90 degrees - vector along Z axis (should be invariant)
@@ -349,10 +280,7 @@ static int test_rotateZ()
 		glm::vec4 const I = glm::rotateZ(glm::vec4(0, 0, 1, 1), glm::pi<float>() * 0.5f);
 		glm::vec4 const Expected(0.0f, 0.0f, 1.0f, 1.0f);
 
-		if (!glm::all(glm::equal(I, Expected, epsilon))) {
-			print_vector_comparison(I, Expected, "rotateZ vec4 invariant axis");
-			Error += 1;
-		}
+		Error += GLM_CHECK_NEAR(I, Expected, epsilon); // rotateZ vec4 invariant axis
 	}
 
 	return Error;
@@ -414,7 +342,6 @@ static int test_orientation()
 				if (i != j) {
 					float dot_product = glm::dot(glm::vec3(O[i]), glm::vec3(O[j]));
 					if (glm::abs(dot_product) > custom_epsilon) {
-						std::cout << "---- Orientation orthogonality test failure ----\n";
 						std::cout << "Columns " << i << " and " << j << " are not orthogonal\n";
 						std::cout << "Dot product: " << dot_product << "\n";
 						Error += 1;
@@ -424,7 +351,6 @@ static int test_orientation()
 
 			float length = glm::length(glm::vec3(O[i]));
 			if (glm::abs(length - 1.0f) > custom_epsilon) {
-				std::cout << "---- Orientation column normalization test failure ----\n";
 				std::cout << "Column " << i << " is not normalized\n";
 				std::cout << "Length: " << length << "\n";
 				Error += 1;
@@ -436,10 +362,7 @@ static int test_orientation()
 		glm::vec3 const transformed = O * glm::vec4(0, 0, 1, 0);
 		glm::vec3 const expected(0, -1, 0);
 
-		if (!glm::all(glm::equal(transformed, expected, custom_epsilon))) {
-			print_vector_comparison(transformed, expected, "Orientation transformation");
-			Error += 1;
-		}
+		Error += GLM_CHECK_NEAR(transformed, expected, custom_epsilon); // Orientation transformation
 	}
 
 	// Test case 3: Orientation with parallel direction and up vectors (should be handled gracefully)
@@ -453,7 +376,6 @@ static int test_orientation()
 		for (int i = 0; i < 3; ++i) {
 			float length = glm::length(glm::vec3(O[i]));
 			if (glm::abs(length - 1.0f) > custom_epsilon) {
-				std::cout << "---- Parallel vectors orientation test failure ----\n";
 				std::cout << "Column " << i << " is not normalized\n";
 				std::cout << "Length: " << length << "\n";
 				Error += 1;
@@ -468,46 +390,11 @@ int main()
 {
 	int Error = 0;
 
-	std::cout << "==== Running GLM rotate_vector tests ====\n";
-
-	std::cout << "Running rotate tests...\n";
-	int RotateErrors = test_rotate();
-	Error += RotateErrors;
-	std::cout << (RotateErrors ?
-				  "FAILED: rotate tests with " + std::to_string(RotateErrors) + " errors\n" :
-				  "PASSED: rotate tests\n");
-
-	std::cout << "Running rotateX tests...\n";
-	int RotateXErrors = test_rotateX();
-	Error += RotateXErrors;
-	std::cout << (RotateXErrors ?
-				  "FAILED: rotateX tests with " + std::to_string(RotateXErrors) + " errors\n" :
-				  "PASSED: rotateX tests\n");
-
-	std::cout << "Running rotateY tests...\n";
-	int RotateYErrors = test_rotateY();
-	Error += RotateYErrors;
-	std::cout << (RotateYErrors ?
-				  "FAILED: rotateY tests with " + std::to_string(RotateYErrors) + " errors\n" :
-				  "PASSED: rotateY tests\n");
-
-	std::cout << "Running rotateZ tests...\n";
-	int RotateZErrors = test_rotateZ();
-	Error += RotateZErrors;
-	std::cout << (RotateZErrors ?
-				  "FAILED: rotateZ tests with " + std::to_string(RotateZErrors) + " errors\n" :
-				  "PASSED: rotateZ tests\n");
-
-	std::cout << "Running orientation tests...\n";
-	int OrientationErrors = test_orientation();
-	Error += OrientationErrors;
-	std::cout << (OrientationErrors ?
-				  "FAILED: orientation tests with " + std::to_string(OrientationErrors) + " errors\n" :
-				  "PASSED: orientation tests\n");
-
-	std::cout << "==== Test summary ====\n";
-	std::cout << "Total errors: " << Error << "\n";
-	std::cout << (Error ? "FAILED\n" : "ALL TESTS PASSED\n");
+	Error += GLM_TEST(test_rotate());
+	Error += GLM_TEST(test_rotateX());
+	Error += GLM_TEST(test_rotateY());
+	Error += GLM_TEST(test_rotateZ());
+	Error += GLM_TEST(test_orientation());
 
 	return GLM_TEST_FINISH(Error);
 }

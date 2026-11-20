@@ -36,12 +36,7 @@ static int test_equal()
 		quaType const Q = make_quat<T>(1, 0, 0, 0);
 		quaType const P = make_quat<T>(1, 0, 0, 0);
 
-		if (!glm::all(glm::equal(Q, P, Epsilon))) {
-			std::cout << "Error: Identical quaternions should be equal" << std::endl;
-			print_quat("Q", Q);
-			print_quat("P", P);
-			Error++;
-		}
+		Error += GLM_CHECK_NEAR(Q, P, Epsilon); // Identical quaternions should be equal
 	}
 
 	// Test 2: Nearly equal quaternions (within epsilon)
@@ -49,12 +44,7 @@ static int test_equal()
 		quaType const Q = make_quat<T>(1, 0, 0, 0);
 		quaType const P = make_quat<T>(1, Epsilon / T(2), Epsilon / T(2), Epsilon / T(2));
 
-		if (!glm::all(glm::equal(Q, P, Epsilon))) {
-			std::cout << "Error: Quaternions within epsilon should be equal" << std::endl;
-			print_quat("Q", Q);
-			print_quat("P", P);
-			Error++;
-		}
+		Error += GLM_CHECK_NEAR(Q, P, Epsilon); // Quaternions within epsilon should be equal
 	}
 
 	// Test 3: Not equal quaternions (outside epsilon)
@@ -75,12 +65,7 @@ static int test_equal()
 		quaType const Q = make_quat<T>(2, 3, 4, 5);
 		quaType const P = make_quat<T>(2, 3, 4, 5);
 
-		if (!glm::all(glm::equal(Q, P, Epsilon))) {
-			std::cout << "Error: Identical non-normalized quaternions should be equal" << std::endl;
-			print_quat("Q", Q);
-			print_quat("P", P);
-			Error++;
-		}
+		Error += GLM_CHECK_NEAR(Q, P, Epsilon); // Identical non-normalized quaternions should be equal
 	}
 
 	return Error;
@@ -153,31 +138,14 @@ int main()
 {
 	int Error = 0;
 
-	std::cout << "=== Quaternion Relational Extension Tests ===" << std::endl;
-	std::cout << "Quaternion memory layout: " <<
-#ifdef GLM_FORCE_QUAT_DATA_WXYZ
-		"WXYZ"
-#else
-		"XYZW"
-#endif
-		<< std::endl << std::endl;
-
-	std::cout << "Testing equal function:" << std::endl;
 	Error += GLM_TEST(test_equal<glm::quat>());
 	Error += GLM_TEST(test_equal<glm::lowp_quat>());
 	Error += GLM_TEST(test_equal<glm::mediump_quat>());
 	Error += GLM_TEST(test_equal<glm::highp_quat>());
-
-	std::cout << "\nTesting notEqual function:" << std::endl;
 	Error += GLM_TEST(test_notEqual<glm::quat>());
 	Error += GLM_TEST(test_notEqual<glm::lowp_quat>());
 	Error += GLM_TEST(test_notEqual<glm::mediump_quat>());
 	Error += GLM_TEST(test_notEqual<glm::highp_quat>());
-
-	if (Error == 0)
-		std::cout << "\nAll tests passed!" << std::endl;
-	else
-		std::cout << "\nFailed tests: " << Error << std::endl;
 
 	return GLM_TEST_FINISH(Error);
 }

@@ -665,9 +665,7 @@ int main() {
 	auto start_time = std::chrono::high_resolution_clock::now();
 	int Error = 0;
 
-	std::cout << "\n=======================================================" << std::endl;
 	std::cout << "= GLM TRIGONOMETRIC FUNCTIONS TEST SUITE =" << std::endl;
-	std::cout << "=======================================================" << std::endl;
 
 	// Define the list of tests to run
 	struct TestInfo {
@@ -823,20 +821,16 @@ int main() {
 
 	// Run all tests
 	for (const auto& test : tests) {
-		std::cout << "\n\n=======================================================" << std::endl;
 		std::cout << "TESTING: " << test.name << std::endl;
-		std::cout << "=======================================================" << std::endl;
 
 		int function_errors = 0;
 
 		// Float tests
-		std::cout << "\n--- FLOAT TESTS ---" << std::endl;
 		function_errors += test.test_float_highp();
 		function_errors += test.test_float_mediump();
 		function_errors += test.test_float_lowp();
 
 		// Double tests
-		std::cout << "\n--- DOUBLE TESTS ---" << std::endl;
 		function_errors += test.test_double_highp();
 		function_errors += test.test_double_mediump();
 		function_errors += test.test_double_lowp();
@@ -862,12 +856,9 @@ int main() {
 	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count();
 
 	// Print final summary
-	std::cout << "\n\n=======================================================" << std::endl;
 	std::cout << "TRIGONOMETRIC FUNCTIONS TEST SUMMARY" << std::endl;
-	std::cout << "=======================================================" << std::endl;
 
 	std::cout << std::left << std::setw(15) << "Function" << " | " << std::setw(12) << "Status" << std::endl;
-	std::cout << "--------------------------------" << std::endl;
 
 	for (const auto& result : test_results) {
 		std::cout << std::left << std::setw(15) << result.first << " | "
