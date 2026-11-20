@@ -837,7 +837,7 @@ int main()
 
 int main()
 {
-	return 0;
+	return GLM_TEST_SKIP_ALL("constexpr is disabled (SIMD build or GLM_FORCE_NO_CONSTEXPR)");
 }
 
 #endif

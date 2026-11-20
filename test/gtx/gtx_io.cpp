@@ -183,7 +183,7 @@ int main()
 
 int main()
 {
-	return 0;
+	return GLM_TEST_SKIP_ALL("requires GLM language extensions (GLM_LANG_CXXMS_FLAG)");
 }
 
 #endif// GLM_LANG & GLM_LANG_CXXMS_FLAG

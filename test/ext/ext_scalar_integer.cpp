@@ -710,7 +710,7 @@ int main()
 
 int main()
 {
-	return 0;
+	return GLM_TEST_SKIP_ALL("requires C++11");
 }
 
 #endif
