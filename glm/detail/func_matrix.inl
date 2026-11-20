@@ -321,30 +321,31 @@ namespace detail
 	template<typename T, qualifier Q, bool is_aligned>
 	struct inv3x3 {};
 
+	// The transpose of inverse(m) for an aligned mat3: its columns are the cross products of pairs of
+	// m's columns, divided by the determinant, so it needs no transposes.
+	template<typename T, qualifier Q>
+	GLM_FUNC_QUALIFIER mat<3, 3, T, Q> inverse_transpose3x3(mat<3, 3, T, Q> const& m)
+	{
+		vec<3, T, Q> const i0 = compute_cross<T, Q, true>::call(m[1], m[2]);
+		vec<3, T, Q> const i1 = compute_cross<T, Q, true>::call(m[2], m[0]);
+		vec<3, T, Q> const i2 = compute_cross<T, Q, true>::call(m[0], m[1]);
+		T const OneOverDeterminant = static_cast<T>(1) / compute_dot<vec<3, T, Q>, T, true>::call(m[0], i0);
+		return mat<3, 3, T, Q>(i0 * OneOverDeterminant, i1 * OneOverDeterminant, i2 * OneOverDeterminant);
+	}
+
 	template<typename T, qualifier Q>
 	struct inv3x3<T, Q, true>
 	{
 		GLM_FUNC_QUALIFIER static mat<3, 3, T, Q> call(mat<3, 3, T, Q> const& m)
 		{
-			// see: https://www.onlinemathstutor.org/post/3x3_inverses
-
-			vec<4, T, Q> a = xyz0(m[0]);
-			vec<4, T, Q> b = xyz0(m[1]);
-			vec<4, T, Q> c = xyz0(m[2]);
-
-			vec<4, T, Q> i0 = compute_cross<T, Q, true>::call(b, c);
-			vec<4, T, Q> i1 = compute_cross<T, Q, true>::call(c, a);
-			vec<4, T, Q> i2 = compute_cross<T, Q, true>::call(a, b);
-
-			mat<3, 3, T, Q> Inverse;
-			Inverse[0] = xyz(i0);
-			Inverse[1] = xyz(i1);
-			Inverse[2] = xyz(i2);
-			Inverse = transpose(Inverse);
-
-			T Determinant = compute_dot<vec<4, T, Q>, T, true>::call(a, compute_cross<T, Q, true>::call(b, c));
-			vec<3, T, Q> OneOverDeterminant(static_cast<T>(1) / Determinant);
-			Inverse *= OneOverDeterminant;
+			// The rows of the inverse are the cross products of pairs of columns over the determinant
+			// (see https://www.onlinemathstutor.org/post/3x3_inverses), and the determinant is the dot
+			// product of the first column and the first of them.
+			vec<3, T, Q> const i0 = compute_cross<T, Q, true>::call(m[1], m[2]);
+			vec<3, T, Q> const i1 = compute_cross<T, Q, true>::call(m[2], m[0]);
+			vec<3, T, Q> const i2 = compute_cross<T, Q, true>::call(m[0], m[1]);
+			mat<3, 3, T, Q> Inverse = transpose(mat<3, 3, T, Q>(i0, i1, i2));
+			Inverse *= static_cast<T>(1) / compute_dot<vec<3, T, Q>, T, true>::call(m[0], i0);
 			return Inverse;
 		}
 	};

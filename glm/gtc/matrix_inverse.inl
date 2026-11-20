@@ -42,7 +42,11 @@ namespace glm
 	template<typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER mat<3, 3, T, Q> inverseTranspose(mat<3, 3, T, Q> const& m)
 	{
-		return transpose(inverse(m));
+		// Aligned types compute the inverse as the transpose of this, so skip both transposes
+		if constexpr (detail::is_aligned<Q>::value)
+			return detail::inverse_transpose3x3(m);
+		else
+			return transpose(inverse(m));
 	}
 
 	template<typename T, qualifier Q>
