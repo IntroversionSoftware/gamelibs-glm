@@ -6,28 +6,25 @@
 
 #define GLM_FORCE_SWIZZLE
 #define GLM_FORCE_ALIGNED_GENTYPES
+#include "glm_test.hpp"
 #include <glm/glm.hpp>
-#include <cstdio>
+#include <string>
 #include <memory>
 #include <type_traits>
 
 #if GLM_CONFIG_SWIZZLE == GLM_SWIZZLE_OPERATOR && GLM_CONFIG_ALIGNED_GENTYPES == GLM_ENABLE
 
+// Compares component by component rather than with operator==, which has its own SIMD paths.
 template<glm::length_t L, typename T, glm::qualifier Q>
-static int check(glm::vec<L, T, Q> const& v, glm::vec<L, T, Q> const& expected, int line)
+static int check(glm::vec<L, T, Q> const& v, glm::vec<L, T, Q> const& expected, char const* expr, char const* values, int line)
 {
+	bool Ok = true;
 	for (glm::length_t i = 0; i < L; ++i)
-	{
-		if (v[i] != expected[i])
-		{
-			std::printf("line %d: component %d mismatch\n", line, static_cast<int>(i));
-			return 1;
-		}
-	}
-	return 0;
+		Ok = Ok && v[i] == expected[i];
+	return glm_test::check_pair(Ok, std::string(expr) + " == (" + values + ")", expr, v, "expected", expected, __FILE__, line);
 }
 
-#define CHECK(v, ...) check(v, std::decay_t<decltype(v)>(__VA_ARGS__), __LINE__)
+#define CHECK(v, ...) check(v, std::decay_t<decltype(v)>(__VA_ARGS__), #v, #__VA_ARGS__, __LINE__)
 
 template<typename T, glm::qualifier Q>
 static int test_read()
@@ -165,20 +162,19 @@ int main()
 {
 	int Error = 0;
 
-	Error += test_all<glm::packed_highp>();
-	Error += test_all<glm::aligned_highp>();
-	Error += test_all<glm::aligned_mediump>();
-	Error += test_all<glm::aligned_lowp>();
+	Error += GLM_TEST(test_all<glm::packed_highp>());
+	Error += GLM_TEST(test_all<glm::aligned_highp>());
+	Error += GLM_TEST(test_all<glm::aligned_mediump>());
+	Error += GLM_TEST(test_all<glm::aligned_lowp>());
 
-	std::printf(Error == 0 ? "PASSED\n" : "FAILED (%d)\n", Error);
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }
 
 #else
 
 int main()
 {
-	return 0;
+	return GLM_TEST_SKIP_ALL("swizzle operators or aligned gentypes are disabled");
 }
 
 #endif
