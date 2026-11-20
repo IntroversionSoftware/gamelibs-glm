@@ -218,6 +218,24 @@ static int test_operators()
 	return Error;
 }
 
+// The vec1 overloads of % and %= take the vec1's one component as the divisor of both.
+static int test_operator_mod_vec1()
+{
+	int Error = 0;
+
+	glm::ivec2 A(7, 9);
+	A %= glm::ivec1(4);
+	Error += GLM_CHECK_EQ(A, glm::ivec2(3, 1));
+
+	glm::uvec2 B(10u, 15u);
+	B %= glm::uvec1(4u);
+	Error += GLM_CHECK_EQ(B, glm::uvec2(2u, 3u));
+
+	Error += GLM_CHECK_EQ(glm::ivec2(7, 9) % glm::ivec1(5), glm::ivec2(2, 4));
+
+	return Error;
+}
+
 static int test_ctor()
 {
 	int Error = 0;
@@ -406,6 +424,7 @@ int main()
 	Error += GLM_TEST(test_ctor());
 	Error += GLM_TEST(test_operators());
 	Error += GLM_TEST(test_operator_increment());
+	Error += GLM_TEST(test_operator_mod_vec1());
 	Error += GLM_TEST(test_swizzle());
 
 	return GLM_TEST_FINISH(Error);
