@@ -7,89 +7,130 @@
 #	define GLM_FORCE_SSE42 1
 #endif
 
+#include "glm_test.hpp"
 #include <glm/glm.hpp>
 #include <glm/exponential.hpp>
 #include <glm/trigonometric.hpp>
 #include <cmath>
-#include <cstdio>
 #include <random>
+#include <string>
+
+// Without the vectorized path (GLM_FORCE_PURE, no FMA, non-x86) mediump/lowp use the scalar
+// reduced-precision implementations, which these tolerances are not meant for.
+#if GLM_CONFIG_ALIGNED_GENTYPES == GLM_ENABLE && GLM_CONFIG_SIMD == GLM_ENABLE && GLM_HAS_FMA && ((GLM_ARCH & GLM_ARCH_SSE2_BIT) || (GLM_ARCH & GLM_ARCH_CLANG_BIT))
 
 namespace {
 
+// Largest relative error of a vectorized function against double-precision libm over [lo, hi].
 template<glm::qualifier Q, class Fork, class Ref>
-int check(const char* name, Fork fork, Ref ref, double lo, double hi, double tol)
+double max_relative_error(Fork fork, Ref ref, double lo, double hi)
 {
 	std::mt19937 rng(20260725u);
 	std::uniform_real_distribution<double> d(lo, hi);
 	double maxrel = 0.0;
 	for (int i = 0; i < 100000; ++i)
 	{
-		const float in[4] = { (float)d(rng), (float)d(rng), (float)d(rng), (float)d(rng) };
+		float in[4];
+		for (float& f : in) f = glm_test::opaque((float)d(rng));
 		glm::vec<4, float, Q> v(in[0], in[1], in[2], in[3]);
 		glm::vec<4, float, Q> o = fork(v);
 		for (int j = 0; j < 4; ++j)
 		{
 			double r = ref((double)in[j]);
-			if (std::isfinite((double)o[j]) && r != 0.0)
+			if (r != 0.0)
 				maxrel = std::max(maxrel, std::fabs((double)o[j] - r) / std::fabs(r));
 		}
 	}
-	if (maxrel > tol) { std::printf("  [FAIL] %s relerr=%.3e tol=%.1e\n", name, maxrel, tol); return 1; }
-	std::printf("  [ ok ] %-24s relerr=%.2e\n", name, maxrel);
-	return 0;
+	return maxrel;
+}
+
+// pow(base>0, exp) = exp(exp*log(base))
+template<glm::qualifier Q>
+double max_relative_error_pow()
+{
+	std::mt19937 r2(7u);
+	std::uniform_real_distribution<double> b(0.01, 20.0), ex(-4.0, 4.0);
+	double maxrel = 0.0;
+	for (int i = 0; i < 100000; ++i)
+	{
+		float bb[4];
+		for (float& f : bb) f = glm_test::opaque((float)b(r2));
+		float ee[4];
+		for (float& f : ee) f = glm_test::opaque((float)ex(r2));
+		glm::vec<4,float,Q> B(bb[0],bb[1],bb[2],bb[3]), E2(ee[0],ee[1],ee[2],ee[3]);
+		glm::vec<4,float,Q> o = glm::pow(B, E2);
+		for (int j = 0; j < 4; ++j)
+		{
+			double r = std::pow((double)bb[j],(double)ee[j]);
+			if (r != 0.0)
+				maxrel = std::max(maxrel, std::fabs((double)o[j]-r)/std::fabs(r));
+		}
+	}
+	return maxrel;
 }
 
 template<glm::qualifier Q>
-int test_qualifier(const char* q)
+void test_qualifier(const char* q)
 {
 	const double tol = glm::detail::is_highp<Q>::value ? 1e-6 : 5e-6;
-	int E = 0;
-	char nm[64];
-	std::snprintf(nm, sizeof nm, "exp  %s", q);  E += check<Q>(nm, [](auto v){ return glm::exp(v); },  [](double x){ return std::exp(x); },  -30.0, 30.0, tol);
-	std::snprintf(nm, sizeof nm, "log  %s", q);  E += check<Q>(nm, [](auto v){ return glm::log(v); },  [](double x){ return std::log(x); },   1e-6, 1e6,  tol);
-	std::snprintf(nm, sizeof nm, "exp2 %s", q);  E += check<Q>(nm, [](auto v){ return glm::exp2(v); }, [](double x){ return std::exp2(x); }, -40.0, 40.0, tol);
-	std::snprintf(nm, sizeof nm, "log2 %s", q);  E += check<Q>(nm, [](auto v){ return glm::log2(v); }, [](double x){ return std::log2(x); },  1e-6, 1e6,  tol);
-	// hyperbolics (built on exp/log; cancellation-aware forms target ~1e-6)
-	std::snprintf(nm, sizeof nm, "sinh %s", q);  E += check<Q>(nm, [](auto v){ return glm::sinh(v); },  [](double x){ return std::sinh(x); },  -10.0, 10.0, tol);
-	std::snprintf(nm, sizeof nm, "cosh %s", q);  E += check<Q>(nm, [](auto v){ return glm::cosh(v); },  [](double x){ return std::cosh(x); },  -10.0, 10.0, tol);
-	std::snprintf(nm, sizeof nm, "tanh %s", q);  E += check<Q>(nm, [](auto v){ return glm::tanh(v); },  [](double x){ return std::tanh(x); },  -10.0, 10.0, tol);
-	std::snprintf(nm, sizeof nm, "asinh %s", q); E += check<Q>(nm, [](auto v){ return glm::asinh(v); }, [](double x){ return std::asinh(x); }, -100.0, 100.0, tol);
-	std::snprintf(nm, sizeof nm, "acosh %s", q); E += check<Q>(nm, [](auto v){ return glm::acosh(v); }, [](double x){ return std::acosh(x); },  1.0, 100.0, tol);
-	std::snprintf(nm, sizeof nm, "atanh %s", q); E += check<Q>(nm, [](auto v){ return glm::atanh(v); }, [](double x){ return std::atanh(x); }, -0.999, 0.999, tol);
-	// pow(base>0, exp) = exp(exp*log(base))
+
+	auto run = [&](const char* fn, auto&& test)
 	{
-		std::mt19937 r2(7u);
-		std::uniform_real_distribution<double> b(0.01, 20.0), ex(-4.0, 4.0);
-		double maxrel = 0.0;
-		for (int i = 0; i < 100000; ++i) {
-			const float bb[4] = {(float)b(r2),(float)b(r2),(float)b(r2),(float)b(r2)};
-			const float ee[4] = {(float)ex(r2),(float)ex(r2),(float)ex(r2),(float)ex(r2)};
-			glm::vec<4,float,Q> B(bb[0],bb[1],bb[2],bb[3]), E2(ee[0],ee[1],ee[2],ee[3]);
-			glm::vec<4,float,Q> o = glm::pow(B, E2);
-			for (int j = 0; j < 4; ++j) { double r = std::pow((double)bb[j],(double)ee[j]);
-				if (r != 0.0) maxrel = std::max(maxrel, std::fabs((double)o[j]-r)/std::fabs(r)); }
-		}
-		if (maxrel > tol) { std::printf("  [FAIL] pow  %s relerr=%.3e tol=%.1e\n", q, maxrel, tol); ++E; }
-		else std::printf("  [ ok ] pow  %-19s relerr=%.2e\n", q, maxrel);
-	}
-	return E;
+		std::string const Name = std::string(fn) + "<" + q + ">";
+		glm_test::run(Name.c_str(), test);
+	};
+
+#	define EXP_SIMD_CHECK(fn, lo, hi) \
+		run(#fn, [&] { \
+			double const maxrel = max_relative_error<Q>([](auto v){ return glm::fn(v); }, [](double x){ return std::fn(x); }, lo, hi); \
+			return GLM_CHECK_LE(maxrel, tol); \
+		})
+
+	// The mediump/lowp forms of these rely on exact rounding (expm1/log1p corrections against
+	// cancellation), which fast-math may simplify away; highp defers to libm.
+#	define EXP_SIMD_CHECK_COMPENSATED(fn, lo, hi) \
+		run(#fn, [&] { \
+			if constexpr (!glm::detail::is_highp<Q>::value) \
+				GLM_TEST_REQUIRE_STRICT_FP(); \
+			double const maxrel = max_relative_error<Q>([](auto v){ return glm::fn(v); }, [](double x){ return std::fn(x); }, lo, hi); \
+			return GLM_CHECK_LE(maxrel, tol); \
+		})
+
+	EXP_SIMD_CHECK(exp, -30.0, 30.0);
+	EXP_SIMD_CHECK(log, 1e-6, 1e6);
+	EXP_SIMD_CHECK(exp2, -40.0, 40.0);
+	EXP_SIMD_CHECK(log2, 1e-6, 1e6);
+	// hyperbolics (built on exp/log; cancellation-aware forms target ~1e-6)
+	EXP_SIMD_CHECK_COMPENSATED(sinh, -10.0, 10.0);
+	EXP_SIMD_CHECK(cosh, -10.0, 10.0);
+	EXP_SIMD_CHECK(tanh, -10.0, 10.0);
+	EXP_SIMD_CHECK_COMPENSATED(asinh, -100.0, 100.0);
+	EXP_SIMD_CHECK_COMPENSATED(acosh, 1.0, 100.0);
+	EXP_SIMD_CHECK_COMPENSATED(atanh, -0.999, 0.999);
+#	undef EXP_SIMD_CHECK
+#	undef EXP_SIMD_CHECK_COMPENSATED
+
+	run("pow", [&] {
+		double const maxrel = max_relative_error_pow<Q>();
+		return GLM_CHECK_LE(maxrel, tol);
+	});
 }
 
 } // namespace
 
 int main()
 {
-	std::printf("=== SIMD aligned exp/log/exp2/log2 regression ===\n");
-	int Error = 0;
-	// Without the vectorized path (GLM_FORCE_PURE, no FMA, non-x86) mediump/lowp use the scalar
-	// reduced-precision implementations, which these tolerances are not meant for.
-#if GLM_CONFIG_ALIGNED_GENTYPES == GLM_ENABLE && GLM_CONFIG_SIMD == GLM_ENABLE && GLM_HAS_FMA && ((GLM_ARCH & GLM_ARCH_SSE2_BIT) || (GLM_ARCH & GLM_ARCH_CLANG_BIT))
-	Error += test_qualifier<glm::aligned_highp>("highp");
-	Error += test_qualifier<glm::aligned_mediump>("mediump");
-	Error += test_qualifier<glm::aligned_lowp>("lowp");
-	std::printf(Error == 0 ? "ALL PASSED\n" : "FAILED (%d)\n", Error);
-#else
-	std::printf("SKIPPED (vectorized transcendental path not compiled in)\n");
-#endif
-	return Error;
+	test_qualifier<glm::aligned_highp>("aligned_highp");
+	test_qualifier<glm::aligned_mediump>("aligned_mediump");
+	test_qualifier<glm::aligned_lowp>("aligned_lowp");
+	return GLM_TEST_FINISH();
 }
+
+#else
+
+int main()
+{
+	return GLM_TEST_SKIP_ALL("vectorized transcendental path not compiled in");
+}
+
+#endif
