@@ -267,6 +267,89 @@ namespace glm_test
 		return true;
 	}
 
+	// The comparisons behind GLM_CHECK_EQ and friends. The operands arrive as variables, so a
+	// comparison that was `sizeof(T) == 16` (a constant the compiler knows is non-negative) would
+	// become a signed/unsigned comparison and warn; integers of mixed signedness are compared by
+	// value instead, like C++20's std::cmp_equal. Everything else uses the type's own operator.
+	namespace detail
+	{
+		template<typename A, typename B>
+		constexpr bool mixed_sign = std::is_integral<A>::value && std::is_integral<B>::value
+			&& !std::is_same<A, bool>::value && !std::is_same<B, bool>::value && std::is_signed<A>::value != std::is_signed<B>::value;
+
+		template<typename A, typename B>
+		bool integer_equal(A a, B b)
+		{
+			if constexpr (std::is_signed<A>::value)
+				return a >= 0 && static_cast<std::make_unsigned_t<A>>(a) == b;
+			else
+				return b >= 0 && a == static_cast<std::make_unsigned_t<B>>(b);
+		}
+
+		template<typename A, typename B>
+		bool integer_less(A a, B b)
+		{
+			if constexpr (std::is_signed<A>::value)
+				return a < 0 || static_cast<std::make_unsigned_t<A>>(a) < b;
+			else
+				return b > 0 && a < static_cast<std::make_unsigned_t<B>>(b);
+		}
+
+		template<typename A, typename B>
+		bool eq(A const& a, B const& b)
+		{
+			if constexpr (mixed_sign<A, B>)
+				return integer_equal(a, b);
+			else
+				return static_cast<bool>(a == b);
+		}
+
+		template<typename A, typename B>
+		bool ne(A const& a, B const& b)
+		{
+			if constexpr (mixed_sign<A, B>)
+				return !integer_equal(a, b);
+			else
+				return static_cast<bool>(a != b);
+		}
+
+		template<typename A, typename B>
+		bool lt(A const& a, B const& b)
+		{
+			if constexpr (mixed_sign<A, B>)
+				return integer_less(a, b);
+			else
+				return static_cast<bool>(a < b);
+		}
+
+		template<typename A, typename B>
+		bool le(A const& a, B const& b)
+		{
+			if constexpr (mixed_sign<A, B>)
+				return !integer_less(b, a);
+			else
+				return static_cast<bool>(a <= b);
+		}
+
+		template<typename A, typename B>
+		bool gt(A const& a, B const& b)
+		{
+			if constexpr (mixed_sign<A, B>)
+				return integer_less(b, a);
+			else
+				return static_cast<bool>(a > b);
+		}
+
+		template<typename A, typename B>
+		bool ge(A const& a, B const& b)
+		{
+			if constexpr (mixed_sign<A, B>)
+				return !integer_less(a, b);
+			else
+				return static_cast<bool>(a >= b);
+		}
+	}//namespace detail
+
 	// Skip the running test (from inside it): `return GLM_TEST_SKIP("reason");`.
 	inline int skip(char const* Reason)
 	{
@@ -392,17 +475,17 @@ namespace glm_test
 
 #define GLM_CHECK(...) ::glm_test::check(static_cast<bool>(__VA_ARGS__), #__VA_ARGS__, __FILE__, __LINE__)
 
-#define GLM_TEST_DETAIL_COMPARE(Macro, Op, a, b) \
+#define GLM_TEST_DETAIL_COMPARE(Macro, Compare, a, b) \
 	([&](auto const& glm_test_a, auto const& glm_test_b) { \
-		return ::glm_test::check_values(static_cast<bool>(glm_test_a Op glm_test_b), Macro, #a, #b, nullptr, glm_test_a, glm_test_b, __FILE__, __LINE__); \
+		return ::glm_test::check_values(::glm_test::detail::Compare(glm_test_a, glm_test_b), Macro, #a, #b, nullptr, glm_test_a, glm_test_b, __FILE__, __LINE__); \
 	}((a), (b)))
 
-#define GLM_CHECK_EQ(a, b) GLM_TEST_DETAIL_COMPARE("GLM_CHECK_EQ", ==, a, b)
-#define GLM_CHECK_NE(a, b) GLM_TEST_DETAIL_COMPARE("GLM_CHECK_NE", !=, a, b)
-#define GLM_CHECK_LT(a, b) GLM_TEST_DETAIL_COMPARE("GLM_CHECK_LT", <, a, b)
-#define GLM_CHECK_LE(a, b) GLM_TEST_DETAIL_COMPARE("GLM_CHECK_LE", <=, a, b)
-#define GLM_CHECK_GT(a, b) GLM_TEST_DETAIL_COMPARE("GLM_CHECK_GT", >, a, b)
-#define GLM_CHECK_GE(a, b) GLM_TEST_DETAIL_COMPARE("GLM_CHECK_GE", >=, a, b)
+#define GLM_CHECK_EQ(a, b) GLM_TEST_DETAIL_COMPARE("GLM_CHECK_EQ", eq, a, b)
+#define GLM_CHECK_NE(a, b) GLM_TEST_DETAIL_COMPARE("GLM_CHECK_NE", ne, a, b)
+#define GLM_CHECK_LT(a, b) GLM_TEST_DETAIL_COMPARE("GLM_CHECK_LT", lt, a, b)
+#define GLM_CHECK_LE(a, b) GLM_TEST_DETAIL_COMPARE("GLM_CHECK_LE", le, a, b)
+#define GLM_CHECK_GT(a, b) GLM_TEST_DETAIL_COMPARE("GLM_CHECK_GT", gt, a, b)
+#define GLM_CHECK_GE(a, b) GLM_TEST_DETAIL_COMPARE("GLM_CHECK_GE", ge, a, b)
 
 // glm::equal(a, b, eps) (component-wise for vectors and matrices, an epsilon or a ULP count), all
 // components required to match: the same as glm::all(glm::equal(a, b, eps)) or the scalar form.
