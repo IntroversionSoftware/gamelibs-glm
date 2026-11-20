@@ -48,6 +48,9 @@ GLM_FUNC_QUALIFIER qua<float, aligned_highp> conjugate(qua<float, aligned_highp>
 	return Result;
 }
 
+// Not on AArch64, where the twelve shuffles become TBL lookups: GLM's generic code measured about
+// twice as fast there (Apple M3), while on x86 this is faster, mostly through mat4_cast.
+#if !defined(__aarch64__) && !defined(_M_ARM64)
 template<>
 GLM_FUNC_QUALIFIER mat<3, 3, float, aligned_highp> mat3_cast(qua<float, aligned_highp> const &_q)
 {
@@ -87,6 +90,8 @@ GLM_FUNC_QUALIFIER mat<3, 3, float, aligned_highp> mat3_cast(qua<float, aligned_
 	Result[2].data = r2;
 	return Result;
 }
+
+#endif
 
 }//namespace glm
 
