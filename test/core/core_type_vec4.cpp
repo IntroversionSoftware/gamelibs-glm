@@ -628,7 +628,7 @@ static int test_perf_AoS(std::size_t Size)
 
 	std::clock_t EndTime = std::clock();
 
-	std::printf("AoS: %d\n", static_cast<int>(EndTime - StartTime));
+	glm_test::info("AoS: %d\n", static_cast<int>(EndTime - StartTime));
 
 	return Error;
 }
@@ -667,7 +667,7 @@ static int test_perf_SoA(std::size_t Size)
 
 	std::clock_t EndTime = std::clock();
 
-	std::printf("SoA: %d\n", static_cast<int>(EndTime - StartTime));
+	glm_test::info("SoA: %d\n", static_cast<int>(EndTime - StartTime));
 
 	return Error;
 }

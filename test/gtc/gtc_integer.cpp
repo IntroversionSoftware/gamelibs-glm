@@ -74,7 +74,7 @@ namespace log2_
 
 			std::clock_t End = clock();
 
-			std::printf("glm::log2<int>: %d clocks\n", static_cast<int>(End - Begin));
+			glm_test::info("glm::log2<int>: %d clocks\n", static_cast<int>(End - Begin));
 		}
 
 		{
@@ -88,7 +88,7 @@ namespace log2_
 
 			std::clock_t End = clock();
 
-			std::printf("glm::log2<ivec4>: %d clocks\n", static_cast<int>(End - Begin));
+			glm_test::info("glm::log2<ivec4>: %d clocks\n", static_cast<int>(End - Begin));
 		}
 
 #if GLM_COMPILER & GLM_COMPILER_CLANG
@@ -123,7 +123,7 @@ namespace log2_
 
 			std::clock_t End = clock();
 
-			std::printf("glm::log2<ivec4> inlined: %d clocks\n", static_cast<int>(End - Begin));
+			glm_test::info("glm::log2<ivec4> inlined: %d clocks\n", static_cast<int>(End - Begin));
 		}
 
 
@@ -152,7 +152,7 @@ namespace log2_
 
 			std::clock_t End = clock();
 
-			std::printf("glm::log2<ivec4> inlined no cast: %d clocks\n", static_cast<int>(End - Begin));
+			glm_test::info("glm::log2<ivec4> inlined no cast: %d clocks\n", static_cast<int>(End - Begin));
 		}
 
 
@@ -181,7 +181,7 @@ namespace log2_
 
 			std::clock_t End = clock();
 
-			std::printf("glm::log2<ivec4> reinterpret: %d clocks\n", static_cast<int>(End - Begin));
+			glm_test::info("glm::log2<ivec4> reinterpret: %d clocks\n", static_cast<int>(End - Begin));
 		}
 #		endif//GLM_HAS_BITSCAN_WINDOWS
 
@@ -200,7 +200,7 @@ namespace log2_
 
 			std::clock_t End = clock();
 
-			std::printf("glm::log2<float>: %d clocks\n", static_cast<int>(End - Begin));
+			glm_test::info("glm::log2<float>: %d clocks\n", static_cast<int>(End - Begin));
 		}
 #if GLM_COMPILER & GLM_COMPILER_CLANG
 #	pragma clang diagnostic pop
@@ -221,7 +221,7 @@ namespace log2_
 
 			std::clock_t End = clock();
 
-			std::printf("glm::log2<vec4>: %d clocks\n", static_cast<int>(End - Begin));
+			glm_test::info("glm::log2<vec4>: %d clocks\n", static_cast<int>(End - Begin));
 		}
 #if GLM_COMPILER & GLM_COMPILER_CLANG
 #	pragma clang diagnostic pop

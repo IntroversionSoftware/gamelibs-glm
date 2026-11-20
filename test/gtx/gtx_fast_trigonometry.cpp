@@ -33,8 +33,8 @@ namespace fastCos
 		const std::clock_t timestamp3 = std::clock();
 		const std::clock_t time_fast = timestamp2 - timestamp1;
 		const std::clock_t time_default = timestamp3 - timestamp2;
-		std::printf("fastCos Time %d clocks\n", static_cast<int>(time_fast));
-		std::printf("cos Time %d clocks\n", static_cast<int>(time_default));
+		glm_test::info("fastCos Time %d clocks\n", static_cast<int>(time_fast));
+		glm_test::info("cos Time %d clocks\n", static_cast<int>(time_default));
 
 		(void) result; // Silence set but not used warning
 
@@ -69,8 +69,8 @@ namespace fastSin
 		const std::clock_t timestamp3 = std::clock();
 		const std::clock_t time_fast = timestamp2 - timestamp1;
 		const std::clock_t time_default = timestamp3 - timestamp2;
-		std::printf("fastSin Time %d clocks\n", static_cast<int>(time_fast));
-		std::printf("sin Time %d clocks\n", static_cast<int>(time_default));
+		glm_test::info("fastSin Time %d clocks\n", static_cast<int>(time_fast));
+		glm_test::info("sin Time %d clocks\n", static_cast<int>(time_default));
 
 		(void) result; // Silence set but not used warning
 
@@ -97,8 +97,8 @@ namespace fastTan
 		const std::clock_t timestamp3 = std::clock();
 		const std::clock_t time_fast = timestamp2 - timestamp1;
 		const std::clock_t time_default = timestamp3 - timestamp2;
-		std::printf("fastTan Time %d clocks\n", static_cast<int>(time_fast));
-		std::printf("tan Time %d clocks\n", static_cast<int>(time_default));
+		glm_test::info("fastTan Time %d clocks\n", static_cast<int>(time_fast));
+		glm_test::info("tan Time %d clocks\n", static_cast<int>(time_default));
 
 		(void) result; // Silence set but not used warning
 
@@ -126,8 +126,8 @@ namespace fastAcos
 		const std::clock_t time_fast = timestamp2 - timestamp1;
 		const std::clock_t time_default = timestamp3 - timestamp2;
 
-		std::printf("fastAcos Time %d clocks\n", static_cast<int>(time_fast));
-		std::printf("acos Time %d clocks\n", static_cast<int>(time_default));
+		glm_test::info("fastAcos Time %d clocks\n", static_cast<int>(time_fast));
+		glm_test::info("acos Time %d clocks\n", static_cast<int>(time_default));
 
 		(void) result; // Silence set but not used warning
 
@@ -151,8 +151,8 @@ namespace fastAsin
 		const std::clock_t timestamp3 = std::clock();
 		const std::clock_t time_fast = timestamp2 - timestamp1;
 		const std::clock_t time_default = timestamp3 - timestamp2;
-		std::printf("fastAsin Time %d clocks\n", static_cast<int>(time_fast));
-		std::printf("asin Time %d clocks\n", static_cast<int>(time_default));
+		glm_test::info("fastAsin Time %d clocks\n", static_cast<int>(time_fast));
+		glm_test::info("asin Time %d clocks\n", static_cast<int>(time_default));
 
 		(void) result; // Silence set but not used warning
 
@@ -176,8 +176,8 @@ namespace fastAtan
 		const std::clock_t timestamp3 = std::clock();
 		const std::clock_t time_fast = timestamp2 - timestamp1;
 		const std::clock_t time_default = timestamp3 - timestamp2;
-		std::printf("fastAtan Time %d clocks\n", static_cast<int>(time_fast));
-		std::printf("atan Time %d clocks\n", static_cast<int>(time_default));
+		glm_test::info("fastAtan Time %d clocks\n", static_cast<int>(time_fast));
+		glm_test::info("atan Time %d clocks\n", static_cast<int>(time_default));
 
 		(void) result; // Silence set but not used warning
 
@@ -270,7 +270,7 @@ namespace taylorCos
 
 		std::clock_t const TimeStampEnd = std::clock();
 
-		std::printf("fastCosNew %d clocks\n", static_cast<int>(TimeStampEnd - TimeStampBegin));
+		glm_test::info("fastCosNew %d clocks\n", static_cast<int>(TimeStampEnd - TimeStampBegin));
 
 		int Error = 0;
 		for(std::size_t i = 0; i < Samples; ++i)
@@ -311,7 +311,7 @@ namespace taylorCos
 
 		std::clock_t const TimeStampEnd = std::clock();
 
-		std::printf("fastCosDeterminisctic %d clocks\n", static_cast<int>(TimeStampEnd - TimeStampBegin));
+		glm_test::info("fastCosDeterminisctic %d clocks\n", static_cast<int>(TimeStampEnd - TimeStampBegin));
 
 		int Error = 0;
 		for(std::size_t i = 0; i < Samples; ++i)
@@ -358,7 +358,7 @@ namespace taylorCos
 
 		std::clock_t const TimeStampEnd = std::clock();
 
-		std::printf("fastCosRef %d clocks\n", static_cast<int>(TimeStampEnd - TimeStampBegin));
+		glm_test::info("fastCosRef %d clocks\n", static_cast<int>(TimeStampEnd - TimeStampBegin));
 
 		int Error = 0;
 		for(std::size_t i = 0; i < Samples; ++i)
@@ -380,7 +380,7 @@ namespace taylorCos
 
 		std::clock_t const TimeStampEnd = std::clock();
 
-		std::printf("fastCosOld %d clocks\n", static_cast<int>(TimeStampEnd - TimeStampBegin));
+		glm_test::info("fastCosOld %d clocks\n", static_cast<int>(TimeStampEnd - TimeStampBegin));
 
 		int Error = 0;
 		for(std::size_t i = 0; i < Samples; ++i)
@@ -402,7 +402,7 @@ namespace taylorCos
 
 		std::clock_t const TimeStampEnd = std::clock();
 
-		std::printf("cos %d clocks\n", static_cast<int>(TimeStampEnd - TimeStampBegin));
+		glm_test::info("cos %d clocks\n", static_cast<int>(TimeStampEnd - TimeStampBegin));
 
 		int Error = 0;
 		for(std::size_t i = 0; i < Samples; ++i)
@@ -506,7 +506,7 @@ namespace taylor2
 
 		std::clock_t const TimeStampEnd = std::clock();
 
-		std::printf("taylorCosA %d clocks\n", static_cast<int>(TimeStampEnd - TimeStampBegin));
+		glm_test::info("taylorCosA %d clocks\n", static_cast<int>(TimeStampEnd - TimeStampBegin));
 
 		int Error = 0;
 		for(std::size_t i = 0; i < Samples; ++i)
@@ -528,7 +528,7 @@ namespace taylor2
 
 		std::clock_t const TimeStampEnd = std::clock();
 
-		std::printf("taylorCosB %d clocks\n", static_cast<int>(TimeStampEnd - TimeStampBegin));
+		glm_test::info("taylorCosB %d clocks\n", static_cast<int>(TimeStampEnd - TimeStampBegin));
 
 		int Error = 0;
 		for(std::size_t i = 0; i < Samples; ++i)
@@ -550,7 +550,7 @@ namespace taylor2
 
 		std::clock_t const TimeStampEnd = std::clock();
 
-		std::printf("taylorCosC %d clocks\n", static_cast<int>(TimeStampEnd - TimeStampBegin));
+		glm_test::info("taylorCosC %d clocks\n", static_cast<int>(TimeStampEnd - TimeStampBegin));
 
 		int Error = 0;
 		for(std::size_t i = 0; i < Samples; ++i)

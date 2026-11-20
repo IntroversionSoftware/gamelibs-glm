@@ -237,8 +237,8 @@ namespace nextPowerOfTwo_advanced
 
 		std::clock_t Timestramp2 = std::clock();
 
-		std::printf("nextPowerOfTwo_loop: %d clocks\n", static_cast<int>(Timestramp1 - Timestramp0));
-		std::printf("glm::nextPowerOfTwo: %d clocks\n", static_cast<int>(Timestramp2 - Timestramp1));
+		glm_test::info("nextPowerOfTwo_loop: %d clocks\n", static_cast<int>(Timestramp1 - Timestramp0));
+		glm_test::info("glm::nextPowerOfTwo: %d clocks\n", static_cast<int>(Timestramp2 - Timestramp1));
 
 		return Error;
 	}
@@ -400,7 +400,7 @@ namespace nextMultiple
 
 		std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
 
-		std::printf("- glm::nextMultiple Time %d microseconds\n", static_cast<int>(std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0).count()));
+		glm_test::info("- glm::nextMultiple Time %d microseconds\n", static_cast<int>(std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0).count()));
 
 		glm::uint Result = 0;
 		for(std::size_t i = 0, n = Results.size(); i < n; ++i)
@@ -431,7 +431,7 @@ namespace nextMultiple
 
 		std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
 
-		std::printf("- nextMultipleMod Time %d microseconds\n", static_cast<int>(std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0).count()));
+		glm_test::info("- nextMultipleMod Time %d microseconds\n", static_cast<int>(std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0).count()));
 
 		glm::uint Result = 0;
 		for(std::size_t i = 0, n = Results.size(); i < n; ++i)
@@ -474,7 +474,7 @@ namespace nextMultiple
 
 		std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
 
-		std::printf("- nextMultipleNeg Time %d microseconds\n", static_cast<int>(std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0).count()));
+		glm_test::info("- nextMultipleNeg Time %d microseconds\n", static_cast<int>(std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0).count()));
 
 		glm::uint Result = 0;
 		for (std::size_t i = 0, n = Results.size(); i < n; ++i)
@@ -504,7 +504,7 @@ namespace nextMultiple
 
 		std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
 
-		std::printf("- nextMultipleUFloat Time %d microseconds\n", static_cast<int>(std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0).count()));
+		glm_test::info("- nextMultipleUFloat Time %d microseconds\n", static_cast<int>(std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0).count()));
 
 		float Result = 0;
 		for (std::size_t i = 0, n = Results.size(); i < n; ++i)
@@ -537,7 +537,7 @@ namespace nextMultiple
 
 		std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
 
-		std::printf("- nextMultipleFloat Time %d microseconds\n", static_cast<int>(std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0).count()));
+		glm_test::info("- nextMultipleFloat Time %d microseconds\n", static_cast<int>(std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0).count()));
 
 		float Result = 0;
 		for (std::size_t i = 0, n = Results.size(); i < n; ++i)
@@ -591,13 +591,13 @@ namespace nextMultiple
 
 		for(int i = 0; i < 4; ++i)
 		{
-			std::printf("Run %d :\n", i);
+			glm_test::info("Run %d :\n", i);
 			Error += perf_nextMultiple(Samples);
 			Error += perf_nextMultipleMod(Samples);
 			Error += perf_nextMultipleNeg(Samples);
 			Error += perf_nextMultipleUFloat(Samples);
 			Error += perf_nextMultipleFloat(Samples);
-			std::printf("\n");
+			glm_test::info("\n");
 		}
 
 		return Error;

@@ -316,11 +316,6 @@ static int test_determinant()
 		Error += GLM_CHECK(glm::abs(det2 - 10000.0f) < glm::epsilon<float>());
 	}
 
-	// Output debug info on failures
-	if (Error > 0) {
-		printf("test_determinant failed with %d errors\n", Error);
-	}
-
 	return Error;
 }
 
@@ -510,7 +505,7 @@ static int test_inverse_perf(std::size_t Count, std::size_t Instance, char const
 	//glm::uint Ulp = 0;
 	//Ulp = glm::max(glm::float_distance(*Dst, *Src), Ulp);
 
-	std::printf("inverse<%s>(%f): %lu\n", Message, static_cast<double>(Diff), static_cast<unsigned long>(EndTime - StartTime));
+	glm_test::info("inverse<%s>(%f): %lu\n", Message, static_cast<double>(Diff), static_cast<unsigned long>(EndTime - StartTime));
 
 	return 0;
 }
