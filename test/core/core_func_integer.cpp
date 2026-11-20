@@ -594,7 +594,7 @@ namespace bitfieldReverse
 		return Error;
 	}
 
-	static int perf(std::size_t Samples)
+	[[maybe_unused]] static int perf(std::size_t Samples)
 	{
 		int Error = 0;
 
@@ -1033,7 +1033,7 @@ namespace findMSB
 		return Error;
 	}
 
-	static int perf(std::size_t Samples)
+	[[maybe_unused]] static int perf(std::size_t Samples)
 	{
 		int Error(0);
 
@@ -1264,7 +1264,7 @@ namespace findLSB
 		return Error;
 	}
 
-	static int perf(std::size_t Samples)
+	[[maybe_unused]] static int perf(std::size_t Samples)
 	{
 		int Error(0);
 
@@ -1800,7 +1800,7 @@ namespace bitCount
 		return bitCount_bitfield(glm::vec<1, genType, glm::defaultp>(x)).x;
 	}
 
-	static int perf(std::size_t Size)
+	[[maybe_unused]] static int perf(std::size_t Size)
 	{
 		int Error(0);
 
