@@ -3,9 +3,9 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/pca.hpp>
 #include <glm/gtc/epsilon.hpp>
-#include <glm/gtx/string_cast.hpp>
+#include <glm/ext/vector_relational.hpp>
+#include <glm/ext/matrix_relational.hpp>
 
-#include <cstdio>
 #include <vector>
 #include <random>
 
@@ -21,52 +21,10 @@ GLM_INLINE GLM_CONSTEXPR float myEpsilon<float>() { return 0.00001f; }
 template<>
 GLM_INLINE GLM_CONSTEXPR double myEpsilon<double>() { return 0.000001; }
 
-template<glm::length_t D, typename T, glm::qualifier Q>
-static bool vectorEpsilonEqual(glm::vec<D, T, Q> const& a, glm::vec<D, T, Q> const& b, T epsilon)
-{
-	for (int c = 0; c < D; ++c)
-		if (!glm::epsilonEqual(a[c], b[c], epsilon))
-		{
-			fprintf(stderr, "failing vectorEpsilonEqual: [%d] %lf != %lf (~%lf)\n",
-				c,
-				static_cast<double>(a[c]),
-				static_cast<double>(b[c]),
-				static_cast<double>(epsilon)
-			);
-			return false;
-		}
-	return true;
-}
-
-template<glm::length_t D, typename T, glm::qualifier Q>
-static bool matrixEpsilonEqual(glm::mat<D, D, T, Q> const& a, glm::mat<D, D, T, Q> const& b, T epsilon)
-{
-	for (int c = 0; c < D; ++c)
-		for (int r = 0; r < D; ++r)
-			if (!glm::epsilonEqual(a[c][r], b[c][r], epsilon))
-			{
-				fprintf(stderr, "failing vectorEpsilonEqual: [%d][%d] %lf != %lf (~%lf)\n",
-					c, r,
-					static_cast<double>(a[c][r]),
-					static_cast<double>(b[c][r]),
-					static_cast<double>(epsilon)
-				);
-				return false;
-			}
-	return true;
-}
-
 template<typename T>
 GLM_INLINE bool sameSign(T const& a, T const& b)
 {
 	return ((a >= 0) && (b >= 0)) || ((a < 0) && (b < 0));
-}
-
-template<typename T>
-static T failReport(T line)
-{
-	fprintf(stderr, "Failed in line %d\n", static_cast<int>(line));
-	return line;
 }
 
 // Test data: 1AGA 'agarose double helix'
@@ -413,10 +371,10 @@ static int testEigenvalueSort()
 	};
 
 	// initial sanity check
-	if(!vectorEpsilonEqual(refVal, refVal, myEpsilon<T>()))
-		return failReport(__LINE__);
-	if(!matrixEpsilonEqual(refVec, refVec, myEpsilon<T>()))
-		return failReport(__LINE__);
+	if (GLM_CHECK_NEAR(refVal, refVal, myEpsilon<T>()))
+		return 1;
+	if (GLM_CHECK_NEAR(refVec, refVec, myEpsilon<T>()))
+		return 1;
 
 	// Exhaustive search through all permutations
 	for(int p = 0; p < permutationCount[D]; ++p)
@@ -431,10 +389,10 @@ static int testEigenvalueSort()
 
 		glm::sortEigenvalues(testVal, testVec);
 
-		if (!vectorEpsilonEqual(testVal, refVal, myEpsilon<T>()))
-			return failReport(__LINE__);
-		if (!matrixEpsilonEqual(testVec, refVec, myEpsilon<T>()))
-			return failReport(__LINE__);
+		if (GLM_CHECK_NEAR(testVal, refVal, myEpsilon<T>()))
+			return 1;
+		if (GLM_CHECK_NEAR(testVec, refVec, myEpsilon<T>()))
+			return 1;
 	}
 
 	return 0;
@@ -457,11 +415,8 @@ static int testCovar(
 	vec center = computeCenter(testData);
 
 	mat covarMat = glm::computeCovarianceMatrix(testData.data(), testData.size(), center);
-	if(!matrixEpsilonEqual(covarMat, mat(agarose::expectedCovarData()), myEpsilon<T>()))
-	{
-		fprintf(stderr, "Reconstructed covarMat:\n%s\n", glm::to_string(covarMat).c_str());
-		return failReport(__LINE__);
-	}
+	if (GLM_CHECK_NEAR(covarMat, mat(agarose::expectedCovarData()), myEpsilon<T>()))
+		return 1;
 
 	// #2: test function variant consistency with random data
 	std::default_random_engine rndEng(randomEngineSeed);
@@ -488,12 +443,12 @@ static int testCovar(
 	mat c3 = glm::computeCovarianceMatrix(testData.data(), testData.size(), center);
 	mat c4 = glm::computeCovarianceMatrix<D, T, Q>(testData.rbegin(), testData.rend(), center);
 
-	if(!matrixEpsilonEqual(c1, c2, myEpsilon<T>()))
-		return failReport(__LINE__);
-	if(!matrixEpsilonEqual(c1, c3, myEpsilon<T>()))
-		return failReport(__LINE__);
-	if(!matrixEpsilonEqual(c1, c4, myEpsilon<T>()))
-		return failReport(__LINE__);
+	if (GLM_CHECK_NEAR(c1, c2, myEpsilon<T>()))
+		return 1;
+	if (GLM_CHECK_NEAR(c1, c3, myEpsilon<T>()))
+		return 1;
+	if (GLM_CHECK_NEAR(c1, c4, myEpsilon<T>()))
+		return 1;
 	return 0;
 }
 
@@ -511,20 +466,20 @@ static int testEigenvectors(T epsilon)
 	vec eigenvalues;
 	mat eigenvectors;
 	unsigned int c = glm::findEigenvaluesSymReal(covarMat, eigenvalues, eigenvectors);
-	if(c != D)
-		return failReport(__LINE__);
+	if (GLM_CHECK_EQ(c, D))
+		return 1;
 	glm::sortEigenvalues(eigenvalues, eigenvectors);
 
-	if (!vectorEpsilonEqual(eigenvalues, vec(agarose::expectedEigenvalues<D>()), epsilon))
-		return failReport(__LINE__);
+	if (GLM_CHECK_NEAR(eigenvalues, vec(agarose::expectedEigenvalues<D>()), epsilon))
+		return 1;
 
 	for (int i = 0; i < D; ++i)
 	{
 		vec act = glm::normalize(eigenvectors[i]);
 		vec exp = glm::normalize(agarose::expectedEigenvectors<D>()[i]);
 		if (!sameSign(act[0], exp[0])) exp = -exp;
-		if (!vectorEpsilonEqual(act, exp, epsilon))
-			return failReport(__LINE__);
+		if (GLM_CHECK_NEAR(act, exp, epsilon))
+			return 1;
 	}
 
 	return 0;
@@ -550,8 +505,8 @@ static int smokeTest()
 	mat3 eVec;
 	vec3 eVal;
 	unsigned int eCnt = glm::findEigenvaluesSymReal(covar, eVal, eVec);
-	if(eCnt != 3u)
-		return failReport(__LINE__);
+	if (GLM_CHECK_EQ(eCnt, 3u))
+		return 1;
 
 	// sort eVec by descending eVal
 	if(eVal[0] < eVal[1])
@@ -570,12 +525,12 @@ static int smokeTest()
 		std::swap(eVec[1], eVec[2]);
 	}
 
-	if(!vectorEpsilonEqual(glm::abs(eVec[0]), vec3(0, 1, 0), myEpsilon<float>()))
-		return failReport(__LINE__);
-	if(!vectorEpsilonEqual(glm::abs(eVec[1]), vec3(1, 0, 0), myEpsilon<float>()))
-		return failReport(__LINE__);
-	if(!vectorEpsilonEqual(glm::abs(eVec[2]), vec3(0, 0, 1), myEpsilon<float>()))
-		return failReport(__LINE__);
+	if (GLM_CHECK_NEAR(glm::abs(eVec[0]), vec3(0, 1, 0), myEpsilon<float>()))
+		return 1;
+	if (GLM_CHECK_NEAR(glm::abs(eVec[1]), vec3(1, 0, 0), myEpsilon<float>()))
+		return 1;
+	if (GLM_CHECK_NEAR(glm::abs(eVec[2]), vec3(0, 0, 1), myEpsilon<float>()))
+		return 1;
 
 	return 0;
 }
@@ -630,91 +585,50 @@ static int rndTest(unsigned int randomEngineSeed)
 	glm::dvec3 evals;
 	glm::dmat3 evecs;
 	unsigned int evcnt = glm::findEigenvaluesSymReal(covarMat, evals, evecs);
-	if(evcnt != 3u)
-		return failReport(__LINE__);
+	if (GLM_CHECK_EQ(evcnt, 3u))
+		return 1;
 	glm::sortEigenvalues(evals, evecs);
 
 	if (!sameSign(evecs[0][0], x[0])) evecs[0] = -evecs[0];
-	if(!vectorEpsilonEqual(x, evecs[0], myEpsilon<double>()))
-		return failReport(__LINE__);
+	if (GLM_CHECK_NEAR(x, evecs[0], myEpsilon<double>()))
+		return 1;
 	if (!sameSign(evecs[2][0], y[0])) evecs[2] = -evecs[2];
-	if (!vectorEpsilonEqual(y, evecs[2], myEpsilon<double>()))
-		return failReport(__LINE__);
+	if (GLM_CHECK_NEAR(y, evecs[2], myEpsilon<double>()))
+		return 1;
 	if (!sameSign(evecs[1][0], z[0])) evecs[1] = -evecs[1];
-	if (!vectorEpsilonEqual(z, evecs[1], myEpsilon<double>()))
-		return failReport(__LINE__);
+	if (GLM_CHECK_NEAR(z, evecs[1], myEpsilon<double>()))
+		return 1;
 
 	return 0;
 }
 
 int main()
 {
-	int error(0);
+	int Error = 0;
 
-	// A small smoke test to fail early with most problems
-	if(smokeTest())
-		return failReport(__LINE__);
+	Error += GLM_TEST(smokeTest());
+	Error += GLM_TEST(testEigenvalueSort<2, float, glm::defaultp>());
+	Error += GLM_TEST(testEigenvalueSort<2, double, glm::defaultp>());
+	Error += GLM_TEST(testEigenvalueSort<3, float, glm::defaultp>());
+	Error += GLM_TEST(testEigenvalueSort<3, double, glm::defaultp>());
+	Error += GLM_TEST(testEigenvalueSort<4, float, glm::defaultp>());
+	Error += GLM_TEST(testEigenvalueSort<4, double, glm::defaultp>());
+	Error += GLM_TEST(testCovar<2, float, glm::defaultp>(100, 12345));
+	Error += GLM_TEST(testCovar<2, double, glm::defaultp>(100, 42));
+	Error += GLM_TEST(testCovar<3, float, glm::defaultp>(100, 2021));
+	Error += GLM_TEST(testCovar<3, double, glm::defaultp>(100, 815));
+	Error += GLM_TEST(testCovar<4, float, glm::defaultp>(100, 3141));
+	Error += GLM_TEST(testCovar<4, double, glm::defaultp>(100, 174));
+	Error += GLM_TEST(testEigenvectors<2, float, glm::defaultp>(0.002f));
+	Error += GLM_TEST(testEigenvectors<2, double, glm::defaultp>(0.00000000001));
+	Error += GLM_TEST(testEigenvectors<3, float, glm::defaultp>(0.00001f));
+	Error += GLM_TEST(testEigenvectors<3, double, glm::defaultp>(0.0000000001));
+	Error += GLM_TEST(testEigenvectors<4, float, glm::defaultp>(0.0001f));
+	Error += GLM_TEST(testEigenvectors<4, double, glm::defaultp>(0.0000001));
+	Error += GLM_TEST(rndTest(12345));
+	Error += GLM_TEST(rndTest(42));
 
-	// test sorting utility.
-	if(testEigenvalueSort<2, float, glm::defaultp>() != 0)
-		error = failReport(__LINE__);
-	if(testEigenvalueSort<2, double, glm::defaultp>() != 0)
-		error = failReport(__LINE__);
-	if(testEigenvalueSort<3, float, glm::defaultp>() != 0)
-		error = failReport(__LINE__);
-	if(testEigenvalueSort<3, double, glm::defaultp>() != 0)
-		error = failReport(__LINE__);
-	if(testEigenvalueSort<4, float, glm::defaultp>() != 0)
-		error = failReport(__LINE__);
-	if(testEigenvalueSort<4, double, glm::defaultp>() != 0)
-		error = failReport(__LINE__);
-	if (error != 0)
-		return error;
-
-	// Note: the random engine uses a fixed seed to create consistent and reproducible test data
-	// test covariance matrix computation from different data sources
-	if(testCovar<2, float, glm::defaultp>(100, 12345) != 0)
-		error = failReport(__LINE__);
-	if(testCovar<2, double, glm::defaultp>(100, 42) != 0)
-		error = failReport(__LINE__);
-	if(testCovar<3, float, glm::defaultp>(100, 2021) != 0)
-		error = failReport(__LINE__);
-	if(testCovar<3, double, glm::defaultp>(100, 815) != 0)
-		error = failReport(__LINE__);
-	if(testCovar<4, float, glm::defaultp>(100, 3141) != 0)
-		error = failReport(__LINE__);
-	if(testCovar<4, double, glm::defaultp>(100, 174) != 0)
-		error = failReport(__LINE__);
-	if (error != 0)
-		return error;
-
-	// test PCA eigen vector reconstruction
-	// Expected epsilon precision evaluated separately:
-	// https://github.com/sgrottel/exp-pca-precision
-	if(testEigenvectors<2, float, glm::defaultp>(0.002f) != 0)
-		error = failReport(__LINE__);
-	if(testEigenvectors<2, double, glm::defaultp>(0.00000000001) != 0)
-		error = failReport(__LINE__);
-	if(testEigenvectors<3, float, glm::defaultp>(0.00001f) != 0)
-		error = failReport(__LINE__);
-	if(testEigenvectors<3, double, glm::defaultp>(0.0000000001) != 0)
-		error = failReport(__LINE__);
-	if(testEigenvectors<4, float, glm::defaultp>(0.0001f) != 0)
-		error = failReport(__LINE__);
-	if(testEigenvectors<4, double, glm::defaultp>(0.0000001) != 0)
-		error = failReport(__LINE__);
-	if(error != 0)
-		return error;
-
-	// Final tests with randomized data
-	if(rndTest(12345) != 0)
-		error = failReport(__LINE__);
-	if(rndTest(42) != 0)
-		error = failReport(__LINE__);
-	if (error != 0)
-		return error;
-
-	return error;
+	return GLM_TEST_FINISH(Error);
 }
 
 #if GLM_COMPILER & GLM_COMPILER_CLANG
