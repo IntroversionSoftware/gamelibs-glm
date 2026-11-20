@@ -246,13 +246,42 @@ namespace detail
 		return detail::functor1<vec, L, T, T, Q>::call(mask, v);
 	}
 
+namespace detail
+{
+	// Rotations of the unsigned representation, so a signed value's sign bit rotates like any other
+	// instead of being copied in by >>. The shift is taken modulo the bit size: shifting by the full
+	// size (which a shift of 0 would otherwise need) is undefined.
+	template<typename genIType>
+	GLM_FUNC_QUALIFIER genIType rotate_right(genIType In, int Shift)
+	{
+		typedef typename std::make_unsigned<genIType>::type unsigned_type;
+		int const BitSize = static_cast<int>(sizeof(genIType) * 8);
+		int const Bits = Shift & (BitSize - 1);
+		if(Bits == 0)
+			return In;
+		unsigned_type const Value = static_cast<unsigned_type>(In);
+		return static_cast<genIType>(static_cast<unsigned_type>((Value >> Bits) | (Value << (BitSize - Bits))));
+	}
+
+	template<typename genIType>
+	GLM_FUNC_QUALIFIER genIType rotate_left(genIType In, int Shift)
+	{
+		typedef typename std::make_unsigned<genIType>::type unsigned_type;
+		int const BitSize = static_cast<int>(sizeof(genIType) * 8);
+		int const Bits = Shift & (BitSize - 1);
+		if(Bits == 0)
+			return In;
+		unsigned_type const Value = static_cast<unsigned_type>(In);
+		return static_cast<genIType>(static_cast<unsigned_type>((Value << Bits) | (Value >> (BitSize - Bits))));
+	}
+}//namespace detail
+
 	template<typename genIType>
 	GLM_FUNC_QUALIFIER genIType bitfieldRotateRight(genIType In, int Shift)
 	{
 		static_assert(std::numeric_limits<genIType>::is_integer, "'bitfieldRotateRight' accepts only integer values");
 
-		int const BitSize = static_cast<genIType>(sizeof(genIType) * 8);
-		return (In << static_cast<genIType>(Shift)) | (In >> static_cast<genIType>(BitSize - Shift));
+		return detail::rotate_right(In, Shift);
 	}
 
 	template<length_t L, typename T, qualifier Q>
@@ -260,8 +289,10 @@ namespace detail
 	{
 		static_assert(std::numeric_limits<T>::is_integer, "'bitfieldRotateRight' accepts only integer values");
 
-		int const BitSize = static_cast<int>(sizeof(T) * 8);
-		return (In << static_cast<T>(Shift)) | (In >> static_cast<T>(BitSize - Shift));
+		vec<L, T, Q> Result(In);
+		for(length_t i = 0; i < L; ++i)
+			Result[i] = detail::rotate_right(In[i], Shift);
+		return Result;
 	}
 
 	template<typename genIType>
@@ -269,8 +300,7 @@ namespace detail
 	{
 		static_assert(std::numeric_limits<genIType>::is_integer, "'bitfieldRotateLeft' accepts only integer values");
 
-		int const BitSize = static_cast<genIType>(sizeof(genIType) * 8);
-		return (In >> static_cast<genIType>(Shift)) | (In << static_cast<genIType>(BitSize - Shift));
+		return detail::rotate_left(In, Shift);
 	}
 
 	template<length_t L, typename T, qualifier Q>
@@ -278,8 +308,10 @@ namespace detail
 	{
 		static_assert(std::numeric_limits<T>::is_integer, "'bitfieldRotateLeft' accepts only integer values");
 
-		int const BitSize = static_cast<int>(sizeof(T) * 8);
-		return (In >> static_cast<T>(Shift)) | (In << static_cast<T>(BitSize - Shift));
+		vec<L, T, Q> Result(In);
+		for(length_t i = 0; i < L; ++i)
+			Result[i] = detail::rotate_left(In[i], Shift);
+		return Result;
 	}
 
 	template<typename genIUType>
