@@ -1,7 +1,8 @@
 #include "glm_test.hpp"
-#if __cplusplus >= 201103L
-
 #include <glm/detail/setup.hpp>
+
+// __cplusplus is 199711L on MSVC without /Zc:__cplusplus, so ask GLM.
+#if GLM_LANG & GLM_LANG_CXX11
 
 #if GLM_COMPILER & GLM_COMPILER_CLANG
 #	pragma clang diagnostic push
@@ -73,9 +74,9 @@ int main()
 
 int main()
 {
-    return 0;
+    return GLM_TEST_SKIP_ALL("requires C++11");
 }
 
-#endif// __cplusplus >= 201103L
+#endif// GLM_LANG & GLM_LANG_CXX11
 
 

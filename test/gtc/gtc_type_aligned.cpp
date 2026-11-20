@@ -511,7 +511,7 @@ int main()
 
 int main()
 {
-	return 0;
+	return GLM_TEST_SKIP_ALL("aligned gentypes are disabled");
 }
 
 #endif
