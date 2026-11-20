@@ -9,18 +9,11 @@
 #include <glm/ext/vector_float3_precision.hpp>
 #include <glm/ext/vector_double3.hpp>
 #include <glm/ext/vector_double3_precision.hpp>
-#include <iostream>
 
 // Helper function to create quaternions consistently regardless of layout
 template <typename T>
 static glm::qua<T, glm::defaultp> make_quat(T w, T x, T y, T z) {
 	return glm::qua<T, glm::defaultp>::wxyz(w, x, y, z);
-}
-
-// Print quaternion components for debugging
-template <typename T, glm::qualifier Q>
-static void print_quat(const std::string& label, const glm::qua<T, Q>& q) {
-	std::cout << label << ": w=" << q.w << ", x=" << q.x << ", y=" << q.y << ", z=" << q.z << std::endl;
 }
 
 template <typename quaType>
@@ -52,12 +45,7 @@ static int test_equal()
 		quaType const Q = make_quat<T>(1, 0, 0, 0);
 		quaType const P = make_quat<T>(1, Epsilon * T(2), 0, 0);
 
-		if (glm::all(glm::equal(Q, P, Epsilon))) {
-			std::cout << "Error: Quaternions outside epsilon should not be equal" << std::endl;
-			print_quat("Q", Q);
-			print_quat("P", P);
-			Error++;
-		}
+		Error += glm_test::context(GLM_CHECK(!glm::all(glm::equal(Q, P, Epsilon))), "Q", Q, "P", P); // Quaternions outside epsilon should not be equal
 	}
 
 	// Test 4: Equal non-normalized quaternions
@@ -84,12 +72,7 @@ static int test_notEqual()
 		quaType const Q = make_quat<T>(1, 0, 0, 0);
 		quaType const P = make_quat<T>(1, 0, 0, 0);
 
-		if (glm::any(glm::notEqual(Q, P, Epsilon))) {
-			std::cout << "Error: Identical quaternions should not be notEqual" << std::endl;
-			print_quat("Q", Q);
-			print_quat("P", P);
-			Error++;
-		}
+		Error += glm_test::context(GLM_CHECK(!glm::any(glm::notEqual(Q, P, Epsilon))), "Q", Q, "P", P); // Identical quaternions should not be notEqual
 	}
 
 	// Test 2: Nearly equal quaternions (within epsilon) should not be notEqual
@@ -97,12 +80,7 @@ static int test_notEqual()
 		quaType const Q = make_quat<T>(1, 0, 0, 0);
 		quaType const P = make_quat<T>(1, Epsilon / T(2), Epsilon / T(2), Epsilon / T(2));
 
-		if (glm::any(glm::notEqual(Q, P, Epsilon))) {
-			std::cout << "Error: Quaternions within epsilon should not be notEqual" << std::endl;
-			print_quat("Q", Q);
-			print_quat("P", P);
-			Error++;
-		}
+		Error += glm_test::context(GLM_CHECK(!glm::any(glm::notEqual(Q, P, Epsilon))), "Q", Q, "P", P); // Quaternions within epsilon should not be notEqual
 	}
 
 	// Test 3: Different quaternions should be notEqual
@@ -110,12 +88,7 @@ static int test_notEqual()
 		quaType const Q = make_quat<T>(1, 0, 0, 0);
 		quaType const P = make_quat<T>(1, Epsilon * T(2), 0, 0);
 
-		if (!glm::any(glm::notEqual(Q, P, Epsilon))) {
-			std::cout << "Error: Different quaternions should be notEqual" << std::endl;
-			print_quat("Q", Q);
-			print_quat("P", P);
-			Error++;
-		}
+		Error += glm_test::context(GLM_CHECK(glm::any(glm::notEqual(Q, P, Epsilon))), "Q", Q, "P", P); // Different quaternions should be notEqual
 	}
 
 	// Test 4: Very different quaternions should be notEqual
@@ -123,12 +96,7 @@ static int test_notEqual()
 		quaType const Q = make_quat<T>(1, 0, 0, 0);
 		quaType const P = make_quat<T>(0, 1, 0, 0);
 
-		if (!glm::any(glm::notEqual(Q, P, Epsilon))) {
-			std::cout << "Error: Very different quaternions should be notEqual" << std::endl;
-			print_quat("Q", Q);
-			print_quat("P", P);
-			Error++;
-		}
+		Error += glm_test::context(GLM_CHECK(glm::any(glm::notEqual(Q, P, Epsilon))), "Q", Q, "P", P); // Very different quaternions should be notEqual
 	}
 
 	return Error;

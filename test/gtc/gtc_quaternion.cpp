@@ -12,7 +12,6 @@
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtc/epsilon.hpp>
 #include <glm/gtc/constants.hpp>
-#include <iostream>
 
 // Helper function to create quaternions consistently regardless of layout
 template <typename T = float, glm::qualifier Q = glm::defaultp>
@@ -24,12 +23,6 @@ static glm::qua<T, Q> make_quat(T w, T x, T y, T z) {
 	// Default behavior with constructor expecting (w,x,y,z)
 	return glm::qua<T, Q>(w, x, y, z);
 #endif
-}
-
-// Print quaternion components for debugging
-template <typename T, glm::qualifier Q>
-static void print_quat(const std::string& label, const glm::qua<T, Q>& q) {
-	std::cout << label << ": w=" << q.w << ", x=" << q.x << ", y=" << q.y << ", z=" << q.z << std::endl;
 }
 
 static int test_quat_angle()
@@ -85,15 +78,7 @@ static int test_quat_angleAxis()
 	glm::quat C = glm::mix(A, B, 0.5f);
 	glm::quat D = glm::angleAxis(glm::pi<float>() * 0.25f, glm::vec3(0, 0, 1));
 
-	if (!glm::equal(C.x, D.x, Epsilon) ||
-		!glm::equal(C.y, D.y, Epsilon) ||
-		!glm::equal(C.z, D.z, Epsilon) ||
-		!glm::equal(C.w, D.w, Epsilon)) {
-		std::cout << "Error: Mixed quaternion doesn't match expected rotation" << std::endl;
-		print_quat("Mixed result", C);
-		print_quat("Expected", D);
-		Error++;
-	}
+	Error += GLM_CHECK_NEAR(C, D, Epsilon);
 
 	return Error;
 }
@@ -109,15 +94,7 @@ static int test_quat_mix()
 	glm::quat C = glm::mix(A, B, 0.5f);
 	glm::quat D = glm::angleAxis(glm::pi<float>() * 0.25f, glm::vec3(0, 0, 1));
 
-	if (!glm::equal(C.x, D.x, Epsilon) ||
-		!glm::equal(C.y, D.y, Epsilon) ||
-		!glm::equal(C.z, D.z, Epsilon) ||
-		!glm::equal(C.w, D.w, Epsilon)) {
-		std::cout << "Error: Mixed quaternion doesn't match expected rotation" << std::endl;
-		print_quat("Mixed result", C);
-		print_quat("Expected", D);
-		Error++;
-	}
+	Error += GLM_CHECK_NEAR(C, D, Epsilon);
 
 	return Error;
 }
@@ -375,12 +352,7 @@ static int test_mul()
 	temp7 *= temp5;
 	temp7 *= glm::inverse(temp5);
 
-	if (glm::any(glm::notEqual(temp7, glm::quat(1.0f, glm::vec3(0.0, 1.0, 0.0)), 0.0001f))) {
-		std::cout << "Error: Quaternion rotation and inverse should cancel out" << std::endl;
-		print_quat("Original", glm::quat(1.0f, glm::vec3(0.0, 1.0, 0.0)));
-		print_quat("Result", temp7);
-		Error++;
-	}
+	Error += GLM_CHECK_NEAR(temp7, glm::quat(1.0f, glm::vec3(0.0, 1.0, 0.0)), 0.0001f); // rotation and inverse cancel out
 
 	return Error;
 }
@@ -395,11 +367,7 @@ static int test_identity()
 
 	Error += GLM_CHECK_NEAR(Q, make_quat(1.0f, 0.0f, 0.0f, 0.0f), Epsilon); // Identity quaternion should be (1,0,0,0)
 
-	if (glm::any(glm::notEqual(Q, make_quat(1.0f, 0.0f, 0.0f, 0.0f), Epsilon))) {
-		std::cout << "Error: notEqual for identity quaternion failed" << std::endl;
-		print_quat("Identity", Q);
-		Error++;
-	}
+	Error += glm_test::context(GLM_CHECK(!glm::any(glm::notEqual(Q, make_quat(1.0f, 0.0f, 0.0f, 0.0f), Epsilon))), "Q", Q);
 
 	glm::mat4 const M = glm::identity<glm::mat4x4>();
 	glm::mat4 const N(1.0f);

@@ -9,7 +9,6 @@
 #include <glm/gtc/epsilon.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <vector>
-#include <iostream>
 
 // Helper function to create quaternions consistently regardless of layout
 // This handles both storage and constructor layout macros
@@ -22,12 +21,6 @@ static glm::qua<T, Q> make_quat(T w, T x, T y, T z) {
 	// Default behavior with constructor expecting (w,x,y,z)
 	return glm::qua<T, Q>(w, x, y, z);
 #endif
-}
-
-// Print quaternion components for debugging
-template <typename T, glm::qualifier Q>
-static void print_quat(const std::string& label, const glm::qua<T, Q>& q) {
-	std::cout << label << ": w=" << q.w << ", x=" << q.x << ", y=" << q.y << ", z=" << q.z << std::endl;
 }
 
 static int test_ctr()
@@ -45,10 +38,6 @@ static int test_ctr()
 	Error += GLM_CHECK(std::is_copy_constructible<glm::quat>::value);
 	Error += GLM_CHECK(std::is_copy_constructible<glm::dquat>::value);
 
-	if (Error > 0) {
-		std::cout << "Error: One or more type traits checks failed" << std::endl;
-	}
-
 	{
 		// For initializer lists, the order matches the constructor parameter order:
 		// - If GLM_FORCE_QUAT_DATA_XYZW is defined: constructor takes (x,y,z,w)
@@ -58,18 +47,10 @@ static int test_ctr()
 		// Check based on constructor parameter order
 #       ifdef GLM_FORCE_QUAT_DATA_XYZW
 		// With XYZW constructor order: {0,1,2,3} means {x=0,y=1,z=2,w=3}
-		if (A.x != 0 || A.y != 1 || A.z != 2 || A.w != 3) {
-			std::cout << "Error: Initializer list doesn't match expected XYZW constructor order" << std::endl;
-			print_quat("Quaternion", A);
-			Error++;
-		}
+		Error += glm_test::context(GLM_CHECK(A.x == 0 && A.y == 1 && A.z == 2 && A.w == 3), "A", A);
 #       else
 		// With WXYZ constructor order (default): {0,1,2,3} means {w=0,x=1,y=2,z=3}
-		if (A.w != 0 || A.x != 1 || A.y != 2 || A.z != 3) {
-			std::cout << "Error: Initializer list doesn't match expected WXYZ constructor order" << std::endl;
-			print_quat("Quaternion", A);
-			Error++;
-		}
+		Error += glm_test::context(GLM_CHECK(A.w == 0 && A.x == 1 && A.y == 2 && A.z == 3), "A", A);
 #       endif
 
 		// Test vector of quaternions
@@ -77,7 +58,8 @@ static int test_ctr()
 			A,
 			{0, 1, 2, 3} };
 
-		Error += GLM_CHECK(!(B.size() != 2 || !(B[0] == A))); // Vector of quaternions with initializer list failed
+		Error += GLM_CHECK_EQ(B.size(), 2);
+		Error += GLM_CHECK_EQ(B[0], A);
 	}
 
 	// Test additional constructors
@@ -95,17 +77,9 @@ static int test_ctr()
 		glm::quat q2(4.0f, v);
 
 #       ifdef GLM_FORCE_QUAT_DATA_WXYZ
-		if (q2.w != 4.0f || q2.x != 1.0f || q2.y != 2.0f || q2.z != 3.0f) {
-			std::cout << "Error: Scalar + vector constructor failed for WXYZ layout" << std::endl;
-			print_quat("Result", q2);
-			Error++;
-		}
+		Error += glm_test::context(GLM_CHECK(q2.w == 4.0f && q2.x == 1.0f && q2.y == 2.0f && q2.z == 3.0f), "q2", q2);
 #       else
-		if (q2.x != 1.0f || q2.y != 2.0f || q2.z != 3.0f || q2.w != 4.0f) {
-			std::cout << "Error: Scalar + vector constructor failed for XYZW layout" << std::endl;
-			print_quat("Result", q2);
-			Error++;
-		}
+		Error += glm_test::context(GLM_CHECK(q2.x == 1.0f && q2.y == 2.0f && q2.z == 3.0f && q2.w == 4.0f), "q2", q2);
 #       endif
 	}
 
@@ -170,11 +144,7 @@ static int test_accessors()
 	{
 		glm::quat q = make_quat(1.0f, 2.0f, 3.0f, 4.0f);
 
-		if (q.w != 1.0f || q.x != 2.0f || q.y != 3.0f || q.z != 4.0f) {
-			std::cout << "Error: Component accessors not working correctly" << std::endl;
-			print_quat("Quaternion", q);
-			Error++;
-		}
+		Error += glm_test::context(GLM_CHECK(q.w == 1.0f && q.x == 2.0f && q.y == 3.0f && q.z == 4.0f), "q", q);
 	}
 
 	// Test operator[] accessor
@@ -182,17 +152,15 @@ static int test_accessors()
 		glm::quat q = make_quat(1.0f, 2.0f, 3.0f, 4.0f);
 
 #       ifdef GLM_FORCE_QUAT_DATA_WXYZ
-		if (q[0] != 1.0f || q[1] != 2.0f || q[2] != 3.0f || q[3] != 4.0f) {
-			std::cout << "Error: operator[] not working correctly for WXYZ layout" << std::endl;
-			std::cout << "Values: " << q[0] << ", " << q[1] << ", " << q[2] << ", " << q[3] << std::endl;
-			Error++;
-		}
+		Error += GLM_CHECK_EQ(q[0], 1.0f);
+		Error += GLM_CHECK_EQ(q[1], 2.0f);
+		Error += GLM_CHECK_EQ(q[2], 3.0f);
+		Error += GLM_CHECK_EQ(q[3], 4.0f);
 #       else
-		if (q[0] != 2.0f || q[1] != 3.0f || q[2] != 4.0f || q[3] != 1.0f) {
-			std::cout << "Error: operator[] not working correctly for XYZW layout" << std::endl;
-			std::cout << "Values: " << q[0] << ", " << q[1] << ", " << q[2] << ", " << q[3] << std::endl;
-			Error++;
-		}
+		Error += GLM_CHECK_EQ(q[0], 2.0f);
+		Error += GLM_CHECK_EQ(q[1], 3.0f);
+		Error += GLM_CHECK_EQ(q[2], 4.0f);
+		Error += GLM_CHECK_EQ(q[3], 1.0f);
 #       endif
 	}
 
@@ -205,11 +173,8 @@ static int test_size()
 
 
 	// Test size of quaternion types
-	std::size_t const A = sizeof(glm::quat);
-	Error += GLM_CHECK_EQ(16, A); // sizeof(glm::quat) =
-
-	std::size_t const B = sizeof(glm::dquat);
-	Error += GLM_CHECK_EQ(32, B); // sizeof(glm::dquat) =
+	Error += GLM_CHECK_EQ(sizeof(glm::quat), 16);
+	Error += GLM_CHECK_EQ(sizeof(glm::dquat), 32);
 
 	// Test length() function
 	Error += GLM_CHECK_EQ(glm::quat().length(), 4);
@@ -228,19 +193,8 @@ static int test_precision()
 	int Error = 0;
 
 
-	if (sizeof(glm::lowp_quat) > sizeof(glm::mediump_quat)) {
-		std::cout << "Error: sizeof(glm::lowp_quat) > sizeof(glm::mediump_quat)" << std::endl;
-		std::cout << "  lowp: " << sizeof(glm::lowp_quat) << " bytes" << std::endl;
-		std::cout << "  mediump: " << sizeof(glm::mediump_quat) << " bytes" << std::endl;
-		Error++;
-	}
-
-	if (sizeof(glm::mediump_quat) > sizeof(glm::highp_quat)) {
-		std::cout << "Error: sizeof(glm::mediump_quat) > sizeof(glm::highp_quat)" << std::endl;
-		std::cout << "  mediump: " << sizeof(glm::mediump_quat) << " bytes" << std::endl;
-		std::cout << "  highp: " << sizeof(glm::highp_quat) << " bytes" << std::endl;
-		Error++;
-	}
+	Error += GLM_CHECK_LE(sizeof(glm::lowp_quat), sizeof(glm::mediump_quat));
+	Error += GLM_CHECK_LE(sizeof(glm::mediump_quat), sizeof(glm::highp_quat));
 
 	return Error;
 }

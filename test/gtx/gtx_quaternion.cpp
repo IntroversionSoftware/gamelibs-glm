@@ -1,13 +1,13 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include "glm_test.hpp"
 #include <glm/ext/quaternion_relational.hpp>
+#include <glm/ext/scalar_relational.hpp>
 #include <glm/gtc/epsilon.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtx/compatibility.hpp>
-#include <iostream>
 
 // Helper function to create quaternions consistently regardless of layout
 template <typename T = float, glm::qualifier Q = glm::defaultp>
@@ -19,18 +19,6 @@ static glm::qua<T, Q> make_quat(T w, T x, T y, T z) {
 	// Default behavior with constructor expecting (w,x,y,z)
 	return glm::qua<T, Q>(w, x, y, z);
 #endif
-}
-
-// Print quaternion components for debugging
-template <typename T, glm::qualifier Q>
-static void print_quat(const std::string& label, const glm::qua<T, Q>& q) {
-	std::cout << label << ": w=" << q.w << ", x=" << q.x << ", y=" << q.y << ", z=" << q.z << std::endl;
-}
-
-// Print vector components for debugging
-template <typename T, glm::qualifier Q>
-static void print_vec(const std::string& label, const glm::vec<3, T, Q>& v) {
-	std::cout << label << ": x=" << v.x << ", y=" << v.y << ", z=" << v.z << std::endl;
 }
 
 static int test_quat_fastMix()
@@ -51,12 +39,7 @@ static int test_quat_fastMix()
 		glm::epsilonEqual(C.z, D.z, Epsilon) &&
 		glm::epsilonEqual(C.w, D.w, Epsilon);
 
-	if (!componentsEqual) {
-		std::cout << "Error: fastMix result doesn't match expected quaternion" << std::endl;
-		print_quat("Result", C);
-		print_quat("Expected", D);
-		Error++;
-	}
+	Error += glm_test::context(GLM_CHECK(componentsEqual), "C", C, "D", D);
 
 	return Error;
 }
@@ -79,12 +62,7 @@ static int test_quat_shortMix()
 		glm::epsilonEqual(C.z, D.z, Epsilon) &&
 		glm::epsilonEqual(C.w, D.w, Epsilon);
 
-	if (!componentsEqual) {
-		std::cout << "Error: shortMix result doesn't match expected quaternion" << std::endl;
-		print_quat("Result", C);
-		print_quat("Expected", D);
-		Error++;
-	}
+	Error += glm_test::context(GLM_CHECK(componentsEqual), "C", C, "D", D);
 
 	return Error;
 }
@@ -103,12 +81,7 @@ static int test_orientation()
 
 		float p = glm::roll(q);
 
-		if (!glm::epsilonEqual(p, glm::pi<float>() * 0.5f, Epsilon)) {
-			std::cout << "Error: Roll angle incorrect" << std::endl;
-			std::cout << "Expected: " << glm::pi<float>() * 0.5f << ", got: " << p << std::endl;
-			print_quat("Quaternion", q);
-			Error++;
-		}
+		Error += glm_test::context(GLM_CHECK_NEAR(p, glm::pi<float>() * 0.5f, Epsilon), "q", q);
 	}
 
 	// Test pitch (rotation around y-axis)
@@ -118,12 +91,7 @@ static int test_orientation()
 
 		float p = glm::pitch(q);
 
-		if (!glm::epsilonEqual(p, 0.f, Epsilon)) {
-			std::cout << "Error: Pitch angle incorrect" << std::endl;
-			std::cout << "Expected: 0, got: " << p << std::endl;
-			print_quat("Quaternion", q);
-			Error++;
-		}
+		Error += glm_test::context(GLM_CHECK_NEAR(p, 0.f, Epsilon), "q", q);
 	}
 
 	// Test yaw (rotation around z-axis)
@@ -133,12 +101,7 @@ static int test_orientation()
 
 		float p = glm::yaw(q);
 
-		if (!glm::epsilonEqual(p, 0.f, Epsilon)) {
-			std::cout << "Error: Yaw angle incorrect" << std::endl;
-			std::cout << "Expected: 0, got: " << p << std::endl;
-			print_quat("Quaternion", q);
-			Error++;
-		}
+		Error += glm_test::context(GLM_CHECK_NEAR(p, 0.f, Epsilon), "q", q);
 	}
 
 	// Test with a combined rotation
@@ -154,13 +117,11 @@ static int test_orientation()
 		float pitch = glm::pitch(q);
 		float yaw = glm::yaw(q);
 
-		std::cout << "Combined rotation:" << std::endl;
-		std::cout << "  Roll: " << glm::degrees(roll) << " degrees" << std::endl;
-		std::cout << "  Pitch: " << glm::degrees(pitch) << " degrees" << std::endl;
-		std::cout << "  Yaw: " << glm::degrees(yaw) << " degrees" << std::endl;
-
-		// Note: We don't check exact values here because Euler angles can have multiple
-		// representations of the same rotation, especially for combined rotations
+		// Away from gimbal lock the decomposition is unique. GLM names the angles about X, Y and Z
+		// pitch, yaw and roll.
+		Error += GLM_CHECK_NEAR(glm::degrees(pitch), 30.0f, 0.01f);
+		Error += GLM_CHECK_NEAR(glm::degrees(yaw), 45.0f, 0.01f);
+		Error += GLM_CHECK_NEAR(glm::degrees(roll), 60.0f, 0.01f);
 	}
 
 	return Error;
@@ -182,13 +143,7 @@ static int test_rotation()
 
 	// Additional test to verify the rotation actually works as expected
 	glm::vec3 rotated = Rotation * v;
-	if (!glm::all(glm::epsilonEqual(rotated, u, 0.0001f))) {
-		std::cout << "Error: Rotation doesn't properly rotate vector" << std::endl;
-		print_vec("Original", v);
-		print_vec("Expected", u);
-		print_vec("Actual", rotated);
-		Error++;
-	}
+	Error += glm_test::context(GLM_CHECK(glm::all(glm::epsilonEqual(rotated, u, 0.0001f))), "v", v, "u", u, "rotated", rotated); // Rotation turns v to u
 
 	return Error;
 }

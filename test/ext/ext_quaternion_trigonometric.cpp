@@ -5,13 +5,7 @@
 #include <glm/ext/scalar_relational.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtc/epsilon.hpp>
-#include <iostream>
-
 #include <glm/glm.hpp>
-#include <glm/gtc/quaternion.hpp>
-#include <glm/gtc/epsilon.hpp>
-#include <glm/ext/quaternion_trigonometric.hpp>
-#include <iostream>
 
 // Helper function to create quaternions consistently regardless of layout
 template <typename T, glm::qualifier Q>
@@ -64,13 +58,7 @@ static int test_angle()
 		glm::vec3 expected_v(0.0f, glm::cos(glm::two_pi<float>() - 1.0f),
 							 glm::sin(glm::two_pi<float>() - 1.0f));
 
-		if (glm::distance(rotated, expected_v) > Epsilon) {
-			std::cout << "Error: Quaternion doesn't rotate vector as expected" << std::endl;
-			std::cout << "Original: 0, 1, 0" << std::endl;
-			std::cout << "Rotated: " << rotated.x << ", " << rotated.y << ", " << rotated.z << std::endl;
-			std::cout << "Expected: " << expected_v.x << ", " << expected_v.y << ", " << expected_v.z << std::endl;
-			Error++;
-		}
+		Error += glm_test::context(GLM_CHECK_LE(glm::distance(rotated, expected_v), Epsilon), "rotated", rotated, "expected_v", expected_v);
 	}
 
 	// Test 4: 45-degree rotation
@@ -121,13 +109,8 @@ static int test_angleAxis()
 		Error += GLM_CHECK_NEAR(ExtractedAngle, Angle, Epsilon); // Extracted angle doesn't match original
 
 		// Check axis (note: axis might be negated, both are valid)
-		if (glm::length(ExtractedAxis - Axis) > Epsilon &&
-			glm::length(ExtractedAxis + Axis) > Epsilon) {
-			std::cout << "Error: Extracted axis doesn't match original" << std::endl;
-			std::cout << "Original: " << Axis.x << ", " << Axis.y << ", " << Axis.z << std::endl;
-			std::cout << "Extracted: " << ExtractedAxis.x << ", " << ExtractedAxis.y << ", " << ExtractedAxis.z << std::endl;
-			Error++;
-		}
+		Error += glm_test::context(GLM_CHECK_LE(glm::min(glm::length(ExtractedAxis - Axis), glm::length(ExtractedAxis + Axis)), Epsilon),
+			"ExtractedAxis", ExtractedAxis, "Axis", Axis);
 	}
 
 	// Test 2: Create and apply rotation
@@ -142,13 +125,7 @@ static int test_angleAxis()
 		glm::vec3 const Rotated = Q * V;
 		glm::vec3 const Expected(0, 0, -1); // 90 degrees around Y axis transforms X to -Z
 
-		if (glm::distance(Rotated, Expected) > Epsilon) {
-			std::cout << "Error: Rotated vector doesn't match expected result" << std::endl;
-			std::cout << "Original: " << V.x << ", " << V.y << ", " << V.z << std::endl;
-			std::cout << "Rotated: " << Rotated.x << ", " << Rotated.y << ", " << Rotated.z << std::endl;
-			std::cout << "Expected: " << Expected.x << ", " << Expected.y << ", " << Expected.z << std::endl;
-			Error++;
-		}
+		Error += glm_test::context(GLM_CHECK_LE(glm::distance(Rotated, Expected), Epsilon), "Rotated", Rotated, "Expected", Expected);
 	}
 
 	// Test 3: Check that angle is always positive
@@ -160,11 +137,8 @@ static int test_angleAxis()
 		float const ExtractedAngle = glm::angle(Q);
 
 		// Angle should be positive (between 0 and π)
-		if (ExtractedAngle < 0.0f || ExtractedAngle > glm::pi<float>()) {
-			std::cout << "Error: Extracted angle should be positive and less than π. Got "
-				<< ExtractedAngle << std::endl;
-			Error++;
-		}
+		Error += GLM_CHECK_GE(ExtractedAngle, 0.0f);
+		Error += GLM_CHECK_LE(ExtractedAngle, glm::pi<float>());
 
 		// The magnitude should be the same
 		Error += GLM_CHECK_NEAR(glm::abs(ExtractedAngle), glm::abs(Angle), Epsilon); // Magnitude of extracted angle doesn't match original
