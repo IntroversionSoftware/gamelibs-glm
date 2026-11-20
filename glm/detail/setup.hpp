@@ -526,7 +526,8 @@ namespace detail
 ///////////////////////////////////////////////////////////////////////////////////
 // Use SIMD instruction sets
 
-#if (GLM_LANG & GLM_LANG_CXXMS_FLAG) && (GLM_ARCH & GLM_ARCH_SIMD_BIT)
+// GLM_FORCE_XYZW_ONLY vectors are plain x/y/z/w members with no SIMD storage.
+#if (GLM_LANG & GLM_LANG_CXXMS_FLAG) && (GLM_ARCH & GLM_ARCH_SIMD_BIT) && !GLM_CONFIG_XYZW_ONLY
 #	define GLM_CONFIG_SIMD GLM_ENABLE
 #else
 #	define GLM_CONFIG_SIMD GLM_DISABLE
