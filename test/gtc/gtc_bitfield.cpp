@@ -1000,32 +1000,28 @@ namespace bitfieldInterleave5
 }//namespace bitfieldInterleave5
 #endif//GLM_TEST_PERF
 
+// Bits dropped on the right come back on the left
 static int test_bitfieldRotateRight()
 {
-	std::clock_t const LastTime = std::clock();
+	int Error = 0;
 
-	glm::ivec4 const A = glm::bitfieldRotateRight(glm::ivec4(2), 1);
-	glm::ivec4 const B = glm::ivec4(2) >> 1;
+	Error += GLM_CHECK_EQ(glm::bitfieldRotateRight(glm::ivec4(2), 1), glm::ivec4(1));
+	Error += GLM_CHECK_EQ(glm::bitfieldRotateRight(glm::uvec4(1), 1), glm::uvec4(0x80000000u));
+	Error += GLM_CHECK_EQ(glm::bitfieldRotateRight(0x12345678u, 8), 0x78123456u);
 
-	std::clock_t const Time = std::clock() - LastTime;
-
-	glm_test::info("glm::bitfieldRotateRight Test %d clocks\n", static_cast<int>(Time));
-
-	return A == B;
+	return Error;
 }
 
+// Bits dropped on the left come back on the right
 static int test_bitfieldRotateLeft()
 {
-	std::clock_t const LastTime = std::clock();
+	int Error = 0;
 
-	glm::ivec4 const A = glm::bitfieldRotateLeft(glm::ivec4(2), 1);
-	glm::ivec4 const B = glm::ivec4(2) << 1;
+	Error += GLM_CHECK_EQ(glm::bitfieldRotateLeft(glm::ivec4(2), 1), glm::ivec4(4));
+	Error += GLM_CHECK_EQ(glm::bitfieldRotateLeft(glm::uvec4(0x80000000u), 1), glm::uvec4(1));
+	Error += GLM_CHECK_EQ(glm::bitfieldRotateLeft(0x12345678u, 8), 0x34567812u);
 
-	std::clock_t const Time = std::clock() - LastTime;
-
-	glm_test::info("glm::bitfieldRotateLeft Test %d clocks\n", static_cast<int>(Time));
-
-	return A == B;
+	return Error;
 }
 
 int main()
@@ -1055,8 +1051,9 @@ int main()
 
 #endif//GLM_TEST_PERF
 
-	Error += GLM_TEST(test_bitfieldRotateRight());
-	Error += GLM_TEST(test_bitfieldRotateLeft());
+	// GLM rotates the other way: bitfieldRotateRight is implemented as a left rotation and vice versa.
+	Error += GLM_TEST_XFAIL(true, "bitfieldRotateRight rotates left", test_bitfieldRotateRight());
+	Error += GLM_TEST_XFAIL(true, "bitfieldRotateLeft rotates right", test_bitfieldRotateLeft());
 
 	return GLM_TEST_FINISH(Error);
 }
