@@ -107,7 +107,7 @@ int test_vec4_load()
 
 	float Data[] = {1.f, 2.f, 3.f, 4.f};
 	glm::aligned_vec4 const V = glm::loadu(Data);
-	Error += GLM_CHECK(glm::all(glm::equal(V, glm::aligned_vec4(1.f, 2.f, 3.f, 4.f), glm::epsilon<float>())));
+	Error += GLM_CHECK_NEAR(V, glm::aligned_vec4(1.f, 2.f, 3.f, 4.f), glm::epsilon<float>());
 
 	return Error;
 }

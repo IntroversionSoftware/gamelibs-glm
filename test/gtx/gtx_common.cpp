@@ -17,7 +17,7 @@ namespace fmod_
 			float B0(2.0f);
 			float C0 = glm::fmod(A0, B0);
 
-			Error += GLM_CHECK(glm::abs(C0 - 1.0f) < 0.00001f);
+			Error += GLM_CHECK_LT(glm::abs(C0 - 1.0f), 0.00001f);
 
 			glm::vec4 A1(3.0);
 			float B1(2.0f);
@@ -49,7 +49,7 @@ namespace fmod_
 			float B0(-10.0f);
 			float C0 = glm::fmod(A0, B0);
 
-			Error += GLM_CHECK(glm::abs(C0 - 2.0f) < 0.00001f);
+			Error += GLM_CHECK_LT(glm::abs(C0 - 2.0f), 0.00001f);
 
 			glm::vec4 A1(22.0);
 			float B1(-10.0f);

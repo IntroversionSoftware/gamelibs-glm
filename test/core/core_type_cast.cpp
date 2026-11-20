@@ -26,10 +26,10 @@ static int test_vec2_cast()
 	glm::mediump_vec2 G = static_cast<glm::mediump_vec2>(A);
 	glm::highp_vec2 H = static_cast<glm::highp_vec2>(A);
 
-	Error += GLM_CHECK(glm::all(glm::equal(A, E, glm::epsilon<float>())));
-	Error += GLM_CHECK(glm::all(glm::equal(B, F, glm::epsilon<float>())));
-	Error += GLM_CHECK(glm::all(glm::equal(C, G, glm::epsilon<float>())));
-	Error += GLM_CHECK(glm::all(glm::equal(D, H, glm::epsilon<float>())));
+	Error += GLM_CHECK_NEAR(A, E, glm::epsilon<float>());
+	Error += GLM_CHECK_NEAR(B, F, glm::epsilon<float>());
+	Error += GLM_CHECK_NEAR(C, G, glm::epsilon<float>());
+	Error += GLM_CHECK_NEAR(D, H, glm::epsilon<float>());
 
 	my_vec2 I;
 	I.x = 1.0f;
@@ -37,11 +37,11 @@ static int test_vec2_cast()
 	glm::vec2 J0 = static_cast<glm::vec2>(I);
 	glm::vec2 J1(1.0f, 2.0f);
 
-	Error += GLM_CHECK(glm::all(glm::equal(J1, J0, glm::epsilon<float>())));
+	Error += GLM_CHECK_NEAR(J1, J0, glm::epsilon<float>());
 
 	glm::vec2 K(7.8f);
 	glm::vec2 L(7.8f, 7.8f);
-	Error += GLM_CHECK(glm::all(glm::equal(K, L, glm::epsilon<float>())));
+	Error += GLM_CHECK_NEAR(K, L, glm::epsilon<float>());
 
 	return Error;
 }
@@ -60,10 +60,10 @@ static int test_vec3_cast()
 
 	int Error(0);
 
-	Error += GLM_CHECK(glm::all(glm::equal(A, E, glm::epsilon<float>())));
-	Error += GLM_CHECK(glm::all(glm::equal(B, F, glm::epsilon<float>())));
-	Error += GLM_CHECK(glm::all(glm::equal(C, G, glm::epsilon<float>())));
-	Error += GLM_CHECK(glm::all(glm::equal(D, H, glm::epsilon<float>())));
+	Error += GLM_CHECK_NEAR(A, E, glm::epsilon<float>());
+	Error += GLM_CHECK_NEAR(B, F, glm::epsilon<float>());
+	Error += GLM_CHECK_NEAR(C, G, glm::epsilon<float>());
+	Error += GLM_CHECK_NEAR(D, H, glm::epsilon<float>());
 
 	return Error;
 }
@@ -82,10 +82,10 @@ static int test_vec4_cast()
 
 	int Error(0);
 
-	Error += GLM_CHECK(glm::all(glm::equal(A, E, glm::epsilon<float>())));
-	Error += GLM_CHECK(glm::all(glm::equal(B, F, glm::epsilon<float>())));
-	Error += GLM_CHECK(glm::all(glm::equal(C, G, glm::epsilon<float>())));
-	Error += GLM_CHECK(glm::all(glm::equal(D, H, glm::epsilon<float>())));
+	Error += GLM_CHECK_NEAR(A, E, glm::epsilon<float>());
+	Error += GLM_CHECK_NEAR(B, F, glm::epsilon<float>());
+	Error += GLM_CHECK_NEAR(C, G, glm::epsilon<float>());
+	Error += GLM_CHECK_NEAR(D, H, glm::epsilon<float>());
 
 	return Error;
 }

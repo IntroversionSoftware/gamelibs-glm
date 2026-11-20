@@ -25,20 +25,20 @@ static int test_operators()
 
 	float x = 1.0f;
 	glm::vec3 a = m * u;
-	Error += GLM_CHECK(glm::all(glm::equal(a, glm::vec3(u, 0.0f), glm::epsilon<float>())));
+	Error += GLM_CHECK_NEAR(a, glm::vec3(u, 0.0f), glm::epsilon<float>());
 
 	glm::vec2 b = v * m;
-	Error += GLM_CHECK(glm::all(glm::equal(b, glm::vec2(1.0f), glm::epsilon<float>())));
+	Error += GLM_CHECK_NEAR(b, glm::vec2(1.0f), glm::epsilon<float>());
 
 	glm::mat2x3 n0(1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
 	glm::mat2x3 n = x / n0;
-	Error += GLM_CHECK(glm::all(glm::equal(n, n0, glm::epsilon<float>())));
+	Error += GLM_CHECK_NEAR(n, n0, glm::epsilon<float>());
 
 	glm::mat2x3 o = m / x;
-	Error += GLM_CHECK(glm::all(glm::equal(o, m, glm::epsilon<float>())));
+	Error += GLM_CHECK_NEAR(o, m, glm::epsilon<float>());
 
 	glm::mat2x3 p = x * m;
-	Error += GLM_CHECK(glm::all(glm::equal(p, m, glm::epsilon<float>())));
+	Error += GLM_CHECK_NEAR(p, m, glm::epsilon<float>());
 
 	glm::mat2x3 q = m * x;
 	bool R = glm::any(glm::notEqual(m, q, glm::epsilon<float>()));
@@ -63,8 +63,8 @@ static int test_ctr()
 		{0, 1, 2},
 		{3, 4, 5}};
 
-	Error += GLM_CHECK(glm::all(glm::equal(m0, m2, glm::epsilon<float>())));
-	Error += GLM_CHECK(glm::all(glm::equal(m1, m2, glm::epsilon<float>())));
+	Error += GLM_CHECK_NEAR(m0, m2, glm::epsilon<float>());
+	Error += GLM_CHECK_NEAR(m1, m2, glm::epsilon<float>());
 
 	std::vector<glm::mat2x3> v1{
 		{0, 1, 2, 3, 4, 5},
@@ -96,7 +96,7 @@ namespace cast
 		glm::mat2x3 B(A);
 		glm::mat2x3 Identity(1.0f);
 
-		Error += GLM_CHECK(glm::all(glm::equal(B, Identity, glm::epsilon<float>())));
+		Error += GLM_CHECK_NEAR(B, Identity, glm::epsilon<float>());
 
 		return Error;
 	}
@@ -124,16 +124,16 @@ static int test_size()
 	int Error = 0;
 
 	// Packed matrices are tightly packed; aligned ones pad each 3-row column to 4 components.
-	Error += GLM_CHECK(24 == sizeof(glm::mat<2, 3, float, glm::packed_highp>));
-	Error += GLM_CHECK(48 == sizeof(glm::mat<2, 3, double, glm::packed_highp>));
+	Error += GLM_CHECK_EQ(24, sizeof(glm::mat<2, 3, float, glm::packed_highp>));
+	Error += GLM_CHECK_EQ(48, sizeof(glm::mat<2, 3, double, glm::packed_highp>));
 #	if GLM_CONFIG_ALIGNED_GENTYPES == GLM_ENABLE
-		Error += GLM_CHECK(32 == sizeof(glm::mat<2, 3, float, glm::aligned_highp>));
-		Error += GLM_CHECK(64 == sizeof(glm::mat<2, 3, double, glm::aligned_highp>));
+		Error += GLM_CHECK_EQ(32, sizeof(glm::mat<2, 3, float, glm::aligned_highp>));
+		Error += GLM_CHECK_EQ(64, sizeof(glm::mat<2, 3, double, glm::aligned_highp>));
 #	endif
-	Error += GLM_CHECK(glm::mat2x3().length() == 2);
-	Error += GLM_CHECK(glm::dmat2x3().length() == 2);
-	Error += GLM_CHECK(glm::mat2x3::length() == 2);
-	Error += GLM_CHECK(glm::dmat2x3::length() == 2);
+	Error += GLM_CHECK_EQ(glm::mat2x3().length(), 2);
+	Error += GLM_CHECK_EQ(glm::dmat2x3().length(), 2);
+	Error += GLM_CHECK_EQ(glm::mat2x3::length(), 2);
+	Error += GLM_CHECK_EQ(glm::dmat2x3::length(), 2);
 
 	return Error;
 }

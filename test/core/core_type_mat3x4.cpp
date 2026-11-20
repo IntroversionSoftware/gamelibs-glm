@@ -26,20 +26,20 @@ static int test_operators()
 
 	float x = 1.0f;
 	glm::vec4 a = m * u;
-	Error += GLM_CHECK(glm::all(glm::equal(a, glm::vec4(u, 0.0f), glm::epsilon<float>())));
+	Error += GLM_CHECK_NEAR(a, glm::vec4(u, 0.0f), glm::epsilon<float>());
 
 	glm::vec3 b = v * m;
-	Error += GLM_CHECK(glm::all(glm::equal(b, glm::vec3(1.0f), glm::epsilon<float>())));
+	Error += GLM_CHECK_NEAR(b, glm::vec3(1.0f), glm::epsilon<float>());
 
 	glm::mat3x4 n0(1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
 	glm::mat3x4 n = x / n0;
-	Error += GLM_CHECK(glm::all(glm::equal(n, n0, glm::epsilon<float>())));
+	Error += GLM_CHECK_NEAR(n, n0, glm::epsilon<float>());
 
 	glm::mat3x4 o = m / x;
-	Error += GLM_CHECK(glm::all(glm::equal(o, m, glm::epsilon<float>())));
+	Error += GLM_CHECK_NEAR(o, m, glm::epsilon<float>());
 
 	glm::mat3x4 p = x * m;
-	Error += GLM_CHECK(glm::all(glm::equal(p, m, glm::epsilon<float>())));
+	Error += GLM_CHECK_NEAR(p, m, glm::epsilon<float>());
 
 	glm::mat3x4 q = m * x;
 	bool R = glm::any(glm::notEqual(m, q, glm::epsilon<float>()));
@@ -66,8 +66,8 @@ static int test_ctr()
 		{4, 5, 6, 7},
 		{8, 9, 10, 11}};
 
-	Error += GLM_CHECK(glm::all(glm::equal(m0, m2, glm::epsilon<float>())));
-	Error += GLM_CHECK(glm::all(glm::equal(m1, m2, glm::epsilon<float>())));
+	Error += GLM_CHECK_NEAR(m0, m2, glm::epsilon<float>());
+	Error += GLM_CHECK_NEAR(m1, m2, glm::epsilon<float>());
 
 	std::vector<glm::mat3x4> v1{
 		{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11},
@@ -129,12 +129,12 @@ static int test_size()
 {
 	int Error = 0;
 
-	Error += GLM_CHECK(48 == sizeof(glm::mat3x4));
-	Error += GLM_CHECK(96 == sizeof(glm::dmat3x4));
-	Error += GLM_CHECK(glm::mat3x4().length() == 3);
-	Error += GLM_CHECK(glm::dmat3x4().length() == 3);
-	Error += GLM_CHECK(glm::mat3x4::length() == 3);
-	Error += GLM_CHECK(glm::dmat3x4::length() == 3);
+	Error += GLM_CHECK_EQ(48, sizeof(glm::mat3x4));
+	Error += GLM_CHECK_EQ(96, sizeof(glm::dmat3x4));
+	Error += GLM_CHECK_EQ(glm::mat3x4().length(), 3);
+	Error += GLM_CHECK_EQ(glm::dmat3x4().length(), 3);
+	Error += GLM_CHECK_EQ(glm::mat3x4::length(), 3);
+	Error += GLM_CHECK_EQ(glm::dmat3x4::length(), 3);
 
 	return Error;
 }

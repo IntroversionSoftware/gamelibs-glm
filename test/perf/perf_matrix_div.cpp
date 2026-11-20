@@ -56,7 +56,7 @@ static int comp_mat2_div_mat2(std::size_t Samples)
 	{
 		packedMatType const A = SISD[i];
 		packedMatType const B = SIMD[i];
-		Error += GLM_CHECK(glm::all(glm::equal(A, B, static_cast<T>(0.001))));
+		Error += GLM_CHECK_NEAR(A, B, static_cast<T>(0.001));
 		assert(!Error);
 	}
 
@@ -83,7 +83,7 @@ static int comp_mat3_div_mat3(std::size_t Samples)
 	{
 		packedMatType const A = SISD[i];
 		packedMatType const B = SIMD[i];
-		Error += GLM_CHECK(glm::all(glm::equal(A, B, static_cast<T>(0.001))));
+		Error += GLM_CHECK_NEAR(A, B, static_cast<T>(0.001));
 		assert(!Error);
 	}
 
@@ -110,7 +110,7 @@ static int comp_mat4_div_mat4(std::size_t Samples)
 	{
 		packedMatType const A = SISD[i];
 		packedMatType const B = SIMD[i];
-		Error += GLM_CHECK(glm::all(glm::equal(A, B, static_cast<T>(0.001))));
+		Error += GLM_CHECK_NEAR(A, B, static_cast<T>(0.001));
 		assert(!Error);
 	}
 

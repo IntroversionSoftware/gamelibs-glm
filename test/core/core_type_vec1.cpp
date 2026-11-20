@@ -80,21 +80,21 @@ static int test_ctor()
 */
 	{
 		glm::vec1 A = glm::vec2(2.0f);
-		Error += GLM_CHECK(glm::all(glm::equal(A, glm::vec1(2.0f), glm::epsilon<float>())));
+		Error += GLM_CHECK_NEAR(A, glm::vec1(2.0f), glm::epsilon<float>());
 
 		glm::vec1 B = glm::vec2(2.0f, 3.0f);
-		Error += GLM_CHECK(glm::all(glm::equal(B, glm::vec1(2.0f), glm::epsilon<float>())));
+		Error += GLM_CHECK_NEAR(B, glm::vec1(2.0f), glm::epsilon<float>());
 
 		glm::vec1 C = glm::vec2(2.0f, 3.0);
-		Error += GLM_CHECK(glm::all(glm::equal(C, glm::vec1(2.0f), glm::epsilon<float>())));
+		Error += GLM_CHECK_NEAR(C, glm::vec1(2.0f), glm::epsilon<float>());
 
 		//glm::vec1 D = glm::dvec1(2.0); // Build error TODO: What does the specification says?
 
 		glm::vec1 E(glm::dvec2(2.0));
-		Error += GLM_CHECK(glm::all(glm::equal(E, glm::vec1(2.0f), glm::epsilon<float>())));
+		Error += GLM_CHECK_NEAR(E, glm::vec1(2.0f), glm::epsilon<float>());
 
 		glm::vec1 F(glm::ivec2(2));
-		Error += GLM_CHECK(glm::all(glm::equal(F, glm::vec1(2.0f), glm::epsilon<float>())));
+		Error += GLM_CHECK_NEAR(F, glm::vec1(2.0f), glm::epsilon<float>());
 	}
 
 	return Error;
@@ -104,14 +104,14 @@ static int test_size()
 {
 	int Error = 0;
 
-	Error += GLM_CHECK(sizeof(glm::vec1) == sizeof(glm::mediump_vec1));
-	Error += GLM_CHECK(4 == sizeof(glm::mediump_vec1));
-	Error += GLM_CHECK(sizeof(glm::dvec1) == sizeof(glm::highp_dvec1));
-	Error += GLM_CHECK(8 == sizeof(glm::highp_dvec1));
-	Error += GLM_CHECK(glm::vec1().length() == 1);
-	Error += GLM_CHECK(glm::dvec1().length() == 1);
-	Error += GLM_CHECK(glm::vec1::length() == 1);
-	Error += GLM_CHECK(glm::dvec1::length() == 1);
+	Error += GLM_CHECK_EQ(sizeof(glm::vec1), sizeof(glm::mediump_vec1));
+	Error += GLM_CHECK_EQ(4, sizeof(glm::mediump_vec1));
+	Error += GLM_CHECK_EQ(sizeof(glm::dvec1), sizeof(glm::highp_dvec1));
+	Error += GLM_CHECK_EQ(8, sizeof(glm::highp_dvec1));
+	Error += GLM_CHECK_EQ(glm::vec1().length(), 1);
+	Error += GLM_CHECK_EQ(glm::dvec1().length(), 1);
+	Error += GLM_CHECK_EQ(glm::vec1::length(), 1);
+	Error += GLM_CHECK_EQ(glm::dvec1::length(), 1);
 
 	return Error;
 }
@@ -136,9 +136,9 @@ static int test_operator_increment()
 	int i3 = ++i1;
 	int i4 = i2++;
 
-	Error += GLM_CHECK(i0 == i4);
-	Error += GLM_CHECK(i1 == i2);
-	Error += GLM_CHECK(i1 == i3);
+	Error += GLM_CHECK_EQ(i0, i4);
+	Error += GLM_CHECK_EQ(i1, i2);
+	Error += GLM_CHECK_EQ(i1, i3);
 
 	return Error;
 }
@@ -154,7 +154,7 @@ static int test_swizzle()
 		glm::vec1 C(A.x);
 
 		//Error += glm::all(glm::equal(A, B)) ? 0 : 1;
-		Error += GLM_CHECK(glm::all(glm::equal(A, C, glm::epsilon<float>())));
+		Error += GLM_CHECK_NEAR(A, C, glm::epsilon<float>());
 	}
 #	endif//GLM_CONFIG_SWIZZLE == GLM_SWIZZLE_OPERATOR
 

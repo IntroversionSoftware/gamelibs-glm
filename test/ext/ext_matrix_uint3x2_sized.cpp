@@ -10,9 +10,9 @@ static int test_comp()
 {
 	int Error = 0;
 
-	Error += GLM_CHECK(sizeof(glm::u8mat3x2) < sizeof(glm::u16mat3x2));
-	Error += GLM_CHECK(sizeof(glm::u16mat3x2) < sizeof(glm::u32mat3x2));
-	Error += GLM_CHECK(sizeof(glm::u32mat3x2) < sizeof(glm::u64mat3x2));
+	Error += GLM_CHECK_LT(sizeof(glm::u8mat3x2), sizeof(glm::u16mat3x2));
+	Error += GLM_CHECK_LT(sizeof(glm::u16mat3x2), sizeof(glm::u32mat3x2));
+	Error += GLM_CHECK_LT(sizeof(glm::u32mat3x2), sizeof(glm::u64mat3x2));
 
 	return Error;
 }

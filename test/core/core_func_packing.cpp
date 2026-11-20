@@ -55,7 +55,7 @@ static int test_packUnorm4x8()
 	glm::u8vec4 Vec(255, 128, 0, 255);
 	glm::uint32 & Ref = *reinterpret_cast<glm::uint32*>(&Vec[0]);
 
-	Error += GLM_CHECK(Packed == Ref);
+	Error += GLM_CHECK_EQ(Packed, Ref);
 
 	std::vector<glm::vec4> A;
 	A.push_back(glm::vec4(1.0f, 0.7f, 0.3f, 0.0f));
@@ -134,7 +134,7 @@ static int test_packDouble2x32()
 		glm::uvec2 B(A[i]);
 		double C = glm::packDouble2x32(B);
 		glm::uvec2 D = glm::unpackDouble2x32(C);
-		Error += GLM_CHECK(B == D);
+		Error += GLM_CHECK_EQ(B, D);
 		assert(!Error);
 	}
 

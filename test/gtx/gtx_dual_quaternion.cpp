@@ -179,12 +179,12 @@ static int test_size()
 {
 	int Error = 0;
 
-	Error += GLM_CHECK(32 == sizeof(glm::dualquat));
-	Error += GLM_CHECK(64 == sizeof(glm::ddualquat));
-	Error += GLM_CHECK(glm::dualquat().length() == 2);
-	Error += GLM_CHECK(glm::ddualquat().length() == 2);
-	Error += GLM_CHECK(glm::dualquat::length() == 2);
-	Error += GLM_CHECK(glm::ddualquat::length() == 2);
+	Error += GLM_CHECK_EQ(32, sizeof(glm::dualquat));
+	Error += GLM_CHECK_EQ(64, sizeof(glm::ddualquat));
+	Error += GLM_CHECK_EQ(glm::dualquat().length(), 2);
+	Error += GLM_CHECK_EQ(glm::ddualquat().length(), 2);
+	Error += GLM_CHECK_EQ(glm::dualquat::length(), 2);
+	Error += GLM_CHECK_EQ(glm::ddualquat::length(), 2);
 
 	return Error;
 }

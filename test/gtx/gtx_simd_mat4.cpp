@@ -306,7 +306,7 @@ int main()
 	Error += GLM_TEST(test_compute_glm());
 	Error += GLM_TEST(test_compute_gtx());
 	float Det = glm::determinant(glm::simdMat4(1.0));
-	Error += GLM_CHECK(Det == 1.0f);
+	Error += GLM_CHECK_EQ(Det, 1.0f);
 
 	glm::simdMat4 D = glm::matrixCompMult(glm::simdMat4(1.0), glm::simdMat4(1.0));
 

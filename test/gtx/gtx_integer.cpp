@@ -14,7 +14,7 @@ static int test_floor_log2()
 		glm::uint A = glm::floor_log2(glm::uint(i));
 		glm::uint B = glm::uint(glm::floor(glm::log2(double(i)))); // Will fail with float, lack of accuracy
 
-		Error += GLM_CHECK(A == B);
+		Error += GLM_CHECK_EQ(A, B);
 		assert(!Error);
 	}
 
@@ -31,7 +31,7 @@ static int test_log2()
 		glm::uint B = glm::uint(glm::log2(double(1 << i)));
 
 		//Error += glm::equalEpsilon(double(A), B, 1.0) ? 0 : 1;
-		Error += GLM_CHECK(glm::abs(double(A) - B) <= 24);
+		Error += GLM_CHECK_LE(glm::abs(double(A) - B), 24);
 		assert(!Error);
 
 		std::printf("Log2(%d) error A=%u, B=%u\n", 1 << i, A, B);
@@ -58,13 +58,13 @@ static int test_pow_uint()
 	int Error = 0;
 
 	glm::uint const p0 = glm::pow(2u, 0u);
-	Error += GLM_CHECK(p0 == 1u);
+	Error += GLM_CHECK_EQ(p0, 1u);
 
 	glm::uint const p1 = glm::pow(2u, 1u);
-	Error += GLM_CHECK(p1 == 2u);
+	Error += GLM_CHECK_EQ(p1, 2u);
 
 	glm::uint const p2 = glm::pow(2u, 2u);
-	Error += GLM_CHECK(p2 == 4u);
+	Error += GLM_CHECK_EQ(p2, 4u);
 
 	return Error;
 }
@@ -74,22 +74,22 @@ static int test_pow_int()
 	int Error = 0;
 
 	int const p0 = glm::pow(2, 0u);
-	Error += GLM_CHECK(p0 == 1);
+	Error += GLM_CHECK_EQ(p0, 1);
 
 	int const p1 = glm::pow(2, 1u);
-	Error += GLM_CHECK(p1 == 2);
+	Error += GLM_CHECK_EQ(p1, 2);
 
 	int const p2 = glm::pow(2, 2u);
-	Error += GLM_CHECK(p2 == 4);
+	Error += GLM_CHECK_EQ(p2, 4);
 
 	int const p0n = glm::pow(-2, 0u);
-	Error += GLM_CHECK(p0n == -1);
+	Error += GLM_CHECK_EQ(p0n, -1);
 
 	int const p1n = glm::pow(-2, 1u);
-	Error += GLM_CHECK(p1n == -2);
+	Error += GLM_CHECK_EQ(p1n, -2);
 
 	int const p2n = glm::pow(-2, 2u);
-	Error += GLM_CHECK(p2n == 4);
+	Error += GLM_CHECK_EQ(p2n, 4);
 
 	return Error;
 }

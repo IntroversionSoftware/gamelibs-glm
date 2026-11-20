@@ -44,10 +44,10 @@ namespace fmin_
 
 		float Zero_f = 0.0f;
 		glm::vec1 A0 = glm::fmin(glm::vec1(1), glm::vec1(Zero_f / 0.0f));
-		Error += GLM_CHECK(glm::equal(A0.x, 1.0f, glm::epsilon<float>()));
+		Error += GLM_CHECK_NEAR(A0.x, 1.0f, glm::epsilon<float>());
 
 		glm::vec1 A1 = glm::fmin(glm::vec1(Zero_f / 0.0f), glm::vec1(1));
-		Error += GLM_CHECK(glm::equal(A1.x, 1.0f, glm::epsilon<float>()));
+		Error += GLM_CHECK_NEAR(A1.x, 1.0f, glm::epsilon<float>());
 
 		return Error;
 	}
@@ -85,10 +85,10 @@ namespace fmax_
 
 		float Zero_f = 0.0f;
 		glm::vec1 A0 = glm::fmax(glm::vec1(1), glm::vec1(Zero_f / 0.0f));
-		Error += GLM_CHECK(glm::equal(A0.x, 1.0f, glm::epsilon<float>()));
+		Error += GLM_CHECK_NEAR(A0.x, 1.0f, glm::epsilon<float>());
 
 		glm::vec1 A1 = glm::fmax(glm::vec1(Zero_f / 0.0f), glm::vec1(1));
-		Error += GLM_CHECK(glm::equal(A1.x, 1.0f, glm::epsilon<float>()));
+		Error += GLM_CHECK_NEAR(A1.x, 1.0f, glm::epsilon<float>());
 
 		return Error;
 	}
@@ -104,7 +104,7 @@ namespace fclamp_
 
 		float Zero_f = 0.0f;
 		glm::vec1 A0 = glm::fclamp(glm::vec1(1), glm::vec1(Zero_f / 0.0f), glm::vec1(2.0f));
-		Error += GLM_CHECK(glm::equal(A0.x, 1.0f, glm::epsilon<float>()));
+		Error += GLM_CHECK_NEAR(A0.x, 1.0f, glm::epsilon<float>());
 
 		return Error;
 	}

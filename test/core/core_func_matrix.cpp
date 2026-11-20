@@ -308,7 +308,7 @@ static int test_determinant()
 		// Matrix with very small values (testing numerical stability)
 		glm::mat2 m1(1e-6f, 0.0f, 0.0f, 1e-6f);
 		float det1 = glm::determinant(m1);
-		Error += GLM_CHECK(glm::abs(det1 - 1e-12f) < 1e-15f);
+		Error += GLM_CHECK_LT(glm::abs(det1 - 1e-12f), 1e-15f);
 
 		// Matrix with larger values
 		glm::mat2 m2(100.0f, 0.0f, 0.0f, 100.0f);
@@ -378,7 +378,7 @@ static int test_inverse_simd()
 	glm::mat4x4 const B4x4 = glm::inverse(A4x4);
 	glm::mat4x4 const I4x4 = A4x4 * B4x4;
 
-	Error += GLM_CHECK(glm::all(glm::equal(I4x4, Identity, 0.001f)));
+	Error += GLM_CHECK_NEAR(I4x4, Identity, 0.001f);
 
 	return Error;
 }

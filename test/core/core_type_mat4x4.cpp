@@ -23,23 +23,23 @@ static int test_operators()
 
 	{
 		matType const P = N * static_cast<value_type>(2.0f);
-		Error += GLM_CHECK(glm::all(glm::equal(P, M, Epsilon)));
+		Error += GLM_CHECK_NEAR(P, M, Epsilon);
 
 		matType const Q = M / static_cast<value_type>(2.0f);
-		Error += GLM_CHECK(glm::all(glm::equal(Q, N, Epsilon)));
+		Error += GLM_CHECK_NEAR(Q, N, Epsilon);
 	}
 
 	{
 		vecType const V = M * U;
-		Error += GLM_CHECK(glm::all(glm::equal(V, vecType(static_cast<value_type>(4.f)), Epsilon)));
+		Error += GLM_CHECK_NEAR(V, vecType(static_cast<value_type>(4.f)), Epsilon);
 
 		vecType const W = U / M;
-		Error += GLM_CHECK(glm::all(glm::equal(W, vecType(static_cast<value_type>(1.f)), Epsilon)));
+		Error += GLM_CHECK_NEAR(W, vecType(static_cast<value_type>(1.f)), Epsilon);
 	}
 
 	{
 		matType const O = M * N;
-		Error += GLM_CHECK(glm::all(glm::equal(O, matType(static_cast<value_type>(2.f)), Epsilon)));
+		Error += GLM_CHECK_NEAR(O, matType(static_cast<value_type>(2.f)), Epsilon);
 	}
 
 	return Error;
@@ -63,7 +63,7 @@ static int test_inverse()
 	matType const Inverse = Identity / Matrix;
 	matType const Result = Matrix * Inverse;
 
-	Error += GLM_CHECK(glm::all(glm::equal(Identity, Result, Epsilon)));
+	Error += GLM_CHECK_NEAR(Identity, Result, Epsilon);
 
 	return Error;
 }
@@ -97,8 +97,8 @@ static int test_ctr()
 		{8, 9, 10, 11},
 		{12, 13, 14, 15}};
 
-	Error += GLM_CHECK(glm::all(glm::equal(m0, m2, glm::epsilon<float>())));
-	Error += GLM_CHECK(glm::all(glm::equal(m1, m2, glm::epsilon<float>())));
+	Error += GLM_CHECK_NEAR(m0, m2, glm::epsilon<float>());
+	Error += GLM_CHECK_NEAR(m1, m2, glm::epsilon<float>());
 
 
 	std::vector<glm::mat4> const m3{
@@ -113,8 +113,8 @@ static int test_ctr()
 		{0, 0, 1, 0},
 		{0, 0, 0, 1} };
 
-	Error += GLM_CHECK(glm::equal(m4[0][0], 1.0f, 0.0001f));
-	Error += GLM_CHECK(glm::equal(m4[3][3], 1.0f, 0.0001f));
+	Error += GLM_CHECK_NEAR(m4[0][0], 1.0f, 0.0001f);
+	Error += GLM_CHECK_NEAR(m4[3][3], 1.0f, 0.0001f);
 
 	std::vector<glm::mat4> const v1{
 		{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15},
@@ -158,12 +158,12 @@ static int test_size()
 {
 	int Error = 0;
 
-	Error += GLM_CHECK(64 == sizeof(glm::mat4));
-	Error += GLM_CHECK(128 == sizeof(glm::dmat4));
-	Error += GLM_CHECK(glm::mat4().length() == 4);
-	Error += GLM_CHECK(glm::dmat4().length() == 4);
-	Error += GLM_CHECK(glm::mat4::length() == 4);
-	Error += GLM_CHECK(glm::dmat4::length() == 4);
+	Error += GLM_CHECK_EQ(64, sizeof(glm::mat4));
+	Error += GLM_CHECK_EQ(128, sizeof(glm::dmat4));
+	Error += GLM_CHECK_EQ(glm::mat4().length(), 4);
+	Error += GLM_CHECK_EQ(glm::dmat4().length(), 4);
+	Error += GLM_CHECK_EQ(glm::mat4::length(), 4);
+	Error += GLM_CHECK_EQ(glm::dmat4::length(), 4);
 
 	return Error;
 }

@@ -17,7 +17,7 @@ int main()
 	int Error = 0;
 
 	glm::ivec4 v(1);
-	Error += GLM_CHECK(add(v, v) == glm::ivec4(2));
+	Error += GLM_CHECK_EQ(add(v, v), glm::ivec4(2));
 
 	return GLM_TEST_FINISH(Error);
 }

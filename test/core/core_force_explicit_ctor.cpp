@@ -9,7 +9,7 @@ int main()
 	int Error = 0;
 
 	glm::ivec4 B(1);
-	Error += GLM_CHECK(B == glm::ivec4(1));
+	Error += GLM_CHECK_EQ(B, glm::ivec4(1));
 
 	//glm::vec4 A = B;
 

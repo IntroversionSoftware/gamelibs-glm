@@ -12,7 +12,7 @@ static int test_bit_operator()
 
 	glm::int32 const c(1);
 	glm::int32 const d = ~c;
-	Error += GLM_CHECK(d == -2);
+	Error += GLM_CHECK_EQ(d, -2);
 
 	return Error;
 }

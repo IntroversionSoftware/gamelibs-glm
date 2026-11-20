@@ -7,12 +7,12 @@ static int test_epsilon()
 
 	{
 		float Test = glm::epsilon<float>();
-		Error += GLM_CHECK(Test > 0.0f);
+		Error += GLM_CHECK_GT(Test, 0.0f);
 	}
 
 	{
 		double Test = glm::epsilon<double>();
-		Error += GLM_CHECK(Test > 0.0);
+		Error += GLM_CHECK_GT(Test, 0.0);
 	}
 
 	return Error;

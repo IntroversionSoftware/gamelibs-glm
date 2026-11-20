@@ -756,7 +756,7 @@ namespace findMSB
 		for(std::size_t i = 0; i < sizeof(Data) / sizeof(type<int, int>); ++i)
 		{
 			int Result = glm::findMSB(Data[i].Value);
-			Error += GLM_CHECK(Data[i].Return == Result);
+			Error += GLM_CHECK_EQ(Data[i].Return, Result);
 		}
 
 		std::clock_t Timestamps1 = std::clock();
@@ -765,7 +765,7 @@ namespace findMSB
 		for(std::size_t i = 0; i < sizeof(Data) / sizeof(type<int, int>); ++i)
 		{
 			int Result = findMSB_nlz1(Data[i].Value);
-			Error += GLM_CHECK(Data[i].Return == Result);
+			Error += GLM_CHECK_EQ(Data[i].Return, Result);
 		}
 
 		std::clock_t Timestamps2 = std::clock();
@@ -774,7 +774,7 @@ namespace findMSB
 		for(std::size_t i = 0; i < sizeof(Data) / sizeof(type<int, int>); ++i)
 		{
 			int Result = findMSB_nlz2(static_cast<unsigned int>(Data[i].Value));
-			Error += GLM_CHECK(Data[i].Return == Result);
+			Error += GLM_CHECK_EQ(Data[i].Return, Result);
 		}
 
 		std::clock_t Timestamps3 = std::clock();
@@ -783,7 +783,7 @@ namespace findMSB
 		for(std::size_t i = 0; i < sizeof(Data) / sizeof(type<int, int>); ++i)
 		{
 			int Result = findMSB_095(static_cast<unsigned int>(Data[i].Value));
-			Error += GLM_CHECK(Data[i].Return == Result);
+			Error += GLM_CHECK_EQ(Data[i].Return, Result);
 		}
 
 		std::clock_t Timestamps4 = std::clock();
@@ -793,7 +793,7 @@ namespace findMSB
 			for(std::size_t i = 0; i < sizeof(Data) / sizeof(type<int, int>); ++i)
 			{
 				int Result = findMSB_intrinsic(Data[i].Value);
-				Error += GLM_CHECK(Data[i].Return == Result);
+				Error += GLM_CHECK_EQ(Data[i].Return, Result);
 			}
 #		endif//GLM_HAS_BITSCAN_WINDOWS
 
@@ -803,7 +803,7 @@ namespace findMSB
 		for(std::size_t i = 0; i < sizeof(Data) / sizeof(type<int, int>); ++i)
 		{
 			int Result = findMSB_pop(static_cast<unsigned int>(Data[i].Value));
-			Error += GLM_CHECK(Data[i].Return == Result);
+			Error += GLM_CHECK_EQ(Data[i].Return, Result);
 		}
 
 		std::clock_t Timestamps6 = std::clock();
@@ -813,7 +813,7 @@ namespace findMSB
 			for(std::size_t i = 0; i < sizeof(Data) / sizeof(type<int, int>); ++i)
 			{
 				int Result = findMSB_avx(Data[i].Value);
-				Error += GLM_CHECK(Data[i].Return == Result);
+				Error += GLM_CHECK_EQ(Data[i].Return, Result);
 			}
 
 			std::clock_t Timestamps7 = std::clock();
@@ -1209,7 +1209,7 @@ namespace findLSB
 		for(std::size_t i = 0; i < sizeof(DataI32) / sizeof(entry); ++i)
 		{
 			int Result = glm::findLSB(DataI32[i].Value);
-			Error += GLM_CHECK(DataI32[i].Return == Result);
+			Error += GLM_CHECK_EQ(DataI32[i].Return, Result);
 		}
 
 		std::clock_t Timestamps1 = std::clock();
@@ -1218,7 +1218,7 @@ namespace findLSB
 		for(std::size_t i = 0; i < sizeof(DataI32) / sizeof(entry); ++i)
 		{
 			int Result = findLSB_095(DataI32[i].Value);
-			Error += GLM_CHECK(DataI32[i].Return == Result);
+			Error += GLM_CHECK_EQ(DataI32[i].Return, Result);
 		}
 
 		std::clock_t Timestamps2 = std::clock();
@@ -1228,7 +1228,7 @@ namespace findLSB
 			for(std::size_t i = 0; i < sizeof(DataI32) / sizeof(entry); ++i)
 			{
 				int Result = findLSB_intrinsic(DataI32[i].Value);
-				Error += GLM_CHECK(DataI32[i].Return == Result);
+				Error += GLM_CHECK_EQ(DataI32[i].Return, Result);
 			}
 #		endif
 
@@ -1238,7 +1238,7 @@ namespace findLSB
 		for(std::size_t i = 0; i < sizeof(DataI32) / sizeof(entry); ++i)
 		{
 			int Result = findLSB_ntz2(DataI32[i].Value);
-			Error += GLM_CHECK(DataI32[i].Return == Result);
+			Error += GLM_CHECK_EQ(DataI32[i].Return, Result);
 		}
 
 		std::clock_t Timestamps4 = std::clock();
@@ -1247,7 +1247,7 @@ namespace findLSB
 		for(std::size_t i = 0; i < sizeof(DataI32) / sizeof(entry); ++i)
 		{
 			int Result = findLSB_branchfree(DataI32[i].Value);
-			Error += GLM_CHECK(DataI32[i].Return == Result);
+			Error += GLM_CHECK_EQ(DataI32[i].Return, Result);
 		}
 
 		std::clock_t Timestamps5 = std::clock();

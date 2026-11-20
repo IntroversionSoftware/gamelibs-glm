@@ -37,7 +37,7 @@ static int test_equal()
 
 	int Error = 0;
 
-	Error += GLM_CHECK(glm::all(glm::equal(matType(One), matType(One), Epsilon)));
+	Error += GLM_CHECK_NEAR(matType(One), matType(One), Epsilon);
 	Error += GLM_CHECK(!(glm::all(glm::equal(matType(One), matType(Two), vecType(Epsilon)))));
 
 	return Error;
@@ -72,13 +72,13 @@ static int test_equal_ulps()
 	int Error = 0;
 
 	T const ULP1Plus = glm::nextFloat(One);
-	Error += GLM_CHECK(glm::all(glm::equal(Ones, mat4(ULP1Plus), 1)));
+	Error += GLM_CHECK_NEAR(Ones, mat4(ULP1Plus), 1);
 
 	T const ULP2Plus = glm::nextFloat(ULP1Plus);
 	Error += GLM_CHECK(!glm::all(glm::equal(Ones, mat4(ULP2Plus), 1)));
 
 	T const ULP1Minus = glm::prevFloat(One);
-	Error += GLM_CHECK(glm::all(glm::equal(Ones, mat4(ULP1Minus), 1)));
+	Error += GLM_CHECK_NEAR(Ones, mat4(ULP1Minus), 1);
 
 	T const ULP2Minus = glm::prevFloat(ULP1Minus);
 	Error += GLM_CHECK(!glm::all(glm::equal(Ones, mat4(ULP2Minus), 1)));

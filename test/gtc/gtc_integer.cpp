@@ -33,7 +33,7 @@ namespace log2_
 		glm::ivec3 D1 = glm::log2(glm::ivec3(16));
 		glm::ivec4 E1 = glm::log2(glm::ivec4(16));
 
-		Error += GLM_CHECK(A0 == A1);
+		Error += GLM_CHECK_EQ(A0, A1);
 		Error += GLM_CHECK(glm::all(glm::equal(B0, B1)));
 		Error += GLM_CHECK(glm::all(glm::equal(C0, C1)));
 		Error += GLM_CHECK(glm::all(glm::equal(D0, D1)));
@@ -45,7 +45,7 @@ namespace log2_
 		glm::u64vec3 D2 = glm::log2(glm::u64vec3(16));
 		glm::u64vec4 E2 = glm::log2(glm::u64vec4(16));
 
-		Error += GLM_CHECK(A2 == glm::uint64(4));
+		Error += GLM_CHECK_EQ(A2, glm::uint64(4));
 		Error += GLM_CHECK(glm::all(glm::equal(B2, glm::u64vec1(4))));
 		Error += GLM_CHECK(glm::all(glm::equal(C2, glm::u64vec2(4))));
 		Error += GLM_CHECK(glm::all(glm::equal(D2, glm::u64vec3(4))));
@@ -241,7 +241,7 @@ namespace iround
 		{
 			int RoundFast = static_cast<int>(glm::iround(f));
 			int RoundSTD = static_cast<int>(glm::round(f));
-			Error += GLM_CHECK(RoundFast == RoundSTD);
+			Error += GLM_CHECK_EQ(RoundFast, RoundSTD);
 			assert(!Error);
 		}
 
@@ -259,7 +259,7 @@ namespace uround
 		{
 			int RoundFast = static_cast<int>(glm::uround(f));
 			int RoundSTD = static_cast<int>(glm::round(f));
-			Error += GLM_CHECK(RoundFast == RoundSTD);
+			Error += GLM_CHECK_EQ(RoundFast, RoundSTD);
 			assert(!Error);
 		}
 

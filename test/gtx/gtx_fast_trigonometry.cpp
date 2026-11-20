@@ -440,7 +440,7 @@ namespace taylorCos
 			float const Cos0 = std::cos(radAngle);
 
 			float const Cos1 = taylorCos::fastRefCos(glm::fvec1(radAngle)).x;
-			Error += GLM_CHECK(glm::abs(Cos1 - Cos0) < 0.1f);
+			Error += GLM_CHECK_LT(glm::abs(Cos1 - Cos0), 0.1f);
 
 			//float const Cos2 = taylorCos::fastCosNew(glm::fvec1(radAngle)).x;
 			//Error += glm::abs(Cos2 - Cos0) < 0.1f ? 0 : 1;

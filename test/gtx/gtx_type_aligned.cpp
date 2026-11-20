@@ -25,7 +25,7 @@ static int test_decl()
 
 		std::printf("vec4 - Aligned: %d, unaligned: %d\n", static_cast<int>(sizeof(S1)), static_cast<int>(sizeof(S2)));
 
-		Error += GLM_CHECK(sizeof(S1) >= sizeof(S2));
+		Error += GLM_CHECK_GE(sizeof(S1), sizeof(S2));
 	}
 
 	{
@@ -52,7 +52,7 @@ static int test_decl()
 
 		std::printf("vec3 - Aligned: %d, unaligned: %d\n", static_cast<int>(sizeof(S1)), static_cast<int>(sizeof(S2)));
 
-		Error += GLM_CHECK(sizeof(S1) <= sizeof(S2));
+		Error += GLM_CHECK_LE(sizeof(S1), sizeof(S2));
 	}
 
 	{
@@ -79,7 +79,7 @@ static int test_decl()
 
 		std::printf("vec4 - Aligned: %d, unaligned: %d\n", static_cast<int>(sizeof(S1)), static_cast<int>(sizeof(S2)));
 
-		Error += GLM_CHECK(sizeof(S1) >= sizeof(S2));
+		Error += GLM_CHECK_GE(sizeof(S1), sizeof(S2));
 	}
 
 	{
@@ -106,7 +106,7 @@ static int test_decl()
 
 		std::printf("dvec4 - Aligned: %d, unaligned: %d\n", static_cast<int>(sizeof(S1)), static_cast<int>(sizeof(S2)));
 
-		Error += GLM_CHECK(sizeof(S1) >= sizeof(S2));
+		Error += GLM_CHECK_GE(sizeof(S1), sizeof(S2));
 	}
 
 	return Error;

@@ -30,18 +30,18 @@ static int test_storage_aligned()
 	int Error = 0;
 
 	size_t size1_aligned = sizeof(glm::detail::storage<1, int, true>::type);
-	Error += GLM_CHECK(size1_aligned == sizeof(int) * 1);
+	Error += GLM_CHECK_EQ(size1_aligned, sizeof(int) * 1);
 	size_t size2_aligned = sizeof(glm::detail::storage<2, int, true>::type);
-	Error += GLM_CHECK(size2_aligned == sizeof(int) * 2);
+	Error += GLM_CHECK_EQ(size2_aligned, sizeof(int) * 2);
 	size_t size4_aligned = sizeof(glm::detail::storage<4, int, true>::type);
-	Error += GLM_CHECK(size4_aligned == sizeof(int) * 4);
+	Error += GLM_CHECK_EQ(size4_aligned, sizeof(int) * 4);
 
 	size_t align1_aligned = alignof(glm::detail::storage<1, int, true>::type);
-	Error += GLM_CHECK(align1_aligned == 4);
+	Error += GLM_CHECK_EQ(align1_aligned, 4);
 	size_t align2_aligned = alignof(glm::detail::storage<2, int, true>::type);
-	Error += GLM_CHECK(align2_aligned == 8);
+	Error += GLM_CHECK_EQ(align2_aligned, 8);
 	size_t align4_aligned = alignof(glm::detail::storage<4, int, true>::type);
-	Error += GLM_CHECK(align4_aligned == 16);
+	Error += GLM_CHECK_EQ(align4_aligned, 16);
 
 	return Error;
 }
@@ -51,13 +51,13 @@ static int test_storage_unaligned()
 	int Error = 0;
 
 	size_t align1_unaligned = alignof(glm::detail::storage<1, int, false>::type);
-	Error += GLM_CHECK(align1_unaligned == sizeof(int));
+	Error += GLM_CHECK_EQ(align1_unaligned, sizeof(int));
 	size_t align2_unaligned = alignof(glm::detail::storage<2, int, false>::type);
-	Error += GLM_CHECK(align2_unaligned == sizeof(int));
+	Error += GLM_CHECK_EQ(align2_unaligned, sizeof(int));
 	size_t align3_unaligned = alignof(glm::detail::storage<3, int, false>::type);
-	Error += GLM_CHECK(align3_unaligned == sizeof(int));
+	Error += GLM_CHECK_EQ(align3_unaligned, sizeof(int));
 	size_t align4_unaligned = alignof(glm::detail::storage<4, int, false>::type);
-	Error += GLM_CHECK(align4_unaligned == sizeof(int));
+	Error += GLM_CHECK_EQ(align4_unaligned, sizeof(int));
 
 	return Error;
 }
@@ -83,7 +83,7 @@ static int test_vec3_aligned()
 #endif
 
 	std::size_t const Size1 = sizeof(Struct1);
-	Error += GLM_CHECK(Size1 == 48);
+	Error += GLM_CHECK_EQ(Size1, 48);
 
 #if GLM_COMPILER & GLM_COMPILER_CLANG
 #	pragma clang diagnostic push
@@ -107,7 +107,7 @@ static int test_vec3_aligned()
 #endif
 
 	std::size_t const Size2 = sizeof(Struct2);
-	Error += GLM_CHECK(Size2 == 48);
+	Error += GLM_CHECK_EQ(Size2, 48);
 
 	return Error;
 }

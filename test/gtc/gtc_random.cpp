@@ -296,8 +296,8 @@ static int test_diskRand()
 			ResultDouble += glm::length(glm::diskRand(2.0));
 		}
 
-		Error += GLM_CHECK(ResultFloat < float(TestSamples) * 2.f);
-		Error += GLM_CHECK(ResultDouble < double(TestSamples) * 2.0);
+		Error += GLM_CHECK_LT(ResultFloat, float(TestSamples) * 2.f);
+		Error += GLM_CHECK_LT(ResultDouble, double(TestSamples) * 2.0);
 		assert(!Error);
 	}
 
@@ -318,8 +318,8 @@ static int test_ballRand()
 			ResultDouble += glm::length(glm::ballRand(2.0));
 		}
 
-		Error += GLM_CHECK(ResultFloat < float(TestSamples) * 2.f);
-		Error += GLM_CHECK(ResultDouble < double(TestSamples) * 2.0);
+		Error += GLM_CHECK_LT(ResultFloat, float(TestSamples) * 2.f);
+		Error += GLM_CHECK_LT(ResultDouble, double(TestSamples) * 2.0);
 		assert(!Error);
 	}
 

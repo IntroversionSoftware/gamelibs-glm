@@ -14,28 +14,28 @@ static int test_comp()
 
 	{
 		glm::ivec1 A(1);
-		Error += GLM_CHECK(A.x == 1);
+		Error += GLM_CHECK_EQ(A.x, 1);
 	}
 
 	{
 		glm::ivec2 A(1, 2);
-		Error += GLM_CHECK(A.x == 1);
-		Error += GLM_CHECK(A.y == 2);
+		Error += GLM_CHECK_EQ(A.x, 1);
+		Error += GLM_CHECK_EQ(A.y, 2);
 	}
 
 	{
 		glm::ivec3 A(1, 2, 3);
-		Error += GLM_CHECK(A.x == 1);
-		Error += GLM_CHECK(A.y == 2);
-		Error += GLM_CHECK(A.z == 3);
+		Error += GLM_CHECK_EQ(A.x, 1);
+		Error += GLM_CHECK_EQ(A.y, 2);
+		Error += GLM_CHECK_EQ(A.z, 3);
 	}
 
 	{
 		glm::ivec4 A(1, 2, 3, 4);
-		Error += GLM_CHECK(A.x == 1);
-		Error += GLM_CHECK(A.y == 2);
-		Error += GLM_CHECK(A.z == 3);
-		Error += GLM_CHECK(A.w == 4);
+		Error += GLM_CHECK_EQ(A.x, 1);
+		Error += GLM_CHECK_EQ(A.y, 2);
+		Error += GLM_CHECK_EQ(A.z, 3);
+		Error += GLM_CHECK_EQ(A.w, 4);
 	}
 
 	return Error;

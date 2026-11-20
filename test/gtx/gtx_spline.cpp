@@ -20,7 +20,7 @@ namespace catmullRom
 			glm::vec2(1.0f, 1.0f),
 			glm::vec2(0.0f, 1.0f), 0.5f);
 
-		Error += GLM_CHECK(glm::all(glm::equal(Result2, glm::vec2(1.125f, 0.5f), glm::epsilon<float>())));
+		Error += GLM_CHECK_NEAR(Result2, glm::vec2(1.125f, 0.5f), glm::epsilon<float>());
 
 		glm::vec3 Result3 = glm::catmullRom(
 			glm::vec3(0.0f, 0.0f, 0.0f),
@@ -28,7 +28,7 @@ namespace catmullRom
 			glm::vec3(1.0f, 1.0f, 0.0f),
 			glm::vec3(0.0f, 1.0f, 0.0f), 0.5f);
 
-		Error += GLM_CHECK(glm::all(glm::equal(Result3, glm::vec3(1.125f, 0.5f, 0.0f), glm::epsilon<float>())));
+		Error += GLM_CHECK_NEAR(Result3, glm::vec3(1.125f, 0.5f, 0.0f), glm::epsilon<float>());
 
 		glm::vec4 Result4 = glm::catmullRom(
 			glm::vec4(0.0f, 0.0f, 0.0f, 1.0f),
@@ -36,7 +36,7 @@ namespace catmullRom
 			glm::vec4(1.0f, 1.0f, 0.0f, 1.0f),
 			glm::vec4(0.0f, 1.0f, 0.0f, 1.0f), 0.5f);
 
-		Error += GLM_CHECK(glm::all(glm::equal(Result4, glm::vec4(1.125f, 0.5f, 0.0f, 1.0f), glm::epsilon<float>())));
+		Error += GLM_CHECK_NEAR(Result4, glm::vec4(1.125f, 0.5f, 0.0f, 1.0f), glm::epsilon<float>());
 
 		return Error;
 	}
@@ -54,7 +54,7 @@ namespace hermite
 			glm::vec2(1.0f, 1.0f),
 			glm::vec2(0.0f, 1.0f), 0.5f);
 
-		Error += GLM_CHECK(glm::all(glm::equal(Result2, glm::vec2(0.625f, 0.375f), glm::epsilon<float>())));
+		Error += GLM_CHECK_NEAR(Result2, glm::vec2(0.625f, 0.375f), glm::epsilon<float>());
 
 		glm::vec3 Result3 = glm::hermite(
 			glm::vec3(0.0f, 0.0f, 0.0f),
@@ -62,7 +62,7 @@ namespace hermite
 			glm::vec3(1.0f, 1.0f, 0.0f),
 			glm::vec3(0.0f, 1.0f, 0.0f), 0.5f);
 
-		Error += GLM_CHECK(glm::all(glm::equal(Result3, glm::vec3(0.625f, 0.375f, 0.0f), glm::epsilon<float>())));
+		Error += GLM_CHECK_NEAR(Result3, glm::vec3(0.625f, 0.375f, 0.0f), glm::epsilon<float>());
 
 		glm::vec4 Result4 = glm::hermite(
 			glm::vec4(0.0f, 0.0f, 0.0f, 1.0f),
@@ -70,7 +70,7 @@ namespace hermite
 			glm::vec4(1.0f, 1.0f, 0.0f, 1.0f),
 			glm::vec4(0.0f, 1.0f, 0.0f, 1.0f), 0.5f);
 
-		Error += GLM_CHECK(glm::all(glm::equal(Result4, glm::vec4(0.625f, 0.375f, 0.0f, 1.0f), glm::epsilon<float>())));
+		Error += GLM_CHECK_NEAR(Result4, glm::vec4(0.625f, 0.375f, 0.0f, 1.0f), glm::epsilon<float>());
 
 		return Error;
 	}
@@ -88,7 +88,7 @@ namespace cubic
 			glm::vec2(1.0f, 1.0f),
 			glm::vec2(0.0f, 1.0f), 0.5f);
 
-		Error += GLM_CHECK(glm::all(glm::equal(Result2, glm::vec2(0.75f, 1.5f), glm::epsilon<float>())));
+		Error += GLM_CHECK_NEAR(Result2, glm::vec2(0.75f, 1.5f), glm::epsilon<float>());
 
 		glm::vec3 Result3 = glm::cubic(
 			glm::vec3(0.0f, 0.0f, 0.0f),
@@ -96,7 +96,7 @@ namespace cubic
 			glm::vec3(1.0f, 1.0f, 0.0f),
 			glm::vec3(0.0f, 1.0f, 0.0f), 0.5f);
 
-		Error += GLM_CHECK(glm::all(glm::equal(Result3, glm::vec3(0.75f, 1.5f, 0.0f), glm::epsilon<float>())));
+		Error += GLM_CHECK_NEAR(Result3, glm::vec3(0.75f, 1.5f, 0.0f), glm::epsilon<float>());
 
 		glm::vec4 Result4 = glm::cubic(
 			glm::vec4(0.0f, 0.0f, 0.0f, 1.0f),
@@ -104,7 +104,7 @@ namespace cubic
 			glm::vec4(1.0f, 1.0f, 0.0f, 1.0f),
 			glm::vec4(0.0f, 1.0f, 0.0f, 1.0f), 0.5f);
 
-		Error += GLM_CHECK(glm::all(glm::equal(Result4, glm::vec4(0.75f, 1.5f, 0.0f, 1.875f), glm::epsilon<float>())));
+		Error += GLM_CHECK_NEAR(Result4, glm::vec4(0.75f, 1.5f, 0.0f, 1.875f), glm::epsilon<float>());
 
 		return Error;
 	}
