@@ -126,22 +126,9 @@ namespace glm
 	template<typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER mat<3, 3, T, Q> adjugate(mat<3, 3, T, Q> const& m)
 	{
-		T const m00 = determinant(mat<2, 2, T, Q>(m[1][1], m[2][1], m[1][2], m[2][2]));
-		T const m01 = determinant(mat<2, 2, T, Q>(m[0][1], m[2][1], m[0][2], m[2][2]));
-		T const m02 = determinant(mat<2, 2, T, Q>(m[0][1], m[1][1], m[0][2], m[1][2]));
-
-		T const m10 = determinant(mat<2, 2, T, Q>(m[1][0], m[2][0], m[1][2], m[2][2]));
-		T const m11 = determinant(mat<2, 2, T, Q>(m[0][0], m[2][0], m[0][2], m[2][2]));
-		T const m12 = determinant(mat<2, 2, T, Q>(m[0][0], m[1][0], m[0][2], m[1][2]));
-
-		T const m20 = determinant(mat<2, 2, T, Q>(m[1][0], m[2][0], m[1][1], m[2][1]));
-		T const m21 = determinant(mat<2, 2, T, Q>(m[0][0], m[2][0], m[0][1], m[2][1]));
-		T const m22 = determinant(mat<2, 2, T, Q>(m[0][0], m[1][0], m[0][1], m[1][1]));
-
-		return mat<3, 3, T, Q>(
-			+m00, -m01, +m02,
-			-m10, +m11, -m12,
-			+m20, -m21, +m22);
+		// The rows of the adjugate are the cross products of pairs of columns (each one is
+		// perpendicular to the other two columns, which is why adjugate(m) * m = det(m) * I)
+		return transpose(mat<3, 3, T, Q>(cross(m[1], m[2]), cross(m[2], m[0]), cross(m[0], m[1])));
 	}
 
 	template<typename T, qualifier Q>

@@ -6,6 +6,32 @@
 #include <glm/gtx/matrix_operation.hpp>
 #include <limits>
 
+// adjugate(m) * m = m * adjugate(m) = det(m) * I, for invertible and singular matrices
+template<glm::length_t D, typename T>
+static int test_adjugate_identity()
+{
+	int Error = 0;
+
+	typedef glm::mat<D, D, T> mat;
+	mat Matrices[3];
+	for (glm::length_t c = 0; c < D; ++c)
+		for (glm::length_t r = 0; r < D; ++r)
+		{
+			Matrices[0][c][r] = static_cast<T>((c * 7 + r * 3) % 5) - T(1.5);
+			Matrices[1][c][r] = static_cast<T>(c == r ? 2 : 0) + static_cast<T>(c) * T(0.25);
+			Matrices[2][c][r] = static_cast<T>(c + 1) * static_cast<T>(r + 1); // rank 1
+		}
+
+	for (mat const& m : Matrices)
+	{
+		mat const DetI = mat(glm::determinant(m));
+		Error += glm_test::context(GLM_CHECK_NEAR(glm::adjugate(m) * m, DetI, T(1e-4)), "m", m);
+		Error += glm_test::context(GLM_CHECK_NEAR(m * glm::adjugate(m), DetI, T(1e-4)), "m", m);
+	}
+
+	return Error;
+}
+
 static int test_adjugate()
 {
 	int Error = 0;
@@ -71,6 +97,10 @@ int main()
 	int Error = 0;
 
 	Error += GLM_TEST(test_adjugate());
+	Error += GLM_TEST(test_adjugate_identity<2, float>());
+	Error += GLM_TEST(test_adjugate_identity<3, float>());
+	Error += GLM_TEST(test_adjugate_identity<4, float>());
+	Error += GLM_TEST(test_adjugate_identity<3, double>());
 
 	return GLM_TEST_FINISH(Error);
 }
