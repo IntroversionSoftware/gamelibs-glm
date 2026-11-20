@@ -107,6 +107,30 @@ static int test_rotate()
 	return Error;
 }
 
+// rotate(v, angle, normal) is the same rotation as glm::rotate(angle, normal), which normalizes the
+// normal: so a normal of any length, in either single or double precision.
+template<typename T>
+static int test_rotate_matches_matrix()
+{
+	int Error = 0;
+
+	typedef glm::vec<3, T> vec3;
+	vec3 const Vectors[] = { vec3(1, 0, 0), vec3(0.3, -2, 5), vec3(-1, 1, -1) };
+	vec3 const Normals[] = { vec3(0, 0, 1), vec3(1, 1, 1), vec3(-3, 0.5, 2), vec3(0, 1e-3, 0) };
+	T const Angles[] = { T(0), T(0.5), T(-2), glm::pi<T>(), T(5) };
+	T const Epsilon = std::is_same<T, float>::value ? T(1e-5) : T(1e-12);
+
+	for (vec3 const& v : Vectors)
+		for (vec3 const& n : Normals)
+			for (T a : Angles)
+			{
+				vec3 const Expected = glm::mat<3, 3, T>(glm::rotate(a, n)) * v;
+				Error += glm_test::context(GLM_CHECK_NEAR(glm::rotate(v, a, n), Expected, Epsilon * T(5)), "v", v, "n", n, "a", a);
+			}
+
+	return Error;
+}
+
 static int test_rotateX()
 {
 	int Error = 0;
@@ -322,6 +346,8 @@ int main()
 	int Error = 0;
 
 	Error += GLM_TEST(test_rotate());
+	Error += GLM_TEST(test_rotate_matches_matrix<float>());
+	Error += GLM_TEST(test_rotate_matches_matrix<double>());
 	Error += GLM_TEST(test_rotateX());
 	Error += GLM_TEST(test_rotateY());
 	Error += GLM_TEST(test_rotateZ());
