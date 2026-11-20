@@ -1913,9 +1913,7 @@ namespace bitCount
 
 int main()
 {
-	std::cout << "\n=======================================\n";
 	std::cout << "GLM Integer Functions Test Suite\n";
-	std::cout << "=======================================\n";
 
 	int Error = 0;
 
@@ -1938,9 +1936,7 @@ int main()
 #	endif
 
 	if (Error == 0) {
-		std::cout << "\n=======================================\n";
 		std::cout << "Performance tests:\n";
-		std::cout << "=======================================\n";
 
 		::bitCount::perf(Samples);
 		::bitfieldReverse::perf(Samples);
@@ -1949,9 +1945,7 @@ int main()
 	}
 #endif
 
-	std::cout << "\n=======================================\n";
 	std::cout << "Total errors: " << Error << "\n";
-	std::cout << "=======================================\n";
 
 	return GLM_TEST_FINISH(Error);
 }

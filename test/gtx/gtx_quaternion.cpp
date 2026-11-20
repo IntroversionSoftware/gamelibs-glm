@@ -38,7 +38,6 @@ static int test_quat_fastMix()
 	int Error = 0;
 	const float Epsilon = 0.01f;
 
-	std::cout << "Testing quaternion fastMix:" << std::endl;
 
 	glm::quat A = glm::angleAxis(0.0f, glm::vec3(0, 0, 1));
 	glm::quat B = glm::angleAxis(glm::pi<float>() * 0.5f, glm::vec3(0, 0, 1));
@@ -67,7 +66,6 @@ static int test_quat_shortMix()
 	int Error = 0;
 	const float Epsilon = 0.01f;
 
-	std::cout << "\nTesting quaternion shortMix:" << std::endl;
 
 	glm::quat A = glm::angleAxis(0.0f, glm::vec3(0, 0, 1));
 	glm::quat B = glm::angleAxis(glm::pi<float>() * 0.5f, glm::vec3(0, 0, 1));
@@ -96,7 +94,6 @@ static int test_orientation()
 	int Error = 0;
 	const float Epsilon = 0.0001f;
 
-	std::cout << "\nTesting quaternion orientation (roll, pitch, yaw):" << std::endl;
 
 	// Test roll (rotation around x-axis)
 	{
@@ -174,7 +171,6 @@ static int test_rotation()
 	int Error = 0;
 	const float Epsilon = glm::epsilon<float>();
 
-	std::cout << "\nTesting quaternion rotation function:" << std::endl;
 
 	glm::vec3 v(1, 0, 0);
 	glm::vec3 u(0, 1, 0);
@@ -182,12 +178,7 @@ static int test_rotation()
 	glm::quat Rotation = glm::rotation(v, u);
 	float Angle = glm::angle(Rotation);
 
-	if (!(glm::abs(Angle - glm::pi<float>() * 0.5f) < Epsilon)) {
-		std::cout << "Error: Rotation angle incorrect" << std::endl;
-		std::cout << "Expected: " << glm::pi<float>() * 0.5f << ", got: " << Angle << std::endl;
-		print_quat("Quaternion", Rotation);
-		Error++;
-	}
+	Error += GLM_CHECK_LT(glm::abs(Angle - glm::pi<float>() * 0.5f), Epsilon); // Rotation angle incorrect
 
 	// Additional test to verify the rotation actually works as expected
 	glm::vec3 rotated = Rotation * v;
@@ -207,7 +198,6 @@ static int test_log()
 	int Error = 0;
 	const float Epsilon = 0.0001f;
 
-	std::cout << "\nTesting quaternion logarithm and exponential:" << std::endl;
 
 	glm::vec3 v(1, 0, 0);
 	glm::vec3 u(0, 1, 0);
@@ -216,13 +206,7 @@ static int test_log()
 	glm::quat p = glm::log(q);
 	glm::quat r = glm::exp(p);
 
-	if (!glm::all(glm::equal(q, r, Epsilon))) {
-		std::cout << "Error: exp(log(q)) should equal q" << std::endl;
-		print_quat("Original", q);
-		print_quat("Log", p);
-		print_quat("Exp(Log)", r);
-		Error++;
-	}
+	Error += GLM_CHECK_NEAR(q, r, Epsilon); // exp(log(q)) should equal q
 
 	// Additional test with multiple rotations
 	for (float angle = 0.1f; angle < glm::pi<float>(); angle += 0.5f) {
@@ -230,12 +214,7 @@ static int test_log()
 		glm::quat logRot = glm::log(rot);
 		glm::quat expLogRot = glm::exp(logRot);
 
-		if (!glm::all(glm::equal(rot, expLogRot, Epsilon))) {
-			std::cout << "Error: exp(log(q)) should equal q for angle " << angle << std::endl;
-			print_quat("Original", rot);
-			print_quat("Exp(Log)", expLogRot);
-			Error++;
-		}
+		Error += GLM_CHECK_NEAR(rot, expLogRot, Epsilon); // exp(log(q)) should equal q for angle
 	}
 
 	return Error;
@@ -245,34 +224,11 @@ int main()
 {
 	int Error = 0;
 
-	std::cout << "=== Quaternion GTX Tests ===" << std::endl;
-	std::cout << "Quaternion memory layout: ";
-
-#ifdef GLM_FORCE_QUAT_DATA_WXYZ
-	std::cout << "WXYZ (storage)";
-#else
-	std::cout << "XYZW (storage)";
-#endif
-
-	std::cout << " / ";
-
-#ifdef GLM_FORCE_QUAT_DATA_XYZW
-	std::cout << "XYZW (constructor)" << std::endl;
-#else
-	std::cout << "WXYZ (constructor)" << std::endl;
-#endif
-	std::cout << std::endl;
-
 	Error += GLM_TEST(test_log());
 	Error += GLM_TEST(test_rotation());
 	Error += GLM_TEST(test_orientation());
 	Error += GLM_TEST(test_quat_fastMix());
 	Error += GLM_TEST(test_quat_shortMix());
-
-	if (Error == 0)
-		std::cout << "\nAll tests passed!" << std::endl;
-	else
-		std::cout << "\nFailed tests: " << Error << std::endl;
 
 	return GLM_TEST_FINISH(Error);
 }

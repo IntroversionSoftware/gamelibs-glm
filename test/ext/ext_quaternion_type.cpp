@@ -34,7 +34,6 @@ static int test_ctr()
 {
 	int Error = 0;
 
-	std::cout << "Testing constructors and C++ type traits:" << std::endl;
 
 	//  Error += std::is_trivially_default_constructible<glm::quat>::value ? 0 : 1;
 	//  Error += std::is_trivially_default_constructible<glm::dquat>::value ? 0 : 1;
@@ -78,10 +77,7 @@ static int test_ctr()
 			A,
 			{0, 1, 2, 3} };
 
-		if (B.size() != 2 || !(B[0] == A)) {
-			std::cout << "Error: Vector of quaternions with initializer list failed" << std::endl;
-			Error++;
-		}
+		Error += GLM_CHECK(!(B.size() != 2 || !(B[0] == A))); // Vector of quaternions with initializer list failed
 	}
 
 	// Test additional constructors
@@ -92,12 +88,7 @@ static int test_ctr()
 		glm::quat identity = make_quat(1.0f, 0.0f, 0.0f, 0.0f);
 		glm::quat explicit_identity = glm::quat::wxyz(1.0f, 0.0f, 0.0f, 0.0f);
 
-		if (explicit_identity != identity) {
-			std::cout << "Error: Explicit identity constructor failed" << std::endl;
-			print_quat("Explicit", explicit_identity);
-			print_quat("Expected identity", identity);
-			Error++;
-		}
+		Error += GLM_CHECK_EQ(explicit_identity, identity); // Explicit identity constructor failed
 
 		// Test scalar + vector constructor
 		glm::vec3 v(1.0f, 2.0f, 3.0f);
@@ -125,18 +116,13 @@ static int test_two_axis_ctr()
 {
 	int Error = 0;
 
-	std::cout << "\nTesting two-axis constructor:" << std::endl;
 
 	// Test 1: Rotation from X to Y axis
 	{
 		glm::quat const q1(glm::vec3(1, 0, 0), glm::vec3(0, 1, 0));
 		glm::vec3 const v1 = q1 * glm::vec3(1, 0, 0);
 
-		if (!glm::all(glm::equal(v1, glm::vec3(0, 1, 0), 0.0001f))) {
-			std::cout << "Error: Rotation from X to Y failed" << std::endl;
-			std::cout << "Rotated vector: " << v1.x << ", " << v1.y << ", " << v1.z << std::endl;
-			Error++;
-		}
+		Error += GLM_CHECK_NEAR(v1, glm::vec3(0, 1, 0), 0.0001f); // Rotation from X to Y failed
 	}
 
 	// Test 2: Double rotation should rotate by 180 degrees
@@ -145,12 +131,7 @@ static int test_two_axis_ctr()
 		glm::quat const q2 = q1 * q1;
 		glm::vec3 const v2 = q2 * glm::vec3(1, 0, 0);
 
-		if (!glm::all(glm::equal(v2, glm::vec3(-1, 0, 0), 0.0001f))) {
-			std::cout << "Error: Double rotation failed" << std::endl;
-			std::cout << "Rotated vector: " << v2.x << ", " << v2.y << ", " << v2.z << std::endl;
-			print_quat("Double rotation quaternion", q2);
-			Error++;
-		}
+		Error += GLM_CHECK_NEAR(v2, glm::vec3(-1, 0, 0), 0.0001f); // Double rotation failed
 	}
 
 	// Test 3: Rotation from X to -X (180 degrees)
@@ -158,11 +139,7 @@ static int test_two_axis_ctr()
 		glm::quat const q3(glm::vec3(1, 0, 0), glm::vec3(-1, 0, 0));
 		glm::vec3 const v3 = q3 * glm::vec3(1, 0, 0);
 
-		if (!glm::all(glm::equal(v3, glm::vec3(-1, 0, 0), 0.0001f))) {
-			std::cout << "Error: Rotation from X to -X failed" << std::endl;
-			std::cout << "Rotated vector: " << v3.x << ", " << v3.y << ", " << v3.z << std::endl;
-			Error++;
-		}
+		Error += GLM_CHECK_NEAR(v3, glm::vec3(-1, 0, 0), 0.0001f); // Rotation from X to -X failed
 	}
 
 	// Test 4: Rotation from Y to -Y (180 degrees)
@@ -170,11 +147,7 @@ static int test_two_axis_ctr()
 		glm::quat const q4(glm::vec3(0, 1, 0), glm::vec3(0, -1, 0));
 		glm::vec3 const v4 = q4 * glm::vec3(0, 1, 0);
 
-		if (!glm::all(glm::equal(v4, glm::vec3(0, -1, 0), 0.0001f))) {
-			std::cout << "Error: Rotation from Y to -Y failed" << std::endl;
-			std::cout << "Rotated vector: " << v4.x << ", " << v4.y << ", " << v4.z << std::endl;
-			Error++;
-		}
+		Error += GLM_CHECK_NEAR(v4, glm::vec3(0, -1, 0), 0.0001f); // Rotation from Y to -Y failed
 	}
 
 	// Test 5: Rotation from Z to -Z (180 degrees)
@@ -182,11 +155,7 @@ static int test_two_axis_ctr()
 		glm::quat const q5(glm::vec3(0, 0, 1), glm::vec3(0, 0, -1));
 		glm::vec3 const v5 = q5 * glm::vec3(0, 0, 1);
 
-		if (!glm::all(glm::equal(v5, glm::vec3(0, 0, -1), 0.0001f))) {
-			std::cout << "Error: Rotation from Z to -Z failed" << std::endl;
-			std::cout << "Rotated vector: " << v5.x << ", " << v5.y << ", " << v5.z << std::endl;
-			Error++;
-		}
+		Error += GLM_CHECK_NEAR(v5, glm::vec3(0, 0, -1), 0.0001f); // Rotation from Z to -Z failed
 	}
 
 	return Error;
@@ -196,7 +165,6 @@ static int test_accessors()
 {
 	int Error = 0;
 
-	std::cout << "\nTesting accessors:" << std::endl;
 
 	// Test individual component accessors
 	{
@@ -235,41 +203,22 @@ static int test_size()
 {
 	int Error = 0;
 
-	std::cout << "\nTesting size and length:" << std::endl;
 
 	// Test size of quaternion types
 	std::size_t const A = sizeof(glm::quat);
-	if (16 != A) {
-		std::cout << "Error: sizeof(glm::quat) = " << A << ", expected 16" << std::endl;
-		Error++;
-	}
+	Error += GLM_CHECK_EQ(16, A); // sizeof(glm::quat) =
 
 	std::size_t const B = sizeof(glm::dquat);
-	if (32 != B) {
-		std::cout << "Error: sizeof(glm::dquat) = " << B << ", expected 32" << std::endl;
-		Error++;
-	}
+	Error += GLM_CHECK_EQ(32, B); // sizeof(glm::dquat) =
 
 	// Test length() function
-	if (glm::quat().length() != 4) {
-		std::cout << "Error: glm::quat().length() != 4" << std::endl;
-		Error++;
-	}
+	Error += GLM_CHECK_EQ(glm::quat().length(), 4);
 
-	if (glm::dquat().length() != 4) {
-		std::cout << "Error: glm::dquat().length() != 4" << std::endl;
-		Error++;
-	}
+	Error += GLM_CHECK_EQ(glm::dquat().length(), 4);
 
-	if (glm::quat::length() != 4) {
-		std::cout << "Error: glm::quat::length() != 4" << std::endl;
-		Error++;
-	}
+	Error += GLM_CHECK_EQ(glm::quat::length(), 4);
 
-	if (glm::dquat::length() != 4) {
-		std::cout << "Error: glm::dquat::length() != 4" << std::endl;
-		Error++;
-	}
+	Error += GLM_CHECK_EQ(glm::dquat::length(), 4);
 
 	return Error;
 }
@@ -278,7 +227,6 @@ static int test_precision()
 {
 	int Error = 0;
 
-	std::cout << "\nTesting precision hierarchy:" << std::endl;
 
 	if (sizeof(glm::lowp_quat) > sizeof(glm::mediump_quat)) {
 		std::cout << "Error: sizeof(glm::lowp_quat) > sizeof(glm::mediump_quat)" << std::endl;
@@ -301,35 +249,11 @@ int main()
 {
 	int Error = 0;
 
-	std::cout << "=== Quaternion Type Extension Tests ===" << std::endl;
-
-	// Determine the quaternion storage layout
-	std::cout << "Quaternion memory layout: ";
-#ifdef GLM_FORCE_QUAT_DATA_WXYZ
-	std::cout << "WXYZ (storage)";
-#else
-	std::cout << "XYZW (storage)";
-#endif
-
-	std::cout << " / ";
-
-#ifdef GLM_FORCE_QUAT_DATA_XYZW
-	std::cout << "XYZW (constructor)" << std::endl;
-#else
-	std::cout << "WXYZ (constructor)" << std::endl;
-#endif
-	std::cout << std::endl;
-
 	Error += GLM_TEST(test_ctr());
 	Error += GLM_TEST(test_two_axis_ctr());
 	Error += GLM_TEST(test_accessors());
 	Error += GLM_TEST(test_size());
 	Error += GLM_TEST(test_precision());
-
-	if (Error == 0)
-		std::cout << "\nAll tests passed!" << std::endl;
-	else
-		std::cout << "\nFailed tests: " << Error << std::endl;
 
 	return GLM_TEST_FINISH(Error);
 }
