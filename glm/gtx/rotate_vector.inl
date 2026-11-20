@@ -48,20 +48,13 @@ namespace glm
 		vec<3, T, Q> const& normal
 	)
 	{
-		return mat<3, 3, T, Q>(glm::rotate(angle, normal)) * v;
+		// Rodrigues' rotation formula, rather than building the rotation matrix and multiplying. The
+		// normal is normalized, as glm::rotate(angle, normal) does.
+		vec<3, T, Q> const n = normalize(normal);
+		T const c = cos(angle);
+		T const s = sin(angle);
+		return v * c + cross(n, v) * s + n * (dot(n, v) * (static_cast<T>(1) - c));
 	}
-	/*
-	template<typename T, qualifier Q>
-	GLM_FUNC_QUALIFIER vec<3, T, Q> rotateGTX(
-		const vec<3, T, Q>& x,
-		T angle,
-		const vec<3, T, Q>& normal)
-	{
-		const T Cos = cos(radians(angle));
-		const T Sin = sin(radians(angle));
-		return x * Cos + ((x * normal) * (T(1) - Cos)) * normal + cross(x, normal) * Sin;
-	}
-	*/
 	template<typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER vec<4, T, Q> rotate
 	(
