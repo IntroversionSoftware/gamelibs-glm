@@ -63,7 +63,7 @@ namespace detail
 			// Get initial estimate of 1/sqrt(x) using the RSQRTSS instruction
 			__m128 current = _mm_rsqrt_ss(v);
 
-			if constexpr (Q != lowp) {
+			if constexpr (!is_lowp<Q>::value) {
 				// Constants for Newton-Raphson
 				const __m128 half = _mm_set_ss(0.5f);
 				const __m128 three_halves = _mm_set_ss(1.5f);
@@ -76,7 +76,7 @@ namespace detail
 				__m128 step = _mm_sub_ss(three_halves, half_v_est_squared);
 				current = _mm_mul_ss(current, step);
 
-				if constexpr (Q == highp) {
+				if constexpr (is_highp<Q>::value) {
 					// Second Newton-Raphson iteration for further refinement
 					// y₂ = y₁ * (1.5 - 0.5 * x * y₁²)
 					current_squared = _mm_mul_ss(current, current);
@@ -97,17 +97,15 @@ namespace detail
 			// Get initial estimate of 1/sqrt(x)
 			float32x2_t current = vrsqrte_f32(v);
 
-			if constexpr (Q != lowp) {
-				// First Newton-Raphson iteration using vrsqrts_f32
-				// This intrinsic computes (2 - v * estimate^2) / 2, which is the step factor
-				float32x2_t step = vrsqrts_f32(v, vmul_f32(current, current));
-				current = vmul_f32(current, step);
+			// vrsqrte is only an ~8-bit estimate (rsqrtss gives ~12), so take one more Newton-Raphson
+			// step than x86 does at each precision: lowp 1, mediump and highp 2.
+			// vrsqrts_f32(a, b) computes (3 - a * b) / 2, the step factor.
+			float32x2_t step = vrsqrts_f32(v, vmul_f32(current, current));
+			current = vmul_f32(current, step);
 
-				if constexpr (Q == highp) {
-					// Second Newton-Raphson iteration for further refinement
-					step = vrsqrts_f32(v, vmul_f32(current, current));
-					current = vmul_f32(current, step);
-				}
+			if constexpr (!is_lowp<Q>::value) {
+				step = vrsqrts_f32(v, vmul_f32(current, current));
+				current = vmul_f32(current, step);
 			}
 
 			// Extract the result (first lane)
