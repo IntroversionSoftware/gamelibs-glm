@@ -1000,32 +1000,55 @@ namespace bitfieldInterleave5
 }//namespace bitfieldInterleave5
 #endif//GLM_TEST_PERF
 
+// Bits dropped on the right come back on the left
 static int test_bitfieldRotateRight()
 {
-	std::clock_t const LastTime = std::clock();
+	int Error = 0;
 
-	glm::ivec4 const A = glm::bitfieldRotateRight(glm::ivec4(2), 1);
-	glm::ivec4 const B = glm::ivec4(2) >> 1;
+	Error += GLM_CHECK_EQ(glm::bitfieldRotateRight(glm::ivec4(2), 1), glm::ivec4(1));
+	Error += GLM_CHECK_EQ(glm::bitfieldRotateRight(glm::uvec4(1), 1), glm::uvec4(0x80000000u));
+	Error += GLM_CHECK_EQ(glm::bitfieldRotateRight(0x12345678u, 8), 0x78123456u);
+	Error += GLM_CHECK_EQ(glm::bitfieldRotateRight(glm::uvec4(1, 2, 0x80000000u, 0x12345678u), 4), glm::uvec4(0x10000000u, 0x20000000u, 0x08000000u, 0x81234567u));
 
-	std::clock_t const Time = std::clock() - LastTime;
+	// The sign bit rotates like any other, rather than being copied in
+	Error += GLM_CHECK_EQ(glm::bitfieldRotateRight(-2, 1), 0x7FFFFFFF);
+	Error += GLM_CHECK_EQ(glm::bitfieldRotateRight(glm::ivec2(-1, 1), 1), glm::ivec2(-1, static_cast<int>(0x80000000u)));
 
-	glm_test::info("glm::bitfieldRotateRight Test %d clocks\n", static_cast<int>(Time));
+	// The shift is modulo the bit size
+	Error += GLM_CHECK_EQ(glm::bitfieldRotateRight(0x12345678u, 0), 0x12345678u);
+	Error += GLM_CHECK_EQ(glm::bitfieldRotateRight(0x12345678u, 32), 0x12345678u);
+	Error += GLM_CHECK_EQ(glm::bitfieldRotateRight(0x12345678u, 36), 0x81234567u);
 
-	return A == B;
+	// Other sizes
+	Error += GLM_CHECK_EQ(glm::bitfieldRotateRight(glm::uint8(0x01), 1), glm::uint8(0x80));
+	Error += GLM_CHECK_EQ(glm::bitfieldRotateRight(glm::int8(-128), 1), glm::int8(0x40));
+	Error += GLM_CHECK_EQ(glm::bitfieldRotateRight(glm::uint16(0x1234), 4), glm::uint16(0x4123));
+	Error += GLM_CHECK_EQ(glm::bitfieldRotateRight(glm::uint64(1), 1), glm::uint64(0x8000000000000000ull));
+
+	return Error;
 }
 
+// Bits dropped on the left come back on the right
 static int test_bitfieldRotateLeft()
 {
-	std::clock_t const LastTime = std::clock();
+	int Error = 0;
 
-	glm::ivec4 const A = glm::bitfieldRotateLeft(glm::ivec4(2), 1);
-	glm::ivec4 const B = glm::ivec4(2) << 1;
+	Error += GLM_CHECK_EQ(glm::bitfieldRotateLeft(glm::ivec4(2), 1), glm::ivec4(4));
+	Error += GLM_CHECK_EQ(glm::bitfieldRotateLeft(glm::uvec4(0x80000000u), 1), glm::uvec4(1));
+	Error += GLM_CHECK_EQ(glm::bitfieldRotateLeft(0x12345678u, 8), 0x34567812u);
 
-	std::clock_t const Time = std::clock() - LastTime;
+	Error += GLM_CHECK_EQ(glm::bitfieldRotateLeft(static_cast<int>(0x80000000u), 1), 1);
+	Error += GLM_CHECK_EQ(glm::bitfieldRotateLeft(0x12345678u, 0), 0x12345678u);
+	Error += GLM_CHECK_EQ(glm::bitfieldRotateLeft(0x12345678u, 32), 0x12345678u);
+	Error += GLM_CHECK_EQ(glm::bitfieldRotateLeft(glm::uint8(0x80), 1), glm::uint8(0x01));
+	Error += GLM_CHECK_EQ(glm::bitfieldRotateLeft(glm::uint16(0x1234), 4), glm::uint16(0x2341));
+	Error += GLM_CHECK_EQ(glm::bitfieldRotateLeft(glm::uint64(0x8000000000000000ull), 1), glm::uint64(1));
 
-	glm_test::info("glm::bitfieldRotateLeft Test %d clocks\n", static_cast<int>(Time));
+	// Rotating left undoes rotating right
+	for(int Shift = 0; Shift < 32; ++Shift)
+		Error += glm_test::context(GLM_CHECK_EQ(glm::bitfieldRotateLeft(glm::bitfieldRotateRight(-123456789, Shift), Shift), -123456789), "Shift", Shift);
 
-	return A == B;
+	return Error;
 }
 
 int main()
