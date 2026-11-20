@@ -200,9 +200,16 @@ namespace detail
 			p = vcombine_f32(t, t);
 #endif
 
-			float32x4_t vd = vrsqrteq_f32(p);
+			// vrsqrteq_f32 alone is only an ~8-bit estimate.
 			vec<4, float, Q> Result;
+#if GLM_ARCH & GLM_ARCH_ARMV8_BIT
+			Result.data = vdivq_f32(v.data, vsqrtq_f32(p));
+#else
+			float32x4_t vd = vrsqrteq_f32(p);
+			vd = vmulq_f32(vd, vrsqrtsq_f32(vmulq_f32(p, vd), vd)); // Newton-Raphson steps
+			vd = vmulq_f32(vd, vrsqrtsq_f32(vmulq_f32(p, vd), vd));
 			Result.data = vmulq_f32(v.data, vd);
+#endif
 			return Result;
 		}
 	};

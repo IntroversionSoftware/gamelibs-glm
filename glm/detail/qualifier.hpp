@@ -294,11 +294,11 @@ namespace detail
 	{
 		typedef glm_u32vec4 type;
 	};
-/* TODO: Duplicate ?
 	template<>
 	struct storage<3, unsigned int, true> : public storage<4, unsigned int, true>
 	{};
 
+/* TODO: Duplicate ?
 	template<>
 	struct storage<3, double, true>
 	{

@@ -989,22 +989,31 @@ namespace detail
 		}
 	};
 
+	// Aligned 2-component vectors are plain arrays rather than float32x4_t, and a 3-component
+	// vector's padding lane holds garbage, so compare only the real lanes.
 	template<length_t L, qualifier Q>
 	struct compute_vec_equal<L, float, Q, false, 32, true>
 	{
 		static bool call(vec<L, float, Q> const& v1, vec<L, float, Q> const& v2)
 		{
-			uint32x4_t cmp = vceqq_f32(v1.data, v2.data);
+			if constexpr (L < 3)
+				return compute_vec_equal<L, float, Q, false, 32, false>::call(v1, v2);
+			else
+			{
+				uint32x4_t cmp = vceqq_f32(v1.data, v2.data);
+				if constexpr (L == 3)
+					cmp = vsetq_lane_u32(~0u, cmp, 3);
 #if GLM_ARCH & GLM_ARCH_ARMV8_BIT
-			cmp = vpminq_u32(cmp, cmp);
-			cmp = vpminq_u32(cmp, cmp);
-			uint32_t r = cmp[0];
+				cmp = vpminq_u32(cmp, cmp);
+				cmp = vpminq_u32(cmp, cmp);
+				uint32_t r = cmp[0];
 #else
-			uint32x2_t cmpx2 = vpmin_u32(vget_low_u32(cmp), vget_high_u32(cmp));
-			cmpx2 = vpmin_u32(cmpx2, cmpx2);
-			uint32_t r = cmpx2[0];
+				uint32x2_t cmpx2 = vpmin_u32(vget_low_u32(cmp), vget_high_u32(cmp));
+				cmpx2 = vpmin_u32(cmpx2, cmpx2);
+				uint32_t r = cmpx2[0];
 #endif
-			return r == ~0u;
+				return r == ~0u;
+			}
 		}
 	};
 
