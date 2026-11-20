@@ -5,7 +5,7 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/color_space_YCoCg.hpp>
 
-int main()
+static int test_round_trip()
 {
 	int Error = 0;
 
@@ -13,6 +13,15 @@ int main()
 	glm::vec3 colorRGB1 = glm::YCoCg2rgb(colorYCoCg);
 
 	Error += GLM_CHECK_NEAR(colorRGB1, glm::vec3(1.0f, 0.5f, 0.0f), glm::epsilon<float>());
+
+	return Error;
+}
+
+int main()
+{
+	int Error = 0;
+
+	Error += GLM_TEST(test_round_trip());
 
 	return GLM_TEST_FINISH(Error);
 }
