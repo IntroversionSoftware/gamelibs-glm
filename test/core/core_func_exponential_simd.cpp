@@ -12,6 +12,7 @@
 #include <glm/exponential.hpp>
 #include <glm/trigonometric.hpp>
 #include <cmath>
+#include <limits>
 #include <random>
 #include <string>
 
@@ -113,6 +114,24 @@ void test_qualifier(const char* q)
 	run("pow", [&] {
 		double const maxrel = max_relative_error_pow<Q>();
 		return GLM_CHECK_LE(maxrel, tol);
+	});
+
+	// The special cases follow libm: log(0) = -inf, log(+inf) = +inf, NaN for a negative or NaN
+	// input, and a denormal is logged like any other value.
+	run("log special values", [&] {
+		GLM_TEST_REQUIRE_IEEE_SPECIALS();
+		int Error = 0;
+		float const Inf = std::numeric_limits<float>::infinity();
+		float const Denormal = glm_test::opaque(1e-40f);
+		glm::vec<4, float, Q> const L = glm::log(glm::vec<4, float, Q>(0.0f, Inf, Denormal, 1.0f));
+		Error += GLM_CHECK_EQ(L[0], -Inf);
+		Error += GLM_CHECK_EQ(L[1], Inf);
+		Error += GLM_CHECK_LE(std::fabs(static_cast<double>(L[2]) - std::log(static_cast<double>(Denormal))), 1e-4);
+		Error += GLM_CHECK_EQ(L[3], 0.0f);
+		glm::vec<4, float, Q> const N(-1.0f, -Inf, std::numeric_limits<float>::quiet_NaN(), -Denormal);
+		Error += GLM_CHECK(glm::all(glm::isnan(glm::log(N))));
+		Error += GLM_CHECK(glm::all(glm::isnan(glm::log2(N))));
+		return Error;
 	});
 }
 
