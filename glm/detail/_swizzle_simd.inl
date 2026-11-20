@@ -85,8 +85,16 @@ namespace detail
 	GLM_FUNC_QUALIFIER void _swizzle_clang_apply(char* p, S const& that, Op const& op)
 	{
 		constexpr int Width = _swizzle_clang_width(N, E0, E1, E2, E3);
+		// An aligned vec3's storage has a 4th (padding) lane; keep only the swizzle's N.
+		_swizzle_clang_vec<T, N> value;
+		if constexpr (sizeof(S) == sizeof(_swizzle_clang_vec<T, N>) && N != 3)
+			value = that;
+		else if constexpr (N == 3)
+			value = __builtin_shufflevector(that, that, 0, 1, 2);
+		else
+			value = __builtin_shufflevector(that, that, 0, 1);
 		_swizzle_clang_apply_impl<N, T, E0, E1, E2, E3, _swizzle_clang_vec<T, Width>>(
-			p, _swizzle_clang_vec<T, N>(that), op, std::make_integer_sequence<int, Width>());
+			p, value, op, std::make_integer_sequence<int, Width>());
 	}
 
 #	if GLM_CONFIG_SWIZZLE == GLM_SWIZZLE_OPERATOR
@@ -98,7 +106,11 @@ namespace detail
 			using V = _swizzle_clang_vec<T, _swizzle_clang_width(N, E0, E1, E2, E3)>;
 
 			vec<N, T, Q> Result;
-			Result.data = _swizzle_clang_gather<T, N, E0, E1, E2, E3>(_swizzle_clang_load<V>(this->_buffer));
+			_swizzle_clang_vec<T, N> const g = _swizzle_clang_gather<T, N, E0, E1, E2, E3>(_swizzle_clang_load<V>(this->_buffer));
+			if constexpr (N == 3)
+				Result.data = __builtin_shufflevector(g, g, 0, 1, 2, 2); // 4-lane vec3 storage
+			else
+				Result.data = g;
 			return Result;
 		}
 	};

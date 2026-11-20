@@ -48,13 +48,23 @@ namespace detail
 		}
 	};
 
+	// The divisor for an integer division over a vector's storage: an aligned vec3's 4th (padding)
+	// lane may be 0, and integer division by zero is undefined even in an unused lane.
+	template<length_t L, typename T, typename V>
+	GLM_FUNC_QUALIFIER V divisor(V d)
+	{
+		if constexpr (L == 3 && std::is_integral<T>::value)
+			d.w = T(1);
+		return d;
+	}
+
 	template<length_t L, typename T, qualifier Q>
 	struct compute_vec_div<L, T, Q, true>
 	{
 		GLM_FUNC_QUALIFIER static vec<L, T, Q> call(vec<L, T, Q> const& a, vec<L, T, Q> const& b)
 		{
 			vec<L, T, Q> Result;
-			Result.data = a.data / b.data;
+			Result.data = a.data / divisor<L, T>(b.data);
 			return Result;
 		}
 	};
@@ -98,7 +108,7 @@ namespace detail
 		GLM_FUNC_QUALIFIER static vec<L, T, Q> call(vec<L, T, Q> const& a, vec<L, T, Q> const& b)
 		{
 			vec<L, T, Q> Result;
-			Result.data = a.data % b.data;
+			Result.data = a.data % divisor<L, T>(b.data);
 			return Result;
 		}
 	};
@@ -126,9 +136,11 @@ namespace detail
 	template<typename A, typename B, qualifier P> \
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<N, T, OP>::vec(vec<M, A, P> const& _xyz, B _w) \
 	{ \
-		using vec_partial = typename detail::storage<M, T, detail::is_aligned<OP>::value>::type; \
-		data.SWA = __builtin_convertvector(_xyz.data.SWA, vec_partial); \
-		data.SWB = static_cast<T>(_w); \
+		/* An aligned vec3's storage is 4 lanes, so convert all of them and then replace w. */ \
+		using vec_full = typename detail::storage<N, T, detail::is_aligned<OP>::value>::type; \
+		vec_full v = __builtin_convertvector(_xyz.data, vec_full); \
+		v.SWB = static_cast<T>(_w); \
+		data = v; \
 	}
 
 #define CTOR_VECN_TRUNC(OP, T, N, M, SWA, SWB) \
@@ -136,8 +148,10 @@ namespace detail
 	template<typename U, qualifier P> \
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<N, T, OP>::vec(vec<M, U, P> const& _other) \
 	{ \
-		using vec_partial = typename detail::storage<N, T, detail::is_aligned<OP>::value>::type; \
-		data.SWA = __builtin_convertvector(_other.data.SWB, vec_partial); \
+		/* An aligned vec3's storage is 4 lanes like the vec4's: convert all of them, so the source's */ \
+		/* w becomes the padding lane and every lane is written. */ \
+		using vec_full = typename detail::storage<N, T, detail::is_aligned<OP>::value>::type; \
+		data = __builtin_convertvector(_other.data, vec_full); \
 	}
 
 #define CTOR_FLOAT(L, Q)\

@@ -246,12 +246,13 @@ namespace detail
 	{
 		GLM_FUNC_QUALIFIER static vec<3, T, Q> call(vec<3, T, Q> const &a, vec<3, T, Q> const &b)
 		{
+			// Aligned vec3 storage is 4 lanes; w is padding and just rides along.
 			using storage_type = typename detail::storage<3, T, true>::type;
-			const storage_type lhs_yzx = a.data.yzx;
-			const storage_type rhs_yzx = b.data.yzx;
-			const storage_type rv = (a.data.xyz * rhs_yzx) - (lhs_yzx * b.data.xyz);
+			const storage_type lhs_yzx = a.data.yzxw;
+			const storage_type rhs_yzx = b.data.yzxw;
+			const storage_type rv = (a.data * rhs_yzx) - (lhs_yzx * b.data);
 			vec<3, T, Q> Result;
-			Result.data = rv.yzx;
+			Result.data = rv.yzxw;
 			return vec<3, T, Q>(Result);
 		}
 

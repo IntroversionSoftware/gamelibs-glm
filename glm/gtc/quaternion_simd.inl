@@ -81,9 +81,10 @@ GLM_FUNC_QUALIFIER mat<3, 3, float, aligned_highp> mat3_cast(qua<float, aligned_
 			__builtin_shufflevector(q, q, 1, 0, 1, 1);
 
 	mat<3, 3, float, aligned_highp> Result;
-	Result[0].data = r0.xyz;
-	Result[1].data = r1.xyz;
-	Result[2].data = r2.xyz;
+	// Aligned vec3 storage is 4 lanes; the w lanes are padding.
+	Result[0].data = r0;
+	Result[1].data = r1;
+	Result[2].data = r2;
 	return Result;
 }
 

@@ -775,8 +775,9 @@ namespace detail
 	struct convert_vec4_to_vec3<T, Q, true> {
 		GLM_FUNC_QUALIFIER static vec<3, T, Q> call(vec<4, T, Q> const& a)
 		{
+			// Aligned vec3 storage is 4 lanes: w becomes the padding.
 			vec<3, T, Q> v;
-			v.data = a.data.xyz;
+			v.data = a.data;
 			return v;
 		}
 	};
