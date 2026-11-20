@@ -98,9 +98,10 @@ function(glmCreateTestGTC NAME)
 	set(SAMPLE_NAME test-${NAME})
 	add_executable(${SAMPLE_NAME} ${NAME}.cpp)
 
+	# Name the target (not its file) so CMAKE_CROSSCOMPILING_EMULATOR applies, e.g. qemu for aarch64.
 	add_test(
 		NAME ${SAMPLE_NAME}
-		COMMAND $<TARGET_FILE:${SAMPLE_NAME}> )
+		COMMAND ${SAMPLE_NAME} )
 	target_link_libraries(${SAMPLE_NAME} PRIVATE glm::glm)
 endfunction()
 

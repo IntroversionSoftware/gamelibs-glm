@@ -20,9 +20,9 @@ static_assert(!glm::detail::is_aligned<glm::packed_lowp>::value, "packed_lowp is
 struct my_vec4_packed
 {
 	glm::uint32 a;
-	glm::vec4 b;
+	glm::packed_vec4 b;
 };
-static_assert(sizeof(my_vec4_packed) == sizeof(glm::uint32) + sizeof(glm::vec4), "glm::vec4 packed is not correct");
+static_assert(sizeof(my_vec4_packed) == sizeof(glm::uint32) + sizeof(glm::packed_vec4), "glm::vec4 packed is not correct");
 
 #if GLM_COMPILER & GLM_COMPILER_CLANG
 #	pragma clang diagnostic push
@@ -43,9 +43,9 @@ static_assert(sizeof(my_vec4_aligned) == sizeof(glm::aligned_vec4) * 2, "glm::ve
 struct my_dvec4_packed
 {
 	glm::uint64 a;
-	glm::dvec4 b;
+	glm::packed_dvec4 b;
 };
-static_assert(sizeof(my_dvec4_packed) == sizeof(glm::uint64) + sizeof(glm::dvec4), "glm::dvec4 packed is not correct");
+static_assert(sizeof(my_dvec4_packed) == sizeof(glm::uint64) + sizeof(glm::packed_dvec4), "glm::dvec4 packed is not correct");
 
 struct my_dvec4_aligned
 {
@@ -62,14 +62,14 @@ struct my_dvec4_aligned
 struct my_ivec4_packed
 {
 	glm::uint32 a;
-	glm::ivec4 b;
+	glm::packed_ivec4 b;
 };
 
 #if GLM_COMPILER & GLM_COMPILER_CLANG
 #	pragma clang diagnostic pop
 #endif
 
-static_assert(sizeof(my_ivec4_packed) == sizeof(glm::uint32) + sizeof(glm::ivec4), "glm::ivec4 packed is not correct");
+static_assert(sizeof(my_ivec4_packed) == sizeof(glm::uint32) + sizeof(glm::packed_ivec4), "glm::ivec4 packed is not correct");
 
 #if GLM_COMPILER & GLM_COMPILER_CLANG
 #	pragma clang diagnostic push

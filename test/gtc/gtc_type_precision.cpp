@@ -1,3 +1,8 @@
+// This test checks that the sized types are tightly packed, which is only true of the default
+// types when they are packed; GLM_FORCE_DEFAULT_ALIGNED_GENTYPES pads 3-component vectors.
+#ifdef GLM_FORCE_DEFAULT_ALIGNED_GENTYPES
+#	undef GLM_FORCE_DEFAULT_ALIGNED_GENTYPES
+#endif
 #include <glm/gtc/type_precision.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtc/constants.hpp>

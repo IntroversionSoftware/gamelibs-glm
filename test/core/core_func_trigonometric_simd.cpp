@@ -4,7 +4,9 @@
 // reduction) and near-asymptote tan, which the small-angle scalar tests do not.
 // Ground truth = double-precision libm.
 #define GLM_FORCE_DEFAULT_ALIGNED_GENTYPES 1
-#define GLM_FORCE_SSE42 1   // enable the SIMD path (fork requires an explicit GLM_FORCE_*)
+#if defined(__x86_64__) || defined(_M_X64) || defined(__i386__) || defined(_M_IX86)
+#	define GLM_FORCE_SSE42 1   // enable the SIMD path (fork requires an explicit GLM_FORCE_*)
+#endif
 
 #include <glm/glm.hpp>
 #include <glm/trigonometric.hpp>
@@ -112,15 +114,15 @@ int main()
 {
 	std::printf("=== SIMD aligned sin/cos/tan regression ===\n");
 	int Error = 0;
-	// Under GLM_FORCE_PURE there is no SIMD path; mediump/lowp then use the scalar
+	// Without the vectorized path (GLM_FORCE_PURE, no FMA, non-x86) mediump/lowp use the scalar
 	// reduced-precision implementations, which these tolerances are not meant for.
-#if GLM_CONFIG_ALIGNED_GENTYPES == GLM_ENABLE && (GLM_ARCH & GLM_ARCH_SIMD_BIT)
+#if GLM_CONFIG_ALIGNED_GENTYPES == GLM_ENABLE && GLM_CONFIG_SIMD == GLM_ENABLE && GLM_HAS_FMA && ((GLM_ARCH & GLM_ARCH_SSE2_BIT) || (GLM_ARCH & GLM_ARCH_CLANG_BIT))
 	Error += test_qualifier<glm::aligned_highp>("aligned_highp");
 	Error += test_qualifier<glm::aligned_mediump>("aligned_mediump");
 	Error += test_qualifier<glm::aligned_lowp>("aligned_lowp");
 	std::printf(Error == 0 ? "ALL PASSED\n" : "FAILED (%d)\n", Error);
 #else
-	std::printf("SKIPPED (no SIMD path: aligned gentypes disabled or GLM_FORCE_PURE)\n");
+	std::printf("SKIPPED (vectorized transcendental path not compiled in)\n");
 #endif
 	return Error;
 }

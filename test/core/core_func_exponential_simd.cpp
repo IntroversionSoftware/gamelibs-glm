@@ -3,7 +3,9 @@
 // to the SIMD specializations in func_exponential_simd.inl. highp defers to libm;
 // mediump/lowp use 4-wide SIMD (rel err ~1e-7). Ground truth = double libm.
 #define GLM_FORCE_DEFAULT_ALIGNED_GENTYPES 1
-#define GLM_FORCE_SSE42 1
+#if defined(__x86_64__) || defined(_M_X64) || defined(__i386__) || defined(_M_IX86)
+#	define GLM_FORCE_SSE42 1
+#endif
 
 #include <glm/glm.hpp>
 #include <glm/exponential.hpp>
@@ -79,15 +81,15 @@ int main()
 {
 	std::printf("=== SIMD aligned exp/log/exp2/log2 regression ===\n");
 	int Error = 0;
-	// Under GLM_FORCE_PURE there is no SIMD path; mediump/lowp then use the scalar
+	// Without the vectorized path (GLM_FORCE_PURE, no FMA, non-x86) mediump/lowp use the scalar
 	// reduced-precision implementations, which these tolerances are not meant for.
-#if GLM_CONFIG_ALIGNED_GENTYPES == GLM_ENABLE && (GLM_ARCH & GLM_ARCH_SIMD_BIT)
+#if GLM_CONFIG_ALIGNED_GENTYPES == GLM_ENABLE && GLM_CONFIG_SIMD == GLM_ENABLE && GLM_HAS_FMA && ((GLM_ARCH & GLM_ARCH_SSE2_BIT) || (GLM_ARCH & GLM_ARCH_CLANG_BIT))
 	Error += test_qualifier<glm::aligned_highp>("highp");
 	Error += test_qualifier<glm::aligned_mediump>("mediump");
 	Error += test_qualifier<glm::aligned_lowp>("lowp");
 	std::printf(Error == 0 ? "ALL PASSED\n" : "FAILED (%d)\n", Error);
 #else
-	std::printf("SKIPPED (no SIMD path: aligned gentypes disabled or GLM_FORCE_PURE)\n");
+	std::printf("SKIPPED (vectorized transcendental path not compiled in)\n");
 #endif
 	return Error;
 }
