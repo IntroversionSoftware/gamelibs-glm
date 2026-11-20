@@ -1,4 +1,4 @@
-#ifndef GLM_FORCE_PURE
+#if !defined(GLM_FORCE_PURE) && !defined(GLM_FORCE_DEFAULT_ALIGNED_GENTYPES)
 #define GLM_FORCE_DEFAULT_ALIGNED_GENTYPES
 #endif
 #include <glm/gtc/random.hpp>

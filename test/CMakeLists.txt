@@ -78,6 +78,8 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
 		add_compile_options(/wd4365) # warning C4365: signed/unsigned mismatch 
 		add_compile_options(/wd5045) # warning C5045: Compiler will insert Spectre mitigation for memory load if /Qspectre switch specified
 		add_compile_options(/wd5029) # warning C5029: nonstandard extension used: alignment attributes in C++ apply to variables, data members and tag types only
+		add_compile_options(/wd4324) # warning C4324: structure was padded due to alignment specifier (intended for aligned gentypes)
+		add_compile_options(/utf-8) # sources are UTF-8 (e.g. pi in test messages)
 		add_compile_options(/wd4820) # warning C4820: 'test_decl::S1': '3' bytes padding added after data member 'test_decl::S1::A' 
 		add_compile_options(/wd4710) # warning C4710: 'std::string glm::detail::format(const char *,...)': function not inlined
 		add_compile_options(/wd4626) # warning C4626: 'glm::io::format_punct<CTy>': assignment operator was implicitly defined as deleted

@@ -67,9 +67,9 @@ static int test_length()
 
 	// Test 4: Non-unit quaternion
 	{
-		glm::quat const A = make_quat(2, 1, 0.5, 0.1);
+		glm::quat const A = make_quat(2, 1, 0.5f, 0.1f);
 		float const L = glm::length(A);
-		float const ExpectedLength = std::sqrt(2 * 2 + 1 * 1 + 0.5 * 0.5 + 0.1 * 0.1);
+		float const ExpectedLength = std::sqrt(2.0f * 2.0f + 1.0f * 1.0f + 0.5f * 0.5f + 0.1f * 0.1f);
 
 		if (!glm::equal(L, ExpectedLength, Epsilon)) {
 			std::cout << "Error: Length of quaternion incorrect, expected "
@@ -117,7 +117,7 @@ static int test_normalize()
 
 	// Test 3: Normalizing non-unit quaternion
 	{
-		glm::quat const A = make_quat(2, 1, 0.5, 0.1);
+		glm::quat const A = make_quat(2, 1, 0.5f, 0.1f);
 		float const OriginalLength = glm::length(A);
 		glm::quat const N = glm::normalize(A);
 		float const NormalizedLength = glm::length(N);

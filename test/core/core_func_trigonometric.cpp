@@ -17,12 +17,12 @@
 
 // Helper function to get qualifier name as string
 static std::string_view qualifier_name(glm::qualifier Q) {
-	switch (Q) {
-	case glm::qualifier::highp: return "highp";
-	case glm::qualifier::mediump: return "mediump";
-	case glm::qualifier::lowp: return "lowp";
-	default: return "unknownp";
-	}
+	// Not a switch: the precision names alias the aligned qualifiers under
+	// GLM_FORCE_DEFAULT_ALIGNED_GENTYPES, and MSVC's /Wall flags unlisted enumerators.
+	if (Q == glm::highp) return "highp";
+	if (Q == glm::mediump) return "mediump";
+	if (Q == glm::lowp) return "lowp";
+	return "unknownp";
 }
 
 // Function to generate appropriate test angles based on function type
