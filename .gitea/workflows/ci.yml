@@ -1,0 +1,133 @@
+# CI for Gitea Actions (act_runner). Gitea runs .gitea/workflows in preference to .github/workflows,
+# so the upstream GitHub workflow is left untouched for the GitHub mirror.
+#
+# Everything runs on Linux x86-64 Docker runners (the `ubuntu-latest` label):
+# - every x86 SIMD path, with both GCC and Clang. Clang's "auto" detection picks the Clang vector
+#   extensions path, so the SSE/AVX intrinsics paths are forced with GLM_FORCE_<ISA> to test them too;
+# - AArch64 (NEON intrinsics and Clang vectors) cross-compiled and run under qemu-user.
+#
+# Runner differences from GitHub-hosted runners this relies on or avoids:
+# - The job container may be root without sudo, and comes with few build tools, so they are
+#   installed with apt in every job (.gitea/ci/install-toolchain.sh).
+# - No artifact uploads (actions/upload-artifact@v4 does not work with Gitea).
+# - No Windows/macOS/arm64 jobs: those need runners registered with matching labels.
+
+name: ci
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+env:
+  # Default clang version; a matrix entry can pick another with `clang:`. Taken from the
+  # distribution if it has it (Ubuntu 26.04, the current gitea/runner-images:ubuntu-latest, has
+  # 17-22), otherwise from apt.llvm.org.
+  CLANG_VERSION: "22"
+
+jobs:
+  linux-x86:
+    name: x86-64 ${{ matrix.cc }} ${{ matrix.simd }} c++${{ matrix.std }} ${{ matrix.build }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        cc: [gcc, clang]
+        simd: [pure, pure-aligned, sse2, sse4.1, avx, avx2, avx2-ext, vectors]
+        std: [20]
+        build: [Release]
+        exclude:
+          - cc: gcc
+            simd: vectors
+        include:
+          - { cc: gcc, simd: pure, std: 17, build: Debug }
+          - { cc: gcc, simd: avx2, std: 17, build: Release }
+          - { cc: clang, simd: vectors, std: 17, build: Debug }
+          - { cc: clang, simd: avx2, std: 20, build: Debug }
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install toolchain
+        run: sh .gitea/ci/install-toolchain.sh ${{ matrix.cc == 'clang' && '--clang' || '' }} g++
+
+      - name: Configure
+        run: |
+          if [ "${{ matrix.cc }}" = gcc ]; then CXX=g++; else CXX=clang++-$CLANG_VERSION; fi
+          $CXX --version | head -1
+          case "${{ matrix.simd }}" in
+            pure)         SIMD="-DGLM_FORCE_PURE=ON" ;;
+            pure-aligned) SIMD="-DGLM_FORCE_PURE=ON"; FLAGS="-DGLM_FORCE_DEFAULT_ALIGNED_GENTYPES" ;;
+            sse2)         SIMD="-DGLM_ENABLE_SIMD_SSE2=ON";   FLAGS="-DGLM_FORCE_SSE2" ;;
+            sse4.1)       SIMD="-DGLM_ENABLE_SIMD_SSE4_1=ON"; FLAGS="-DGLM_FORCE_SSE41" ;;
+            avx)          SIMD="-DGLM_ENABLE_SIMD_AVX=ON";    FLAGS="-DGLM_FORCE_AVX" ;;
+            avx2)         SIMD="-DGLM_ENABLE_SIMD_AVX2=ON";   FLAGS="-DGLM_FORCE_AVX2 -mfma" ;;
+            avx2-ext)     SIMD="-DGLM_ENABLE_SIMD_AVX2=ON -DGLM_ENABLE_LANG_EXTENSIONS=ON"; FLAGS="-DGLM_FORCE_AVX2 -mfma" ;;
+            vectors)      SIMD="-DGLM_ENABLE_SIMD_CLANG=ON";  FLAGS="-mavx2 -mfma" ;;
+          esac
+          cmake -S . -B build -G Ninja \
+            -DCMAKE_CXX_COMPILER=$CXX \
+            -DCMAKE_BUILD_TYPE=${{ matrix.build }} \
+            -DCMAKE_CXX_FLAGS="$FLAGS" \
+            -DGLM_ENABLE_CXX_${{ matrix.std }}=ON \
+            -DGLM_BUILD_TESTS=ON -DGLM_BUILD_LIBRARY=OFF -DGLM_QUIET=ON \
+            $SIMD
+
+      - name: Build
+        run: cmake --build build -j "$(nproc)"
+
+      - name: Test
+        run: ctest --test-dir build --output-on-failure -j "$(nproc)"
+
+  linux-aarch64:
+    name: aarch64 (qemu) ${{ matrix.cc == 'clang' && format('clang{0}', matrix.clang) || 'gcc' }} ${{ matrix.simd }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        cc: [gcc, clang]
+        simd: [pure, neon, vectors]
+        clang: ["22"]
+        exclude:
+          - cc: gcc
+            simd: vectors
+        include:
+          # Clang 18-21 store 3-component ext_vectors with a poison padding lane, which used to
+          # garble aligned vec3s on AArch64; GLM's 4-lane vec3 storage avoids it. Keep testing an
+          # affected release so that stays true.
+          - { cc: clang, simd: vectors, clang: "18" }
+    env:
+      CLANG_VERSION: ${{ matrix.clang }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install toolchain
+        run: sh .gitea/ci/install-toolchain.sh ${{ matrix.cc == 'clang' && '--clang' || '' }} g++-aarch64-linux-gnu qemu-user
+
+      - name: Configure
+        run: |
+          case "${{ matrix.simd }}" in
+            pure)    SIMD="-DGLM_FORCE_PURE=ON" ;;
+            neon)    SIMD="-DGLM_ENABLE_SIMD_NEON=ON"; FLAGS="-DGLM_FORCE_NEON" ;;
+            vectors) SIMD="-DGLM_ENABLE_SIMD_CLANG=ON" ;;
+          esac
+          if [ "${{ matrix.cc }}" = gcc ]; then
+            CXX="-DCMAKE_CXX_COMPILER=aarch64-linux-gnu-g++"
+          else
+            CXX="-DCMAKE_CXX_COMPILER=clang++-$CLANG_VERSION -DCMAKE_CXX_COMPILER_TARGET=aarch64-linux-gnu"
+          fi
+          cmake -S . -B build -G Ninja $CXX \
+            -DCMAKE_SYSTEM_NAME=Linux -DCMAKE_SYSTEM_PROCESSOR=aarch64 \
+            "-DCMAKE_CROSSCOMPILING_EMULATOR=qemu-aarch64;-L;/usr/aarch64-linux-gnu" \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_CXX_FLAGS="$FLAGS" \
+            -DGLM_ENABLE_CXX_20=ON \
+            -DGLM_BUILD_TESTS=ON -DGLM_BUILD_LIBRARY=OFF -DGLM_QUIET=ON \
+            $SIMD
+
+      - name: Build
+        run: cmake --build build -j "$(nproc)"
+
+      - name: Test
+        run: ctest --test-dir build --output-on-failure -j "$(nproc)"
