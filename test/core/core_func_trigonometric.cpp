@@ -3,6 +3,8 @@
 #include "glm_test.hpp"
 #include <glm/trigonometric.hpp>
 #include <glm/common.hpp>
+#include <glm/vector_relational.hpp>
+#include <glm/ext/scalar_relational.hpp>
 #include <glm/ext/vector_relational.hpp>
 
 #include <cmath>
@@ -509,6 +511,50 @@ namespace trig_test {
 		);
 	}
 
+	// Outside their domains the functions return what the standard library does at every precision:
+	// NaN, or +-inf at atanh's poles.
+	template<typename T, glm::qualifier Q>
+	int test_domain()
+	{
+		GLM_TEST_REQUIRE_IEEE_SPECIALS();
+		int Error = 0;
+		T const Inf = std::numeric_limits<T>::infinity();
+		glm::tvec4<T, Q> const Outside(static_cast<T>(1.5), static_cast<T>(-1.5), static_cast<T>(2), static_cast<T>(-2));
+
+		Error += GLM_CHECK(std::isnan(glm::asin<T, Q>(static_cast<T>(1.5))));
+		Error += GLM_CHECK(std::isnan(glm::asin<T, Q>(static_cast<T>(-1.5))));
+		Error += GLM_CHECK(std::isnan(glm::acos<T, Q>(static_cast<T>(1.5))));
+		Error += GLM_CHECK(std::isnan(glm::acosh<T, Q>(static_cast<T>(0.5))));
+		Error += GLM_CHECK(std::isnan(glm::atanh<T, Q>(static_cast<T>(2))));
+		Error += GLM_CHECK(std::isnan(glm::atanh<T, Q>(static_cast<T>(-1.5))));
+		Error += GLM_CHECK_EQ((glm::atanh<T, Q>(static_cast<T>(1))), Inf);
+		Error += GLM_CHECK_EQ((glm::atanh<T, Q>(static_cast<T>(-1))), -Inf);
+
+		Error += GLM_CHECK(glm::all(glm::isnan(glm::asin(Outside))));
+		Error += GLM_CHECK(glm::all(glm::isnan(glm::acos(Outside))));
+		Error += GLM_CHECK(glm::all(glm::isnan(glm::atanh(Outside))));
+		Error += GLM_CHECK(glm::all(glm::isnan(glm::acosh(glm::tvec4<T, Q>(static_cast<T>(0.5), static_cast<T>(0), static_cast<T>(-1), static_cast<T>(-3))))));
+
+		return Error;
+	}
+
+	// asin is accurate across the whole domain, the ends included, and odd: asin(0) is exactly 0.
+	template<typename T, glm::qualifier Q>
+	int test_asin_domain_sweep()
+	{
+		int Error = 0;
+		T const eps = glm::min(epsilon<T, Q>(), static_cast<T>(1e-3));
+
+		for(int i = -100; i <= 100; ++i)
+		{
+			T const x = static_cast<T>(i) / static_cast<T>(100);
+			Error += glm_test::context(GLM_CHECK_NEAR((glm::asin<T, Q>(x)), std::asin(x), eps), "x", x);
+		}
+		Error += GLM_CHECK_EQ((glm::asin<T, Q>(static_cast<T>(0))), static_cast<T>(0));
+
+		return Error;
+	}
+
 } // namespace trig_test
 
 #define TRIG_TEST(fn) \
@@ -538,6 +584,8 @@ int main()
 	TRIG_TEST(test_atanh);
 	TRIG_TEST(test_radians);
 	TRIG_TEST(test_degrees);
+	TRIG_TEST(test_domain);
+	TRIG_TEST(test_asin_domain_sweep);
 
 	return GLM_TEST_FINISH(Error);
 }
