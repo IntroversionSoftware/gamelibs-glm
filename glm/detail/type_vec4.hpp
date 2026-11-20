@@ -69,6 +69,9 @@ namespace glm
 					GLM_SWIZZLE4_4_MEMBERS(T, Q, s, t, p, q)
 #				endif
 			};
+#			if GLM_CONFIG_SWIZZLE == GLM_SWIZZLE_FUNCTION
+				GLM_SWIZZLE_GEN_VEC_FROM_VEC4(T, Q)
+#			endif
 #		else
 			union { T x, r, s; };
 			union { T y, g, t; };
