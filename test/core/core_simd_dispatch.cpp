@@ -15,6 +15,8 @@
 #endif
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_inverse.hpp>
+#include <glm/gtc/quaternion.hpp>
 
 #include "glm_test_util.hpp"
 
@@ -74,6 +76,12 @@ namespace
 			if (!all_close(got[c], expected[c], tol))
 				return false;
 		return true;
+	}
+
+	template<typename T, glm::qualifier Q, glm::qualifier P>
+	bool all_close(glm::qua<T, Q> const& got, glm::qua<T, P> const& expected, double tol)
+	{
+		return close(got.x, expected.x, tol) && close(got.y, expected.y, tol) && close(got.z, expected.z, tol) && close(got.w, expected.w, tol);
 	}
 
 	template<typename A, typename B>
@@ -322,7 +330,34 @@ namespace
 				auto const PI = PA + glm::mat<C, R, T, glm::packed_highp>(T(16));
 				auto const I = to_aligned_dirty<Q>(PI);
 				check("inverse", glm::inverse(I), glm::inverse(PI), Tol * 16, __LINE__);
+				check("inverseTranspose", glm::inverseTranspose(I), glm::inverseTranspose(PI), Tol * 16, __LINE__);
 			}
+		}
+	}
+
+	template<typename T, glm::qualifier Q>
+	void test_quat()
+	{
+		double const Tol = tolerance<Q>();
+		using packed_quat = glm::qua<T, glm::packed_highp>;
+		for (int Iter = 0; Iter < 64; ++Iter)
+		{
+			auto const P4 = random_vec<4, T>(-2, 2, true);
+			auto const P5 = random_vec<4, T>(-2, 2, true);
+			packed_quat const PA = packed_quat::wxyz(P4.w, P4.x, P4.y, P4.z);
+			packed_quat const PB = packed_quat::wxyz(P5.w, P5.x, P5.y, P5.z);
+			auto const PV = random_vec<3, T>(-4, 4);
+			glm::qua<T, Q> const A(PA);
+			glm::qua<T, Q> const B(PB);
+			auto const V = to_aligned_dirty<Q>(PV);
+
+			DIFF1("quat normalize", Tol, glm::normalize(a));
+			DIFF1("quat conjugate", 0, glm::conjugate(a));
+			DIFF1("quat inverse", Tol, glm::inverse(a));
+			DIFF2("quat * quat", Tol * 16, a * b);
+			check("quat * vec3", A * V, PA * PV, Tol * 16, __LINE__);
+			DIFF1("mat3_cast", Tol * 16, glm::mat3_cast(a));
+			DIFF1("mat4_cast", Tol * 16, glm::mat4_cast(a));
 		}
 	}
 
@@ -350,6 +385,8 @@ namespace
 		RUN(test_mat, 4, 2, float); RUN(test_mat, 4, 3, float); RUN(test_mat, 4, 4, float);
 		RUN(test_mat, 2, 2, double); RUN(test_mat, 3, 3, double); RUN(test_mat, 4, 4, double);
 		RUN(test_mat, 4, 3, double);
+
+		RUN(test_quat, float); RUN(test_quat, double);
 
 #		undef RUN
 	}
