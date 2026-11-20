@@ -480,7 +480,8 @@ namespace detail
 ///////////////////////////////////////////////////////////////////////////////////
 // Use SIMD instruction sets
 
-#if (GLM_LANG & GLM_LANG_CXXMS_FLAG) && (GLM_ARCH & GLM_ARCH_SIMD_BIT)
+// GLM_FORCE_XYZW_ONLY vectors are plain x/y/z/w members with no SIMD storage.
+#if (GLM_LANG & GLM_LANG_CXXMS_FLAG) && (GLM_ARCH & GLM_ARCH_SIMD_BIT) && !GLM_CONFIG_XYZW_ONLY
 #	define GLM_CONFIG_SIMD GLM_ENABLE
 #else
 #	define GLM_CONFIG_SIMD GLM_DISABLE
@@ -517,7 +518,10 @@ namespace detail
 #	define GLM_FORCE_ALIGNED_GENTYPES
 #endif
 
-#if defined(GLM_FORCE_ALIGNED_GENTYPES) || (GLM_CONFIG_SIMD == GLM_ENABLE)
+// Aligned gentypes are built from anonymous structs, which MSVC rejects without language
+// extensions (/Za); other compilers accept them as an extension.
+#if (defined(GLM_FORCE_ALIGNED_GENTYPES) || (GLM_CONFIG_SIMD == GLM_ENABLE)) && \
+	!((GLM_COMPILER & GLM_COMPILER_VC) && !(GLM_LANG & GLM_LANG_CXXMS_FLAG))
 #	define GLM_CONFIG_ALIGNED_GENTYPES GLM_ENABLE
 #else
 #	define GLM_CONFIG_ALIGNED_GENTYPES GLM_DISABLE

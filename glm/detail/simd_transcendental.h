@@ -12,7 +12,7 @@
 
 // Requires FMA (used throughout the reductions/polynomials). Without it, callers
 // fall back to their libm/scalar primaries (e.g. x86-64-v2 builds).
-#if ((GLM_ARCH & GLM_ARCH_SSE2_BIT) || (GLM_ARCH & GLM_ARCH_CLANG_BIT)) && defined(__FMA__)
+#if ((GLM_ARCH & GLM_ARCH_SSE2_BIT) || (GLM_ARCH & GLM_ARCH_CLANG_BIT)) && GLM_HAS_FMA
 
 #if defined(_M_ARM64) || defined(__aarch64__)
 #	include <arm_neon.h>
@@ -27,7 +27,7 @@ namespace detail
 {
 	GLM_FUNC_QUALIFIER __m128 glm_explog_fnmadd(__m128 a, __m128 b, __m128 c)
 	{
-#	if defined(__FMA__)
+#	if GLM_HAS_FMA
 		return _mm_fnmadd_ps(a, b, c);
 #	else
 		return _mm_sub_ps(c, _mm_mul_ps(a, b));

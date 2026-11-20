@@ -526,3 +526,10 @@
 	typedef unsigned long long  glm_u64vec4 __attribute__((ext_vector_type(4)));
 #endif
 
+// FMA3 is usable: GCC and Clang define __FMA__; MSVC enables FMA3 with /arch:AVX2 (and above)
+// but defines only __AVX2__.
+#if defined(__FMA__) || (defined(_MSC_VER) && !defined(__clang__) && defined(__AVX2__))
+#	define GLM_HAS_FMA 1
+#else
+#	define GLM_HAS_FMA 0
+#endif

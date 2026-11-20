@@ -49,13 +49,11 @@ namespace glm
 			T zx_xz = m[2][0] - m[0][2];
 			T xy_yx = m[0][1] - m[1][0];
 
-			// We only need these if biggestIndex != 0
-			T xy_plus_yx, zx_plus_xz, yz_plus_zy;
-			if (biggestIndex != 0) {
-				xy_plus_yx = m[0][1] + m[1][0];
-				zx_plus_xz = m[2][0] + m[0][2];
-				yz_plus_zy = m[1][2] + m[2][1];
-			}
+			// Only used when biggestIndex != 0, but cheap enough to compute unconditionally, which also
+			// keeps compilers from warning that they may be used uninitialized.
+			T xy_plus_yx = m[0][1] + m[1][0];
+			T zx_plus_xz = m[2][0] + m[0][2];
+			T yz_plus_zy = m[1][2] + m[2][1];
 
 			switch(biggestIndex)
 			{

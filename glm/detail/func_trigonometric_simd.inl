@@ -8,9 +8,15 @@
 // ~1.4e-5 at 1e6; tan tracks true value up to the asymptote (no clamp).
 // lowp aliases mediump (a distinct rougher lowp is not worth the small extra speed).
 
-#if ((GLM_ARCH & GLM_ARCH_SSE2_BIT) || (GLM_ARCH & GLM_ARCH_CLANG_BIT)) && defined(__FMA__)  // SIMD path needs FMA; else libm/scalar primaries
+#if ((GLM_ARCH & GLM_ARCH_SSE2_BIT) || (GLM_ARCH & GLM_ARCH_CLANG_BIT)) && GLM_HAS_FMA  // SIMD path needs FMA; else libm/scalar primaries
 
-#include <x86intrin.h>
+#if defined(_M_ARM64) || defined(__aarch64__)
+#	include <arm_neon.h>
+#elif defined(_M_X64)
+#	include <intrin.h>
+#elif defined(__x86_64__)
+#	include <x86intrin.h>
+#endif
 #include <cmath>
 #include "simd_transcendental.h"   // glm_exp_ps / glm_log_ps for hyperbolics
 
@@ -19,7 +25,7 @@ namespace detail
 {
 	GLM_FUNC_QUALIFIER __m128 glm_trig_fnmadd(__m128 a, __m128 b, __m128 c)
 	{
-#	if defined(__FMA__)
+#	if GLM_HAS_FMA
 		return _mm_fnmadd_ps(a, b, c);           // c - a*b, fused (exact product)
 #	else
 		return _mm_sub_ps(c, _mm_mul_ps(a, b));  // fallback (x86-64-v2, no FMA)

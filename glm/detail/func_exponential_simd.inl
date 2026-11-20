@@ -143,7 +143,7 @@ namespace detail
 // highp defers to libm; mediump/lowp use 4-wide SIMD (rel err ~1-2e-7).
 // exp/log primitives live in simd_transcendental.h (shared with the hyperbolics
 // in func_trigonometric_simd.inl, whichever header is included first).
-#if ((GLM_ARCH & GLM_ARCH_SSE2_BIT) || (GLM_ARCH & GLM_ARCH_CLANG_BIT)) && defined(__FMA__)  // SIMD path needs FMA; else libm/scalar primaries
+#if ((GLM_ARCH & GLM_ARCH_SSE2_BIT) || (GLM_ARCH & GLM_ARCH_CLANG_BIT)) && GLM_HAS_FMA  // SIMD path needs FMA; else libm/scalar primaries
 
 #include <cmath>
 #include "simd_transcendental.h"
