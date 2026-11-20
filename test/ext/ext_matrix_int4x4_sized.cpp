@@ -1,3 +1,4 @@
+#include "glm_test.hpp"
 #include <glm/ext/matrix_int4x4_sized.hpp>
 
 static_assert(sizeof(glm::i8mat4x4) == 16, "int8 size isn't 1 byte on this platform");
@@ -9,9 +10,9 @@ static int test_comp()
 {
 	int Error = 0;
 
-	Error += sizeof(glm::i8mat4x4) < sizeof(glm::i16mat4x4) ? 0 : 1;
-	Error += sizeof(glm::i16mat4x4) < sizeof(glm::i32mat4x4) ? 0 : 1;
-	Error += sizeof(glm::i32mat4x4) < sizeof(glm::i64mat4x4) ? 0 : 1;
+	Error += GLM_CHECK(sizeof(glm::i8mat4x4) < sizeof(glm::i16mat4x4));
+	Error += GLM_CHECK(sizeof(glm::i16mat4x4) < sizeof(glm::i32mat4x4));
+	Error += GLM_CHECK(sizeof(glm::i32mat4x4) < sizeof(glm::i64mat4x4));
 
 	return Error;
 }
@@ -20,7 +21,7 @@ int main()
 {
 	int Error = 0;
 
-	Error += test_comp();
+	Error += GLM_TEST(test_comp());
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }

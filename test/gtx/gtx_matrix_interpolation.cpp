@@ -1,4 +1,5 @@
 #define GLM_ENABLE_EXPERIMENTAL
+#include "glm_test.hpp"
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/component_wise.hpp>
 #include <glm/gtx/matrix_interpolation.hpp>
@@ -112,11 +113,11 @@ int main()
 {
 	int Error = 0;
 
-	Error += test_axisAngle();
-	Error += test_axisAngle2();
-	Error += test_rotate();
+	Error += GLM_TEST(test_axisAngle());
+	Error += GLM_TEST(test_axisAngle2());
+	Error += GLM_TEST(test_rotate());
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }
 
 

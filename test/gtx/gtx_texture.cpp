@@ -1,3 +1,4 @@
+#include "glm_test.hpp"
 #include <glm/vec2.hpp>
 
 #define GLM_ENABLE_EXPERIMENTAL
@@ -8,7 +9,7 @@ static int test_levels()
 	int Error = 0;
 
 	int const Levels = glm::levels(glm::ivec2(3, 2));
-	Error += Levels == 2 ? 0 : 1;
+	Error += GLM_CHECK(Levels == 2);
 
 	return Error;
 }
@@ -17,7 +18,7 @@ int main()
 {
 	int Error = 0;
 
-	Error += test_levels();
+	Error += GLM_TEST(test_levels());
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }

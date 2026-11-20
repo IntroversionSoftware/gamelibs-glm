@@ -1,4 +1,5 @@
 #define GLM_ENABLE_EXPERIMENTAL
+#include "glm_test.hpp"
 #include <glm/ext/quaternion_relational.hpp>
 #include <glm/gtc/epsilon.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -262,16 +263,16 @@ int main()
 #endif
 	std::cout << std::endl;
 
-	Error += test_log();
-	Error += test_rotation();
-	Error += test_orientation();
-	Error += test_quat_fastMix();
-	Error += test_quat_shortMix();
+	Error += GLM_TEST(test_log());
+	Error += GLM_TEST(test_rotation());
+	Error += GLM_TEST(test_orientation());
+	Error += GLM_TEST(test_quat_fastMix());
+	Error += GLM_TEST(test_quat_shortMix());
 
 	if (Error == 0)
 		std::cout << "\nAll tests passed!" << std::endl;
 	else
 		std::cout << "\nFailed tests: " << Error << std::endl;
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }

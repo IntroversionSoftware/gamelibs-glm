@@ -1,3 +1,4 @@
+#include "glm_test.hpp"
 #include <glm/ext/quaternion_double.hpp>
 #include <glm/ext/quaternion_double_precision.hpp>
 #include <glm/ext/quaternion_float.hpp>
@@ -39,11 +40,11 @@ static int test_ctr()
 	//  Error += std::is_trivially_default_constructible<glm::dquat>::value ? 0 : 1;
 	//  Error += std::is_trivially_copy_assignable<glm::quat>::value ? 0 : 1;
 	//  Error += std::is_trivially_copy_assignable<glm::dquat>::value ? 0 : 1;
-	Error += std::is_trivially_copyable<glm::quat>::value ? 0 : 1;
-	Error += std::is_trivially_copyable<glm::dquat>::value ? 0 : 1;
+	Error += GLM_CHECK(std::is_trivially_copyable<glm::quat>::value);
+	Error += GLM_CHECK(std::is_trivially_copyable<glm::dquat>::value);
 
-	Error += std::is_copy_constructible<glm::quat>::value ? 0 : 1;
-	Error += std::is_copy_constructible<glm::dquat>::value ? 0 : 1;
+	Error += GLM_CHECK(std::is_copy_constructible<glm::quat>::value);
+	Error += GLM_CHECK(std::is_copy_constructible<glm::dquat>::value);
 
 	if (Error > 0) {
 		std::cout << "Error: One or more type traits checks failed" << std::endl;
@@ -319,16 +320,16 @@ int main()
 #endif
 	std::cout << std::endl;
 
-	Error += test_ctr();
-	Error += test_two_axis_ctr();
-	Error += test_accessors();
-	Error += test_size();
-	Error += test_precision();
+	Error += GLM_TEST(test_ctr());
+	Error += GLM_TEST(test_two_axis_ctr());
+	Error += GLM_TEST(test_accessors());
+	Error += GLM_TEST(test_size());
+	Error += GLM_TEST(test_precision());
 
 	if (Error == 0)
 		std::cout << "\nAll tests passed!" << std::endl;
 	else
 		std::cout << "\nFailed tests: " << Error << std::endl;
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }

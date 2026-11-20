@@ -1,4 +1,5 @@
 #include <glm/gtc/constants.hpp>
+#include "glm_test.hpp"
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/ext/matrix_relational.hpp>
@@ -625,21 +626,21 @@ int main()
 #endif
 	std::cout << std::endl;
 
-	Error += test_mul();
-	Error += test_quat_mul_vec();
-	Error += test_quat_angle();
-	Error += test_quat_angleAxis();
-	Error += test_quat_mix();
-	Error += test_quat_normalize();
-	Error += test_quat_euler();
-	Error += test_quat_slerp();
-	Error += test_quat_slerp_spins();
-	Error += test_identity();
+	Error += GLM_TEST(test_mul());
+	Error += GLM_TEST(test_quat_mul_vec());
+	Error += GLM_TEST(test_quat_angle());
+	Error += GLM_TEST(test_quat_angleAxis());
+	Error += GLM_TEST(test_quat_mix());
+	Error += GLM_TEST(test_quat_normalize());
+	Error += GLM_TEST(test_quat_euler());
+	Error += GLM_TEST(test_quat_slerp());
+	Error += GLM_TEST(test_quat_slerp_spins());
+	Error += GLM_TEST(test_identity());
 
 	if (Error == 0)
 		std::cout << "\nAll tests passed!" << std::endl;
 	else
 		std::cout << "\nFailed tests: " << Error << std::endl;
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }

@@ -1,4 +1,5 @@
 #define GLM_ENABLE_EXPERIMENTAL
+#include "glm_test.hpp"
 #include <glm/gtc/noise.hpp>
 #include <glm/gtc/type_precision.hpp>
 #include <glm/gtx/raw_data.hpp>
@@ -73,14 +74,14 @@ int main()
 {
 	int Error = 0;
 
-	Error += test_simplex_float();
-	Error += test_simplex_double();
+	Error += GLM_TEST(test_simplex_float());
+	Error += GLM_TEST(test_simplex_double());
 
-	Error += test_perlin_float();
-	Error += test_perlin_double();
+	Error += GLM_TEST(test_perlin_float());
+	Error += GLM_TEST(test_perlin_double());
 
-	Error += test_perlin_pedioric_float();
-	Error += test_perlin_pedioric_double();
+	Error += GLM_TEST(test_perlin_pedioric_float());
+	Error += GLM_TEST(test_perlin_pedioric_double());
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }

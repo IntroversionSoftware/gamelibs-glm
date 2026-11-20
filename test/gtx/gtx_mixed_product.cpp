@@ -8,6 +8,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #define GLM_ENABLE_EXPERIMENTAL
+#include "glm_test.hpp"
 #include <glm/gtc/type_precision.hpp>
 #include <glm/gtx/associated_min_max.hpp>
 
@@ -15,5 +16,5 @@ int main()
 {
 	int Error(0);
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }

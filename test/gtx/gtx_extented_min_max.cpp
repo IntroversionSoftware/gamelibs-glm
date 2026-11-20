@@ -29,11 +29,12 @@
 /// @author Christophe Riccio
 ///////////////////////////////////////////////////////////////////////////////////
 
+#include "glm_test.hpp"
 #include <glm/gtx/extended_min_max.hpp>
 
 int main()
 {
 	int Error(0);
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }

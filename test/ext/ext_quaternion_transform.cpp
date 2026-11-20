@@ -1,4 +1,5 @@
 #define GLM_ENABLE_EXPERIMENTAL
+#include "glm_test.hpp"
 #include <glm/gtx/quaternion.hpp>
 
 #include <glm/gtc/epsilon.hpp>
@@ -245,13 +246,13 @@ int main()
 #endif
 		<< std::endl << std::endl;
 
-	Error += test_lookAt();
-	Error += test_rotation();
+	Error += GLM_TEST(test_lookAt());
+	Error += GLM_TEST(test_rotation());
 
 	if (Error == 0)
 		std::cout << "\nAll tests passed!" << std::endl;
 	else
 		std::cout << "\nFailed tests: " << Error << std::endl;
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }

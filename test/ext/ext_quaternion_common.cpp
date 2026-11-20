@@ -1,4 +1,5 @@
 #include <glm/ext/vector_float3.hpp>
+#include "glm_test.hpp"
 #include <glm/ext/quaternion_common.hpp>
 #include <glm/ext/quaternion_float.hpp>
 #include <glm/ext/quaternion_relational.hpp>
@@ -169,15 +170,15 @@ int main()
     << std::endl;
 
     std::cout << "\nTesting conjugate function:" << std::endl;
-    Error += test_conjugate();
+    Error += GLM_TEST(test_conjugate());
 
     std::cout << "\nTesting mix/slerp functions:" << std::endl;
-    Error += test_mix();
+    Error += GLM_TEST(test_mix());
 
     if (Error == 0)
         std::cout << "\nAll tests passed!" << std::endl;
     else
         std::cout << "\nFailed tests: " << Error << std::endl;
 
-    return Error;
+    return GLM_TEST_FINISH(Error);
 }

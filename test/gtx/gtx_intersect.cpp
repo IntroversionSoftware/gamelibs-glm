@@ -1,4 +1,5 @@
 #define GLM_ENABLE_EXPERIMENTAL
+#include "glm_test.hpp"
 #include <glm/glm.hpp>
 #include <glm/gtc/epsilon.hpp>
 #include <glm/gtx/intersect.hpp>
@@ -16,22 +17,22 @@ static int test_intersectRayPlane()
 	{
 		float Distance = 0;
 		bool const Result = glm::intersectRayPlane(RayOrigin, RayDir, PlaneOrigin, PlaneNormal, Distance);
-		Error += glm::abs(Distance - 1.f) <= std::numeric_limits<float>::epsilon() ? 0 : 1;
-		Error += Result ? 0 : 1;
+		Error += GLM_CHECK(glm::abs(Distance - 1.f) <= std::numeric_limits<float>::epsilon());
+		Error += GLM_CHECK(Result);
 	}
 	{
 		float Distance = 0;
 		bool const Result = glm::intersectRayPlane(RayOrigin, RayDir, PlaneOrigin, -1.f * PlaneNormal, Distance);
-		Error += glm::abs(Distance - 1.f) <= std::numeric_limits<float>::epsilon() ? 0 : 1;
-		Error += Result ? 0 : 1;
+		Error += GLM_CHECK(glm::abs(Distance - 1.f) <= std::numeric_limits<float>::epsilon());
+		Error += GLM_CHECK(Result);
 	}
 
 	// check if plane is before of behind the ray origin
 	{
 		float Distance = 9.9999f; // value should not be changed
 		bool const Result = glm::intersectRayPlane(RayOrigin, RayDir, -1.f * PlaneOrigin, PlaneNormal, Distance);
-		Error += glm::abs(Distance - 9.9999f) <= std::numeric_limits<float>::epsilon() ? 0 : 1;
-		Error += Result ? 1 : 0; // there is no intersection in front of the ray origin, only behind
+		Error += GLM_CHECK(glm::abs(Distance - 9.9999f) <= std::numeric_limits<float>::epsilon());
+		Error += GLM_CHECK(!(Result)); // there is no intersection in front of the ray origin, only behind
 	}
 
 	return Error;
@@ -305,8 +306,8 @@ static int test_intersectLineTriangle()
 
 	bool const Result = glm::intersectLineTriangle(Orig, Dir, Vert0, Vert1, Vert2, Position);
 
-	Error += glm::all(glm::epsilonEqual(Position, glm::vec3(2.0f, 0.0f, 0.0f), std::numeric_limits<float>::epsilon())) ? 0 : 1;
-	Error += Result ? 0 : 1;
+	Error += GLM_CHECK(glm::all(glm::epsilonEqual(Position, glm::vec3(2.0f, 0.0f, 0.0f), std::numeric_limits<float>::epsilon())));
+	Error += GLM_CHECK(Result);
 
 	return Error;
 }
@@ -317,10 +318,10 @@ int main()
 	int Error = 0;
 
 #if GLM_PLATFORM != GLM_PLATFORM_LINUX
-	Error += test_intersectRayPlane();
-	Error += test_intersectRayTriangle();
-	Error += test_intersectLineTriangle(); // Disabled on 2025/01/16, C.I. failing on Ubuntu latest, GCC 13.3.0
+	Error += GLM_TEST(test_intersectRayPlane());
+	Error += GLM_TEST(test_intersectRayTriangle());
+	Error += GLM_TEST(test_intersectLineTriangle()); // Disabled on 2025/01/16, C.I. failing on Ubuntu latest, GCC 13.3.0
 #endif//GLM_PLATFORM != GLM_PLATFORM_LINUX
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }

@@ -1,5 +1,6 @@
 #define GLM_FORCE_XYZW_ONLY
 
+#include "glm_test.hpp"
 #include <glm/gtc/constants.hpp>
 #include <glm/gtc/vec1.hpp>
 #include <glm/ext/vector_relational.hpp>
@@ -13,28 +14,28 @@ static int test_comp()
 
 	{
 		glm::ivec1 A(1);
-		Error += A.x == 1 ? 0 : 1;
+		Error += GLM_CHECK(A.x == 1);
 	}
 
 	{
 		glm::ivec2 A(1, 2);
-		Error += A.x == 1 ? 0 : 1;
-		Error += A.y == 2 ? 0 : 1;
+		Error += GLM_CHECK(A.x == 1);
+		Error += GLM_CHECK(A.y == 2);
 	}
 
 	{
 		glm::ivec3 A(1, 2, 3);
-		Error += A.x == 1 ? 0 : 1;
-		Error += A.y == 2 ? 0 : 1;
-		Error += A.z == 3 ? 0 : 1;
+		Error += GLM_CHECK(A.x == 1);
+		Error += GLM_CHECK(A.y == 2);
+		Error += GLM_CHECK(A.z == 3);
 	}
 
 	{
 		glm::ivec4 A(1, 2, 3, 4);
-		Error += A.x == 1 ? 0 : 1;
-		Error += A.y == 2 ? 0 : 1;
-		Error += A.z == 3 ? 0 : 1;
-		Error += A.w == 4 ? 0 : 1;
+		Error += GLM_CHECK(A.x == 1);
+		Error += GLM_CHECK(A.y == 2);
+		Error += GLM_CHECK(A.z == 3);
+		Error += GLM_CHECK(A.w == 4);
 	}
 
 	return Error;
@@ -51,8 +52,8 @@ int main()
 {
 	int Error = 0;
 
-	Error += test_comp();
-	Error += test_constexpr();
+	Error += GLM_TEST(test_comp());
+	Error += GLM_TEST(test_constexpr());
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }

@@ -1,3 +1,4 @@
+#include "glm_test.hpp"
 #include <glm/ext/vector_ulp.hpp>
 #include <glm/ext/vector_relational.hpp>
 #include <glm/ext/vector_float4.hpp>
@@ -11,14 +12,14 @@ static int test_ulp_float_dist()
 	glm::vec4 const A(1.0f);
 
 	glm::vec4 const B = glm::nextFloat(A);
-	Error += glm::any(glm::notEqual(A, B, 0)) ? 0 : 1;
+	Error += GLM_CHECK(glm::any(glm::notEqual(A, B, 0)));
 	glm::vec4 const C = glm::prevFloat(B);
-	Error += glm::all(glm::equal(A, C, 0)) ? 0 : 1;
+	Error += GLM_CHECK(glm::all(glm::equal(A, C, 0)));
 
 	glm::ivec4 const D = glm::floatDistance(A, B);
-	Error += D == glm::ivec4(1) ? 0 : 1;
+	Error += GLM_CHECK(D == glm::ivec4(1));
 	glm::ivec4 const E = glm::floatDistance(A, C);
-	Error += E == glm::ivec4(0) ? 0 : 1;
+	Error += GLM_CHECK(E == glm::ivec4(0));
 
 	return Error;
 }
@@ -32,14 +33,14 @@ static int test_ulp_float_step()
 	for(int i = 10; i < 1000; i *= 10)
 	{
 		glm::vec4 const B = glm::nextFloat(A, i);
-		Error += glm::any(glm::notEqual(A, B, 0)) ? 0 : 1;
+		Error += GLM_CHECK(glm::any(glm::notEqual(A, B, 0)));
 		glm::vec4 const C = glm::prevFloat(B, i);
-		Error += glm::all(glm::equal(A, C, 0)) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(A, C, 0)));
 
 		glm::ivec4 const D = glm::floatDistance(A, B);
-		Error += D == glm::ivec4(i) ? 0 : 1;
+		Error += GLM_CHECK(D == glm::ivec4(i));
 		glm::ivec4 const E = glm::floatDistance(A, C);
-		Error += E == glm::ivec4(0) ? 0 : 1;
+		Error += GLM_CHECK(E == glm::ivec4(0));
 	}
 
 	return Error;
@@ -52,14 +53,14 @@ static int test_ulp_double_dist()
 	glm::dvec4 const A(1.0);
 
 	glm::dvec4 const B = glm::nextFloat(A);
-	Error += glm::any(glm::notEqual(A, B, 0)) ? 0 : 1;
+	Error += GLM_CHECK(glm::any(glm::notEqual(A, B, 0)));
 	glm::dvec4 const C = glm::prevFloat(B);
-	Error += glm::all(glm::equal(A, C, 0)) ? 0 : 1;
+	Error += GLM_CHECK(glm::all(glm::equal(A, C, 0)));
 
 	glm::ivec4 const D(glm::floatDistance(A, B));
-	Error += D == glm::ivec4(1) ? 0 : 1;
+	Error += GLM_CHECK(D == glm::ivec4(1));
 	glm::ivec4 const E = glm::floatDistance(A, C);
-	Error += E == glm::ivec4(0) ? 0 : 1;
+	Error += GLM_CHECK(E == glm::ivec4(0));
 
 	return Error;
 }
@@ -73,14 +74,14 @@ static int test_ulp_double_step()
 	for(int i = 10; i < 1000; i *= 10)
 	{
 		glm::dvec4 const B = glm::nextFloat(A, i);
-		Error += glm::any(glm::notEqual(A, B, 0)) ? 0 : 1;
+		Error += GLM_CHECK(glm::any(glm::notEqual(A, B, 0)));
 		glm::dvec4 const C = glm::prevFloat(B, i);
-		Error += glm::all(glm::equal(A, C, 0)) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(A, C, 0)));
 
 		glm::ivec4 const D(glm::floatDistance(A, B));
-		Error += D == glm::ivec4(i) ? 0 : 1;
+		Error += GLM_CHECK(D == glm::ivec4(i));
 		glm::ivec4 const E(glm::floatDistance(A, C));
-		Error += E == glm::ivec4(0) ? 0 : 1;
+		Error += GLM_CHECK(E == glm::ivec4(0));
 	}
 
 	return Error;
@@ -90,10 +91,10 @@ int main()
 {
 	int Error = 0;
 
-	Error += test_ulp_float_dist();
-	Error += test_ulp_float_step();
-	Error += test_ulp_double_dist();
-	Error += test_ulp_double_step();
+	Error += GLM_TEST(test_ulp_float_dist());
+	Error += GLM_TEST(test_ulp_float_step());
+	Error += GLM_TEST(test_ulp_double_dist());
+	Error += GLM_TEST(test_ulp_double_step());
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }

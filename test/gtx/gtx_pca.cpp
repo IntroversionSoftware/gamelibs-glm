@@ -1,4 +1,5 @@
 #define GLM_ENABLE_EXPERIMENTAL
+#include "glm_test.hpp"
 #include <glm/glm.hpp>
 #include <glm/gtx/pca.hpp>
 #include <glm/gtc/epsilon.hpp>

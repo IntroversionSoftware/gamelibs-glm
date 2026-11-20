@@ -1,3 +1,4 @@
+#include "glm_test.hpp"
 #include <glm/gtc/constants.hpp>
 #include <glm/ext/scalar_relational.hpp>
 #include <glm/ext/vector_relational.hpp>
@@ -38,26 +39,26 @@ static int test_operators()
 
 	float x = 1.0f;
 	glm::vec3 a = m * u;
-	Error += glm::all(glm::equal(a, glm::vec3(1.0f), glm::epsilon<float>())) ? 0 : 1;
+	Error += GLM_CHECK(glm::all(glm::equal(a, glm::vec3(1.0f), glm::epsilon<float>())));
 
 	glm::vec3 b = v * m;
-	Error += glm::all(glm::equal(b, glm::vec3(1.0f), glm::epsilon<float>())) ? 0 : 1;
+	Error += GLM_CHECK(glm::all(glm::equal(b, glm::vec3(1.0f), glm::epsilon<float>())));
 
 	glm::mat3x3 n0(1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
 	glm::mat3x3 n = x / n0;
-	Error += glm::all(glm::equal(n, n0, glm::epsilon<float>())) ? 0 : 1;
+	Error += GLM_CHECK(glm::all(glm::equal(n, n0, glm::epsilon<float>())));
 
 	glm::mat3x3 o = m / x;
-	Error += glm::all(glm::equal(o, m, glm::epsilon<float>())) ? 0 : 1;
+	Error += GLM_CHECK(glm::all(glm::equal(o, m, glm::epsilon<float>())));
 
 	glm::mat3x3 p = x * m;
-	Error += glm::all(glm::equal(p, m, glm::epsilon<float>())) ? 0 : 1;
+	Error += GLM_CHECK(glm::all(glm::equal(p, m, glm::epsilon<float>())));
 
 	glm::mat3x3 q = m * x;
 	bool R = glm::any(glm::notEqual(m, q, glm::epsilon<float>()));
 	bool S = glm::all(glm::equal(m, l, glm::epsilon<float>()));
 
-	Error += (S && !R) ? 0 : 1;
+	Error += GLM_CHECK((S && !R));
 
 	return Error;
 }
@@ -74,9 +75,9 @@ static int test_inverse()
 		glm::mat3 const Inverse = glm::inverse(Matrix);
 		glm::mat3 const Identity = Matrix * Inverse;
 
-		Error += glm::all(glm::equal(Identity[0], glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.01f))) ? 0 : 1;
-		Error += glm::all(glm::equal(Identity[1], glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.01f))) ? 0 : 1;
-		Error += glm::all(glm::equal(Identity[2], glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.01f))) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(Identity[0], glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.01f))));
+		Error += GLM_CHECK(glm::all(glm::equal(Identity[1], glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.01f))));
+		Error += GLM_CHECK(glm::all(glm::equal(Identity[2], glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.01f))));
 	}
 
 	{
@@ -86,9 +87,9 @@ static int test_inverse()
 			glm::vec3(0.3f, 0.5f, 0.7f));
 		glm::mat3 const Identity = Matrix / Matrix;
 
-		Error += glm::all(glm::equal(Identity[0], glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.01f))) ? 0 : 1;
-		Error += glm::all(glm::equal(Identity[1], glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.01f))) ? 0 : 1;
-		Error += glm::all(glm::equal(Identity[2], glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.01f))) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(Identity[0], glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.01f))));
+		Error += GLM_CHECK(glm::all(glm::equal(Identity[1], glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.01f))));
+		Error += GLM_CHECK(glm::all(glm::equal(Identity[2], glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.01f))));
 	}
 
 	return Error;
@@ -110,8 +111,8 @@ static int test_ctr()
 		{3, 4, 5},
 		{6, 7, 8}};
 
-	Error += glm::all(glm::equal(m0, m2, glm::epsilon<float>())) ? 0 : 1;
-	Error += glm::all(glm::equal(m1, m2, glm::epsilon<float>())) ? 0 : 1;
+	Error += GLM_CHECK(glm::all(glm::equal(m0, m2, glm::epsilon<float>())));
+	Error += GLM_CHECK(glm::all(glm::equal(m1, m2, glm::epsilon<float>())));
 
 	std::vector<glm::mat3x3> v1{
 		{0, 1, 2, 3, 4, 5, 6, 7, 8},
@@ -145,7 +146,7 @@ namespace cast
 		glm::mat3x3 B(A);
 		glm::mat3x3 Identity(1.0f);
 
-		Error += glm::all(glm::equal(B, Identity, glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(B, Identity, glm::epsilon<float>())));
 
 		return Error;
 	}
@@ -173,16 +174,16 @@ static int test_size()
 	int Error = 0;
 
 	// Packed matrices are tightly packed; aligned ones pad each 3-row column to 4 components.
-	Error += 36 == sizeof(glm::mat<3, 3, float, glm::packed_highp>) ? 0 : 1;
-	Error += 72 == sizeof(glm::mat<3, 3, double, glm::packed_highp>) ? 0 : 1;
+	Error += GLM_CHECK(36 == sizeof(glm::mat<3, 3, float, glm::packed_highp>));
+	Error += GLM_CHECK(72 == sizeof(glm::mat<3, 3, double, glm::packed_highp>));
 #	if GLM_CONFIG_ALIGNED_GENTYPES == GLM_ENABLE
-		Error += 48 == sizeof(glm::mat<3, 3, float, glm::aligned_highp>) ? 0 : 1;
-		Error += 96 == sizeof(glm::mat<3, 3, double, glm::aligned_highp>) ? 0 : 1;
+		Error += GLM_CHECK(48 == sizeof(glm::mat<3, 3, float, glm::aligned_highp>));
+		Error += GLM_CHECK(96 == sizeof(glm::mat<3, 3, double, glm::aligned_highp>));
 #	endif
-	Error += glm::mat3x3().length() == 3 ? 0 : 1;
-	Error += glm::dmat3x3().length() == 3 ? 0 : 1;
-	Error += glm::mat3x3::length() == 3 ? 0 : 1;
-	Error += glm::dmat3x3::length() == 3 ? 0 : 1;
+	Error += GLM_CHECK(glm::mat3x3().length() == 3);
+	Error += GLM_CHECK(glm::dmat3x3().length() == 3);
+	Error += GLM_CHECK(glm::mat3x3::length() == 3);
+	Error += GLM_CHECK(glm::dmat3x3::length() == 3);
 
 	return Error;
 }
@@ -191,13 +192,13 @@ int main()
 {
 	int Error = 0;
 
-	Error += cast::test();
-	Error += test_ctr();
-	Error += test_mat3x3();
-	Error += test_operators();
-	Error += test_inverse();
-	Error += test_size();
+	Error += GLM_TEST(cast::test());
+	Error += GLM_TEST(test_ctr());
+	Error += GLM_TEST(test_mat3x3());
+	Error += GLM_TEST(test_operators());
+	Error += GLM_TEST(test_inverse());
+	Error += GLM_TEST(test_size());
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }
 

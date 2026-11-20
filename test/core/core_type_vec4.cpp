@@ -1,4 +1,5 @@
 #define GLM_FORCE_SWIZZLE
+#include "glm_test.hpp"
 #include <glm/gtc/constants.hpp>
 #include <glm/gtc/vec1.hpp>
 #include <glm/ext/scalar_relational.hpp>
@@ -53,7 +54,7 @@ static int test_vec4_ctor()
 	{
 		glm::ivec4 A(1, 2, 3, 4);
 		glm::ivec4 B(A);
-		Error += glm::all(glm::equal(A, B)) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(A, B)));
 	}
 
 	{
@@ -76,7 +77,7 @@ static int test_vec4_ctor()
 		glm::ivec4 A(1);
 		glm::ivec4 B(1, 1, 1, 1);
 
-		Error += A == B ? 0 : 1;
+		Error += GLM_CHECK(A == B);
 	}
 
 	{
@@ -91,7 +92,7 @@ static int test_vec4_ctor()
 		Tests.push_back(glm::ivec4(glm::ivec4(1, 2, 3, 4)));
 
 		for(std::size_t i = 0; i < Tests.size(); ++i)
-			Error += Tests[i] == glm::ivec4(1, 2, 3, 4) ? 0 : 1;
+			Error += GLM_CHECK(Tests[i] == glm::ivec4(1, 2, 3, 4));
 	}
 
 	{
@@ -103,52 +104,52 @@ static int test_vec4_ctor()
 
 		glm::vec4 A(R);
 		glm::vec4 B(1.0f);
-		Error += glm::all(glm::equal(A, B, glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(A, B, glm::epsilon<float>())));
 
 		glm::vec4 C(R, S, T, U);
-		Error += glm::all(glm::equal(C, O, glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(C, O, glm::epsilon<float>())));
 
 		glm::vec4 D(R, 2.0f, 3.0f, 4.0f);
-		Error += glm::all(glm::equal(D, O, glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(D, O, glm::epsilon<float>())));
 
 		glm::vec4 E(1.0f, S, 3.0f, 4.0f);
-		Error += glm::all(glm::equal(E, O, glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(E, O, glm::epsilon<float>())));
 
 		glm::vec4 F(R, S, 3.0f, 4.0f);
-		Error += glm::all(glm::equal(F, O, glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(F, O, glm::epsilon<float>())));
 
 		glm::vec4 G(1.0f, 2.0f, T, 4.0f);
-		Error += glm::all(glm::equal(G, O, glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(G, O, glm::epsilon<float>())));
 
 		glm::vec4 H(R, 2.0f, T, 4.0f);
-		Error += glm::all(glm::equal(H, O, glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(H, O, glm::epsilon<float>())));
 
 		glm::vec4 I(1.0f, S, T, 4.0f);
-		Error += glm::all(glm::equal(I, O, glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(I, O, glm::epsilon<float>())));
 
 		glm::vec4 J(R, S, T, 4.0f);
-		Error += glm::all(glm::equal(J, O, glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(J, O, glm::epsilon<float>())));
 
 		glm::vec4 K(R, 2.0f, 3.0f, U);
-		Error += glm::all(glm::equal(K, O, glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(K, O, glm::epsilon<float>())));
 
 		glm::vec4 L(1.0f, S, 3.0f, U);
-		Error += glm::all(glm::equal(L, O, glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(L, O, glm::epsilon<float>())));
 
 		glm::vec4 M(R, S, 3.0f, U);
-		Error += glm::all(glm::equal(M, O, glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(M, O, glm::epsilon<float>())));
 
 		glm::vec4 N(1.0f, 2.0f, T, U);
-		Error += glm::all(glm::equal(N, O, glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(N, O, glm::epsilon<float>())));
 
 		glm::vec4 P(R, 2.0f, T, U);
-		Error += glm::all(glm::equal(P, O, glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(P, O, glm::epsilon<float>())));
 
 		glm::vec4 Q(1.0f, S, T, U);
-		Error += glm::all(glm::equal(Q, O, glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(Q, O, glm::epsilon<float>())));
 
 		glm::vec4 V(R, S, T, U);
-		Error += glm::all(glm::equal(V, O, glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(V, O, glm::epsilon<float>())));
 	}
 
 	{
@@ -160,52 +161,52 @@ static int test_vec4_ctor()
 
 		glm::vec4 const A(R);
 		glm::vec4 const B(1.0);
-		Error += glm::all(glm::equal(A, B, glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(A, B, glm::epsilon<float>())));
 
 		glm::vec4 const C(R, S, T, U);
-		Error += glm::all(glm::equal(C, O, glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(C, O, glm::epsilon<float>())));
 
 		glm::vec4 const D(R, 2.0f, 3.0, 4.0f);
-		Error += glm::all(glm::equal(D, O, glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(D, O, glm::epsilon<float>())));
 
 		glm::vec4 const E(1.0, S, 3.0f, 4.0);
-		Error += glm::all(glm::equal(E, O, glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(E, O, glm::epsilon<float>())));
 
 		glm::vec4 const F(R, S, 3.0, 4.0f);
-		Error += glm::all(glm::equal(F, O, glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(F, O, glm::epsilon<float>())));
 
 		glm::vec4 const G(1.0f, 2.0, T, 4.0);
-		Error += glm::all(glm::equal(G, O, glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(G, O, glm::epsilon<float>())));
 
 		glm::vec4 const H(R, 2.0, T, 4.0);
-		Error += glm::all(glm::equal(H, O, glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(H, O, glm::epsilon<float>())));
 
 		glm::vec4 const I(1.0, S, T, 4.0f);
-		Error += glm::all(glm::equal(I, O, glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(I, O, glm::epsilon<float>())));
 
 		glm::vec4 const J(R, S, T, 4.0f);
-		Error += glm::all(glm::equal(J, O, glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(J, O, glm::epsilon<float>())));
 
 		glm::vec4 const K(R, 2.0f, 3.0, U);
-		Error += glm::all(glm::equal(K, O, glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(K, O, glm::epsilon<float>())));
 
 		glm::vec4 const L(1.0f, S, 3.0, U);
-		Error += glm::all(glm::equal(L, O, glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(L, O, glm::epsilon<float>())));
 
 		glm::vec4 const M(R, S, 3.0, U);
-		Error += glm::all(glm::equal(M, O, glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(M, O, glm::epsilon<float>())));
 
 		glm::vec4 const N(1.0f, 2.0, T, U);
-		Error += glm::all(glm::equal(N, O, glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(N, O, glm::epsilon<float>())));
 
 		glm::vec4 const P(R, 2.0, T, U);
-		Error += glm::all(glm::equal(P, O, glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(P, O, glm::epsilon<float>())));
 
 		glm::vec4 const Q(1.0f, S, T, U);
-		Error += glm::all(glm::equal(Q, O, glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(Q, O, glm::epsilon<float>())));
 
 		glm::vec4 const V(R, S, T, U);
-		Error += glm::all(glm::equal(V, O, glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(V, O, glm::epsilon<float>())));
 	}
 
 	{
@@ -224,37 +225,37 @@ static int test_vec4_ctor()
 		glm::vec4 O(1.0f, 2.0, 3.0f, 4.0);
 
 		glm::vec4 A(v1_0, v1_1, v2_2);
-		Error += glm::all(glm::equal(A, O, glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(A, O, glm::epsilon<float>())));
 
 		glm::vec4 B(1.0f, 2.0f, v2_2);
-		Error += glm::all(glm::equal(B, O, glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(B, O, glm::epsilon<float>())));
 
 		glm::vec4 C(v1_0, 2.0f, v2_2);
-		Error += glm::all(glm::equal(C, O, glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(C, O, glm::epsilon<float>())));
 
 		glm::vec4 D(1.0f, v1_1, v2_2);
-		Error += glm::all(glm::equal(D, O, glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(D, O, glm::epsilon<float>())));
 
 		glm::vec4 E(v2_0, v1_2, v1_3);
-		Error += glm::all(glm::equal(E, O, glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(E, O, glm::epsilon<float>())));
 
 		glm::vec4 F(v2_0, 3.0, v1_3);
-		Error += glm::all(glm::equal(F, O, glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(F, O, glm::epsilon<float>())));
 
 		glm::vec4 G(v2_0, v1_2, 4.0);
-		Error += glm::all(glm::equal(G, O, glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(G, O, glm::epsilon<float>())));
 
 		glm::vec4 H(v2_0, 3.0f, 4.0);
-		Error += glm::all(glm::equal(H, O, glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(H, O, glm::epsilon<float>())));
 
 		glm::vec4 I(v3_0, 4.0);
-		Error += glm::all(glm::equal(I, O, glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(I, O, glm::epsilon<float>())));
 
 		glm::vec4 J(1.0f, v3_1);
-		Error += glm::all(glm::equal(J, O, glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(J, O, glm::epsilon<float>())));
 
 		glm::vec4 K(1.0f, v2_1, 4.0f);
-		Error += glm::all(glm::equal(J, O, glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(J, O, glm::epsilon<float>())));
 	}
 
 	return Error;
@@ -271,14 +272,14 @@ static int test_bvec4_ctor()
 	glm::bvec4 E = A && C;
 	glm::bvec4 F = A || C;
 
-	Error += D == glm::bvec4(true) ? 0 : 1;
-	Error += E == glm::bvec4(false) ? 0 : 1;
-	Error += F == glm::bvec4(true) ? 0 : 1;
+	Error += GLM_CHECK(D == glm::bvec4(true));
+	Error += GLM_CHECK(E == glm::bvec4(false));
+	Error += GLM_CHECK(F == glm::bvec4(true));
 
 	bool G = A == C;
 	bool H = A != C;
-	Error += !G ? 0 : 1;
-	Error += H ? 0 : 1;
+	Error += GLM_CHECK(!G);
+	Error += GLM_CHECK(H);
 
 	return Error;
 }
@@ -293,7 +294,7 @@ static int test_operators()
 		bool R = A != B;
 		bool S = A == B;
 
-		Error += (S && !R) ? 0 : 1;
+		Error += GLM_CHECK((S && !R));
 	}
 
 	{
@@ -301,40 +302,40 @@ static int test_operators()
 		glm::vec4 const B(4.0f, 5.0f, 6.0f, 7.0f);
 
 		glm::vec4 const C = A + B;
-		Error += glm::all(glm::equal(C, glm::vec4(5, 7, 9, 11), glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(C, glm::vec4(5, 7, 9, 11), glm::epsilon<float>())));
 
 		glm::vec4 const D = B - A;
-		Error += glm::all(glm::equal(D, glm::vec4(3, 3, 3, 3), glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(D, glm::vec4(3, 3, 3, 3), glm::epsilon<float>())));
 
 		glm::vec4 const E = A * B;
-		Error += glm::all(glm::equal(E, glm::vec4(4, 10, 18, 28), glm::epsilon<float>()) )? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(E, glm::vec4(4, 10, 18, 28), glm::epsilon<float>()) ));
 
 		glm::vec4 const F = B / A;
-		Error += glm::all(glm::equal(F, glm::vec4(4, 2.5, 2, 7.0f / 4.0f), glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(F, glm::vec4(4, 2.5, 2, 7.0f / 4.0f), glm::epsilon<float>())));
 
 		glm::vec4 const G = A + 1.0f;
-		Error += glm::all(glm::equal(G, glm::vec4(2, 3, 4, 5), glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(G, glm::vec4(2, 3, 4, 5), glm::epsilon<float>())));
 
 		glm::vec4 const H = B - 1.0f;
-		Error += glm::all(glm::equal(H, glm::vec4(3, 4, 5, 6), glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(H, glm::vec4(3, 4, 5, 6), glm::epsilon<float>())));
 
 		glm::vec4 const I = A * 2.0f;
-		Error += glm::all(glm::equal(I, glm::vec4(2, 4, 6, 8), glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(I, glm::vec4(2, 4, 6, 8), glm::epsilon<float>())));
 
 		glm::vec4 const J = B / 2.0f;
-		Error += glm::all(glm::equal(J, glm::vec4(2, 2.5, 3, 3.5), glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(J, glm::vec4(2, 2.5, 3, 3.5), glm::epsilon<float>())));
 
 		glm::vec4 const K = 1.0f + A;
-		Error += glm::all(glm::equal(K, glm::vec4(2, 3, 4, 5), glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(K, glm::vec4(2, 3, 4, 5), glm::epsilon<float>())));
 
 		glm::vec4 const L = 1.0f - B;
-		Error += glm::all(glm::equal(L, glm::vec4(-3, -4, -5, -6), glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(L, glm::vec4(-3, -4, -5, -6), glm::epsilon<float>())));
 
 		glm::vec4 const M = 2.0f * A;
-		Error += glm::all(glm::equal(M, glm::vec4(2, 4, 6, 8), glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(M, glm::vec4(2, 4, 6, 8), glm::epsilon<float>())));
 
 		glm::vec4 const N = 2.0f / B;
-		Error += glm::all(glm::equal(N, glm::vec4(0.5, 2.0 / 5.0, 2.0 / 6.0, 2.0 / 7.0), glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(N, glm::vec4(0.5, 2.0 / 5.0, 2.0 / 6.0, 2.0 / 7.0), glm::epsilon<float>())));
 	}
 
 	{
@@ -342,88 +343,88 @@ static int test_operators()
 		glm::ivec4 B(4.0f, 5.0f, 6.0f, 7.0f);
 
 		A += B;
-		Error += A == glm::ivec4(5, 7, 9, 11) ? 0 : 1;
+		Error += GLM_CHECK(A == glm::ivec4(5, 7, 9, 11));
 
 		A += 1;
-		Error += A == glm::ivec4(6, 8, 10, 12) ? 0 : 1;
+		Error += GLM_CHECK(A == glm::ivec4(6, 8, 10, 12));
 	}
 	{
 		glm::ivec4 A(1.0f, 2.0f, 3.0f, 4.0f);
 		glm::ivec4 B(4.0f, 5.0f, 6.0f, 7.0f);
 
 		B -= A;
-		Error += B == glm::ivec4(3, 3, 3, 3) ? 0 : 1;
+		Error += GLM_CHECK(B == glm::ivec4(3, 3, 3, 3));
 
 		B -= 1;
-		Error += B == glm::ivec4(2, 2, 2, 2) ? 0 : 1;
+		Error += GLM_CHECK(B == glm::ivec4(2, 2, 2, 2));
 	}
 	{
 		glm::ivec4 A(1.0f, 2.0f, 3.0f, 4.0f);
 		glm::ivec4 B(4.0f, 5.0f, 6.0f, 7.0f);
 
 		A *= B;
-		Error += A == glm::ivec4(4, 10, 18, 28) ? 0 : 1;
+		Error += GLM_CHECK(A == glm::ivec4(4, 10, 18, 28));
 
 		A *= 2;
-		Error += A == glm::ivec4(8, 20, 36, 56) ? 0 : 1;
+		Error += GLM_CHECK(A == glm::ivec4(8, 20, 36, 56));
 	}
 	{
 		glm::ivec4 A(1.0f, 2.0f, 2.0f, 4.0f);
 		glm::ivec4 B(4.0f, 4.0f, 8.0f, 8.0f);
 
 		B /= A;
-		Error += B == glm::ivec4(4, 2, 4, 2) ? 0 : 1;
+		Error += GLM_CHECK(B == glm::ivec4(4, 2, 4, 2));
 
 		B /= 2;
-		Error += B == glm::ivec4(2, 1, 2, 1) ? 0 : 1;
+		Error += GLM_CHECK(B == glm::ivec4(2, 1, 2, 1));
 	}
 	{
 		glm::ivec4 A(1.0f, 2.0f, 2.0f, 4.0f);
 		glm::ivec4 B(4.0f, 4.0f, 8.0f, 8.0f);
 
 		B = B / A;
-		Error += B == glm::ivec4(4, 2, 4, 2) ? 0 : 1;
+		Error += GLM_CHECK(B == glm::ivec4(4, 2, 4, 2));
 
 		B = B / 2;
-		Error += B == glm::ivec4(2, 1, 2, 1) ? 0 : 1;
+		Error += GLM_CHECK(B == glm::ivec4(2, 1, 2, 1));
 	}
 	{
 		glm::ivec4 B(2);
 
 		B /= B.y;
-		Error += B == glm::ivec4(1) ? 0 : 1;
+		Error += GLM_CHECK(B == glm::ivec4(1));
 	}
 
 	{
 		glm::ivec4 A(1.0f, 2.0f, 3.0f, 4.0f);
 		glm::ivec4 B = -A;
-		Error += B == glm::ivec4(-1.0f, -2.0f, -3.0f, -4.0f) ? 0 : 1;
+		Error += GLM_CHECK(B == glm::ivec4(-1.0f, -2.0f, -3.0f, -4.0f));
 	}
 
 	{
 		glm::ivec4 A(1.0f, 2.0f, 3.0f, 4.0f);
 		glm::ivec4 B = --A;
-		Error += B == glm::ivec4(0.0f, 1.0f, 2.0f, 3.0f) ? 0 : 1;
+		Error += GLM_CHECK(B == glm::ivec4(0.0f, 1.0f, 2.0f, 3.0f));
 	}
 
 	{
 		glm::ivec4 A(1.0f, 2.0f, 3.0f, 4.0f);
 		glm::ivec4 B = A--;
-		Error += B == glm::ivec4(1.0f, 2.0f, 3.0f, 4.0f) ? 0 : 1;
-		Error += A == glm::ivec4(0.0f, 1.0f, 2.0f, 3.0f) ? 0 : 1;
+		Error += GLM_CHECK(B == glm::ivec4(1.0f, 2.0f, 3.0f, 4.0f));
+		Error += GLM_CHECK(A == glm::ivec4(0.0f, 1.0f, 2.0f, 3.0f));
 	}
 
 	{
 		glm::ivec4 A(1.0f, 2.0f, 3.0f, 4.0f);
 		glm::ivec4 B = ++A;
-		Error += B == glm::ivec4(2.0f, 3.0f, 4.0f, 5.0f) ? 0 : 1;
+		Error += GLM_CHECK(B == glm::ivec4(2.0f, 3.0f, 4.0f, 5.0f));
 	}
 
 	{
 		glm::ivec4 A(1.0f, 2.0f, 3.0f, 4.0f);
 		glm::ivec4 B = A++;
-		Error += B == glm::ivec4(1.0f, 2.0f, 3.0f, 4.0f) ? 0 : 1;
-		Error += A == glm::ivec4(2.0f, 3.0f, 4.0f, 5.0f) ? 0 : 1;
+		Error += GLM_CHECK(B == glm::ivec4(1.0f, 2.0f, 3.0f, 4.0f));
+		Error += GLM_CHECK(A == glm::ivec4(2.0f, 3.0f, 4.0f, 5.0f));
 	}
 
 	return Error;
@@ -436,15 +437,15 @@ static int test_equal()
 	{
 		glm::uvec4 A(1, 2, 3, 4);
 		glm::uvec4 B(1, 2, 3, 4);
-		Error += A == B ? 0 : 1;
-		Error += A != B ? 1 : 0;
+		Error += GLM_CHECK(A == B);
+		Error += GLM_CHECK(!(A != B));
 	}
 
 	{
 		glm::ivec4 A(1, 2, 3, 4);
 		glm::ivec4 B(1, 2, 3, 4);
-		Error += A == B ? 0 : 1;
-		Error += A != B ? 1 : 0;
+		Error += GLM_CHECK(A == B);
+		Error += GLM_CHECK(!(A != B));
 	}
 
 	return Error;
@@ -454,18 +455,18 @@ static int test_size()
 {
 	int Error = 0;
 
-	Error += sizeof(glm::vec4) == sizeof(glm::lowp_vec4) ? 0 : 1;
-	Error += sizeof(glm::vec4) == sizeof(glm::mediump_vec4) ? 0 : 1;
-	Error += sizeof(glm::vec4) == sizeof(glm::highp_vec4) ? 0 : 1;
-	Error += 16 == sizeof(glm::mediump_vec4) ? 0 : 1;
-	Error += sizeof(glm::dvec4) == sizeof(glm::lowp_dvec4) ? 0 : 1;
-	Error += sizeof(glm::dvec4) == sizeof(glm::mediump_dvec4) ? 0 : 1;
-	Error += sizeof(glm::dvec4) == sizeof(glm::highp_dvec4) ? 0 : 1;
-	Error += 32 == sizeof(glm::highp_dvec4) ? 0 : 1;
-	Error += glm::vec4().length() == 4 ? 0 : 1;
-	Error += glm::dvec4().length() == 4 ? 0 : 1;
-	Error += glm::vec4::length() == 4 ? 0 : 1;
-	Error += glm::dvec4::length() == 4 ? 0 : 1;
+	Error += GLM_CHECK(sizeof(glm::vec4) == sizeof(glm::lowp_vec4));
+	Error += GLM_CHECK(sizeof(glm::vec4) == sizeof(glm::mediump_vec4));
+	Error += GLM_CHECK(sizeof(glm::vec4) == sizeof(glm::highp_vec4));
+	Error += GLM_CHECK(16 == sizeof(glm::mediump_vec4));
+	Error += GLM_CHECK(sizeof(glm::dvec4) == sizeof(glm::lowp_dvec4));
+	Error += GLM_CHECK(sizeof(glm::dvec4) == sizeof(glm::mediump_dvec4));
+	Error += GLM_CHECK(sizeof(glm::dvec4) == sizeof(glm::highp_dvec4));
+	Error += GLM_CHECK(32 == sizeof(glm::highp_dvec4));
+	Error += GLM_CHECK(glm::vec4().length() == 4);
+	Error += GLM_CHECK(glm::dvec4().length() == 4);
+	Error += GLM_CHECK(glm::vec4::length() == 4);
+	Error += GLM_CHECK(glm::dvec4::length() == 4);
 
 	return Error;
 }
@@ -479,28 +480,28 @@ static int test_swizzle_partial()
 
 	{
 		glm::vec4 B(A.xy, A.zw);
-		Error += glm::all(glm::equal(A, B, glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(A, B, glm::epsilon<float>())));
 	}
 	{
 		glm::vec4 B(A.xy, 3.0f, 4.0f);
-		Error += glm::all(glm::equal(A, B, glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(A, B, glm::epsilon<float>())));
 	}
 	{
 		glm::vec4 B(1.0f, A.yz, 4.0f);
-		Error += glm::all(glm::equal(A, B, glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(A, B, glm::epsilon<float>())));
 	}
 	{
 		glm::vec4 B(1.0f, 2.0f, A.zw);
-		Error += glm::all(glm::equal(A, B, glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(A, B, glm::epsilon<float>())));
 	}
 
 	{
 		glm::vec4 B(A.xyz, 4.0f);
-		Error += glm::all(glm::equal(A, B, glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(A, B, glm::epsilon<float>())));
 	}
 	{
 		glm::vec4 B(1.0f, A.yzw);
-		Error += glm::all(glm::equal(A, B, glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(A, B, glm::epsilon<float>())));
 	}
 #	endif//GLM_CONFIG_SWIZZLE == GLM_SWIZZLE_OPERATOR || GLM_CONFIG_SWIZZLE == GLM_SWIZZLE_FUNCTION
 
@@ -527,18 +528,18 @@ static int test_swizzle()
 		glm::ivec4 L(A.x, A.yz, A.w);
 		glm::ivec4 M(A.xy, A.z, A.w);
 
-		Error += glm::all(glm::equal(A, B)) ? 0 : 1;
-		Error += glm::all(glm::equal(A, C)) ? 0 : 1;
-		Error += glm::all(glm::equal(A, D)) ? 0 : 1;
-		Error += glm::all(glm::equal(A, E)) ? 0 : 1;
-		Error += glm::all(glm::equal(A, F)) ? 0 : 1;
-		Error += glm::all(glm::equal(A, G)) ? 0 : 1;
-		Error += glm::all(glm::equal(A, H)) ? 0 : 1;
-		Error += glm::all(glm::equal(A, I)) ? 0 : 1;
-		Error += glm::all(glm::equal(A, J)) ? 0 : 1;
-		Error += glm::all(glm::equal(A, K)) ? 0 : 1;
-		Error += glm::all(glm::equal(A, L)) ? 0 : 1;
-		Error += glm::all(glm::equal(A, M)) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(A, B)));
+		Error += GLM_CHECK(glm::all(glm::equal(A, C)));
+		Error += GLM_CHECK(glm::all(glm::equal(A, D)));
+		Error += GLM_CHECK(glm::all(glm::equal(A, E)));
+		Error += GLM_CHECK(glm::all(glm::equal(A, F)));
+		Error += GLM_CHECK(glm::all(glm::equal(A, G)));
+		Error += GLM_CHECK(glm::all(glm::equal(A, H)));
+		Error += GLM_CHECK(glm::all(glm::equal(A, I)));
+		Error += GLM_CHECK(glm::all(glm::equal(A, J)));
+		Error += GLM_CHECK(glm::all(glm::equal(A, K)));
+		Error += GLM_CHECK(glm::all(glm::equal(A, L)));
+		Error += GLM_CHECK(glm::all(glm::equal(A, M)));
 	}
 #	endif//GLM_CONFIG_SWIZZLE == GLM_SWIZZLE_OPERATOR
 
@@ -558,18 +559,18 @@ static int test_swizzle()
 		glm::vec4 L(A.x, A.yz(), A.w);
 		glm::vec4 M(A.xy(), A.z, A.w);
 
-		Error += glm::all(glm::equal(A, B, glm::epsilon<float>())) ? 0 : 1;
-		Error += glm::all(glm::equal(A, C, glm::epsilon<float>())) ? 0 : 1;
-		Error += glm::all(glm::equal(A, D, glm::epsilon<float>())) ? 0 : 1;
-		Error += glm::all(glm::equal(A, E, glm::epsilon<float>())) ? 0 : 1;
-		Error += glm::all(glm::equal(A, F, glm::epsilon<float>())) ? 0 : 1;
-		Error += glm::all(glm::equal(A, G, glm::epsilon<float>())) ? 0 : 1;
-		Error += glm::all(glm::equal(A, H, glm::epsilon<float>())) ? 0 : 1;
-		Error += glm::all(glm::equal(A, I, glm::epsilon<float>())) ? 0 : 1;
-		Error += glm::all(glm::equal(A, J, glm::epsilon<float>())) ? 0 : 1;
-		Error += glm::all(glm::equal(A, K, glm::epsilon<float>())) ? 0 : 1;
-		Error += glm::all(glm::equal(A, L, glm::epsilon<float>())) ? 0 : 1;
-		Error += glm::all(glm::equal(A, M, glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(A, B, glm::epsilon<float>())));
+		Error += GLM_CHECK(glm::all(glm::equal(A, C, glm::epsilon<float>())));
+		Error += GLM_CHECK(glm::all(glm::equal(A, D, glm::epsilon<float>())));
+		Error += GLM_CHECK(glm::all(glm::equal(A, E, glm::epsilon<float>())));
+		Error += GLM_CHECK(glm::all(glm::equal(A, F, glm::epsilon<float>())));
+		Error += GLM_CHECK(glm::all(glm::equal(A, G, glm::epsilon<float>())));
+		Error += GLM_CHECK(glm::all(glm::equal(A, H, glm::epsilon<float>())));
+		Error += GLM_CHECK(glm::all(glm::equal(A, I, glm::epsilon<float>())));
+		Error += GLM_CHECK(glm::all(glm::equal(A, J, glm::epsilon<float>())));
+		Error += GLM_CHECK(glm::all(glm::equal(A, K, glm::epsilon<float>())));
+		Error += GLM_CHECK(glm::all(glm::equal(A, L, glm::epsilon<float>())));
+		Error += GLM_CHECK(glm::all(glm::equal(A, M, glm::epsilon<float>())));
 	}
 #	endif//GLM_CONFIG_SWIZZLE == GLM_SWIZZLE_OPERATOR || GLM_CONFIG_SWIZZLE == GLM_SWIZZLE_FUNCTION
 
@@ -586,9 +587,9 @@ static int test_operator_increment()
 	glm::ivec4 v3 = ++v1;
 	glm::ivec4 v4 = v2++;
 
-	Error += glm::all(glm::equal(v0, v4)) ? 0 : 1;
-	Error += glm::all(glm::equal(v1, v2)) ? 0 : 1;
-	Error += glm::all(glm::equal(v1, v3)) ? 0 : 1;
+	Error += GLM_CHECK(glm::all(glm::equal(v0, v4)));
+	Error += GLM_CHECK(glm::all(glm::equal(v1, v2)));
+	Error += GLM_CHECK(glm::all(glm::equal(v1, v3)));
 
 	int i0(1);
 	int i1(i0);
@@ -596,9 +597,9 @@ static int test_operator_increment()
 	int i3 = ++i1;
 	int i4 = i2++;
 
-	Error += i0 == i4 ? 0 : 1;
-	Error += i1 == i2 ? 0 : 1;
-	Error += i1 == i3 ? 0 : 1;
+	Error += GLM_CHECK(i0 == i4);
+	Error += GLM_CHECK(i1 == i2);
+	Error += GLM_CHECK(i1 == i3);
 
 	return Error;
 }
@@ -709,7 +710,7 @@ static int test_simd()
 	glm::vec4 const c(b * a);
 	glm::vec4 const d(a + c);
 
-	Error += glm::all(glm::greaterThanEqual(d, glm::vec4(0))) ? 0 : 1;
+	Error += GLM_CHECK(glm::all(glm::greaterThanEqual(d, glm::vec4(0))));
 
 	return Error;
 }
@@ -730,11 +731,11 @@ static int test_inheritance()
 
 	my_vec4 v;
 
-	Error += v.member == 82 ? 0 : 1;
-	Error += glm::equal(v.x, 76.f, glm::epsilon<float>()) ? 0 : 1;
-	Error += glm::equal(v.y, 75.f, glm::epsilon<float>()) ? 0 : 1;
-	Error += glm::equal(v.z, 74.f, glm::epsilon<float>()) ? 0 : 1;
-	Error += glm::equal(v.w, 73.f, glm::epsilon<float>()) ? 0 : 1;
+	Error += GLM_CHECK(v.member == 82);
+	Error += GLM_CHECK(glm::equal(v.x, 76.f, glm::epsilon<float>()));
+	Error += GLM_CHECK(glm::equal(v.y, 75.f, glm::epsilon<float>()));
+	Error += GLM_CHECK(glm::equal(v.z, 74.f, glm::epsilon<float>()));
+	Error += GLM_CHECK(glm::equal(v.w, 73.f, glm::epsilon<float>()));
 
 	return Error;
 }
@@ -750,7 +751,7 @@ static int test_simd_gen()
 	glm::ivec4 const A(C);
 	glm::ivec4 const B(D);
 
-	Error += A != B ? 0 : 1;
+	Error += GLM_CHECK(A != B);
 
 	return Error;
 }
@@ -814,21 +815,21 @@ int main()
 	std::size_t const Size(1);
 #	endif//NDEBUG
 
-	Error += test_perf_AoS(Size);
-	Error += test_perf_SoA(Size);
+	Error += GLM_TEST(test_perf_AoS(Size));
+	Error += GLM_TEST(test_perf_SoA(Size));
 
-	Error += test_vec4_ctor();
-	Error += test_bvec4_ctor();
-	Error += test_size();
-	Error += test_operators();
-	Error += test_equal();
-	Error += test_swizzle();
-	Error += test_swizzle_partial();
-	Error += test_simd();
-	Error += test_operator_increment();
-	Error += heap::test();
-	Error += test_inheritance();
+	Error += GLM_TEST(test_vec4_ctor());
+	Error += GLM_TEST(test_bvec4_ctor());
+	Error += GLM_TEST(test_size());
+	Error += GLM_TEST(test_operators());
+	Error += GLM_TEST(test_equal());
+	Error += GLM_TEST(test_swizzle());
+	Error += GLM_TEST(test_swizzle_partial());
+	Error += GLM_TEST(test_simd());
+	Error += GLM_TEST(test_operator_increment());
+	Error += GLM_TEST(heap::test());
+	Error += GLM_TEST(test_inheritance());
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }
 

@@ -1,4 +1,5 @@
 #define GLM_ENABLE_EXPERIMENTAL
+#include "glm_test.hpp"
 #include <glm/exponential.hpp>
 #include <glm/gtc/epsilon.hpp>
 #include <glm/gtx/integer.hpp>
@@ -13,7 +14,7 @@ static int test_floor_log2()
 		glm::uint A = glm::floor_log2(glm::uint(i));
 		glm::uint B = glm::uint(glm::floor(glm::log2(double(i)))); // Will fail with float, lack of accuracy
 
-		Error += A == B ? 0 : 1;
+		Error += GLM_CHECK(A == B);
 		assert(!Error);
 	}
 
@@ -30,7 +31,7 @@ static int test_log2()
 		glm::uint B = glm::uint(glm::log2(double(1 << i)));
 
 		//Error += glm::equalEpsilon(double(A), B, 1.0) ? 0 : 1;
-		Error += glm::abs(double(A) - B) <= 24 ? 0 : 1;
+		Error += GLM_CHECK(glm::abs(double(A) - B) <= 24);
 		assert(!Error);
 
 		std::printf("Log2(%d) error A=%u, B=%u\n", 1 << i, A, B);
@@ -46,7 +47,7 @@ static int test_nlz()
 	int Error = 0;
 
 	for(glm::uint i = 1; i < glm::uint(33); ++i)
-		Error += glm::nlz(i) == 31u - static_cast<glm::uint>(glm::findMSB(i)) ? 0 : 1;
+		Error += GLM_CHECK(glm::nlz(i) == 31u - static_cast<glm::uint>(glm::findMSB(i)));
 		//printf("%d, %d\n", glm::nlz(i), 31u - glm::findMSB(i));
 
 	return Error;
@@ -57,13 +58,13 @@ static int test_pow_uint()
 	int Error = 0;
 
 	glm::uint const p0 = glm::pow(2u, 0u);
-	Error += p0 == 1u ? 0 : 1;
+	Error += GLM_CHECK(p0 == 1u);
 
 	glm::uint const p1 = glm::pow(2u, 1u);
-	Error += p1 == 2u ? 0 : 1;
+	Error += GLM_CHECK(p1 == 2u);
 
 	glm::uint const p2 = glm::pow(2u, 2u);
-	Error += p2 == 4u ? 0 : 1;
+	Error += GLM_CHECK(p2 == 4u);
 
 	return Error;
 }
@@ -73,22 +74,22 @@ static int test_pow_int()
 	int Error = 0;
 
 	int const p0 = glm::pow(2, 0u);
-	Error += p0 == 1 ? 0 : 1;
+	Error += GLM_CHECK(p0 == 1);
 
 	int const p1 = glm::pow(2, 1u);
-	Error += p1 == 2 ? 0 : 1;
+	Error += GLM_CHECK(p1 == 2);
 
 	int const p2 = glm::pow(2, 2u);
-	Error += p2 == 4 ? 0 : 1;
+	Error += GLM_CHECK(p2 == 4);
 
 	int const p0n = glm::pow(-2, 0u);
-	Error += p0n == -1 ? 0 : 1;
+	Error += GLM_CHECK(p0n == -1);
 
 	int const p1n = glm::pow(-2, 1u);
-	Error += p1n == -2 ? 0 : 1;
+	Error += GLM_CHECK(p1n == -2);
 
 	int const p2n = glm::pow(-2, 2u);
-	Error += p2n == 4 ? 0 : 1;
+	Error += GLM_CHECK(p2n == 4);
 
 	return Error;
 }
@@ -97,12 +98,12 @@ int main()
 {
 	int Error = 0;
 
-	Error += test_nlz();
+	Error += GLM_TEST(test_nlz());
 //	Error += test_floor_log2();
-	Error += test_log2();
-	Error += test_pow_uint();
-	Error += test_pow_int();
+	Error += GLM_TEST(test_log2());
+	Error += GLM_TEST(test_pow_uint());
+	Error += GLM_TEST(test_pow_int());
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }
 

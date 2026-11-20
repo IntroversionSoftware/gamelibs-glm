@@ -1,3 +1,4 @@
+#include "glm_test.hpp"
 #include <glm/ext/vector_relational.hpp>
 #include <glm/ext/vector_float1.hpp>
 #include <glm/ext/vector_float1_precision.hpp>
@@ -29,11 +30,11 @@ static int test_equal()
 
 	int Error = 0;
 
-	Error += glm::all(glm::equal(vecType(A), vecType(B), Epsilon1)) ? 0 : 1;
-	Error += glm::all(glm::equal(vecType(A), vecType(B), vecType(Epsilon1))) ? 0 : 1;
+	Error += GLM_CHECK(glm::all(glm::equal(vecType(A), vecType(B), Epsilon1)));
+	Error += GLM_CHECK(glm::all(glm::equal(vecType(A), vecType(B), vecType(Epsilon1))));
 
-	Error += !glm::any(glm::equal(vecType(A), vecType(B), Epsilon2)) ? 0 : 1;
-	Error += !glm::any(glm::equal(vecType(A), vecType(B), vecType(Epsilon2))) ? 0 : 1;
+	Error += GLM_CHECK(!glm::any(glm::equal(vecType(A), vecType(B), Epsilon2)));
+	Error += GLM_CHECK(!glm::any(glm::equal(vecType(A), vecType(B), vecType(Epsilon2))));
 
 	return Error;
 }
@@ -50,11 +51,11 @@ static int test_notEqual()
 
 	int Error = 0;
 
-	Error += glm::all(glm::notEqual(vecType(A), vecType(B), Epsilon2)) ? 0 : 1;
-	Error += glm::all(glm::notEqual(vecType(A), vecType(B), vecType(Epsilon2))) ? 0 : 1;
+	Error += GLM_CHECK(glm::all(glm::notEqual(vecType(A), vecType(B), Epsilon2)));
+	Error += GLM_CHECK(glm::all(glm::notEqual(vecType(A), vecType(B), vecType(Epsilon2))));
 
-	Error += !glm::any(glm::notEqual(vecType(A), vecType(B), Epsilon1)) ? 0 : 1;
-	Error += !glm::any(glm::notEqual(vecType(A), vecType(B), vecType(Epsilon1))) ? 0 : 1;
+	Error += GLM_CHECK(!glm::any(glm::notEqual(vecType(A), vecType(B), Epsilon1)));
+	Error += GLM_CHECK(!glm::any(glm::notEqual(vecType(A), vecType(B), vecType(Epsilon1))));
 
 	return Error;
 }
@@ -70,16 +71,16 @@ static int test_equal_ulps()
 	int Error = 0;
 
 	T const ULP1Plus = glm::nextFloat(One);
-	Error += glm::all(glm::equal(Ones, vec4(ULP1Plus), 1)) ? 0 : 1;
+	Error += GLM_CHECK(glm::all(glm::equal(Ones, vec4(ULP1Plus), 1)));
 
 	T const ULP2Plus = glm::nextFloat(ULP1Plus);
-	Error += !glm::all(glm::equal(Ones, vec4(ULP2Plus), 1)) ? 0 : 1;
+	Error += GLM_CHECK(!glm::all(glm::equal(Ones, vec4(ULP2Plus), 1)));
 
 	T const ULP1Minus = glm::prevFloat(One);
-	Error += glm::all(glm::equal(Ones, vec4(ULP1Minus), 1)) ? 0 : 1;
+	Error += GLM_CHECK(glm::all(glm::equal(Ones, vec4(ULP1Minus), 1)));
 
 	T const ULP2Minus = glm::prevFloat(ULP1Minus);
-	Error += !glm::all(glm::equal(Ones, vec4(ULP2Minus), 1)) ? 0 : 1;
+	Error += GLM_CHECK(!glm::all(glm::equal(Ones, vec4(ULP2Minus), 1)));
 
 	return Error;
 }
@@ -95,16 +96,16 @@ static int test_notEqual_ulps()
 	int Error = 0;
 
 	T const ULP1Plus = glm::nextFloat(One);
-	Error += !glm::all(glm::notEqual(Ones, vec4(ULP1Plus), 1)) ? 0 : 1;
+	Error += GLM_CHECK(!glm::all(glm::notEqual(Ones, vec4(ULP1Plus), 1)));
 
 	T const ULP2Plus = glm::nextFloat(ULP1Plus);
-	Error += glm::all(glm::notEqual(Ones, vec4(ULP2Plus), 1)) ? 0 : 1;
+	Error += GLM_CHECK(glm::all(glm::notEqual(Ones, vec4(ULP2Plus), 1)));
 
 	T const ULP1Minus = glm::prevFloat(One);
-	Error += !glm::all(glm::notEqual(Ones, vec4(ULP1Minus), 1)) ? 0 : 1;
+	Error += GLM_CHECK(!glm::all(glm::notEqual(Ones, vec4(ULP1Minus), 1)));
 
 	T const ULP2Minus = glm::prevFloat(ULP1Minus);
-	Error += glm::all(glm::notEqual(Ones, vec4(ULP2Minus), 1)) ? 0 : 1;
+	Error += GLM_CHECK(glm::all(glm::notEqual(Ones, vec4(ULP2Minus), 1)));
 
 	return Error;
 }
@@ -113,78 +114,78 @@ int main()
 {
 	int Error = 0;
 
-	Error += test_equal_ulps<float>();
-	Error += test_equal_ulps<double>();
-	Error += test_notEqual_ulps<float>();
-	Error += test_notEqual_ulps<double>();
+	Error += GLM_TEST(test_equal_ulps<float>());
+	Error += GLM_TEST(test_equal_ulps<double>());
+	Error += GLM_TEST(test_notEqual_ulps<float>());
+	Error += GLM_TEST(test_notEqual_ulps<double>());
 
-	Error += test_equal<glm::vec1>();
-	Error += test_equal<glm::lowp_vec1>();
-	Error += test_equal<glm::mediump_vec1>();
-	Error += test_equal<glm::highp_vec1>();
-	Error += test_equal<glm::vec2>();
-	Error += test_equal<glm::lowp_vec2>();
-	Error += test_equal<glm::mediump_vec2>();
-	Error += test_equal<glm::highp_vec2>();
-	Error += test_equal<glm::vec3>();
-	Error += test_equal<glm::lowp_vec3>();
-	Error += test_equal<glm::mediump_vec3>();
-	Error += test_equal<glm::highp_vec3>();
-	Error += test_equal<glm::vec4>();
-	Error += test_equal<glm::lowp_vec4>();
-	Error += test_equal<glm::mediump_vec4>();
-	Error += test_equal<glm::highp_vec4>();
+	Error += GLM_TEST(test_equal<glm::vec1>());
+	Error += GLM_TEST(test_equal<glm::lowp_vec1>());
+	Error += GLM_TEST(test_equal<glm::mediump_vec1>());
+	Error += GLM_TEST(test_equal<glm::highp_vec1>());
+	Error += GLM_TEST(test_equal<glm::vec2>());
+	Error += GLM_TEST(test_equal<glm::lowp_vec2>());
+	Error += GLM_TEST(test_equal<glm::mediump_vec2>());
+	Error += GLM_TEST(test_equal<glm::highp_vec2>());
+	Error += GLM_TEST(test_equal<glm::vec3>());
+	Error += GLM_TEST(test_equal<glm::lowp_vec3>());
+	Error += GLM_TEST(test_equal<glm::mediump_vec3>());
+	Error += GLM_TEST(test_equal<glm::highp_vec3>());
+	Error += GLM_TEST(test_equal<glm::vec4>());
+	Error += GLM_TEST(test_equal<glm::lowp_vec4>());
+	Error += GLM_TEST(test_equal<glm::mediump_vec4>());
+	Error += GLM_TEST(test_equal<glm::highp_vec4>());
 
-	Error += test_equal<glm::dvec1>();
-	Error += test_equal<glm::lowp_dvec1>();
-	Error += test_equal<glm::mediump_dvec1>();
-	Error += test_equal<glm::highp_dvec1>();
-	Error += test_equal<glm::dvec2>();
-	Error += test_equal<glm::lowp_dvec2>();
-	Error += test_equal<glm::mediump_dvec2>();
-	Error += test_equal<glm::highp_dvec2>();
-	Error += test_equal<glm::dvec3>();
-	Error += test_equal<glm::lowp_dvec3>();
-	Error += test_equal<glm::mediump_dvec3>();
-	Error += test_equal<glm::highp_dvec3>();
-	Error += test_equal<glm::dvec4>();
-	Error += test_equal<glm::lowp_dvec4>();
-	Error += test_equal<glm::mediump_dvec4>();
-	Error += test_equal<glm::highp_dvec4>();
+	Error += GLM_TEST(test_equal<glm::dvec1>());
+	Error += GLM_TEST(test_equal<glm::lowp_dvec1>());
+	Error += GLM_TEST(test_equal<glm::mediump_dvec1>());
+	Error += GLM_TEST(test_equal<glm::highp_dvec1>());
+	Error += GLM_TEST(test_equal<glm::dvec2>());
+	Error += GLM_TEST(test_equal<glm::lowp_dvec2>());
+	Error += GLM_TEST(test_equal<glm::mediump_dvec2>());
+	Error += GLM_TEST(test_equal<glm::highp_dvec2>());
+	Error += GLM_TEST(test_equal<glm::dvec3>());
+	Error += GLM_TEST(test_equal<glm::lowp_dvec3>());
+	Error += GLM_TEST(test_equal<glm::mediump_dvec3>());
+	Error += GLM_TEST(test_equal<glm::highp_dvec3>());
+	Error += GLM_TEST(test_equal<glm::dvec4>());
+	Error += GLM_TEST(test_equal<glm::lowp_dvec4>());
+	Error += GLM_TEST(test_equal<glm::mediump_dvec4>());
+	Error += GLM_TEST(test_equal<glm::highp_dvec4>());
 
-	Error += test_notEqual<glm::vec1>();
-	Error += test_notEqual<glm::lowp_vec1>();
-	Error += test_notEqual<glm::mediump_vec1>();
-	Error += test_notEqual<glm::highp_vec1>();
-	Error += test_notEqual<glm::vec2>();
-	Error += test_notEqual<glm::lowp_vec2>();
-	Error += test_notEqual<glm::mediump_vec2>();
-	Error += test_notEqual<glm::highp_vec2>();
-	Error += test_notEqual<glm::vec3>();
-	Error += test_notEqual<glm::lowp_vec3>();
-	Error += test_notEqual<glm::mediump_vec3>();
-	Error += test_notEqual<glm::highp_vec3>();
-	Error += test_notEqual<glm::vec4>();
-	Error += test_notEqual<glm::lowp_vec4>();
-	Error += test_notEqual<glm::mediump_vec4>();
-	Error += test_notEqual<glm::highp_vec4>();
+	Error += GLM_TEST(test_notEqual<glm::vec1>());
+	Error += GLM_TEST(test_notEqual<glm::lowp_vec1>());
+	Error += GLM_TEST(test_notEqual<glm::mediump_vec1>());
+	Error += GLM_TEST(test_notEqual<glm::highp_vec1>());
+	Error += GLM_TEST(test_notEqual<glm::vec2>());
+	Error += GLM_TEST(test_notEqual<glm::lowp_vec2>());
+	Error += GLM_TEST(test_notEqual<glm::mediump_vec2>());
+	Error += GLM_TEST(test_notEqual<glm::highp_vec2>());
+	Error += GLM_TEST(test_notEqual<glm::vec3>());
+	Error += GLM_TEST(test_notEqual<glm::lowp_vec3>());
+	Error += GLM_TEST(test_notEqual<glm::mediump_vec3>());
+	Error += GLM_TEST(test_notEqual<glm::highp_vec3>());
+	Error += GLM_TEST(test_notEqual<glm::vec4>());
+	Error += GLM_TEST(test_notEqual<glm::lowp_vec4>());
+	Error += GLM_TEST(test_notEqual<glm::mediump_vec4>());
+	Error += GLM_TEST(test_notEqual<glm::highp_vec4>());
 
-	Error += test_notEqual<glm::dvec1>();
-	Error += test_notEqual<glm::lowp_dvec1>();
-	Error += test_notEqual<glm::mediump_dvec1>();
-	Error += test_notEqual<glm::highp_dvec1>();
-	Error += test_notEqual<glm::dvec2>();
-	Error += test_notEqual<glm::lowp_dvec2>();
-	Error += test_notEqual<glm::mediump_dvec2>();
-	Error += test_notEqual<glm::highp_dvec2>();
-	Error += test_notEqual<glm::dvec3>();
-	Error += test_notEqual<glm::lowp_dvec3>();
-	Error += test_notEqual<glm::mediump_dvec3>();
-	Error += test_notEqual<glm::highp_dvec3>();
-	Error += test_notEqual<glm::dvec4>();
-	Error += test_notEqual<glm::lowp_dvec4>();
-	Error += test_notEqual<glm::mediump_dvec4>();
-	Error += test_notEqual<glm::highp_dvec4>();
+	Error += GLM_TEST(test_notEqual<glm::dvec1>());
+	Error += GLM_TEST(test_notEqual<glm::lowp_dvec1>());
+	Error += GLM_TEST(test_notEqual<glm::mediump_dvec1>());
+	Error += GLM_TEST(test_notEqual<glm::highp_dvec1>());
+	Error += GLM_TEST(test_notEqual<glm::dvec2>());
+	Error += GLM_TEST(test_notEqual<glm::lowp_dvec2>());
+	Error += GLM_TEST(test_notEqual<glm::mediump_dvec2>());
+	Error += GLM_TEST(test_notEqual<glm::highp_dvec2>());
+	Error += GLM_TEST(test_notEqual<glm::dvec3>());
+	Error += GLM_TEST(test_notEqual<glm::lowp_dvec3>());
+	Error += GLM_TEST(test_notEqual<glm::mediump_dvec3>());
+	Error += GLM_TEST(test_notEqual<glm::highp_dvec3>());
+	Error += GLM_TEST(test_notEqual<glm::dvec4>());
+	Error += GLM_TEST(test_notEqual<glm::lowp_dvec4>());
+	Error += GLM_TEST(test_notEqual<glm::mediump_dvec4>());
+	Error += GLM_TEST(test_notEqual<glm::highp_dvec4>());
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }

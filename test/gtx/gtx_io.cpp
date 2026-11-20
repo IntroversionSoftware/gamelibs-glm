@@ -1,3 +1,4 @@
+#include "glm_test.hpp"
 #include <glm/glm.hpp>
 #if GLM_LANG & GLM_LANG_CXXMS_FLAG
 #include <glm/gtc/type_precision.hpp>
@@ -157,26 +158,26 @@ int main()
 {
 	int Error(0);
 
-	Error += test_io_quat<float, glm::highp>(std::cout);
-	Error += test_io_quat<float, glm::highp>(std::wcout);
-	Error += test_io_quat<int, glm::mediump>(std::cout);
-	Error += test_io_quat<int, glm::mediump>(std::wcout);
-	Error += test_io_quat<glm::uint, glm::lowp>(std::cout);
-	Error += test_io_quat<glm::uint, glm::lowp>(std::wcout);
+	Error += GLM_TEST(test_io_quat<float, glm::highp>(std::cout));
+	Error += GLM_TEST(test_io_quat<float, glm::highp>(std::wcout));
+	Error += GLM_TEST(test_io_quat<int, glm::mediump>(std::cout));
+	Error += GLM_TEST(test_io_quat<int, glm::mediump>(std::wcout));
+	Error += GLM_TEST(test_io_quat<glm::uint, glm::lowp>(std::cout));
+	Error += GLM_TEST(test_io_quat<glm::uint, glm::lowp>(std::wcout));
 
-	Error += test_io_vec<float, glm::highp>(std::cout);
-	Error += test_io_vec<float, glm::highp>(std::wcout);
-	Error += test_io_vec<int, glm::mediump>(std::cout);
-	Error += test_io_vec<int, glm::mediump>(std::wcout);
-	Error += test_io_vec<glm::uint, glm::lowp>(std::cout);
-	Error += test_io_vec<glm::uint, glm::lowp>(std::wcout);
+	Error += GLM_TEST(test_io_vec<float, glm::highp>(std::cout));
+	Error += GLM_TEST(test_io_vec<float, glm::highp>(std::wcout));
+	Error += GLM_TEST(test_io_vec<int, glm::mediump>(std::cout));
+	Error += GLM_TEST(test_io_vec<int, glm::mediump>(std::wcout));
+	Error += GLM_TEST(test_io_vec<glm::uint, glm::lowp>(std::cout));
+	Error += GLM_TEST(test_io_vec<glm::uint, glm::lowp>(std::wcout));
 
-	Error += test_io_mat<float, glm::highp>(std::cout, glm::io::column_major);
-	Error += test_io_mat<float, glm::lowp>(std::wcout, glm::io::column_major);
-	Error += test_io_mat<float, glm::highp>(std::cout, glm::io::row_major);
-        Error += test_io_mat<float, glm::lowp>(std::wcout, glm::io::row_major);
+	Error += GLM_TEST(test_io_mat<float, glm::highp>(std::cout, glm::io::column_major));
+	Error += GLM_TEST(test_io_mat<float, glm::lowp>(std::wcout, glm::io::column_major));
+	Error += GLM_TEST(test_io_mat<float, glm::highp>(std::cout, glm::io::row_major));
+        Error += GLM_TEST(test_io_mat<float, glm::lowp>(std::wcout, glm::io::row_major));
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }
 #else
 

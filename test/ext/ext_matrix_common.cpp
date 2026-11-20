@@ -1,3 +1,4 @@
+#include "glm_test.hpp"
 #include <glm/ext/matrix_common.hpp>
 #include <glm/ext/matrix_double4x4.hpp>
 #include <glm/ext/matrix_float4x4.hpp>
@@ -14,7 +15,7 @@ static int test_mix()
 		glm::mat4 B(4);
 		glm::mat4 C = glm::mix(A, B, 0.5f);
 		glm::bvec4 const D = glm::equal(C, glm::mat4(3), 1);
-		Error += glm::all(D) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(D));
 	}
 
 	{
@@ -22,7 +23,7 @@ static int test_mix()
 		glm::mat4 B(4);
 		glm::mat4 C = glm::mix(A, B, 0.5);
 		glm::bvec4 const D = glm::equal(C, glm::mat4(3), 1);
-		Error += glm::all(D) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(D));
 	}
 
 	{
@@ -30,7 +31,7 @@ static int test_mix()
 		glm::dmat4 B(4);
 		glm::dmat4 C = glm::mix(A, B, 0.5);
 		glm::bvec4 const D = glm::equal(C, glm::dmat4(3), 1);
-		Error += glm::all(D) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(D));
 	}
 
 	{
@@ -38,7 +39,7 @@ static int test_mix()
 		glm::dmat4 B(4);
 		glm::dmat4 C = glm::mix(A, B, 0.5f);
 		glm::bvec4 const D = glm::equal(C, glm::dmat4(3), 1);
-		Error += glm::all(D) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(D));
 	}
 
 	return Error;
@@ -70,7 +71,7 @@ static int test_abs()
 		glm::bvec4 const col2 = glm::equal(D[1], A[1], 0.001f);
 		glm::bvec4 const col3 = glm::equal(D[2], A[2], 0.001f);
 		glm::bvec4 const col4 = glm::equal(D[3], A[3], 0.001f);
-		Error += glm::all(glm::bvec4(glm::all(col1), glm::all(col2), glm::all(col3), glm::all(col4))) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::bvec4(glm::all(col1), glm::all(col2), glm::all(col3), glm::all(col4))));
 	}
 	{
 		glm::mat4x3 A(
@@ -91,7 +92,7 @@ static int test_abs()
 		glm::bvec3 const col2 = glm::equal(D[1], A[1], 0.001f);
 		glm::bvec3 const col3 = glm::equal(D[2], A[2], 0.001f);
 		glm::bvec3 const col4 = glm::equal(D[3], A[3], 0.001f);
-		Error += glm::all(glm::bvec4(glm::all(col1), glm::all(col2), glm::all(col3), glm::all(col4))) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::bvec4(glm::all(col1), glm::all(col2), glm::all(col3), glm::all(col4))));
 	}
 	{
 		glm::mat4x2 A(
@@ -112,7 +113,7 @@ static int test_abs()
 		glm::bvec2 const col2 = glm::equal(D[1], A[1], 0.001f);
 		glm::bvec2 const col3 = glm::equal(D[2], A[2], 0.001f);
 		glm::bvec2 const col4 = glm::equal(D[3], A[3], 0.001f);
-		Error += glm::all(glm::bvec4(glm::all(col1), glm::all(col2), glm::all(col3), glm::all(col4))) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::bvec4(glm::all(col1), glm::all(col2), glm::all(col3), glm::all(col4))));
 	}
 
 	// -------------------- //
@@ -134,7 +135,7 @@ static int test_abs()
 		glm::bvec4 const col1 = glm::equal(D[0], A[0], 0.001f);
 		glm::bvec4 const col2 = glm::equal(D[1], A[1], 0.001f);
 		glm::bvec4 const col3 = glm::equal(D[2], A[2], 0.001f);
-		Error += glm::all(glm::bvec3(glm::all(col1), glm::all(col2), glm::all(col3))) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::bvec3(glm::all(col1), glm::all(col2), glm::all(col3))));
 	}
 	{
 		glm::mat3 A(
@@ -152,7 +153,7 @@ static int test_abs()
 		glm::bvec3 const col1 = glm::equal(D[0], A[0], 0.001f);
 		glm::bvec3 const col2 = glm::equal(D[1], A[1], 0.001f);
 		glm::bvec3 const col3 = glm::equal(D[2], A[2], 0.001f);
-		Error += glm::all(glm::bvec3(glm::all(col1), glm::all(col2), glm::all(col3))) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::bvec3(glm::all(col1), glm::all(col2), glm::all(col3))));
 	}
 	{
 		glm::mat3x2 A(
@@ -170,7 +171,7 @@ static int test_abs()
 		glm::bvec2 const col1 = glm::equal(D[0], A[0], 0.001f);
 		glm::bvec2 const col2 = glm::equal(D[1], A[1], 0.001f);
 		glm::bvec2 const col3 = glm::equal(D[2], A[2], 0.001f);
-		Error += glm::all(glm::bvec3(glm::all(col1), glm::all(col2), glm::all(col3))) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::bvec3(glm::all(col1), glm::all(col2), glm::all(col3))));
 	}
 
 	// -------------------- //
@@ -189,7 +190,7 @@ static int test_abs()
 		glm::mat2x4 D = glm::abs(C);
 		glm::bvec4 const col1 = glm::equal(D[0], A[0], 0.001f);
 		glm::bvec4 const col2 = glm::equal(D[1], A[1], 0.001f);
-		Error += glm::all(glm::bvec2(glm::all(col1), glm::all(col2))) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::bvec2(glm::all(col1), glm::all(col2))));
 	}
 	{
 		glm::mat2x3 A(
@@ -204,7 +205,7 @@ static int test_abs()
 		glm::mat2x3 D = glm::abs(C);
 		glm::bvec3 const col1 = glm::equal(D[0], A[0], 0.001f);
 		glm::bvec3 const col2 = glm::equal(D[1], A[1], 0.001f);
-		Error += glm::all(glm::bvec2(glm::all(col1), glm::all(col2))) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::bvec2(glm::all(col1), glm::all(col2))));
 	}
 	{
 		glm::mat2 A(
@@ -219,7 +220,7 @@ static int test_abs()
 		glm::mat2 D = glm::abs(C);
 		glm::bvec2 const col1 = glm::equal(D[0], A[0], 0.001f);
 		glm::bvec2 const col2 = glm::equal(D[1], A[1], 0.001f);
-		Error += glm::all(glm::bvec2(glm::all(col1), glm::all(col2))) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::bvec2(glm::all(col1), glm::all(col2))));
 	}
 
 	return Error;
@@ -229,8 +230,8 @@ int main()
 {
 	int Error = 0;
 
-	Error += test_mix();
-	Error += test_abs();
+	Error += GLM_TEST(test_mix());
+	Error += GLM_TEST(test_abs());
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }

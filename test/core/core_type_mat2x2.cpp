@@ -1,3 +1,4 @@
+#include "glm_test.hpp"
 #include <glm/ext/matrix_relational.hpp>
 #include <glm/ext/vector_relational.hpp>
 #include <glm/ext/scalar_relational.hpp>
@@ -26,26 +27,26 @@ static int test_operators()
 	float x = 1.0f;
 
 	glm::vec2 a = m * u;
-	Error += glm::all(glm::equal(a, glm::vec2(1.0f), glm::epsilon<float>())) ? 0 : 1;
+	Error += GLM_CHECK(glm::all(glm::equal(a, glm::vec2(1.0f), glm::epsilon<float>())));
 
 	glm::vec2 b = v * m;
-	Error += glm::all(glm::equal(b, glm::vec2(1.0f), glm::epsilon<float>())) ? 0 : 1;
+	Error += GLM_CHECK(glm::all(glm::equal(b, glm::vec2(1.0f), glm::epsilon<float>())));
 
 	glm::mat2x2 n0(1.0f, 1.0f, 1.0f, 1.0f);
 	glm::mat2x2 n = x / n0;
-	Error += glm::all(glm::equal(n, n0, glm::epsilon<float>())) ? 0 : 1;
+	Error += GLM_CHECK(glm::all(glm::equal(n, n0, glm::epsilon<float>())));
 
 	glm::mat2x2 o = m / x;
-	Error += glm::all(glm::equal(o, m, glm::epsilon<float>())) ? 0 : 1;
+	Error += GLM_CHECK(glm::all(glm::equal(o, m, glm::epsilon<float>())));
 
 	glm::mat2x2 p = x * m;
-	Error += glm::all(glm::equal(p, m, glm::epsilon<float>())) ? 0 : 1;
+	Error += GLM_CHECK(glm::all(glm::equal(p, m, glm::epsilon<float>())));
 
 	glm::mat2x2 q = m * x;
 	bool R = glm::any(glm::notEqual(m, q, glm::epsilon<float>()));
 	bool S = glm::all(glm::equal(m, l, glm::epsilon<float>()));
 
-	Error += (S && !R) ? 0 : 1;
+	Error += GLM_CHECK((S && !R));
 
 	return Error;
 }
@@ -59,16 +60,16 @@ static int test_inverse()
 		glm::mat2 const Inverse = glm::inverse(Matrix);
 		glm::mat2 const Identity = Matrix * Inverse;
 
-		Error += glm::all(glm::equal(Identity[0], glm::vec2(1.0f, 0.0f), glm::vec2(0.01f))) ? 0 : 1;
-		Error += glm::all(glm::equal(Identity[1], glm::vec2(0.0f, 1.0f), glm::vec2(0.01f))) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(Identity[0], glm::vec2(1.0f, 0.0f), glm::vec2(0.01f))));
+		Error += GLM_CHECK(glm::all(glm::equal(Identity[1], glm::vec2(0.0f, 1.0f), glm::vec2(0.01f))));
 	}
 
 	{
 		glm::mat2 const Matrix(1, 2, 3, 4);
 		glm::mat2 const Identity = Matrix / Matrix;
 
-		Error += glm::all(glm::equal(Identity[0], glm::vec2(1.0f, 0.0f), glm::vec2(0.01f))) ? 0 : 1;
-		Error += glm::all(glm::equal(Identity[1], glm::vec2(0.0f, 1.0f), glm::vec2(0.01f))) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(Identity[0], glm::vec2(1.0f, 0.0f), glm::vec2(0.01f))));
+		Error += GLM_CHECK(glm::all(glm::equal(Identity[1], glm::vec2(0.0f, 1.0f), glm::vec2(0.01f))));
 	}
 
 	return Error;
@@ -83,7 +84,7 @@ static int test_ctr()
 		glm::highp_mat2x2 const B(A);
 		glm::mediump_mat2x2 const C(B);
 
-		Error += glm::all(glm::equal(A, C, glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(A, C, glm::epsilon<float>())));
 	}
 
 	glm::mat2x2 m0(
@@ -96,8 +97,8 @@ static int test_ctr()
 		{0, 1},
 		{2, 3}};
 
-	Error += glm::all(glm::equal(m0, m2, glm::epsilon<float>())) ? 0 : 1;
-	Error += glm::all(glm::equal(m1, m2, glm::epsilon<float>())) ? 0 : 1;
+	Error += GLM_CHECK(glm::all(glm::equal(m0, m2, glm::epsilon<float>())));
+	Error += GLM_CHECK(glm::all(glm::equal(m1, m2, glm::epsilon<float>())));
 
 	std::vector<glm::mat2x2> v1{
 		{0, 1, 2, 3},
@@ -129,7 +130,7 @@ namespace cast
 		glm::mat2 B(A);
 		glm::mat2 Identity(1.0f);
 
-		Error += glm::all(glm::equal(B, Identity, glm::epsilon<float>())) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(B, Identity, glm::epsilon<float>())));
 
 		return Error;
 	}
@@ -156,12 +157,12 @@ static int test_size()
 {
 	int Error = 0;
 
-	Error += 16 == sizeof(glm::mat2x2) ? 0 : 1;
-	Error += 32 == sizeof(glm::dmat2x2) ? 0 : 1;
-	Error += glm::mat2x2().length() == 2 ? 0 : 1;
-	Error += glm::dmat2x2().length() == 2 ? 0 : 1;
-	Error += glm::mat2x2::length() == 2 ? 0 : 1;
-	Error += glm::dmat2x2::length() == 2 ? 0 : 1;
+	Error += GLM_CHECK(16 == sizeof(glm::mat2x2));
+	Error += GLM_CHECK(32 == sizeof(glm::dmat2x2));
+	Error += GLM_CHECK(glm::mat2x2().length() == 2);
+	Error += GLM_CHECK(glm::dmat2x2().length() == 2);
+	Error += GLM_CHECK(glm::mat2x2::length() == 2);
+	Error += GLM_CHECK(glm::dmat2x2::length() == 2);
 
 	return Error;
 }
@@ -170,11 +171,11 @@ int main()
 {
 	int Error = 0;
 
-	Error += cast::test();
-	Error += test_ctr();
-	Error += test_operators();
-	Error += test_inverse();
-	Error += test_size();
+	Error += GLM_TEST(cast::test());
+	Error += GLM_TEST(test_ctr());
+	Error += GLM_TEST(test_operators());
+	Error += GLM_TEST(test_inverse());
+	Error += GLM_TEST(test_size());
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }

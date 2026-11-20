@@ -1,3 +1,4 @@
+#include "glm_test.hpp"
 #if __cplusplus >= 201103L
 
 #include <glm/detail/setup.hpp>
@@ -59,9 +60,9 @@ int main()
 {
     int Error = 0;
 
-    Error += test_compile();
+    Error += GLM_TEST(test_compile());
 
-    return Error;
+    return GLM_TEST_FINISH(Error);
 }
 
 #if GLM_COMPILER & GLM_COMPILER_CLANG

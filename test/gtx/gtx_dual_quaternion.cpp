@@ -1,5 +1,6 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #define GLM_FORCE_CTOR_INIT
+#include "glm_test.hpp"
 #include <glm/gtx/dual_quaternion.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/epsilon.hpp>
@@ -44,9 +45,9 @@ static int test_scalars()
 		glm::dualquat dst3 = src1;
 		dst3 *= 2.0f;
 		glm::dualquat dstCmp(src_q1 * 2.0f,src_q2 * 2.0f);
-		Error += glm::all(glm::epsilonEqual(dst1.real,dstCmp.real, Epsilon)) && glm::all(glm::epsilonEqual(dst1.dual,dstCmp.dual, Epsilon)) ? 0 : 1;
-		Error += glm::all(glm::epsilonEqual(dst2.real,dstCmp.real, Epsilon)) && glm::all(glm::epsilonEqual(dst2.dual,dstCmp.dual, Epsilon)) ? 0 : 1;
-		Error += glm::all(glm::epsilonEqual(dst3.real,dstCmp.real, Epsilon)) && glm::all(glm::epsilonEqual(dst3.dual,dstCmp.dual, Epsilon)) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(dst1.real,dstCmp.real, Epsilon)) && glm::all(glm::epsilonEqual(dst1.dual,dstCmp.dual, Epsilon)));
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(dst2.real,dstCmp.real, Epsilon)) && glm::all(glm::epsilonEqual(dst2.dual,dstCmp.dual, Epsilon)));
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(dst3.real,dstCmp.real, Epsilon)) && glm::all(glm::epsilonEqual(dst3.dual,dstCmp.dual, Epsilon)));
 	}
 
 	{
@@ -54,8 +55,8 @@ static int test_scalars()
 		glm::dualquat dst2 = src1;
 		dst2 /= 2.0f;
 		glm::dualquat dstCmp(src_q1 / 2.0f,src_q2 / 2.0f);
-		Error += glm::all(glm::epsilonEqual(dst1.real,dstCmp.real, Epsilon)) && glm::all(glm::epsilonEqual(dst1.dual,dstCmp.dual, Epsilon)) ? 0 : 1;
-		Error += glm::all(glm::epsilonEqual(dst2.real,dstCmp.real, Epsilon)) && glm::all(glm::epsilonEqual(dst2.dual,dstCmp.dual, Epsilon)) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(dst1.real,dstCmp.real, Epsilon)) && glm::all(glm::epsilonEqual(dst1.dual,dstCmp.dual, Epsilon)));
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(dst2.real,dstCmp.real, Epsilon)) && glm::all(glm::epsilonEqual(dst2.dual,dstCmp.dual, Epsilon)));
 	}
 	return Error;
 }
@@ -85,8 +86,8 @@ static int test_inverse()
 		glm::dualquat r1 = invdq * dq;
 		glm::dualquat r2 = dq * invdq;
 
-		Error += glm::all(glm::epsilonEqual(r1.real, dqid.real, Epsilon)) && glm::all(glm::epsilonEqual(r1.dual, dqid.dual, Epsilon)) ? 0 : 1;
-		Error += glm::all(glm::epsilonEqual(r2.real, dqid.real, Epsilon)) && glm::all(glm::epsilonEqual(r2.dual, dqid.dual, Epsilon)) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(r1.real, dqid.real, Epsilon)) && glm::all(glm::epsilonEqual(r1.dual, dqid.dual, Epsilon)));
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(r2.real, dqid.real, Epsilon)) && glm::all(glm::epsilonEqual(r2.dual, dqid.dual, Epsilon)));
 
 		// testing commutative property
 		glm::dualquat r (   glm::quat( myfrand() * glm::pi<float>() * 2.0f, myfrand(), myfrand(), myfrand() ),
@@ -94,7 +95,7 @@ static int test_inverse()
 		glm::dualquat riq = (r * invdq) * dq;
 		glm::dualquat rqi = (r * dq) * invdq;
 
-		Error += glm::all(glm::epsilonEqual(riq.real, rqi.real, Epsilon)) && glm::all(glm::epsilonEqual(riq.dual, rqi.dual, Epsilon)) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::epsilonEqual(riq.real, rqi.real, Epsilon)) && glm::all(glm::epsilonEqual(riq.dual, rqi.dual, Epsilon)));
 	}
 
 	return Error;
@@ -145,10 +146,10 @@ static int test_mul()
 			glm::vec4 dst_pt_m4_i  = glm::inverse(m4) * src_pt;
 			glm::vec4 dst_pt_dq4_i = src_pt * dq4;
 
-			Error += glm::all(glm::epsilonEqual(dst_pt_m3, dst_pt_dq3, Epsilon)) ? 0 : 1;
-			Error += glm::all(glm::epsilonEqual(dst_pt_m4, dst_pt_dq4, Epsilon)) ? 0 : 1;
-			Error += glm::all(glm::epsilonEqual(dst_pt_m3_i, dst_pt_dq3_i, Epsilon)) ? 0 : 1;
-			Error += glm::all(glm::epsilonEqual(dst_pt_m4_i, dst_pt_dq4_i, Epsilon)) ? 0 : 1;
+			Error += GLM_CHECK(glm::all(glm::epsilonEqual(dst_pt_m3, dst_pt_dq3, Epsilon)));
+			Error += GLM_CHECK(glm::all(glm::epsilonEqual(dst_pt_m4, dst_pt_dq4, Epsilon)));
+			Error += GLM_CHECK(glm::all(glm::epsilonEqual(dst_pt_m3_i, dst_pt_dq3_i, Epsilon)));
+			Error += GLM_CHECK(glm::all(glm::epsilonEqual(dst_pt_m4_i, dst_pt_dq4_i, Epsilon)));
 		}
 	}
 
@@ -164,11 +165,11 @@ static int test_dual_quat_ctr()
 	//	Error += std::is_trivially_default_constructible<glm::ddualquat>::value ? 0 : 1;
 	//	Error += std::is_trivially_copy_assignable<glm::dualquat>::value ? 0 : 1;
 	//	Error += std::is_trivially_copy_assignable<glm::ddualquat>::value ? 0 : 1;
-		Error += std::is_trivially_copyable<glm::dualquat>::value ? 0 : 1;
-		Error += std::is_trivially_copyable<glm::ddualquat>::value ? 0 : 1;
+		Error += GLM_CHECK(std::is_trivially_copyable<glm::dualquat>::value);
+		Error += GLM_CHECK(std::is_trivially_copyable<glm::ddualquat>::value);
 
-		Error += std::is_copy_constructible<glm::dualquat>::value ? 0 : 1;
-		Error += std::is_copy_constructible<glm::ddualquat>::value ? 0 : 1;
+		Error += GLM_CHECK(std::is_copy_constructible<glm::dualquat>::value);
+		Error += GLM_CHECK(std::is_copy_constructible<glm::ddualquat>::value);
 	}
 	
 	return Error;
@@ -178,12 +179,12 @@ static int test_size()
 {
 	int Error = 0;
 
-	Error += 32 == sizeof(glm::dualquat) ? 0 : 1;
-	Error += 64 == sizeof(glm::ddualquat) ? 0 : 1;
-	Error += glm::dualquat().length() == 2 ? 0 : 1;
-	Error += glm::ddualquat().length() == 2 ? 0 : 1;
-	Error += glm::dualquat::length() == 2 ? 0 : 1;
-	Error += glm::ddualquat::length() == 2 ? 0 : 1;
+	Error += GLM_CHECK(32 == sizeof(glm::dualquat));
+	Error += GLM_CHECK(64 == sizeof(glm::ddualquat));
+	Error += GLM_CHECK(glm::dualquat().length() == 2);
+	Error += GLM_CHECK(glm::ddualquat().length() == 2);
+	Error += GLM_CHECK(glm::dualquat::length() == 2);
+	Error += GLM_CHECK(glm::ddualquat::length() == 2);
 
 	return Error;
 }
@@ -192,12 +193,12 @@ int main()
 {
 	int Error = 0;
 
-	Error += test_dual_quat_ctr();
-	Error += test_dquat_type();
-	Error += test_scalars();
-	Error += test_inverse();
-	Error += test_mul();
-	Error += test_size();
+	Error += GLM_TEST(test_dual_quat_ctr());
+	Error += GLM_TEST(test_dquat_type());
+	Error += GLM_TEST(test_scalars());
+	Error += GLM_TEST(test_inverse());
+	Error += GLM_TEST(test_mul());
+	Error += GLM_TEST(test_size());
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }

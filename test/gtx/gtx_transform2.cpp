@@ -1,3 +1,4 @@
+#include "glm_test.hpp"
 #include <glm/glm.hpp>
 #include <glm/gtc/epsilon.hpp>
 
@@ -128,8 +129,8 @@ int main()
 {
 	int Error = 0;
 
-	Error += test_reflect2D();
-	Error += test_reflect3D();
+	Error += GLM_TEST(test_reflect2D());
+	Error += GLM_TEST(test_reflect3D());
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }

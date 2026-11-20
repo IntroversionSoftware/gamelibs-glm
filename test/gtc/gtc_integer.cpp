@@ -1,5 +1,6 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #define GLM_FORCE_INLINE
+#include "glm_test.hpp"
 #include <glm/gtc/epsilon.hpp>
 #include <glm/gtc/integer.hpp>
 #include <glm/gtc/type_precision.hpp>
@@ -32,11 +33,11 @@ namespace log2_
 		glm::ivec3 D1 = glm::log2(glm::ivec3(16));
 		glm::ivec4 E1 = glm::log2(glm::ivec4(16));
 
-		Error += A0 == A1 ? 0 : 1;
-		Error += glm::all(glm::equal(B0, B1)) ? 0 : 1;
-		Error += glm::all(glm::equal(C0, C1)) ? 0 : 1;
-		Error += glm::all(glm::equal(D0, D1)) ? 0 : 1;
-		Error += glm::all(glm::equal(E0, E1)) ? 0 : 1;
+		Error += GLM_CHECK(A0 == A1);
+		Error += GLM_CHECK(glm::all(glm::equal(B0, B1)));
+		Error += GLM_CHECK(glm::all(glm::equal(C0, C1)));
+		Error += GLM_CHECK(glm::all(glm::equal(D0, D1)));
+		Error += GLM_CHECK(glm::all(glm::equal(E0, E1)));
 
 		glm::uint64 A2 = glm::log2(glm::uint64(16));
 		glm::u64vec1 B2 = glm::log2(glm::u64vec1(16));
@@ -44,11 +45,11 @@ namespace log2_
 		glm::u64vec3 D2 = glm::log2(glm::u64vec3(16));
 		glm::u64vec4 E2 = glm::log2(glm::u64vec4(16));
 
-		Error += A2 == glm::uint64(4) ? 0 : 1;
-		Error += glm::all(glm::equal(B2, glm::u64vec1(4))) ? 0 : 1;
-		Error += glm::all(glm::equal(C2, glm::u64vec2(4))) ? 0 : 1;
-		Error += glm::all(glm::equal(D2, glm::u64vec3(4))) ? 0 : 1;
-		Error += glm::all(glm::equal(E2, glm::u64vec4(4))) ? 0 : 1;
+		Error += GLM_CHECK(A2 == glm::uint64(4));
+		Error += GLM_CHECK(glm::all(glm::equal(B2, glm::u64vec1(4))));
+		Error += GLM_CHECK(glm::all(glm::equal(C2, glm::u64vec2(4))));
+		Error += GLM_CHECK(glm::all(glm::equal(D2, glm::u64vec3(4))));
+		Error += GLM_CHECK(glm::all(glm::equal(E2, glm::u64vec4(4))));
 
 		return Error;
 	}
@@ -240,7 +241,7 @@ namespace iround
 		{
 			int RoundFast = static_cast<int>(glm::iround(f));
 			int RoundSTD = static_cast<int>(glm::round(f));
-			Error += RoundFast == RoundSTD ? 0 : 1;
+			Error += GLM_CHECK(RoundFast == RoundSTD);
 			assert(!Error);
 		}
 
@@ -258,7 +259,7 @@ namespace uround
 		{
 			int RoundFast = static_cast<int>(glm::uround(f));
 			int RoundSTD = static_cast<int>(glm::round(f));
-			Error += RoundFast == RoundSTD ? 0 : 1;
+			Error += GLM_CHECK(RoundFast == RoundSTD);
 			assert(!Error);
 		}
 
@@ -270,12 +271,12 @@ int main()
 {
 	int Error(0);
 
-	Error += ::log2_::test();
-	Error += ::iround::test();
-	Error += ::uround::test();
+	Error += GLM_TEST(::log2_::test());
+	Error += GLM_TEST(::iround::test());
+	Error += GLM_TEST(::uround::test());
 
 	std::size_t const Samples(1000);
-	Error += ::log2_::perf(Samples);
+	Error += GLM_TEST(::log2_::perf(Samples));
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }

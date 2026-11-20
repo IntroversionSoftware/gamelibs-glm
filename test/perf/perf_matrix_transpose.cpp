@@ -1,4 +1,5 @@
 #define GLM_FORCE_INLINE
+#include "glm_test.hpp"
 #include <glm/matrix.hpp>
 #include <glm/ext/matrix_float4x4.hpp>
 #include <glm/ext/matrix_double4x4.hpp>
@@ -54,7 +55,7 @@ static int comp_mat2_transpose(std::size_t Samples)
 	{
 		packedMatType const A = SISD[i];
 		packedMatType const B = SIMD[i];
-		Error += glm::all(glm::equal(A, B, static_cast<T>(0.001))) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(A, B, static_cast<T>(0.001))));
 		assert(!Error);
 	}
 
@@ -80,7 +81,7 @@ static int comp_mat3_transpose(std::size_t Samples)
 	{
 		packedMatType const A = SISD[i];
 		packedMatType const B = SIMD[i];
-		Error += glm::all(glm::equal(A, B, static_cast<T>(0.001))) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(A, B, static_cast<T>(0.001))));
 		assert(!Error);
 	}
 
@@ -106,7 +107,7 @@ static int comp_mat4_transpose(std::size_t Samples)
 	{
 		packedMatType const A = SISD[i];
 		packedMatType const B = SIMD[i];
-		Error += glm::all(glm::equal(A, B, static_cast<T>(0.001))) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(A, B, static_cast<T>(0.001))));
 		assert(!Error);
 	}
 
@@ -120,24 +121,24 @@ int main()
 	int Error = 0;
 
 	std::printf("glm::transpose(mat2):\n");
-	Error += comp_mat2_transpose<glm::mat2, glm::aligned_mat2>(Samples);
+	Error += GLM_TEST(comp_mat2_transpose<glm::mat2, glm::aligned_mat2>(Samples));
 
 	std::printf("glm::transpose(dmat2):\n");
-	Error += comp_mat2_transpose<glm::dmat2, glm::aligned_dmat2>(Samples);
+	Error += GLM_TEST(comp_mat2_transpose<glm::dmat2, glm::aligned_dmat2>(Samples));
 
 	std::printf("glm::transpose(mat3):\n");
-	Error += comp_mat3_transpose<glm::mat3, glm::aligned_mat3>(Samples);
+	Error += GLM_TEST(comp_mat3_transpose<glm::mat3, glm::aligned_mat3>(Samples));
 
 	std::printf("glm::transpose(dmat3):\n");
-	Error += comp_mat3_transpose<glm::dmat3, glm::aligned_dmat3>(Samples);
+	Error += GLM_TEST(comp_mat3_transpose<glm::dmat3, glm::aligned_dmat3>(Samples));
 
 	std::printf("glm::transpose(mat4):\n");
-	Error += comp_mat4_transpose<glm::mat4, glm::aligned_mat4>(Samples);
+	Error += GLM_TEST(comp_mat4_transpose<glm::mat4, glm::aligned_mat4>(Samples));
 
 	std::printf("glm::transpose(dmat4):\n");
-	Error += comp_mat4_transpose<glm::dmat4, glm::aligned_dmat4>(Samples);
+	Error += GLM_TEST(comp_mat4_transpose<glm::dmat4, glm::aligned_dmat4>(Samples));
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }
 
 #else

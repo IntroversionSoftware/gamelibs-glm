@@ -1,3 +1,4 @@
+#include "glm_test.hpp"
 #include <glm/gtc/epsilon.hpp>
 #include <glm/gtc/constants.hpp>
 #include <glm/gtc/quaternion.hpp>
@@ -7,23 +8,23 @@ static int test_defined()
 {
 	int Error = 0;
 
-	Error += glm::all(glm::epsilonEqual(glm::vec2(0.0f), glm::vec2(0.0f), glm::vec2(glm::epsilon<float>()))) ? 0 : 1;
-	Error += glm::all(glm::epsilonEqual(glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(glm::epsilon<float>()))) ? 0 : 1;
-	Error += glm::all(glm::epsilonEqual(glm::vec4(0.0f), glm::vec4(0.0f), glm::vec4(glm::epsilon<float>()))) ? 0 : 1;
+	Error += GLM_CHECK(glm::all(glm::epsilonEqual(glm::vec2(0.0f), glm::vec2(0.0f), glm::vec2(glm::epsilon<float>()))));
+	Error += GLM_CHECK(glm::all(glm::epsilonEqual(glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(glm::epsilon<float>()))));
+	Error += GLM_CHECK(glm::all(glm::epsilonEqual(glm::vec4(0.0f), glm::vec4(0.0f), glm::vec4(glm::epsilon<float>()))));
 
-	Error += glm::all(glm::epsilonNotEqual(glm::vec2(1.0f), glm::vec2(2.0f), glm::vec2(glm::epsilon<float>()))) ? 0 : 1;
-	Error += glm::all(glm::epsilonNotEqual(glm::vec3(1.0f), glm::vec3(2.0f), glm::vec3(glm::epsilon<float>()))) ? 0 : 1;
-	Error += glm::all(glm::epsilonNotEqual(glm::vec4(1.0f), glm::vec4(2.0f), glm::vec4(glm::epsilon<float>()))) ? 0 : 1;
+	Error += GLM_CHECK(glm::all(glm::epsilonNotEqual(glm::vec2(1.0f), glm::vec2(2.0f), glm::vec2(glm::epsilon<float>()))));
+	Error += GLM_CHECK(glm::all(glm::epsilonNotEqual(glm::vec3(1.0f), glm::vec3(2.0f), glm::vec3(glm::epsilon<float>()))));
+	Error += GLM_CHECK(glm::all(glm::epsilonNotEqual(glm::vec4(1.0f), glm::vec4(2.0f), glm::vec4(glm::epsilon<float>()))));
 
-	Error += glm::all(glm::epsilonEqual(glm::vec2(0.0f), glm::vec2(0.0f), glm::epsilon<float>())) ? 0 : 1;
-	Error += glm::all(glm::epsilonEqual(glm::vec3(0.0f), glm::vec3(0.0f), glm::epsilon<float>())) ? 0 : 1;
-	Error += glm::all(glm::epsilonEqual(glm::vec4(0.0f), glm::vec4(0.0f), glm::epsilon<float>())) ? 0 : 1;
-	Error += glm::all(glm::epsilonEqual(glm::quat(glm::vec3(0.0f)), glm::quat(glm::vec3(0.0f)), glm::epsilon<float>())) ? 0 : 1;
+	Error += GLM_CHECK(glm::all(glm::epsilonEqual(glm::vec2(0.0f), glm::vec2(0.0f), glm::epsilon<float>())));
+	Error += GLM_CHECK(glm::all(glm::epsilonEqual(glm::vec3(0.0f), glm::vec3(0.0f), glm::epsilon<float>())));
+	Error += GLM_CHECK(glm::all(glm::epsilonEqual(glm::vec4(0.0f), glm::vec4(0.0f), glm::epsilon<float>())));
+	Error += GLM_CHECK(glm::all(glm::epsilonEqual(glm::quat(glm::vec3(0.0f)), glm::quat(glm::vec3(0.0f)), glm::epsilon<float>())));
 
-	Error += glm::all(glm::epsilonNotEqual(glm::vec2(1.0f), glm::vec2(2.0f), glm::epsilon<float>())) ? 0 : 1;
-	Error += glm::all(glm::epsilonNotEqual(glm::vec3(1.0f), glm::vec3(2.0f), glm::epsilon<float>())) ? 0 : 1;
-	Error += glm::all(glm::epsilonNotEqual(glm::vec4(1.0f), glm::vec4(2.0f), glm::epsilon<float>())) ? 0 : 1;
-	Error += glm::all(glm::epsilonNotEqual(glm::quat(glm::vec3(0.0f)), glm::quat(glm::vec3(1.0f)), glm::epsilon<float>())) ? 0 : 1;
+	Error += GLM_CHECK(glm::all(glm::epsilonNotEqual(glm::vec2(1.0f), glm::vec2(2.0f), glm::epsilon<float>())));
+	Error += GLM_CHECK(glm::all(glm::epsilonNotEqual(glm::vec3(1.0f), glm::vec3(2.0f), glm::epsilon<float>())));
+	Error += GLM_CHECK(glm::all(glm::epsilonNotEqual(glm::vec4(1.0f), glm::vec4(2.0f), glm::epsilon<float>())));
+	Error += GLM_CHECK(glm::all(glm::epsilonNotEqual(glm::quat(glm::vec3(0.0f)), glm::quat(glm::vec3(1.0f)), glm::epsilon<float>())));
 
 	return Error;
 }
@@ -36,31 +37,31 @@ static int test_equal()
 	{
 		T A = glm::epsilon<T>();
 		T B = glm::epsilon<T>();
-		Error += glm::epsilonEqual(A, B, glm::epsilon<T>() * T(2)) ? 0 : 1;
+		Error += GLM_CHECK(glm::epsilonEqual(A, B, glm::epsilon<T>() * T(2)));
 	}
 
 	{
 		T A(0);
 		T B = static_cast<T>(0) + glm::epsilon<T>();
-		Error += glm::epsilonEqual(A, B, glm::epsilon<T>() * T(2)) ? 0 : 1;
+		Error += GLM_CHECK(glm::epsilonEqual(A, B, glm::epsilon<T>() * T(2)));
 	}
 
 	{
 		T A(0);
 		T B = static_cast<T>(0) - glm::epsilon<T>();
-		Error += glm::epsilonEqual(A, B, glm::epsilon<T>() * T(2)) ? 0 : 1;
+		Error += GLM_CHECK(glm::epsilonEqual(A, B, glm::epsilon<T>() * T(2)));
 	}
 
 	{
 		T A = static_cast<T>(0) + glm::epsilon<T>();
 		T B = static_cast<T>(0);
-		Error += glm::epsilonEqual(A, B, glm::epsilon<T>() * T(2)) ? 0 : 1;
+		Error += GLM_CHECK(glm::epsilonEqual(A, B, glm::epsilon<T>() * T(2)));
 	}
 
 	{
 		T A = static_cast<T>(0) - glm::epsilon<T>();
 		T B = static_cast<T>(0);
-		Error += glm::epsilonEqual(A, B, glm::epsilon<T>() * T(2)) ? 0 : 1;
+		Error += GLM_CHECK(glm::epsilonEqual(A, B, glm::epsilon<T>() * T(2)));
 	}
 
 	return Error;
@@ -70,11 +71,11 @@ int main()
 {
 	int Error = 0;
 
-	Error += test_defined();
-	Error += test_equal<float>();
-	Error += test_equal<double>();
+	Error += GLM_TEST(test_defined());
+	Error += GLM_TEST(test_equal<float>());
+	Error += GLM_TEST(test_equal<double>());
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }
 
 

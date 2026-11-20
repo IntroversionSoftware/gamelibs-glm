@@ -1,3 +1,4 @@
+#include "glm_test.hpp"
 #include <glm/ext/scalar_int_sized.hpp>
 
 static_assert(sizeof(glm::int8) == 1, "int8 size isn't 1 byte on this platform");
@@ -11,10 +12,10 @@ static int test_size()
 {
 	int Error = 0;
 
-	Error += sizeof(glm::int8) == 1 ? 0 : 1;
-	Error += sizeof(glm::int16) == 2 ? 0 : 1;
-	Error += sizeof(glm::int32) == 4 ? 0 : 1;
-	Error += sizeof(glm::int64) == 8 ? 0 : 1;
+	Error += GLM_CHECK(sizeof(glm::int8) == 1);
+	Error += GLM_CHECK(sizeof(glm::int16) == 2);
+	Error += GLM_CHECK(sizeof(glm::int32) == 4);
+	Error += GLM_CHECK(sizeof(glm::int64) == 8);
 
 	return Error;
 }
@@ -23,9 +24,9 @@ static int test_comp()
 {
 	int Error = 0;
 
-	Error += sizeof(glm::int8) < sizeof(glm::int16) ? 0 : 1;
-	Error += sizeof(glm::int16) < sizeof(glm::int32) ? 0 : 1;
-	Error += sizeof(glm::int32) < sizeof(glm::int64) ? 0 : 1;
+	Error += GLM_CHECK(sizeof(glm::int8) < sizeof(glm::int16));
+	Error += GLM_CHECK(sizeof(glm::int16) < sizeof(glm::int32));
+	Error += GLM_CHECK(sizeof(glm::int32) < sizeof(glm::int64));
 
 	return Error;
 }
@@ -34,8 +35,8 @@ int main()
 {
 	int Error = 0;
 
-	Error += test_size();
-	Error += test_comp();
+	Error += GLM_TEST(test_size());
+	Error += GLM_TEST(test_comp());
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }

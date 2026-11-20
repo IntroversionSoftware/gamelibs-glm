@@ -1,4 +1,5 @@
 #define GLM_ENABLE_EXPERIMENTAL
+#include "glm_test.hpp"
 #include <glm/gtx/type_aligned.hpp>
 #include <cstdio>
 
@@ -24,7 +25,7 @@ static int test_decl()
 
 		std::printf("vec4 - Aligned: %d, unaligned: %d\n", static_cast<int>(sizeof(S1)), static_cast<int>(sizeof(S2)));
 
-		Error += sizeof(S1) >= sizeof(S2) ? 0 : 1;
+		Error += GLM_CHECK(sizeof(S1) >= sizeof(S2));
 	}
 
 	{
@@ -51,7 +52,7 @@ static int test_decl()
 
 		std::printf("vec3 - Aligned: %d, unaligned: %d\n", static_cast<int>(sizeof(S1)), static_cast<int>(sizeof(S2)));
 
-		Error += sizeof(S1) <= sizeof(S2) ? 0 : 1;
+		Error += GLM_CHECK(sizeof(S1) <= sizeof(S2));
 	}
 
 	{
@@ -78,7 +79,7 @@ static int test_decl()
 
 		std::printf("vec4 - Aligned: %d, unaligned: %d\n", static_cast<int>(sizeof(S1)), static_cast<int>(sizeof(S2)));
 
-		Error += sizeof(S1) >= sizeof(S2) ? 0 : 1;
+		Error += GLM_CHECK(sizeof(S1) >= sizeof(S2));
 	}
 
 	{
@@ -105,7 +106,7 @@ static int test_decl()
 
 		std::printf("dvec4 - Aligned: %d, unaligned: %d\n", static_cast<int>(sizeof(S1)), static_cast<int>(sizeof(S2)));
 
-		Error += sizeof(S1) >= sizeof(S2) ? 0 : 1;
+		Error += GLM_CHECK(sizeof(S1) >= sizeof(S2));
 	}
 
 	return Error;
@@ -143,8 +144,8 @@ int main()
 {
 	int Error(0);
 
-	Error += test_decl();
-	Error += perf_mul();
+	Error += GLM_TEST(test_decl());
+	Error += GLM_TEST(perf_mul());
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }

@@ -1,5 +1,6 @@
 #define GLM_FORCE_UNRESTRICTED_GENTYPE
 
+#include "glm_test.hpp"
 #include <glm/ext/vector_integer.hpp>
 #include <glm/ext/scalar_int_sized.hpp>
 #include <glm/ext/scalar_uint_sized.hpp>
@@ -51,7 +52,7 @@ namespace isPowerOfTwo
 		for (std::size_t i = 0, n = sizeof(Data) / sizeof(type<glm::int16>); i < n; ++i)
 		{
 			glm::vec<L, bool> const Result = glm::isPowerOfTwo(glm::vec<L, glm::int16>(Data[i].Value));
-			Error += glm::vec<L, bool>(Data[i].Return) == Result ? 0 : 1;
+			Error += GLM_CHECK(glm::vec<L, bool>(Data[i].Return) == Result);
 		}
 
 		return Error;
@@ -75,7 +76,7 @@ namespace isPowerOfTwo
 		for (std::size_t i = 0, n = sizeof(Data) / sizeof(type<glm::uint16>); i < n; ++i)
 		{
 			glm::vec<L, bool> const Result = glm::isPowerOfTwo(glm::vec<L, glm::uint16>(Data[i].Value));
-			Error += glm::vec<L, bool>(Data[i].Return) == Result ? 0 : 1;
+			Error += GLM_CHECK(glm::vec<L, bool>(Data[i].Return) == Result);
 		}
 
 		return Error;
@@ -99,7 +100,7 @@ namespace isPowerOfTwo
 		for (std::size_t i = 0, n = sizeof(Data) / sizeof(type<int>); i < n; ++i)
 		{
 			glm::vec<L, bool> const Result = glm::isPowerOfTwo(glm::vec<L, glm::int32>(Data[i].Value));
-			Error += glm::vec<L, bool>(Data[i].Return) == Result ? 0 : 1;
+			Error += GLM_CHECK(glm::vec<L, bool>(Data[i].Return) == Result);
 		}
 
 		return Error;
@@ -123,7 +124,7 @@ namespace isPowerOfTwo
 		for (std::size_t i = 0, n = sizeof(Data) / sizeof(type<glm::uint>); i < n; ++i)
 		{
 			glm::vec<L, bool> const Result = glm::isPowerOfTwo(glm::vec<L, glm::uint32>(Data[i].Value));
-			Error += glm::vec<L, bool>(Data[i].Return) == Result ? 0 : 1;
+			Error += GLM_CHECK(glm::vec<L, bool>(Data[i].Return) == Result);
 		}
 
 		return Error;
@@ -165,16 +166,16 @@ namespace prevPowerOfTwo
 		int Error = 0;
 
 		glm::vec<L, T> const A = glm::prevPowerOfTwo(glm::vec<L, T>(7));
-		Error += A == glm::vec<L, T>(4) ? 0 : 1;
+		Error += GLM_CHECK(A == glm::vec<L, T>(4));
 
 		glm::vec<L, T> const B = glm::prevPowerOfTwo(glm::vec<L, T>(15));
-		Error += B == glm::vec<L, T>(8) ? 0 : 1;
+		Error += GLM_CHECK(B == glm::vec<L, T>(8));
 
 		glm::vec<L, T> const C = glm::prevPowerOfTwo(glm::vec<L, T>(31));
-		Error += C == glm::vec<L, T>(16) ? 0 : 1;
+		Error += GLM_CHECK(C == glm::vec<L, T>(16));
 
 		glm::vec<L, T> const D = glm::prevPowerOfTwo(glm::vec<L, T>(32));
-		Error += D == glm::vec<L, T>(32) ? 0 : 1;
+		Error += GLM_CHECK(D == glm::vec<L, T>(32));
 
 		return Error;
 	}
@@ -235,16 +236,16 @@ namespace nextPowerOfTwo
 		int Error = 0;
 
 		glm::vec<L, T> const A = glm::nextPowerOfTwo(glm::vec<L, T>(7));
-		Error += A == glm::vec<L, T>(8) ? 0 : 1;
+		Error += GLM_CHECK(A == glm::vec<L, T>(8));
 
 		glm::vec<L, T> const B = glm::nextPowerOfTwo(glm::vec<L, T>(15));
-		Error += B == glm::vec<L, T>(16) ? 0 : 1;
+		Error += GLM_CHECK(B == glm::vec<L, T>(16));
 
 		glm::vec<L, T> const C = glm::nextPowerOfTwo(glm::vec<L, T>(31));
-		Error += C == glm::vec<L, T>(32) ? 0 : 1;
+		Error += GLM_CHECK(C == glm::vec<L, T>(32));
 
 		glm::vec<L, T> const D = glm::nextPowerOfTwo(glm::vec<L, T>(32));
-		Error += D == glm::vec<L, T>(32) ? 0 : 1;
+		Error += GLM_CHECK(D == glm::vec<L, T>(32));
 
 		return Error;
 	}
@@ -321,10 +322,10 @@ namespace prevMultiple
 		for (std::size_t i = 0, n = sizeof(Data) / sizeof(type<T>); i < n; ++i)
 		{
 			glm::vec<L, T> const Result0 = glm::prevMultiple(glm::vec<L, T>(Data[i].Source), Data[i].Multiple);
-			Error += glm::vec<L, T>(Data[i].Return) == Result0 ? 0 : 1;
+			Error += GLM_CHECK(glm::vec<L, T>(Data[i].Return) == Result0);
 
 			glm::vec<L, T> const Result1 = glm::prevMultiple(glm::vec<L, T>(Data[i].Source), glm::vec<L, T>(Data[i].Multiple));
-			Error += glm::vec<L, T>(Data[i].Return) == Result1 ? 0 : 1;
+			Error += GLM_CHECK(glm::vec<L, T>(Data[i].Return) == Result1);
 		}
 
 		return Error;
@@ -406,10 +407,10 @@ namespace nextMultiple
 		for (std::size_t i = 0, n = sizeof(Data) / sizeof(type<T>); i < n; ++i)
 		{
 			glm::vec<L, T> const Result0 = glm::nextMultiple(glm::vec<L, T>(Data[i].Source), glm::vec<L, T>(Data[i].Multiple));
-			Error += glm::vec<L, T>(Data[i].Return) == Result0 ? 0 : 1;
+			Error += GLM_CHECK(glm::vec<L, T>(Data[i].Return) == Result0);
 
 			glm::vec<L, T> const Result1 = glm::nextMultiple(glm::vec<L, T>(Data[i].Source), Data[i].Multiple);
-			Error += glm::vec<L, T>(Data[i].Return) == Result1 ? 0 : 1;
+			Error += GLM_CHECK(glm::vec<L, T>(Data[i].Return) == Result1);
 		}
 
 		return Error;
@@ -504,7 +505,7 @@ namespace findNSB
 		for (std::size_t i = 0, n = sizeof(Data) / sizeof(type<T>); i < n; ++i)
 		{
 			glm::vec<L, int> const Result0 = glm::findNSB<L, T, glm::defaultp>(glm::vec<L, T>(Data[i].Source), glm::vec<L, int>(Data[i].SignificantBitCount));
-			Error += glm::vec<L, int>(Data[i].Return) == Result0 ? 0 : 1;
+			Error += GLM_CHECK(glm::vec<L, int>(Data[i].Return) == Result0);
 			assert(!Error);
 		}
 
@@ -654,7 +655,7 @@ static int test_mix()
 		for(std::size_t i = 0; i < sizeof(TestBool) / sizeof(test_mix_entry<int, bool>); ++i)
 		{
 			int const Result = glm::mix(TestBool[i].x, TestBool[i].y, TestBool[i].a);
-			Error += Result == TestBool[i].Result ? 0 : 1;
+			Error += GLM_CHECK(Result == TestBool[i].Result);
 		}
 	}
 
@@ -663,7 +664,7 @@ static int test_mix()
 		for(std::size_t i = 0; i < sizeof(TestInt) / sizeof(test_mix_entry<int, int>); ++i)
 		{
 			int const Result = glm::mix(TestInt[i].x, TestInt[i].y, TestInt[i].a);
-			Error += Result == TestInt[i].Result ? 0 : 1;
+			Error += GLM_CHECK(Result == TestInt[i].Result);
 		}
 	}
 
@@ -672,7 +673,7 @@ static int test_mix()
 		for(std::size_t i = 0; i < sizeof(TestVec2Bool) / sizeof(test_mix_entry<glm::ivec2, bool>); ++i)
 		{
 			glm::ivec2 const Result = glm::mix(TestVec2Bool[i].x, TestVec2Bool[i].y, TestVec2Bool[i].a);
-			Error += glm::all(glm::equal(Result, TestVec2Bool[i].Result)) ? 0 : 1;
+			Error += GLM_CHECK(glm::all(glm::equal(Result, TestVec2Bool[i].Result)));
 		}
 	}
 
@@ -681,7 +682,7 @@ static int test_mix()
 		for(std::size_t i = 0; i < sizeof(TestBVec2) / sizeof(test_mix_entry<glm::ivec2, glm::bvec2>); ++i)
 		{
 			glm::ivec2 const Result = glm::mix(TestBVec2[i].x, TestBVec2[i].y, TestBVec2[i].a);
-			Error += glm::all(glm::equal(Result, TestBVec2[i].Result)) ? 0 : 1;
+			Error += GLM_CHECK(glm::all(glm::equal(Result, TestBVec2[i].Result)));
 		}
 	}
 
@@ -690,7 +691,7 @@ static int test_mix()
 		for(std::size_t i = 0; i < sizeof(TestVec3Bool) / sizeof(test_mix_entry<glm::ivec3, bool>); ++i)
 		{
 			glm::ivec3 const Result = glm::mix(TestVec3Bool[i].x, TestVec3Bool[i].y, TestVec3Bool[i].a);
-			Error += glm::all(glm::equal(Result, TestVec3Bool[i].Result)) ? 0 : 1;
+			Error += GLM_CHECK(glm::all(glm::equal(Result, TestVec3Bool[i].Result)));
 		}
 	}
 
@@ -699,7 +700,7 @@ static int test_mix()
 		for(std::size_t i = 0; i < sizeof(TestBVec3) / sizeof(test_mix_entry<glm::ivec3, glm::bvec3>); ++i)
 		{
 			glm::ivec3 const Result = glm::mix(TestBVec3[i].x, TestBVec3[i].y, TestBVec3[i].a);
-			Error += glm::all(glm::equal(Result, TestBVec3[i].Result)) ? 0 : 1;
+			Error += GLM_CHECK(glm::all(glm::equal(Result, TestBVec3[i].Result)));
 		}
 	}
 
@@ -708,7 +709,7 @@ static int test_mix()
 		for(std::size_t i = 0; i < sizeof(TestVec4Bool) / sizeof(test_mix_entry<glm::ivec4, bool>); ++i)
 		{
 			glm::ivec4 const Result = glm::mix(TestVec4Bool[i].x, TestVec4Bool[i].y, TestVec4Bool[i].a);
-			Error += glm::all(glm::equal(Result, TestVec4Bool[i].Result)) ? 0 : 1;
+			Error += GLM_CHECK(glm::all(glm::equal(Result, TestVec4Bool[i].Result)));
 		}
 	}
 
@@ -717,7 +718,7 @@ static int test_mix()
 		for(std::size_t i = 0; i < sizeof(TestBVec4) / sizeof(test_mix_entry<glm::ivec4, glm::bvec4>); ++i)
 		{
 			glm::ivec4 const Result = glm::mix(TestBVec4[i].x, TestBVec4[i].y, TestBVec4[i].a);
-			Error += glm::all(glm::equal(Result, TestBVec4[i].Result)) ? 0 : 1;
+			Error += GLM_CHECK(glm::all(glm::equal(Result, TestBVec4[i].Result)));
 		}
 	}
 
@@ -728,14 +729,14 @@ int main()
 {
 	int Error = 0;
 
-	Error += isPowerOfTwo::test();
-	Error += prevPowerOfTwo::test();
-	Error += nextPowerOfTwo::test();
-	Error += prevMultiple::test();
-	Error += nextMultiple::test();
-	Error += findNSB::test();
+	Error += GLM_TEST(isPowerOfTwo::test());
+	Error += GLM_TEST(prevPowerOfTwo::test());
+	Error += GLM_TEST(nextPowerOfTwo::test());
+	Error += GLM_TEST(prevMultiple::test());
+	Error += GLM_TEST(nextMultiple::test());
+	Error += GLM_TEST(findNSB::test());
 
-	Error += test_mix();
+	Error += GLM_TEST(test_mix());
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }

@@ -1,3 +1,4 @@
+#include "glm_test.hpp"
 #include <glm/ext/scalar_ulp.hpp>
 
 #define GLM_ENABLE_EXPERIMENTAL
@@ -273,7 +274,7 @@ namespace taylorCos
 
 		int Error = 0;
 		for(std::size_t i = 0; i < Samples; ++i)
-			Error += Results[i].x >= -1.0f && Results[i].x <= 1.0f ? 0 : 1;
+			Error += GLM_CHECK(Results[i].x >= -1.0f && Results[i].x <= 1.0f);
 		return Error;
 	}
 */
@@ -314,7 +315,7 @@ namespace taylorCos
 
 		int Error = 0;
 		for(std::size_t i = 0; i < Samples; ++i)
-			Error += Results[i].x >= -1.0f && Results[i].x <= 1.0f ? 0 : 1;
+			Error += GLM_CHECK(Results[i].x >= -1.0f && Results[i].x <= 1.0f);
 		return Error;
 	}
 
@@ -361,7 +362,7 @@ namespace taylorCos
 
 		int Error = 0;
 		for(std::size_t i = 0; i < Samples; ++i)
-			Error += Results[i].x >= -1.0f && Results[i].x <= 1.0f ? 0 : 1;
+			Error += GLM_CHECK(Results[i].x >= -1.0f && Results[i].x <= 1.0f);
 		return Error;
 	}
 
@@ -383,7 +384,7 @@ namespace taylorCos
 
 		int Error = 0;
 		for(std::size_t i = 0; i < Samples; ++i)
-			Error += Results[i].x >= -1.0f && Results[i].x <= 1.0f ? 0 : 1;
+			Error += GLM_CHECK(Results[i].x >= -1.0f && Results[i].x <= 1.0f);
 		return Error;
 	}
 
@@ -405,7 +406,7 @@ namespace taylorCos
 
 		int Error = 0;
 		for(std::size_t i = 0; i < Samples; ++i)
-			Error += Results[i].x >= -1.0f && Results[i].x <= 1.0f ? 0 : 1;
+			Error += GLM_CHECK(Results[i].x >= -1.0f && Results[i].x <= 1.0f);
 		return Error;
 	}
 
@@ -439,7 +440,7 @@ namespace taylorCos
 			float const Cos0 = std::cos(radAngle);
 
 			float const Cos1 = taylorCos::fastRefCos(glm::fvec1(radAngle)).x;
-			Error += glm::abs(Cos1 - Cos0) < 0.1f ? 0 : 1;
+			Error += GLM_CHECK(glm::abs(Cos1 - Cos0) < 0.1f);
 
 			//float const Cos2 = taylorCos::fastCosNew(glm::fvec1(radAngle)).x;
 			//Error += glm::abs(Cos2 - Cos0) < 0.1f ? 0 : 1;
@@ -509,7 +510,7 @@ namespace taylor2
 
 		int Error = 0;
 		for(std::size_t i = 0; i < Samples; ++i)
-			Error += Results[i] >= -1.0f && Results[i] <= 1.0f ? 0 : 1;
+			Error += GLM_CHECK(Results[i] >= -1.0f && Results[i] <= 1.0f);
 		return Error;
 	}
 
@@ -531,7 +532,7 @@ namespace taylor2
 
 		int Error = 0;
 		for(std::size_t i = 0; i < Samples; ++i)
-			Error += Results[i] >= -1.0f && Results[i] <= 1.0f ? 0 : 1;
+			Error += GLM_CHECK(Results[i] >= -1.0f && Results[i] <= 1.0f);
 		return Error;
 	}
 
@@ -553,7 +554,7 @@ namespace taylor2
 
 		int Error = 0;
 		for(std::size_t i = 0; i < Samples; ++i)
-			Error += Results[i] >= -1.0f && Results[i] <= 1.0f ? 0 : 1;
+			Error += GLM_CHECK(Results[i] >= -1.0f && Results[i] <= 1.0f);
 		return Error;
 	}
 
@@ -577,9 +578,9 @@ int main()
 {
 	int Error(0);
 
-	Error += ::taylor2::perf(1000);
-	Error += ::taylorCos::test();
-	Error += ::taylorCos::perf(1000);
+	Error += GLM_TEST(::taylor2::perf(1000));
+	Error += GLM_TEST(::taylorCos::test());
+	Error += GLM_TEST(::taylorCos::perf(1000));
 
 	::fastCos::perf(false);
 	::fastSin::perf(false);
@@ -588,5 +589,5 @@ int main()
 	::fastAsin::perf(false);
 	::fastAtan::perf(false);
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }

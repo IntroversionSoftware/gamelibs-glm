@@ -1,4 +1,5 @@
 #define GLM_FORCE_INLINE
+#include "glm_test.hpp"
 #include <glm/ext/matrix_float2x2.hpp>
 #include <glm/ext/matrix_double2x2.hpp>
 #include <glm/ext/matrix_float3x3.hpp>
@@ -86,7 +87,7 @@ static int comp_mat2_mul_mat2(std::size_t Samples)
 	{
 		packedMatType const A = SISD[i];
 		packedMatType const B = SIMD[i];
-		Error += glm::all(glm::equal(A, B, static_cast<T>(0.001))) ? 0 : 1;
+		Error += GLM_CHECK(glm::all(glm::equal(A, B, static_cast<T>(0.001))));
 	}
 
 	return Error;
@@ -134,7 +135,7 @@ static int comp_mat3_mul_mat3(std::size_t Samples)
 	{
 		packedMatType const A = SISD[i];
 		packedMatType const B = SIMD[i];
-		Error += percent_error(A, B, 0.01f) ? 0 : 1;
+		Error += GLM_CHECK(percent_error(A, B, 0.01f));
 	}
 
 	return Error;
@@ -159,7 +160,7 @@ static int comp_mat4_mul_mat4(std::size_t Samples)
 	{
 		packedMatType const A = SISD[i];
 		packedMatType const B = SIMD[i];
-		Error += percent_error(A, B, 0.01f) ? 0 : 1;
+		Error += GLM_CHECK(percent_error(A, B, 0.01f));
 	}
 
 	return Error;
@@ -172,24 +173,24 @@ int main()
 	int Error = 0;
 
 	std::printf("mat2 * mat2:\n");
-	Error += comp_mat2_mul_mat2<glm::mat2, glm::aligned_mat2>(Samples);
+	Error += GLM_TEST(comp_mat2_mul_mat2<glm::mat2, glm::aligned_mat2>(Samples));
 
 	std::printf("dmat2 * dmat2:\n");
-	Error += comp_mat2_mul_mat2<glm::dmat2, glm::aligned_dmat2>(Samples);
+	Error += GLM_TEST(comp_mat2_mul_mat2<glm::dmat2, glm::aligned_dmat2>(Samples));
 
 	std::printf("mat3 * mat3:\n");
-	Error += comp_mat3_mul_mat3<glm::mat3, glm::aligned_mat3>(Samples);
+	Error += GLM_TEST(comp_mat3_mul_mat3<glm::mat3, glm::aligned_mat3>(Samples));
 
 	std::printf("dmat3 * dmat3:\n");
-	Error += comp_mat3_mul_mat3<glm::dmat3, glm::aligned_dmat3>(Samples);
+	Error += GLM_TEST(comp_mat3_mul_mat3<glm::dmat3, glm::aligned_dmat3>(Samples));
 
 	std::printf("mat4 * mat4:\n");
-	Error += comp_mat4_mul_mat4<glm::mat4, glm::aligned_mat4>(Samples);
+	Error += GLM_TEST(comp_mat4_mul_mat4<glm::mat4, glm::aligned_mat4>(Samples));
 
 	std::printf("dmat4 * dmat4:\n");
-	Error += comp_mat4_mul_mat4<glm::dmat4, glm::aligned_dmat4>(Samples);
+	Error += GLM_TEST(comp_mat4_mul_mat4<glm::dmat4, glm::aligned_dmat4>(Samples));
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }
 
 #else

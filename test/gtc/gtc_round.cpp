@@ -1,3 +1,4 @@
+#include "glm_test.hpp"
 #include <glm/gtc/round.hpp>
 #include <glm/gtc/type_precision.hpp>
 #include <glm/gtc/vec1.hpp>
@@ -41,7 +42,7 @@ namespace isPowerOfTwo
 		for(std::size_t i = 0, n = sizeof(Data) / sizeof(type<glm::int16>); i < n; ++i)
 		{
 			bool Result = glm::isPowerOfTwo(Data[i].Value);
-			Error += Data[i].Return == Result ? 0 : 1;
+			Error += GLM_CHECK(Data[i].Return == Result);
 		}
 
 		return Error;
@@ -64,7 +65,7 @@ namespace isPowerOfTwo
 		for(std::size_t i = 0, n = sizeof(Data) / sizeof(type<glm::uint16>); i < n; ++i)
 		{
 			bool Result = glm::isPowerOfTwo(Data[i].Value);
-			Error += Data[i].Return == Result ? 0 : 1;
+			Error += GLM_CHECK(Data[i].Return == Result);
 		}
 
 		return Error;
@@ -87,31 +88,31 @@ namespace isPowerOfTwo
 		for(std::size_t i = 0, n = sizeof(Data) / sizeof(type<int>); i < n; ++i)
 		{
 			bool Result = glm::isPowerOfTwo(Data[i].Value);
-			Error += Data[i].Return == Result ? 0 : 1;
+			Error += GLM_CHECK(Data[i].Return == Result);
 		}
 
 		for(std::size_t i = 0, n = sizeof(Data) / sizeof(type<int>); i < n; ++i)
 		{
 			glm::bvec1 Result = glm::isPowerOfTwo(glm::ivec1(Data[i].Value));
-			Error += glm::all(glm::equal(glm::bvec1(Data[i].Return), Result)) ? 0 : 1;
+			Error += GLM_CHECK(glm::all(glm::equal(glm::bvec1(Data[i].Return), Result)));
 		}
 
 		for(std::size_t i = 0, n = sizeof(Data) / sizeof(type<int>); i < n; ++i)
 		{
 			glm::bvec2 Result = glm::isPowerOfTwo(glm::ivec2(Data[i].Value));
-			Error += glm::all(glm::equal(glm::bvec2(Data[i].Return), Result)) ? 0 : 1;
+			Error += GLM_CHECK(glm::all(glm::equal(glm::bvec2(Data[i].Return), Result)));
 		}
 
 		for(std::size_t i = 0, n = sizeof(Data) / sizeof(type<int>); i < n; ++i)
 		{
 			glm::bvec3 Result = glm::isPowerOfTwo(glm::ivec3(Data[i].Value));
-			Error += glm::all(glm::equal(glm::bvec3(Data[i].Return), Result)) ? 0 : 1;
+			Error += GLM_CHECK(glm::all(glm::equal(glm::bvec3(Data[i].Return), Result)));
 		}
 
 		for(std::size_t i = 0, n = sizeof(Data) / sizeof(type<int>); i < n; ++i)
 		{
 			glm::bvec4 Result = glm::isPowerOfTwo(glm::ivec4(Data[i].Value));
-			Error += glm::all(glm::equal(glm::bvec4(Data[i].Return), Result)) ? 0 : 1;
+			Error += GLM_CHECK(glm::all(glm::equal(glm::bvec4(Data[i].Return), Result)));
 		}
 
 		return Error;
@@ -134,7 +135,7 @@ namespace isPowerOfTwo
 		for(std::size_t i = 0, n = sizeof(Data) / sizeof(type<glm::uint>); i < n; ++i)
 		{
 			bool Result = glm::isPowerOfTwo(Data[i].Value);
-			Error += Data[i].Return == Result ? 0 : 1;
+			Error += GLM_CHECK(Data[i].Return == Result);
 		}
 
 		return Error;
@@ -206,7 +207,7 @@ namespace ceilPowerOfTwo_advanced
 		for(std::size_t i = 0, n = sizeof(Data) / sizeof(type<glm::int32>); i < n; ++i)
 		{
 			glm::int32 Result = glm::ceilPowerOfTwo(Data[i].Value);
-			Error += Data[i].Return == Result ? 0 : 1;
+			Error += GLM_CHECK(Data[i].Return == Result);
 		}
 
 		return Error;
@@ -233,7 +234,7 @@ namespace ceilPowerOfTwo_advanced
 		for(std::size_t i = 0, n = sizeof(Data) / sizeof(type<glm::uint32>); i < n; ++i)
 		{
 			glm::uint32 Result = glm::ceilPowerOfTwo(Data[i].Value);
-			Error += Data[i].Return == Result ? 0 : 1;
+			Error += GLM_CHECK(Data[i].Return == Result);
 		}
 
 		return Error;
@@ -282,22 +283,22 @@ namespace roundPowerOfTwo
 		int Error = 0;
 
 		glm::uint32 const A = glm::roundPowerOfTwo(7u);
-		Error += A == 8u ? 0 : 1;
+		Error += GLM_CHECK(A == 8u);
 
 		glm::uint32 const B = glm::roundPowerOfTwo(15u);
-		Error += B == 16u ? 0 : 1;
+		Error += GLM_CHECK(B == 16u);
 
 		glm::uint32 const C = glm::roundPowerOfTwo(31u);
-		Error += C == 32u ? 0 : 1;
+		Error += GLM_CHECK(C == 32u);
 
 		glm::uint32 const D = glm::roundPowerOfTwo(9u);
-		Error += D == 8u ? 0 : 1;
+		Error += GLM_CHECK(D == 8u);
 
 		glm::uint32 const E = glm::roundPowerOfTwo(17u);
-		Error += E == 16u ? 0 : 1;
+		Error += GLM_CHECK(E == 16u);
 
 		glm::uint32 const F = glm::roundPowerOfTwo(33u);
-		Error += F == 32u ? 0 : 1;
+		Error += GLM_CHECK(F == 32u);
 
 		return Error;
 	}
@@ -310,13 +311,13 @@ namespace floorPowerOfTwo
 		int Error = 0;
 
 		glm::uint32 const A = glm::floorPowerOfTwo(7u);
-		Error += A == 4u ? 0 : 1;
+		Error += GLM_CHECK(A == 4u);
 
 		glm::uint32 const B = glm::floorPowerOfTwo(15u);
-		Error += B == 8u ? 0 : 1;
+		Error += GLM_CHECK(B == 8u);
 
 		glm::uint32 const C = glm::floorPowerOfTwo(31u);
-		Error += C == 16u ? 0 : 1;
+		Error += GLM_CHECK(C == 16u);
 
 		return Error;
 	}
@@ -329,13 +330,13 @@ namespace ceilPowerOfTwo
 		int Error = 0;
 
 		glm::uint32 const A = glm::ceilPowerOfTwo(7u);
-		Error += A == 8u ? 0 : 1;
+		Error += GLM_CHECK(A == 8u);
 
 		glm::uint32 const B = glm::ceilPowerOfTwo(15u);
-		Error += B == 16u ? 0 : 1;
+		Error += GLM_CHECK(B == 16u);
 
 		glm::uint32 const C = glm::ceilPowerOfTwo(31u);
-		Error += C == 32u ? 0 : 1;
+		Error += GLM_CHECK(C == 32u);
 
 		return Error;
 	}
@@ -365,7 +366,7 @@ namespace floorMultiple
 		for(std::size_t i = 0, n = sizeof(Data) / sizeof(type<glm::float64>); i < n; ++i)
 		{
 			glm::float64 Result = glm::floorMultiple(Data[i].Source, Data[i].Multiple);
-			Error += glm::epsilonEqual(Data[i].Return, Result, Data[i].Epsilon) ? 0 : 1;
+			Error += GLM_CHECK(glm::epsilonEqual(Data[i].Return, Result, Data[i].Epsilon));
 		}
 
 		return Error;
@@ -405,7 +406,7 @@ namespace ceilMultiple
 		for(std::size_t i = 0, n = sizeof(Data) / sizeof(type<glm::float64>); i < n; ++i)
 		{
 			glm::float64 Result = glm::ceilMultiple(Data[i].Source, Data[i].Multiple);
-			Error += glm::epsilonEqual(Data[i].Return, Result, Data[i].Epsilon) ? 0 : 1;
+			Error += GLM_CHECK(glm::epsilonEqual(Data[i].Return, Result, Data[i].Epsilon));
 		}
 
 		return Error;
@@ -431,7 +432,7 @@ namespace ceilMultiple
 		for(std::size_t i = 0, n = sizeof(Data) / sizeof(type<int>); i < n; ++i)
 		{
 			int Result = glm::ceilMultiple(Data[i].Source, Data[i].Multiple);
-			Error += Data[i].Return == Result ? 0 : 1;
+			Error += GLM_CHECK(Data[i].Return == Result);
 		}
 
 		return Error;
@@ -452,16 +453,16 @@ int main()
 {
 	int Error(0);
 
-	Error += isPowerOfTwo::test();
-	Error += floorPowerOfTwo::test();
-	Error += roundPowerOfTwo::test();
-	Error += ceilPowerOfTwo::test();
-	Error += ceilPowerOfTwo_advanced::test();
+	Error += GLM_TEST(isPowerOfTwo::test());
+	Error += GLM_TEST(floorPowerOfTwo::test());
+	Error += GLM_TEST(roundPowerOfTwo::test());
+	Error += GLM_TEST(ceilPowerOfTwo::test());
+	Error += GLM_TEST(ceilPowerOfTwo_advanced::test());
 
-	Error += ceilPowerOfTwo_advanced::perf();
+	Error += GLM_TEST(ceilPowerOfTwo_advanced::perf());
 
-	Error += floorMultiple::test();
-	Error += ceilMultiple::test();
+	Error += GLM_TEST(floorMultiple::test());
+	Error += GLM_TEST(ceilMultiple::test());
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }

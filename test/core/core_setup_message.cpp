@@ -1,4 +1,5 @@
 #define GLM_FORCE_MESSAGES
+#include "glm_test.hpp"
 #include <glm/vec3.hpp>
 #include <cstdio>
 
@@ -224,7 +225,7 @@ static int test_model()
 {
 	int Error = 0;
 
-	Error += ((sizeof(void*) == 4) && (GLM_MODEL == GLM_MODEL_32)) || ((sizeof(void*) == 8) && (GLM_MODEL == GLM_MODEL_64)) ? 0 : 1;
+	Error += GLM_CHECK(((sizeof(void*) == 4) && (GLM_MODEL == GLM_MODEL_32)) || ((sizeof(void*) == 8) && (GLM_MODEL == GLM_MODEL_64)));
 
 #	if GLM_MODEL == GLM_MODEL_32
 		std::printf("GLM_MODEL_32\n");
@@ -303,13 +304,13 @@ int main()
 
 #	if !defined(GLM_FORCE_PLATFORM_UNKNOWN) && !defined(GLM_FORCE_COMPILER_UNKNOWN) && !defined(GLM_FORCE_ARCH_UNKNOWN) && !defined(GLM_FORCE_CXX_UNKNOWN)
 
-		Error += test_cpp_version();
-		Error += test_compiler();
-		Error += test_model();
-		Error += test_instruction_set();
-		Error += test_operators();
+		Error += GLM_TEST(test_cpp_version());
+		Error += GLM_TEST(test_compiler());
+		Error += GLM_TEST(test_model());
+		Error += GLM_TEST(test_instruction_set());
+		Error += GLM_TEST(test_operators());
 
 #	endif
 
-	return Error;
+	return GLM_TEST_FINISH(Error);
 }
