@@ -332,7 +332,7 @@ namespace detail
 		GLM_FUNC_QUALIFIER static vec<4, float, Q> call(vec<4, float, Q> const& N, vec<4, float, Q> const& I, vec<4, float, Q> const& Nref)
 		{
 			vec<4, float, Q> Result;
-			Result.data = glm_vec4_faceforward(N.data, I.data, Nref.data);
+			Result.data = compute_dot<vec<4, float, Q>, float, true>::call(Nref, I) < 0.0f ? N.data : -N.data;
 			return Result;
 		}
 	};
@@ -343,7 +343,7 @@ namespace detail
 		GLM_FUNC_QUALIFIER static vec<4, float, Q> call(vec<4, float, Q> const& I, vec<4, float, Q> const& N)
 		{
 			vec<4, float, Q> Result;
-			Result.data = glm_vec4_reflect(I.data, N.data);
+			Result.data = I.data - N.data * (2.0f * compute_dot<vec<4, float, Q>, float, true>::call(N, I));
 			return Result;
 		}
 	};

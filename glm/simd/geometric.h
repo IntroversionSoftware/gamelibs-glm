@@ -149,11 +149,11 @@ GLM_FUNC_QUALIFIER glm_vec4 glm_vec3_normalize(glm_vec4 v)
 
 GLM_FUNC_QUALIFIER glm_vec4 glm_vec4_faceforward(glm_vec4 N, glm_vec4 I, glm_vec4 Nref)
 {
+	// dot(Nref, I) < 0 ? N : -N. Not N * -sign(dot), which is zero when the dot product is.
 	glm_vec4 const dot0 = glm_vec4_dot(Nref, I);
-	glm_vec4 const sgn0 = glm_vec4_sign(dot0);
-	glm_vec4 const mul0 = _mm_mul_ps(sgn0, _mm_set1_ps(-1.0f));
-	glm_vec4 const mul1 = _mm_mul_ps(N, mul0);
-	return mul1;
+	glm_vec4 const lt0 = _mm_cmplt_ps(dot0, _mm_setzero_ps());
+	glm_vec4 const neg0 = _mm_xor_ps(N, _mm_set1_ps(-0.0f));
+	return _mm_or_ps(_mm_and_ps(lt0, N), _mm_andnot_ps(lt0, neg0));
 }
 
 GLM_FUNC_QUALIFIER glm_vec4 glm_vec4_reflect(glm_vec4 I, glm_vec4 N)

@@ -98,6 +98,7 @@ namespace detail
 		}
 	};
 
+#	if GLM_ARCH & GLM_ARCH_SSE41_BIT // _mm_min/max_epi32/epu32 are SSE4.1
 	template<qualifier Q>
 	struct compute_min_vector<4, int, Q, true>
 	{
@@ -108,7 +109,9 @@ namespace detail
 			return result;
 		}
 	};
+#	endif
 
+#	if GLM_ARCH & GLM_ARCH_SSE41_BIT // _mm_min/max_epi32/epu32 are SSE4.1
 	template<qualifier Q>
 	struct compute_min_vector<4, uint, Q, true>
 	{
@@ -119,6 +122,7 @@ namespace detail
 			return result;
 		}
 	};
+#	endif
 
 	template<qualifier Q>
 	struct compute_max_vector<4, float, Q, true>
@@ -131,6 +135,7 @@ namespace detail
 		}
 	};
 
+#	if GLM_ARCH & GLM_ARCH_SSE41_BIT // _mm_min/max_epi32/epu32 are SSE4.1
 	template<qualifier Q>
 	struct compute_max_vector<4, int, Q, true>
 	{
@@ -141,7 +146,9 @@ namespace detail
 			return result;
 		}
 	};
+#	endif
 
+#	if GLM_ARCH & GLM_ARCH_SSE41_BIT // _mm_min/max_epi32/epu32 are SSE4.1
 	template<qualifier Q>
 	struct compute_max_vector<4, uint, Q, true>
 	{
@@ -152,6 +159,7 @@ namespace detail
 			return result;
 		}
 	};
+#	endif
 
 	template<qualifier Q>
 	struct compute_clamp_vector<4, float, Q, true>
@@ -164,6 +172,7 @@ namespace detail
 		}
 	};
 
+#	if GLM_ARCH & GLM_ARCH_SSE41_BIT // _mm_min/max_epi32/epu32 are SSE4.1
 	template<qualifier Q>
 	struct compute_clamp_vector<4, int, Q, true>
 	{
@@ -174,7 +183,9 @@ namespace detail
 			return result;
 		}
 	};
+#	endif
 
+#	if GLM_ARCH & GLM_ARCH_SSE41_BIT // _mm_min/max_epi32/epu32 are SSE4.1
 	template<qualifier Q>
 	struct compute_clamp_vector<4, uint, Q, true>
 	{
@@ -185,6 +196,7 @@ namespace detail
 			return result;
 		}
 	};
+#	endif
 
 	template<qualifier Q>
 	struct compute_mix_vector<4, float, bool, Q, true>
@@ -255,7 +267,7 @@ namespace detail
 		GLM_FUNC_QUALIFIER static vec<4, double, Q> call(vec<4, double, Q> const& a, vec<4, double, Q> const& b, vec<4, double, Q> const& c)
 		{
 			vec<4, double, Q> Result;
-#	if (GLM_ARCH & GLM_ARCH_AVX2_BIT) && !(GLM_COMPILER & GLM_COMPILER_CLANG)
+#	if (GLM_ARCH & GLM_ARCH_AVX_BIT) && GLM_HAS_FMA // FMA3 is a separate feature from AVX2 (-mfma)
 			Result.data = _mm256_fmadd_pd(a.data, b.data, c.data);
 #	elif (GLM_ARCH & GLM_ARCH_AVX_BIT)
 			Result.data = _mm256_add_pd(_mm256_mul_pd(a.data, b.data), c.data);

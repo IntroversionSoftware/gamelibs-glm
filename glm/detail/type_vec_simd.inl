@@ -518,13 +518,18 @@ namespace detail
 	};
 
 	template<length_t L, typename T, qualifier Q>
-	struct compute_vec_xor<L, T, Q, true, 32, true>
+	struct compute_vec_xor<L, T, Q, -1, 32, true>
 	{
 		GLM_FUNC_QUALIFIER static vec<L, T, Q> call(vec<L, T, Q> const& a, vec<L, T, Q> const& b)
 		{
-			vec<L, T, Q> Result;
-			Result.data = _mm_xor_si128(a.data, b.data);
-			return Result;
+			if constexpr (L < 3)
+				return compute_vec_xor<L, T, Q, -1, 32, false>::call(a, b);
+			else
+			{
+				vec<L, T, Q> Result;
+				Result.data = _mm_xor_si128(a.data, b.data);
+				return Result;
+			}
 		}
 	};
 
@@ -618,13 +623,18 @@ namespace detail
 //	};
 
 	template<length_t L, typename T, qualifier Q>
-	struct compute_vec_bitwise_not<L, T, Q, true, 32, true>
+	struct compute_vec_bitwise_not<L, T, Q, -1, 32, true>
 	{
 		GLM_FUNC_QUALIFIER static vec<L, T, Q> call(vec<L, T, Q> const& v)
 		{
-			vec<L, T, Q> Result;
-			Result.data = _mm_xor_si128(v.data, _mm_set1_epi32(-1));
-			return Result;
+			if constexpr (L < 3)
+				return compute_vec_bitwise_not<L, T, Q, -1, 32, false>::call(v);
+			else
+			{
+				vec<L, T, Q> Result;
+				Result.data = _mm_xor_si128(v.data, _mm_set1_epi32(-1));
+				return Result;
+			}
 		}
 	};
 
@@ -659,18 +669,22 @@ namespace detail
 		}
 	};
 
-#	if GLM_ARCH & GLM_ARCH_SSE41_BIT
-	template<length_t L, qualifier Q>
-	struct compute_vec_equal<L, int, Q, true, 32, true>
+	// 32-bit int and uint.
+	template<length_t L, typename T, qualifier Q>
+	struct compute_vec_equal<L, T, Q, -1, 32, true>
 	{
-		GLM_FUNC_QUALIFIER static bool call(vec<L, int, Q> const& v1, vec<L, int, Q> const& v2)
+		GLM_FUNC_QUALIFIER static bool call(vec<L, T, Q> const& v1, vec<L, T, Q> const& v2)
 		{
-			//return _mm_movemask_epi8(_mm_cmpeq_epi32(v1.data, v2.data)) != 0;
-			__m128i neq = _mm_xor_si128(v1.data, v2.data);
-			return _mm_test_all_zeros(neq, neq) == 0;
+			if constexpr (L < 3)
+				return compute_vec_equal<L, T, Q, -1, 32, false>::call(v1, v2);
+			else
+			{
+				int const Mask = (1 << L) - 1;
+				int const Equal = _mm_movemask_ps(_mm_castsi128_ps(_mm_cmpeq_epi32(v1.data, v2.data)));
+				return (Equal & Mask) == Mask;
+			}
 		}
 	};
-#	endif
 
 
 
