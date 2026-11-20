@@ -490,10 +490,26 @@ namespace bitfieldReverse
 		return Error;
 	}
 
+	// Signed scalars reverse every bit, the sign bit included, as the vector versions do.
+	static int test_signed()
+	{
+		int Error = 0;
+
+		Error += GLM_CHECK_EQ(glm::bitfieldReverse(1), static_cast<int>(0x80000000u));
+		Error += GLM_CHECK_EQ(glm::bitfieldReverse(static_cast<int>(0x80000000u)), 1);
+		Error += GLM_CHECK_EQ(glm::bitfieldReverse(-2), 0x7FFFFFFF);
+		Error += GLM_CHECK_EQ(glm::bitfieldReverse(static_cast<glm::int64>(1)), static_cast<glm::int64>(0x8000000000000000ull));
+		Error += GLM_CHECK_EQ(glm::bitfieldReverse(static_cast<glm::int8>(1)), static_cast<glm::int8>(-128));
+		Error += GLM_CHECK_EQ(glm::bitfieldReverse(glm::ivec2(1, -2)), glm::ivec2(static_cast<int>(0x80000000u), 0x7FFFFFFF));
+
+		return Error;
+	}
+
 	static int test()
 	{
 		int Error = 0;
 
+		Error += test_signed();
 		Error += test32_bitfieldReverse();
 		Error += test32_bitfieldReverseLoop();
 		Error += test32_bitfieldReverseUint32();
