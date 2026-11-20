@@ -32,6 +32,7 @@
 //		Error += GLM_CHECK_EQ(A, B);                // A == B, printing both on failure
 //		Error += GLM_CHECK_LE(MaxError, Tolerance); // also _NE, _LT, _GT, _GE
 //		Error += GLM_CHECK_NEAR(A, B, 0.001f);      // glm::all(glm::equal(A, B, eps)), or the scalar form
+//		Error += glm_test::context(GLM_CHECK(...), "Q", Q); // also print Q on failure
 //		return Error;
 //	}
 //
@@ -43,13 +44,19 @@
 //		return GLM_TEST_FINISH(Error);
 //	}
 //
+// Information that isn't a result (timings, the configuration) goes through glm_test::info(), a
+// printf that prints only when GLM_TEST_VERBOSE is set in the environment, so a passing run shows
+// only the status lines.
+//
 // Arguments to the GLM_CHECK_EQ/NEAR macros that contain a top-level comma (template arguments)
 // need their own parentheses: GLM_CHECK_EQ((glm::vec<3, int>(1)), B).
 
 #pragma once
 
 #include <algorithm>
+#include <cstdarg>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <string>
 #include <type_traits>
@@ -103,6 +110,38 @@ namespace glm_test
 		return Copy;
 	}
 
+	// Whether GLM_TEST_VERBOSE is set (to anything but 0) in the environment.
+	inline bool verbose()
+	{
+#		if defined(_MSC_VER)
+#			pragma warning(push)
+#			pragma warning(disable: 4996) // getenv is fine here
+#		endif
+		static bool const Verbose = [] {
+			char const* Value = std::getenv("GLM_TEST_VERBOSE");
+			return Value && *Value && std::strcmp(Value, "0") != 0;
+		}();
+#		if defined(_MSC_VER)
+#			pragma warning(pop)
+#		endif
+		return Verbose;
+	}
+
+	// printf for information that isn't a result, such as timings: printed only when verbose().
+#	if defined(__GNUC__) || defined(__clang__)
+	__attribute__((format(printf, 1, 2)))
+#	endif
+	inline void info(char const* Format, ...)
+	{
+		if (!verbose())
+			return;
+		std::va_list Args;
+		va_start(Args, Format);
+		std::vprintf(Format, Args);
+		va_end(Args);
+		std::fflush(stdout);
+	}
+
 	inline char const* basename(char const* Path)
 	{
 		char const* Name = Path;
@@ -120,6 +159,12 @@ namespace glm_test
 		template<typename T>
 		struct is_quat<T, std::void_t<decltype(T::wxyz(std::declval<typename T::value_type>(), std::declval<typename T::value_type>(),
 			std::declval<typename T::value_type>(), std::declval<typename T::value_type>()))>> : std::true_type {};
+
+		template<typename T>
+		struct is_string : std::false_type {};
+
+		template<typename C, typename Tr, typename A>
+		struct is_string<std::basic_string<C, Tr, A>> : std::true_type {};
 
 		template<typename T, typename = void>
 		struct is_indexable : std::false_type {};
@@ -178,8 +223,29 @@ namespace glm_test
 				return print(static_cast<unsigned long long>(Value));
 			else if constexpr (std::is_enum<T>::value)
 				return format(static_cast<typename std::underlying_type<T>::type>(Value));
+			else if constexpr (std::is_same<T, char const*>::value || std::is_same<T, char*>::value)
+				return Value ? format(std::string(Value)) : std::string("null");
+			else if constexpr (std::is_array<T>::value && std::is_same<std::remove_cv_t<std::remove_extent_t<T>>, char>::value)
+				return format(std::string(Value));
 			else if constexpr (std::is_pointer<T>::value)
 				return print(static_cast<void const*>(Value));
+			else if constexpr (is_string<T>::value)
+			{
+				// Quoted, with newlines and anything outside printable ASCII escaped (wide strings too)
+				std::string Text = "\"";
+				for (auto c : Value)
+				{
+					if (c == '\n')
+						Text += "\\n";
+					else if (c == '"' || c == '\\')
+						(Text += '\\') += static_cast<char>(c);
+					else if (c >= 32 && c < 127)
+						Text += static_cast<char>(c);
+					else
+						Text += '?';
+				}
+				return Text + "\"";
+			}
 			else if constexpr (is_quat<T>::value)
 				return "quat(w=" + format(Value.w) + ", x=" + format(Value.x) + ", y=" + format(Value.y) + ", z=" + format(Value.z) + ")";
 			else if constexpr (is_indexable<T>::value)
@@ -250,6 +316,35 @@ namespace glm_test
 	{
 		std::string What = std::string(Macro) + "(" + NameA + ", " + NameB + (Extra ? std::string(", ") + Extra : std::string()) + ")";
 		return check_pair(Ok, What, NameA, ValueA, NameB, ValueB, File, Line);
+	}
+
+	namespace detail
+	{
+		inline void context_values() {}
+
+		template<typename T, typename... More>
+		void context_values(char const* Name, T const& Value, More const&... Rest)
+		{
+			value(Name, static_cast<int>(std::strlen(Name)), format(Value));
+			context_values(Rest...);
+		}
+	}//namespace detail
+
+	// More values for a failed check to print after its own:
+	//
+	//	Error += glm_test::context(GLM_CHECK_NEAR(glm::length(q), 1.0f, Epsilon), "q", q);
+	//
+	// takes the check's result (1 on failure) and the names and values, and returns the result.
+	template<typename... NamesAndValues>
+	int context(int Failed, NamesAndValues const&... Values)
+	{
+		static_assert(sizeof...(Values) % 2 == 0, "context() takes name, value pairs");
+		if (Failed)
+		{
+			detail::context_values(Values...);
+			std::fflush(stdout);
+		}
+		return Failed;
 	}
 
 	// glm::all() for the vector of bools glm::equal returns, or the bool itself for scalars.
