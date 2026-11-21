@@ -4,7 +4,9 @@
 #pragma once
 
 #include "qualifier.hpp"
-#if GLM_CONFIG_SWIZZLE == GLM_SWIZZLE_OPERATOR
+#if GLM_CONFIG_SWIZZLE == GLM_SWIZZLE_OPERATOR && GLM_CONFIG_COMPONENT_PROPERTIES == GLM_ENABLE
+#	include "_swizzle_property.hpp"
+#elif GLM_CONFIG_SWIZZLE == GLM_SWIZZLE_OPERATOR
 #	include "_swizzle.hpp"
 #elif GLM_CONFIG_SWIZZLE == GLM_SWIZZLE_FUNCTION
 #	include "_swizzle_func.hpp"
@@ -63,7 +65,7 @@ namespace glm
 
 				typename detail::storage<3, T, detail::is_aligned<Q>::value>::type data;
 
-#				if GLM_CONFIG_SWIZZLE == GLM_SWIZZLE_OPERATOR
+#				if GLM_CONFIG_SWIZZLE == GLM_SWIZZLE_OPERATOR && GLM_CONFIG_COMPONENT_PROPERTIES == GLM_DISABLE
 					GLM_SWIZZLE3_2_MEMBERS(T, Q, x, y, z)
 					GLM_SWIZZLE3_2_MEMBERS(T, Q, r, g, b)
 					GLM_SWIZZLE3_2_MEMBERS(T, Q, s, t, p)
@@ -82,6 +84,9 @@ namespace glm
 				GLM_COMPONENT_PROPERTY(0) T x, r, s;
 				GLM_COMPONENT_PROPERTY(1) T y, g, t;
 				GLM_COMPONENT_PROPERTY(2) T z, b, p;
+#				if GLM_CONFIG_SWIZZLE == GLM_SWIZZLE_OPERATOR
+					GLM_SWIZZLE_PROPERTIES3
+#				endif
 #			endif
 #			if GLM_CONFIG_SWIZZLE == GLM_SWIZZLE_FUNCTION
 				GLM_SWIZZLE_GEN_VEC_FROM_VEC3(T, Q)
@@ -173,7 +178,7 @@ namespace glm
 		GLM_CTOR_DECL GLM_EXPLICIT vec(vec<3, U, P> const& v);
 
 		// -- Swizzle constructors --
-#		if GLM_CONFIG_SWIZZLE == GLM_SWIZZLE_OPERATOR
+#		if GLM_CONFIG_SWIZZLE == GLM_SWIZZLE_OPERATOR && GLM_CONFIG_COMPONENT_PROPERTIES == GLM_DISABLE
 			template<int E0, int E1, int E2>
 			GLM_FUNC_DISCARD_DECL GLM_CONSTEXPR vec(detail::_swizzle<3, T, Q, E0, E1, E2, -1> const& that)
 			{
@@ -191,7 +196,7 @@ namespace glm
 			{
 				*this = vec(scalar, v());
 			}
-#		endif//GLM_CONFIG_SWIZZLE == GLM_SWIZZLE_OPERATOR
+#		endif
 
 		// -- Unary arithmetic operators --
 

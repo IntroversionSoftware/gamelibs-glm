@@ -670,13 +670,32 @@ void foo()
 }
 ```
 
-*Note: The implementation has a caveat: Swizzle operator types must be different on both size of the equal operator or the operation will fail. There is no known fix for this issue to date.*
+*Note: The implementation has a caveat: Swizzle operator types must be different on both size of the equal operator or the operation will fail. There is no known fix for this issue to date.* (Swizzles as properties, below, don't have this caveat.)
 
-#### 2.14.3. Components as properties
+#### 2.14.3. Components and swizzles as properties
 
 With Clang's vector extensions (`GLM_FORCE_INTRINSICS` with Clang 16 or later, C++17 or later), the components of `vec2`, `vec3`, `vec4` and `qua` are properties (`__declspec(property)`) when the compiler supports them: with `-fdeclspec` or `-fms-extensions`, which are the default when targeting Windows. Their accessors read and write the lanes of the vector's storage. Writing a component (`v.y = n`) then updates the vector as a whole, instead of storing a scalar that a following vector operation must load back from memory before the store has completed (a store-forwarding stall). Defining `GLM_FORCE_NO_COMPONENT_PROPERTIES` keeps plain members.
 
 Each use of a component is a value of the component type: `auto c = v.x` is a `float`, and `a.x = b.x` assigns the value. A component isn't an lvalue, though: `&v.x`, `float& r = v.x` and passing `v.x` to a `float&` parameter don't compile. `&v[0]`, `value_ptr(v)` and `v[i]` give references to the components.
+
+With `GLM_FORCE_SWIZZLE`, the swizzles are properties too, in place of the swizzle operator objects. A swizzle is a value of the vector type, so it can be passed to functions directly, and assigning one swizzle to another works in all cases:
+
+```cpp
+#define GLM_FORCE_SWIZZLE
+#define GLM_FORCE_INTRINSICS
+#include <glm/glm.hpp>
+
+void foo(glm::vec4 Color, glm::vec3 Position)
+{
+  auto Ground = Position.xz;                      // a vec2
+  glm::vec4 Clamped = glm::clamp(Color.bgra, 0.f, 1.f);
+  Position.xz = Position.zx;                      // swaps x and z
+  Position.xy = 0.0f;                             // assigns 0 to x and y
+  Position.zx += Ground;                          // reads z and x, adds, writes them back
+}
+```
+
+A swizzle that names a component more than once (`v.xx`) can't be assigned to. `Color.bgra()` still compiles, and is the same vector as `Color.bgra`.
 
 Debuggers show only the vector's storage (`data`), as properties have no storage of their own.
 

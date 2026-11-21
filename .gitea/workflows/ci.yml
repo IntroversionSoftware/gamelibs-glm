@@ -79,7 +79,7 @@ jobs:
             avx)          SIMD="-DGLM_ENABLE_SIMD_AVX=ON";    FLAGS="-DGLM_FORCE_AVX" ;;
             avx2)         SIMD="-DGLM_ENABLE_SIMD_AVX2=ON";   FLAGS="-DGLM_FORCE_AVX2 -mfma" ;;
             avx2-ext)     SIMD="-DGLM_ENABLE_SIMD_AVX2=ON -DGLM_ENABLE_LANG_EXTENSIONS=ON"; FLAGS="-DGLM_FORCE_AVX2 -mfma" ;;
-            # Clang's vectors with component properties (-fdeclspec), also with aligned
+            # Clang's vectors with component and swizzle properties (-fdeclspec), also with aligned
             # default types, and with plain members (no __declspec support)
             vectors)         SIMD="-DGLM_ENABLE_SIMD_CLANG=ON"; FLAGS="-mavx2 -mfma -fdeclspec" ;;
             vectors-aligned) SIMD="-DGLM_ENABLE_SIMD_CLANG=ON"; FLAGS="-mavx2 -mfma -fdeclspec -DGLM_FORCE_DEFAULT_ALIGNED_GENTYPES" ;;

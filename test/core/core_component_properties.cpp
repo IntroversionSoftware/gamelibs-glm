@@ -1,7 +1,8 @@
-// Components as properties (GLM_CONFIG_COMPONENT_PROPERTIES): each use of a component is a value,
-// and writes go through the vector's storage. The value semantics also hold with plain members, so
-// this runs either way.
+// Components and swizzles as properties (GLM_CONFIG_COMPONENT_PROPERTIES): each use of a component
+// or swizzle is a value, and writes go through the vector's storage. The value semantics also hold
+// with plain members, so most of this runs either way; only the swizzle checks need properties.
 
+#define GLM_FORCE_SWIZZLE
 #define GLM_FORCE_ALIGNED_GENTYPES
 #include "glm_test.hpp"
 #include <glm/glm.hpp>
@@ -75,12 +76,60 @@ static int test_quat()
 	return Error;
 }
 
+#if GLM_CONFIG_COMPONENT_PROPERTIES == GLM_ENABLE && GLM_CONFIG_SWIZZLE == GLM_SWIZZLE_OPERATOR
+template<glm::qualifier Q>
+static int test_swizzles()
+{
+	using v2 = glm::vec<2, float, Q>;
+	using v3 = glm::vec<3, float, Q>;
+	using v4 = glm::vec<4, float, Q>;
+	int Error = 0;
+
+	v3 A(1.0f, 2.0f, 3.0f);
+	v3 const B(4.0f, 5.0f, 6.0f);
+
+	// A swizzle is a value of the vector type
+	auto C = A.xz;
+	static_assert(std::is_same<decltype(C), v2>::value, "auto c = v.xz is a vec2");
+	Error += GLM_CHECK_EQ(C, v2(1.0f, 3.0f));
+	Error += GLM_CHECK_EQ(glm::dot(A.xy, B.xy), 14.0f);
+	Error += GLM_CHECK_EQ(A.xz(), C);
+
+	// Assigning the same swizzle of another vector (a.xy = b.xy) assigns the values
+	A.xy = B.xy;
+	Error += GLM_CHECK_EQ(A, v3(4.0f, 5.0f, 3.0f));
+
+	// Overlapping swizzles of the same vector: all components are read before any is written
+	A.xz = A.zx;
+	Error += GLM_CHECK_EQ(A, v3(3.0f, 5.0f, 4.0f));
+
+	// Scalar and compound assignment
+	A.yz = 0.0f;
+	Error += GLM_CHECK_EQ(A, v3(3.0f, 0.0f, 0.0f));
+	A.zx += v2(1.0f, 2.0f);
+	Error += GLM_CHECK_EQ(A, v3(5.0f, 0.0f, 1.0f));
+
+	// Swizzles to and from other sizes
+	v4 D = A.xyzx;
+	Error += GLM_CHECK_EQ(D, v4(5.0f, 0.0f, 1.0f, 5.0f));
+	D.wzyx = v4(1.0f, 2.0f, 3.0f, 4.0f);
+	Error += GLM_CHECK_EQ(D, v4(4.0f, 3.0f, 2.0f, 1.0f));
+	D.bgr = A.rgb;
+	Error += GLM_CHECK_EQ(D, v4(1.0f, 0.0f, 5.0f, 1.0f));
+
+	return Error;
+}
+#endif
+
 template<glm::qualifier Q>
 static int test_all()
 {
 	int Error = 0;
 	Error += glm_test::context(test_components<Q>(), "Q", Q);
 	Error += glm_test::context(test_quat<Q>(), "Q", Q);
+#if GLM_CONFIG_COMPONENT_PROPERTIES == GLM_ENABLE && GLM_CONFIG_SWIZZLE == GLM_SWIZZLE_OPERATOR
+	Error += glm_test::context(test_swizzles<Q>(), "Q", Q);
+#endif
 	return Error;
 }
 
