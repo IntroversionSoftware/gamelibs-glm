@@ -583,6 +583,34 @@ namespace detail
 #endif
 
 ///////////////////////////////////////////////////////////////////////////////////
+// Components as properties
+//
+// With Clang's vector extensions, an aligned vector is stored as a Clang vector (`data`), and a
+// plain member for one of its components is a scalar in memory: v.y = n is a scalar store, and
+// using the whole vector right after it (v = normalize(v)) loads it back from memory before that
+// store has completed, which costs a store-forwarding stall. The components are instead
+// properties (__declspec(property)) whose accessors read and write the lanes of `data`, so v.y = n
+// inserts n into the vector where the compiler can keep it in a register.
+//
+// Each use of v.x is still a T (auto c = v.x is a T; a.x = b.x assigns the value), but it isn't
+// an lvalue: &v.x and T& r = v.x don't compile, and &v[0] or value_ptr(v) take the address.
+// vec1's component is a plain member, as there's only one.
+//
+// __declspec(property) needs -fdeclspec or -fms-extensions, which are the default when targeting
+// Windows; without either, the components are plain members. GLM_FORCE_NO_COMPONENT_PROPERTIES
+// keeps them plain members regardless.
+
+#if (GLM_ARCH & GLM_ARCH_CLANG_BIT) && (GLM_LANG & GLM_LANG_CXX17_FLAG) && !GLM_CONFIG_XYZW_ONLY && \
+	!defined(GLM_FORCE_NO_COMPONENT_PROPERTIES) && defined(__has_declspec_attribute)
+#	if __has_declspec_attribute(property)
+#		define GLM_CONFIG_COMPONENT_PROPERTIES GLM_ENABLE
+#	endif
+#endif
+#ifndef GLM_CONFIG_COMPONENT_PROPERTIES
+#	define GLM_CONFIG_COMPONENT_PROPERTIES GLM_DISABLE
+#endif
+
+///////////////////////////////////////////////////////////////////////////////////
 // Silent warnings
 
 #ifdef GLM_FORCE_WARNINGS
@@ -808,6 +836,11 @@ namespace detail
 #		pragma message("GLM: GLM_FORCE_SWIZZLE is defined, swizzling functions enabled. Enable compiler C++ language extensions to enable swizzle operators.")
 #	else
 #		pragma message("GLM: GLM_FORCE_SWIZZLE is undefined. swizzling functions or operators are disabled.")
+#	endif
+
+	// Report component properties
+#	if GLM_CONFIG_COMPONENT_PROPERTIES == GLM_ENABLE
+#		pragma message("GLM: vector and quaternion components are properties over the vector storage.")
 #	endif
 
 	// Report .length() type

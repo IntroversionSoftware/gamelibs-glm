@@ -8,7 +8,7 @@ static int test_vec1() {
 	glm::vec1 v(0);
 	float& x = glm::get<0>(v);
 	int Error = 0;
-	Error += GLM_CHECK_EQ(&x, &v.x);
+	Error += GLM_CHECK_EQ(&x, &v[0]);
 	return Error;
 }
 
@@ -17,8 +17,8 @@ static int test_vec2() {
 	float& x = glm::get<0>(v);
 	float& y = glm::get<1>(v);
 	int Error = 0;
-	Error += GLM_CHECK_EQ(&x, &v.x);
-	Error += GLM_CHECK_EQ(&y, &v.y);
+	Error += GLM_CHECK_EQ(&x, &v[0]);
+	Error += GLM_CHECK_EQ(&y, &v[1]);
 	return Error;
 }
 
@@ -28,9 +28,9 @@ static int test_vec3() {
 	float& y = glm::get<1>(v);
 	float& z = glm::get<2>(v);
 	int Error = 0;
-	Error += GLM_CHECK_EQ(&x, &v.x);
-	Error += GLM_CHECK_EQ(&y, &v.y);
-	Error += GLM_CHECK_EQ(&z, &v.z);
+	Error += GLM_CHECK_EQ(&x, &v[0]);
+	Error += GLM_CHECK_EQ(&y, &v[1]);
+	Error += GLM_CHECK_EQ(&z, &v[2]);
 	return Error;
 }
 
@@ -42,10 +42,10 @@ static int test_vec4() {
 	float& w = glm::get<3>(v);
 
 	int Error = 0;
-	Error += GLM_CHECK_EQ(&x, &v.x);
-	Error += GLM_CHECK_EQ(&y, &v.y);
-	Error += GLM_CHECK_EQ(&z, &v.z);
-	Error += GLM_CHECK_EQ(&w, &v.w);
+	Error += GLM_CHECK_EQ(&x, &v[0]);
+	Error += GLM_CHECK_EQ(&y, &v[1]);
+	Error += GLM_CHECK_EQ(&z, &v[2]);
+	Error += GLM_CHECK_EQ(&w, &v[3]);
 	return Error;
 }
 
@@ -53,7 +53,7 @@ static int test_const_vec1() {
 	glm::vec1 const v(0);
 	float const& x = glm::get<0>(v);
 	int Error = 0;
-	Error += GLM_CHECK_EQ(&x, &v.x);
+	Error += GLM_CHECK_EQ(&x, &v[0]);
 	return Error;
 }
 
@@ -62,8 +62,8 @@ static int test_const_vec2() {
 	float const& x = glm::get<0>(v);
 	float const& y = glm::get<1>(v);
 	int Error = 0;
-	Error += GLM_CHECK_EQ(&x, &v.x);
-	Error += GLM_CHECK_EQ(&y, &v.y);
+	Error += GLM_CHECK_EQ(&x, &v[0]);
+	Error += GLM_CHECK_EQ(&y, &v[1]);
 	return Error;
 }
 
@@ -73,9 +73,9 @@ static int test_const_vec3() {
 	float const& y = glm::get<1>(v);
 	float const& z = glm::get<2>(v);
 	int Error = 0;
-	Error += GLM_CHECK_EQ(&x, &v.x);
-	Error += GLM_CHECK_EQ(&y, &v.y);
-	Error += GLM_CHECK_EQ(&z, &v.z);
+	Error += GLM_CHECK_EQ(&x, &v[0]);
+	Error += GLM_CHECK_EQ(&y, &v[1]);
+	Error += GLM_CHECK_EQ(&z, &v[2]);
 	return Error;
 }
 
@@ -87,10 +87,10 @@ static int test_const_vec4() {
 	float const& w = glm::get<3>(v);
 
 	int Error = 0;
-	Error += GLM_CHECK_EQ(&x, &v.x);
-	Error += GLM_CHECK_EQ(&y, &v.y);
-	Error += GLM_CHECK_EQ(&z, &v.z);
-	Error += GLM_CHECK_EQ(&w, &v.w);
+	Error += GLM_CHECK_EQ(&x, &v[0]);
+	Error += GLM_CHECK_EQ(&y, &v[1]);
+	Error += GLM_CHECK_EQ(&z, &v[2]);
+	Error += GLM_CHECK_EQ(&w, &v[3]);
 	return Error;
 }
 
@@ -109,10 +109,10 @@ static int test_quat() {
 	float& w = glm::get<3>(q);
 #endif
 	int Error = 0;
-	Error += GLM_CHECK_EQ(&x, &q.x);
-	Error += GLM_CHECK_EQ(&y, &q.y);
-	Error += GLM_CHECK_EQ(&z, &q.z);
-	Error += GLM_CHECK_EQ(&w, &q.w);
+	Error += GLM_CHECK_EQ(&x, &q[0]);
+	Error += GLM_CHECK_EQ(&y, &q[1]);
+	Error += GLM_CHECK_EQ(&z, &q[2]);
+	Error += GLM_CHECK_EQ(&w, &q[3]);
 	return Error;
 }
 
@@ -130,10 +130,10 @@ static int test_const_quat() {
 	float const& w = glm::get<3>(q);
 #endif
 	int Error = 0;
-	Error += GLM_CHECK_EQ(&x, &q.x);
-	Error += GLM_CHECK_EQ(&y, &q.y);
-	Error += GLM_CHECK_EQ(&z, &q.z);
-	Error += GLM_CHECK_EQ(&w, &q.w);
+	Error += GLM_CHECK_EQ(&x, &q[0]);
+	Error += GLM_CHECK_EQ(&y, &q[1]);
+	Error += GLM_CHECK_EQ(&z, &q[2]);
+	Error += GLM_CHECK_EQ(&w, &q[3]);
 	return Error;
 }
 
@@ -228,7 +228,7 @@ static int test_structured_vec1() {
 	glm::vec1 v(0);
 	auto& [x] = v;
 	int Error = 0;
-	Error += GLM_CHECK_EQ(&x, &v.x);
+	Error += GLM_CHECK_EQ(&x, &v[0]);
 	return Error;
 }
 
@@ -236,8 +236,8 @@ static int test_structured_vec2() {
 	glm::vec2 v(0);
 	auto& [x, y] = v;
 	int Error = 0;
-	Error += GLM_CHECK_EQ(&x, &v.x);
-	Error += GLM_CHECK_EQ(&y, &v.y);
+	Error += GLM_CHECK_EQ(&x, &v[0]);
+	Error += GLM_CHECK_EQ(&y, &v[1]);
 	return Error;
 }
 
@@ -245,9 +245,9 @@ static int test_structured_vec3() {
 	glm::vec3 v(0);
 	auto& [x, y, z] = v;
 	int Error = 0;
-	Error += GLM_CHECK_EQ(&x, &v.x);
-	Error += GLM_CHECK_EQ(&y, &v.y);
-	Error += GLM_CHECK_EQ(&z, &v.z);
+	Error += GLM_CHECK_EQ(&x, &v[0]);
+	Error += GLM_CHECK_EQ(&y, &v[1]);
+	Error += GLM_CHECK_EQ(&z, &v[2]);
 	return Error;
 }
 
@@ -255,10 +255,10 @@ static int test_structured_vec4() {
 	glm::vec4 v(0);
 	auto& [x, y, z, w] = v;
 	int Error = 0;
-	Error += GLM_CHECK_EQ(&x, &v.x);
-	Error += GLM_CHECK_EQ(&y, &v.y);
-	Error += GLM_CHECK_EQ(&z, &v.z);
-	Error += GLM_CHECK_EQ(&w, &v.w);
+	Error += GLM_CHECK_EQ(&x, &v[0]);
+	Error += GLM_CHECK_EQ(&y, &v[1]);
+	Error += GLM_CHECK_EQ(&z, &v[2]);
+	Error += GLM_CHECK_EQ(&w, &v[3]);
 	return Error;
 }
 
@@ -266,7 +266,7 @@ static int test_const_structured_vec1() {
 	glm::vec1 const v(0);
 	auto const& [x] = v;
 	int Error = 0;
-	Error += GLM_CHECK_EQ(&x, &v.x);
+	Error += GLM_CHECK_EQ(&x, &v[0]);
 	return Error;
 }
 
@@ -274,8 +274,8 @@ static int test_const_structured_vec2() {
 	glm::vec2 const v(0);
 	auto const& [x, y] = v;
 	int Error = 0;
-	Error += GLM_CHECK_EQ(&x, &v.x);
-	Error += GLM_CHECK_EQ(&y, &v.y);
+	Error += GLM_CHECK_EQ(&x, &v[0]);
+	Error += GLM_CHECK_EQ(&y, &v[1]);
 	return Error;
 }
 
@@ -283,9 +283,9 @@ static int test_const_structured_vec3() {
 	glm::vec3 const v(0);
 	auto const& [x, y, z] = v;
 	int Error = 0;
-	Error += GLM_CHECK_EQ(&x, &v.x);
-	Error += GLM_CHECK_EQ(&y, &v.y);
-	Error += GLM_CHECK_EQ(&z, &v.z);
+	Error += GLM_CHECK_EQ(&x, &v[0]);
+	Error += GLM_CHECK_EQ(&y, &v[1]);
+	Error += GLM_CHECK_EQ(&z, &v[2]);
 	return Error;
 }
 
@@ -293,10 +293,10 @@ static int test_const_structured_vec4() {
 	glm::vec4 const v(0);
 	auto const& [x, y, z, w] = v;
 	int Error = 0;
-	Error += GLM_CHECK_EQ(&x, &v.x);
-	Error += GLM_CHECK_EQ(&y, &v.y);
-	Error += GLM_CHECK_EQ(&z, &v.z);
-	Error += GLM_CHECK_EQ(&w, &v.w);
+	Error += GLM_CHECK_EQ(&x, &v[0]);
+	Error += GLM_CHECK_EQ(&y, &v[1]);
+	Error += GLM_CHECK_EQ(&z, &v[2]);
+	Error += GLM_CHECK_EQ(&w, &v[3]);
 	return Error;
 }
 
@@ -374,10 +374,10 @@ static int test_structured_quat() {
 	auto& [x, y, z, w] = q;
 #endif
 	int Error = 0;
-	Error += GLM_CHECK_EQ(&x, &q.x);
-	Error += GLM_CHECK_EQ(&y, &q.y);
-	Error += GLM_CHECK_EQ(&z, &q.z);
-	Error += GLM_CHECK_EQ(&w, &q.w);
+	Error += GLM_CHECK_EQ(&x, &q[0]);
+	Error += GLM_CHECK_EQ(&y, &q[1]);
+	Error += GLM_CHECK_EQ(&z, &q[2]);
+	Error += GLM_CHECK_EQ(&w, &q[3]);
 	return Error;
 }
 
@@ -389,10 +389,10 @@ static int test_const_structured_quat() {
 	auto const& [x, y, z, w] = q;
 #endif
 	int Error = 0;
-	Error += GLM_CHECK_EQ(&x, &q.x);
-	Error += GLM_CHECK_EQ(&y, &q.y);
-	Error += GLM_CHECK_EQ(&z, &q.z);
-	Error += GLM_CHECK_EQ(&w, &q.w);
+	Error += GLM_CHECK_EQ(&x, &q[0]);
+	Error += GLM_CHECK_EQ(&y, &q[1]);
+	Error += GLM_CHECK_EQ(&z, &q[2]);
+	Error += GLM_CHECK_EQ(&w, &q[3]);
 	return Error;
 }
 

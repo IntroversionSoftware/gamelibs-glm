@@ -1,5 +1,6 @@
 glmCreateTestGTC(core_cpp_constexpr)
 glmCreateTestGTC(core_cpp_defaulted_ctor)
+glmCreateTestGTC(core_component_properties)
 glmCreateTestGTC(core_force_aligned_gentypes)
 glmCreateTestGTC(core_force_default_aligned)
 glmCreateTestGTC(core_force_ctor_init)

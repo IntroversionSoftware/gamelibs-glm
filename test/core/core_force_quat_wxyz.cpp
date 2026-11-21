@@ -13,7 +13,7 @@ static int test_operations()
 
 	glm::quat const A = glm::quat::wxyz(1.0f, 2.0f, 3.0f, 4.0f);
 	glm::quat const B = glm::quat::wxyz(5.0f, 6.0f, 7.0f, 8.0f);
-	Error += GLM_CHECK(&A.w + 1 == &A.x);
+	Error += GLM_CHECK(A[0] == A.w && A[1] == A.x);
 
 	// Hamilton product
 	glm::quat const C = A * B;

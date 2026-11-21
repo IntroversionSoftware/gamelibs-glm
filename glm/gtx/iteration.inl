@@ -22,12 +22,12 @@ namespace glm
 	/// @{
 	template<length_t L,typename T,qualifier Q>
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR T* begin(vec<L,T,Q>& v) {
-		return &v.x;
+		return &v[0];
 	}
 	template<length_t C,length_t R,typename T,qualifier Q>
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR T* begin(mat<C,R,T,Q>& m) {
 		static_assert(detail::iteration_contiguous<C, R, T, Q>::value, "glm::begin/end: the columns of this matrix are padded (3 rows, aligned); iterate a packed matrix instead, see glm::to_packed");
-		return &m[0].x;
+		return &m[0][0];
 	}
 	template<typename T,qualifier Q>
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR T* begin(qua<T,Q>& q) {
@@ -35,12 +35,12 @@ namespace glm
 	}
 	template<length_t L,typename T,qualifier Q>
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR const T* begin(const vec<L,T,Q>& v) {
-		return &v.x;
+		return &v[0];
 	}
 	template<length_t C,length_t R,typename T,qualifier Q>
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR const T* begin(const mat<C,R,T,Q>& m) {
 		static_assert(detail::iteration_contiguous<C, R, T, Q>::value, "glm::begin/end: the columns of this matrix are padded (3 rows, aligned); iterate a packed matrix instead, see glm::to_packed");
-		return &m[0].x;
+		return &m[0][0];
 	}
 	template<typename T,qualifier Q>
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR const T* begin(const qua<T,Q>& q) {
@@ -49,12 +49,12 @@ namespace glm
 
 	template<length_t L,typename T,qualifier Q>
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR T* end(vec<L,T,Q>& v) {
-		return (&v.x) + L;
+		return &v[0] + L;
 	}
 	template<length_t C,length_t R,typename T,qualifier Q>
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR T* end(mat<C,R,T,Q>& m) {
 		static_assert(detail::iteration_contiguous<C, R, T, Q>::value, "glm::begin/end: the columns of this matrix are padded (3 rows, aligned); iterate a packed matrix instead, see glm::to_packed");
-		return (&m[0].x) + C*R;
+		return (&m[0][0]) + C*R;
 	}
 	template<typename T,qualifier Q>
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR T* end(qua<T,Q>& q) {
@@ -62,12 +62,12 @@ namespace glm
 	}
 	template<length_t L,typename T,qualifier Q>
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR const T* end(const vec<L,T,Q>& v) {
-		return (&v.x) + L;
+		return &v[0] + L;
 	}
 	template<length_t C,length_t R,typename T,qualifier Q>
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR const T* end(const mat<C,R,T,Q>& m) {
 		static_assert(detail::iteration_contiguous<C, R, T, Q>::value, "glm::begin/end: the columns of this matrix are padded (3 rows, aligned); iterate a packed matrix instead, see glm::to_packed");
-		return (&m[0].x) + C*R;
+		return (&m[0][0]) + C*R;
 	}
 	template<typename T,qualifier Q>
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR const T* end(const qua<T,Q>& q) {

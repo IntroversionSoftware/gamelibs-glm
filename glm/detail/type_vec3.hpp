@@ -55,9 +55,11 @@ namespace glm
 #		elif GLM_CONFIG_ANONYMOUS_STRUCT == GLM_ENABLE
 			union
 			{
+#				if GLM_CONFIG_COMPONENT_PROPERTIES == GLM_DISABLE
 				struct{ T x, y, z; };
 				struct{ T r, g, b; };
 				struct{ T s, t, p; };
+#				endif
 
 				typename detail::storage<3, T, detail::is_aligned<Q>::value>::type data;
 
@@ -73,6 +75,14 @@ namespace glm
 					GLM_SWIZZLE3_4_MEMBERS(T, Q, s, t, p)
 #				endif
 			};
+#			if GLM_CONFIG_COMPONENT_PROPERTIES == GLM_ENABLE
+				GLM_COMPONENT_ACCESSORS(0)
+				GLM_COMPONENT_ACCESSORS(1)
+				GLM_COMPONENT_ACCESSORS(2)
+				GLM_COMPONENT_PROPERTY(0) T x, r, s;
+				GLM_COMPONENT_PROPERTY(1) T y, g, t;
+				GLM_COMPONENT_PROPERTY(2) T z, b, p;
+#			endif
 #			if GLM_CONFIG_SWIZZLE == GLM_SWIZZLE_FUNCTION
 				GLM_SWIZZLE_GEN_VEC_FROM_VEC3(T, Q)
 #			endif

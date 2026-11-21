@@ -10,157 +10,157 @@ namespace glm
 	template<typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER T const* value_ptr(vec<1, T, Q> const& v)
 	{
-		return &(v.x);
+		return &v[0];
 	}
 
 	template<typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER T* value_ptr(vec<1, T, Q>& v)
 	{
-		return &(v.x);
+		return &v[0];
 	}
 
 	template<typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER T const* value_ptr(vec<2, T, Q> const& v)
 	{
-		return &(v.x);
+		return &v[0];
 	}
 
 	template<typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER T* value_ptr(vec<2, T, Q>& v)
 	{
-		return &(v.x);
+		return &v[0];
 	}
 
 	template<typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER T const * value_ptr(vec<3, T, Q> const& v)
 	{
-		return &(v.x);
+		return &v[0];
 	}
 
 	template<typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER T* value_ptr(vec<3, T, Q>& v)
 	{
-		return &(v.x);
+		return &v[0];
 	}
 
 	template<typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER T const* value_ptr(vec<4, T, Q> const& v)
 	{
-		return &(v.x);
+		return &v[0];
 	}
 
 	template<typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER T* value_ptr(vec<4, T, Q>& v)
 	{
-		return &(v.x);
+		return &v[0];
 	}
 
 	template<typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER T const* value_ptr(mat<2, 2, T, Q> const& m)
 	{
-		return &(m[0].x);
+		return &m[0][0];
 	}
 
 	template<typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER T* value_ptr(mat<2, 2, T, Q>& m)
 	{
-		return &(m[0].x);
+		return &m[0][0];
 	}
 
 	template<typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER T const* value_ptr(mat<3, 3, T, Q> const& m)
 	{
-		return &(m[0].x);
+		return &m[0][0];
 	}
 
 	template<typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER T* value_ptr(mat<3, 3, T, Q>& m)
 	{
-		return &(m[0].x);
+		return &m[0][0];
 	}
 
 	template<typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER T const* value_ptr(mat<4, 4, T, Q> const& m)
 	{
-		return &(m[0].x);
+		return &m[0][0];
 	}
 
 	template<typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER T* value_ptr(mat<4, 4, T, Q>& m)
 	{
-		return &(m[0].x);
+		return &m[0][0];
 	}
 
 	template<typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER T const* value_ptr(mat<2, 3, T, Q> const& m)
 	{
-		return &(m[0].x);
+		return &m[0][0];
 	}
 
 	template<typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER T* value_ptr(mat<2, 3, T, Q>& m)
 	{
-		return &(m[0].x);
+		return &m[0][0];
 	}
 
 	template<typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER T const* value_ptr(mat<3, 2, T, Q> const& m)
 	{
-		return &(m[0].x);
+		return &m[0][0];
 	}
 
 	template<typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER T* value_ptr(mat<3, 2, T, Q>& m)
 	{
-		return &(m[0].x);
+		return &m[0][0];
 	}
 
 	template<typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER T const* value_ptr(mat<2, 4, T, Q> const& m)
 	{
-		return &(m[0].x);
+		return &m[0][0];
 	}
 
 	template<typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER T* value_ptr(mat<2, 4, T, Q>& m)
 	{
-		return &(m[0].x);
+		return &m[0][0];
 	}
 
 	template<typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER T const* value_ptr(mat<4, 2, T, Q> const& m)
 	{
-		return &(m[0].x);
+		return &m[0][0];
 	}
 
 	template<typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER T* value_ptr(mat<4, 2, T, Q>& m)
 	{
-		return &(m[0].x);
+		return &m[0][0];
 	}
 
 	template<typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER T const* value_ptr(mat<3, 4, T, Q> const& m)
 	{
-		return &(m[0].x);
+		return &m[0][0];
 	}
 
 	template<typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER T* value_ptr(mat<3, 4, T, Q>& m)
 	{
-		return &(m[0].x);
+		return &m[0][0];
 	}
 
 	template<typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER T const* value_ptr(mat<4, 3, T, Q> const& m)
 	{
-		return &(m[0].x);
+		return &m[0][0];
 	}
 
 	template<typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER T * value_ptr(mat<4, 3, T, Q>& m)
 	{
-		return &(m[0].x);
+		return &m[0][0];
 	}
 
 	template<typename T, qualifier Q>

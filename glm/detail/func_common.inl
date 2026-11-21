@@ -554,34 +554,34 @@ namespace detail
 	GLM_FUNC_QUALIFIER vec<1, T, Q> modf(vec<1, T, Q> const& x, vec<1, T, Q> & i)
 	{
 		return vec<1, T, Q>(
-			modf(x.x, i.x));
+			modf(x.x, i[0]));
 	}
 
 	template<typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER vec<2, T, Q> modf(vec<2, T, Q> const& x, vec<2, T, Q> & i)
 	{
 		return vec<2, T, Q>(
-			modf(x.x, i.x),
-			modf(x.y, i.y));
+			modf(x.x, i[0]),
+			modf(x.y, i[1]));
 	}
 
 	template<typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER vec<3, T, Q> modf(vec<3, T, Q> const& x, vec<3, T, Q> & i)
 	{
 		return vec<3, T, Q>(
-			modf(x.x, i.x),
-			modf(x.y, i.y),
-			modf(x.z, i.z));
+			modf(x.x, i[0]),
+			modf(x.y, i[1]),
+			modf(x.z, i[2]));
 	}
 
 	template<typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER vec<4, T, Q> modf(vec<4, T, Q> const& x, vec<4, T, Q> & i)
 	{
 		return vec<4, T, Q>(
-			modf(x.x, i.x),
-			modf(x.y, i.y),
-			modf(x.z, i.z),
-			modf(x.w, i.w));
+			modf(x.x, i[0]),
+			modf(x.y, i[1]),
+			modf(x.z, i[2]),
+			modf(x.w, i[3]));
 	}
 
 	//// Only valid if (INT_MIN <= x-y <= INT_MAX)

@@ -42,14 +42,33 @@ namespace glm
 #		if GLM_LANG & GLM_LANG_CXXMS_FLAG
 			union
 			{
-#				ifdef GLM_FORCE_QUAT_DATA_WXYZ
-					struct { T w, x, y, z; };
-#				else
-					struct { T x, y, z, w; };
+#				if GLM_CONFIG_COMPONENT_PROPERTIES == GLM_DISABLE
+#					ifdef GLM_FORCE_QUAT_DATA_WXYZ
+						struct { T w, x, y, z; };
+#					else
+						struct { T x, y, z, w; };
+#					endif
 #				endif
 
 				typename detail::storage<4, T, detail::is_aligned<Q>::value>::type data;
 			};
+#			if GLM_CONFIG_COMPONENT_PROPERTIES == GLM_ENABLE
+				GLM_COMPONENT_ACCESSORS(0)
+				GLM_COMPONENT_ACCESSORS(1)
+				GLM_COMPONENT_ACCESSORS(2)
+				GLM_COMPONENT_ACCESSORS(3)
+#				ifdef GLM_FORCE_QUAT_DATA_WXYZ
+					GLM_COMPONENT_PROPERTY(0) T w;
+					GLM_COMPONENT_PROPERTY(1) T x;
+					GLM_COMPONENT_PROPERTY(2) T y;
+					GLM_COMPONENT_PROPERTY(3) T z;
+#				else
+					GLM_COMPONENT_PROPERTY(0) T x;
+					GLM_COMPONENT_PROPERTY(1) T y;
+					GLM_COMPONENT_PROPERTY(2) T z;
+					GLM_COMPONENT_PROPERTY(3) T w;
+#				endif
+#			endif
 #		else
 #			ifdef GLM_FORCE_QUAT_DATA_WXYZ
 				T w, x, y, z;

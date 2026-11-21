@@ -672,6 +672,14 @@ void foo()
 
 *Note: The implementation has a caveat: Swizzle operator types must be different on both size of the equal operator or the operation will fail. There is no known fix for this issue to date.*
 
+#### 2.14.3. Components as properties
+
+With Clang's vector extensions (`GLM_FORCE_INTRINSICS` with Clang 16 or later, C++17 or later), the components of `vec2`, `vec3`, `vec4` and `qua` are properties (`__declspec(property)`) when the compiler supports them: with `-fdeclspec` or `-fms-extensions`, which are the default when targeting Windows. Their accessors read and write the lanes of the vector's storage. Writing a component (`v.y = n`) then updates the vector as a whole, instead of storing a scalar that a following vector operation must load back from memory before the store has completed (a store-forwarding stall). Defining `GLM_FORCE_NO_COMPONENT_PROPERTIES` keeps plain members.
+
+Each use of a component is a value of the component type: `auto c = v.x` is a `float`, and `a.x = b.x` assigns the value. A component isn't an lvalue, though: `&v.x`, `float& r = v.x` and passing `v.x` to a `float&` parameter don't compile. `&v[0]`, `value_ptr(v)` and `v[i]` give references to the components.
+
+Debuggers show only the vector's storage (`data`), as properties have no storage of their own.
+
 ### <a name="section2_15"></a> 2.15. GLM\_FORCE\_XYZW\_ONLY: Only exposes x, y, z and w components
 
 Following GLSL specifications, GLM supports three sets of components to access vector types member: x, y, z, w; r, g, b, a; and s, t, p, q.

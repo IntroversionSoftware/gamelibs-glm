@@ -471,7 +471,7 @@ namespace test_extractsEulerAngles
 			glm::mat4 const rotation = rotationFunc(angles.x, angles.y, angles.z);
 
 			glm::vec3 extractedEulerAngles(0.0f);
-			testExtractionFunc(rotation, extractedEulerAngles.x, extractedEulerAngles.y, extractedEulerAngles.z);
+			testExtractionFunc(rotation, extractedEulerAngles[0], extractedEulerAngles[1], extractedEulerAngles[2]);
 			glm::mat4 const extractedRotation = rotationFunc(extractedEulerAngles.x, extractedEulerAngles.y, extractedEulerAngles.z);
 
 			glm::vec4 const V(1.0f,1.0f,1.0f,1.0f);

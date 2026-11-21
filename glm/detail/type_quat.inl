@@ -75,7 +75,9 @@ namespace detail
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR T & qua<T, Q>::operator[](typename qua<T, Q>::length_type i)
 	{
 		GLM_ASSERT_LENGTH(i, this->length());
-#		ifdef GLM_FORCE_QUAT_DATA_WXYZ
+#		if GLM_CONFIG_COMPONENT_PROPERTIES == GLM_ENABLE
+			return detail::storage_component<T>(data, i);
+#		elif defined(GLM_FORCE_QUAT_DATA_WXYZ)
 			return (&w)[i];
 #		else
 			return (&x)[i];
@@ -86,7 +88,9 @@ namespace detail
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR T const& qua<T, Q>::operator[](typename qua<T, Q>::length_type i) const
 	{
 		GLM_ASSERT_LENGTH(i, this->length());
-#		ifdef GLM_FORCE_QUAT_DATA_WXYZ
+#		if GLM_CONFIG_COMPONENT_PROPERTIES == GLM_ENABLE
+			return detail::storage_component<T>(data, i);
+#		elif defined(GLM_FORCE_QUAT_DATA_WXYZ)
 			return (&w)[i];
 #		else
 			return (&x)[i];
@@ -98,10 +102,10 @@ namespace detail
 #	if GLM_CONFIG_CTOR_INIT == GLM_ENABLE
 		template<typename T, qualifier Q>
 		GLM_DEFAULTED_DEFAULT_CTOR_QUALIFIER GLM_CONSTEXPR qua<T, Q>::qua()
-#			ifdef GLM_FORCE_QUAT_DATA_WXYZ
-				: w(1), x(0), y(0), z(0)
+#			ifdef GLM_FORCE_QUAT_DATA_XYZW
+				: qua(static_cast<T>(0), static_cast<T>(0), static_cast<T>(0), static_cast<T>(1))
 #			else
-				: x(0), y(0), z(0), w(1)
+				: qua(static_cast<T>(1), static_cast<T>(0), static_cast<T>(0), static_cast<T>(0))
 #			endif
 		{}
 #	endif
@@ -109,10 +113,10 @@ namespace detail
 	template<typename T, qualifier Q>
 	template<qualifier P>
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR qua<T, Q>::qua(qua<T, P> const& q)
-#		ifdef GLM_FORCE_QUAT_DATA_WXYZ
-			: w(q.w), x(q.x), y(q.y), z(q.z)
+#		ifdef GLM_FORCE_QUAT_DATA_XYZW
+			: qua(q.x, q.y, q.z, q.w)
 #		else
-			: x(q.x), y(q.y), z(q.z), w(q.w)
+			: qua(q.w, q.x, q.y, q.z)
 #		endif
 	{}
 
@@ -120,10 +124,10 @@ namespace detail
 
 	template<typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR qua<T, Q>::qua(T s, vec<3, T, Q> const& v)
-#		ifdef GLM_FORCE_QUAT_DATA_WXYZ
-			: w(s), x(v.x), y(v.y), z(v.z)
+#		ifdef GLM_FORCE_QUAT_DATA_XYZW
+			: qua(v.x, v.y, v.z, s)
 #		else
-			: x(v.x), y(v.y), z(v.z), w(s)
+			: qua(s, v.x, v.y, v.z)
 #		endif
 	{}
 
@@ -133,7 +137,11 @@ namespace detail
 #		else
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR qua<T, Q>::qua(T _w, T _x, T _y, T _z)
 #		endif
-#		ifdef GLM_FORCE_QUAT_DATA_WXYZ
+#		if GLM_CONFIG_COMPONENT_PROPERTIES == GLM_ENABLE && defined(GLM_FORCE_QUAT_DATA_WXYZ)
+			: data{_w, _x, _y, _z}
+#		elif GLM_CONFIG_COMPONENT_PROPERTIES == GLM_ENABLE
+			: data{_x, _y, _z, _w}
+#		elif defined(GLM_FORCE_QUAT_DATA_WXYZ)
 			: w(_w), x(_x), y(_y), z(_z)
 #		else
 			: x(_x), y(_y), z(_z), w(_w)
@@ -154,10 +162,10 @@ namespace detail
 	template<typename T, qualifier Q>
 	template<typename U, qualifier P>
 	GLM_FUNC_QUALIFIER GLM_CONSTEXPR qua<T, Q>::qua(qua<U, P> const& q)
-#		ifdef GLM_FORCE_QUAT_DATA_WXYZ
-			: w(static_cast<T>(q.w)), x(static_cast<T>(q.x)), y(static_cast<T>(q.y)), z(static_cast<T>(q.z))
+#		ifdef GLM_FORCE_QUAT_DATA_XYZW
+			: qua(static_cast<T>(q.x), static_cast<T>(q.y), static_cast<T>(q.z), static_cast<T>(q.w))
 #		else
-			: x(static_cast<T>(q.x)), y(static_cast<T>(q.y)), z(static_cast<T>(q.z)), w(static_cast<T>(q.w))
+			: qua(static_cast<T>(q.w), static_cast<T>(q.x), static_cast<T>(q.y), static_cast<T>(q.z))
 #		endif
 	{}
 

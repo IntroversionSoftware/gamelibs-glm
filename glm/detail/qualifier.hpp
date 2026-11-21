@@ -334,6 +334,61 @@ namespace detail
 	};
 #	endif
 
+#	if GLM_CONFIG_COMPONENT_PROPERTIES == GLM_ENABLE
+	// Components as properties (see setup.hpp): component I of a vector's storage is a lane of a
+	// Clang vector, or an element where the storage is an array (packed and bool vectors).
+	//
+	// These and the accessors that use them are always inlined, also without GLM_FORCE_INLINE: a lane
+	// write compiled on its own becomes a scalar store, and only once it's inlined where the vector
+	// is used does the compiler keep the vector in a register instead.
+#	define GLM_COMPONENT_INLINE inline __attribute__((__always_inline__))
+
+	template<length_t I, typename S>
+	GLM_COMPONENT_INLINE GLM_CONSTEXPR auto storage_get(S const& s)
+	{
+		if constexpr (std::is_class<S>::value)
+			return s.data[I];
+		else
+			return s[I];
+	}
+
+	template<length_t I, typename S, typename T>
+	GLM_COMPONENT_INLINE GLM_CONSTEXPR void storage_put(S& s, T v)
+	{
+		if constexpr (std::is_class<S>::value)
+			s.data[I] = v;
+		else
+			s[I] = v;
+	}
+
+	// A reference to component i, for operator[]. A Clang vector's lane can't be referenced, but
+	// accessing it as a T is fine: accesses to a Clang vector may alias any type.
+	template<typename T, typename S>
+	GLM_COMPONENT_INLINE GLM_CONSTEXPR T& storage_component(S& s, length_t i)
+	{
+		if constexpr (std::is_class<S>::value)
+			return s.data[i];
+		else
+			return reinterpret_cast<T*>(&s)[i];
+	}
+
+	template<typename T, typename S>
+	GLM_COMPONENT_INLINE GLM_CONSTEXPR T const& storage_component(S const& s, length_t i)
+	{
+		if constexpr (std::is_class<S>::value)
+			return s.data[i];
+		else
+			return reinterpret_cast<T const*>(&s)[i];
+	}
+
+	// The accessors of the properties for component I, in a vector or quaternion class with
+	// value_type T and storage `data`; GLM_COMPONENT_PROPERTY(I) declares the properties.
+#	define GLM_COMPONENT_ACCESSORS(I) \
+		GLM_COMPONENT_INLINE GLM_CONSTEXPR T _get##I() const { return detail::storage_get<I>(data); } \
+		GLM_COMPONENT_INLINE GLM_CONSTEXPR void _put##I(T _v) { detail::storage_put<I>(data, _v); }
+#	define GLM_COMPONENT_PROPERTY(I) __declspec(property(get = _get##I, put = _put##I))
+#	endif
+
 
 
 	enum genTypeEnum

@@ -37,7 +37,7 @@ jobs:
       fail-fast: false
       matrix:
         cc: [gcc, clang]
-        simd: [pure, pure-aligned, sse2, sse4.1, avx, avx2, avx2-ext, vectors]
+        simd: [pure, pure-aligned, sse2, sse4.1, avx, avx2, avx2-ext, vectors, vectors-aligned, vectors-members]
         std: [20]
         build: [Release]
         # Dimensions rather than keys only the include entries have, so those add jobs instead of
@@ -47,6 +47,10 @@ jobs:
         exclude:
           - cc: gcc
             simd: vectors
+          - cc: gcc
+            simd: vectors-aligned
+          - cc: gcc
+            simd: vectors-members
         include:
           - { cc: gcc, simd: pure, std: 17, build: Debug, math: ieee, stdlib: libstdc++ }
           - { cc: gcc, simd: avx2, std: 17, build: Release, math: ieee, stdlib: libstdc++ }
@@ -75,7 +79,11 @@ jobs:
             avx)          SIMD="-DGLM_ENABLE_SIMD_AVX=ON";    FLAGS="-DGLM_FORCE_AVX" ;;
             avx2)         SIMD="-DGLM_ENABLE_SIMD_AVX2=ON";   FLAGS="-DGLM_FORCE_AVX2 -mfma" ;;
             avx2-ext)     SIMD="-DGLM_ENABLE_SIMD_AVX2=ON -DGLM_ENABLE_LANG_EXTENSIONS=ON"; FLAGS="-DGLM_FORCE_AVX2 -mfma" ;;
-            vectors)      SIMD="-DGLM_ENABLE_SIMD_CLANG=ON";  FLAGS="-mavx2 -mfma" ;;
+            # Clang's vectors with component properties (-fdeclspec), also with aligned
+            # default types, and with plain members (no __declspec support)
+            vectors)         SIMD="-DGLM_ENABLE_SIMD_CLANG=ON"; FLAGS="-mavx2 -mfma -fdeclspec" ;;
+            vectors-aligned) SIMD="-DGLM_ENABLE_SIMD_CLANG=ON"; FLAGS="-mavx2 -mfma -fdeclspec -DGLM_FORCE_DEFAULT_ALIGNED_GENTYPES" ;;
+            vectors-members) SIMD="-DGLM_ENABLE_SIMD_CLANG=ON"; FLAGS="-mavx2 -mfma" ;;
           esac
           if [ "${{ matrix.math }}" = fast ]; then FLAGS="$FLAGS -ffast-math"; fi
           if [ "${{ matrix.stdlib }}" = libc++ ]; then FLAGS="$FLAGS -stdlib=libc++"; fi
@@ -127,7 +135,7 @@ jobs:
           case "${{ matrix.simd }}" in
             pure)    SIMD="-DGLM_FORCE_PURE=ON" ;;
             neon)    SIMD="-DGLM_ENABLE_SIMD_NEON=ON"; FLAGS="-DGLM_FORCE_NEON" ;;
-            vectors) SIMD="-DGLM_ENABLE_SIMD_CLANG=ON" ;;
+            vectors) SIMD="-DGLM_ENABLE_SIMD_CLANG=ON"; FLAGS="-fdeclspec" ;;
           esac
           if [ "${{ matrix.math }}" = fast ]; then FLAGS="$FLAGS -ffast-math"; fi
           if [ "${{ matrix.cc }}" = gcc ]; then
