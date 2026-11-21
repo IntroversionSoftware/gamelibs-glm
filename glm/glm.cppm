@@ -2604,6 +2604,7 @@ export namespace glm {
 		using glm::rowMajor3;
 		using glm::rowMajor4;
 		using glm::rq_decompose;
+		using glm::safeNormalize;
 		using glm::saturation;
 		using glm::scale;
 		using glm::scaleBias;
