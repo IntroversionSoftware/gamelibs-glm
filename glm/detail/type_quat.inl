@@ -77,10 +77,10 @@ namespace detail
 		GLM_ASSERT_LENGTH(i, this->length());
 #		if GLM_CONFIG_COMPONENT_PROPERTIES == GLM_ENABLE
 			return detail::storage_component<T>(data, i);
-#		elif defined(GLM_FORCE_QUAT_DATA_WXYZ)
-			return (&w)[i];
 #		else
-			return (&x)[i];
+			// The components start the object, in memory order. Indexing from the object rather than from
+			// the first component tells GCC the access is within the vector, not past the end of one component.
+			return reinterpret_cast<T*>(this)[i];
 #		endif
 	}
 
@@ -90,10 +90,8 @@ namespace detail
 		GLM_ASSERT_LENGTH(i, this->length());
 #		if GLM_CONFIG_COMPONENT_PROPERTIES == GLM_ENABLE
 			return detail::storage_component<T>(data, i);
-#		elif defined(GLM_FORCE_QUAT_DATA_WXYZ)
-			return (&w)[i];
 #		else
-			return (&x)[i];
+			return reinterpret_cast<T const*>(this)[i];
 #		endif
 	}
 

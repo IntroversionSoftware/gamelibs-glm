@@ -157,7 +157,9 @@ namespace glm
 #if GLM_HAS_IS_CONSTANT_EVALUATED
 		}
 		else {
-			return (&x)[i];
+			// The components start the object, in memory order. Indexing from the object rather than from
+			// the first component tells GCC the access is within the vector, not past the end of one component.
+			return reinterpret_cast<T*>(this)[i];
 		}
 #endif
 #endif
@@ -187,7 +189,7 @@ namespace glm
 #if GLM_HAS_IS_CONSTANT_EVALUATED
 		}
 		else {
-			return (&x)[i];
+			return reinterpret_cast<T const*>(this)[i];
 		}
 #endif
 #endif
