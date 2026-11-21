@@ -2223,6 +2223,7 @@ export namespace glm {
 		using glm::angle;
 		using glm::angleAxis;
 		using glm::any;
+		using glm::anyPerpendicular;
 		using glm::areCollinear;
 		using glm::areOrthogonal;
 		using glm::areOrthonormal;

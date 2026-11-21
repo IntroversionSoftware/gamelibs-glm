@@ -16,6 +16,7 @@
 // Dependency:
 #include "../glm.hpp"
 #include "../gtx/projection.hpp"
+#include "../gtx/safe_normalize.hpp"
 
 #ifndef GLM_ENABLE_EXPERIMENTAL
 #	error "GLM: GLM_GTX_perpendicular is an experimental extension and may change in the future. Use #define GLM_ENABLE_EXPERIMENTAL before including it, if you really want to use it."
@@ -32,6 +33,14 @@ namespace glm
 	//! From GLM_GTX_perpendicular extension.
 	template<typename genType>
 	GLM_FUNC_DECL genType perp(genType const& x, genType const& Normal);
+
+	//! Returns a unit vector perpendicular to v, any one: for example to complete an orthonormal
+	//! basis, or to stand in for normalize(cross(v, w)) when w is parallel to v. It follows v's
+	//! direction continuously except where v crosses the z = 0 plane (Duff et al., "Building an
+	//! Orthonormal Basis, Revisited", 2017). A zero v gives (1, 0, 0).
+	//! From GLM_GTX_perpendicular extension.
+	template<typename T, qualifier Q>
+	GLM_FUNC_DECL vec<3, T, Q> anyPerpendicular(vec<3, T, Q> const& v);
 
 	/// @}
 }//namespace glm
