@@ -699,6 +699,8 @@ A swizzle that names a component more than once (`v.xx`) can't be assigned to. `
 
 Debuggers show only the vector's storage (`data`), as properties have no storage of their own.
 
+*Note: Clang 22 and later crash writing a precompiled header that contains a compound assignment to a property whose object isn't type-dependent but whose right-hand side is, for example `Position.y += Delta` in a member of a class template where `Position` is a `glm::vec3` and `Delta` is a `T`. Writing `Position.y = Position.y + Delta` instead avoids it.*
+
 ### <a name="section2_15"></a> 2.15. GLM\_FORCE\_XYZW\_ONLY: Only exposes x, y, z and w components
 
 Following GLSL specifications, GLM supports three sets of components to access vector types member: x, y, z, w; r, g, b, a; and s, t, p, q.
