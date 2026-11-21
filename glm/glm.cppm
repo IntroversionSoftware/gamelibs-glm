@@ -2594,6 +2594,7 @@ export namespace glm {
 		using glm::root_two_pi;
 		using glm::rotate;
 		using glm::rotateNormalizedAxis;
+		using glm::rotateScaledAxis;
 		using glm::rotateX;
 		using glm::rotateY;
 		using glm::rotateZ;

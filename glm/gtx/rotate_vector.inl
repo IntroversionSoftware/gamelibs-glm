@@ -163,6 +163,23 @@ namespace glm
 	}
 
 	template<typename T, qualifier Q>
+	GLM_FUNC_QUALIFIER vec<3, T, Q> rotateScaledAxis
+	(
+		vec<3, T, Q> const& v,
+		vec<3, T, Q> const& scaledAxis
+	)
+	{
+		// Any rotation is applied, however small; only an axis whose squared length underflows the
+		// normal range can't be normalized reliably.
+		T const AngleSq = dot(scaledAxis, scaledAxis);
+		if(!(AngleSq > std::numeric_limits<T>::min()))
+			return v;
+
+		T const Angle = sqrt(AngleSq);
+		return rotate(v, Angle, scaledAxis / Angle);
+	}
+
+	template<typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER mat<4, 4, T, Q> orientation
 	(
 		vec<3, T, Q> const& Normal,

@@ -341,6 +341,30 @@ static int test_orientation()
 	return Error;
 }
 
+static int test_rotateScaledAxis()
+{
+	int Error = 0;
+	float const Eps = 1e-5f;
+
+	// A quarter turn about z, given as a rotation vector.
+	glm::vec3 const QuarterTurn = glm::vec3(0, 0, 1) * glm::half_pi<float>();
+	Error += GLM_CHECK_NEAR(glm::rotateScaledAxis(glm::vec3(1, 0, 0), QuarterTurn), glm::vec3(0, 1, 0), Eps);
+
+	// The same as rotate with the axis and angle separated.
+	glm::vec3 const Axis = glm::normalize(glm::vec3(1, 2, 3));
+	glm::vec3 const V(4, -1, 2);
+	Error += GLM_CHECK_NEAR(glm::rotateScaledAxis(V, Axis * 0.7f), glm::rotate(V, 0.7f, Axis), Eps);
+
+	// A tiny rotation is applied rather than dropped: x rotated about y by 1e-5 gains z = -1e-5.
+	glm::vec3 const Nudged = glm::rotateScaledAxis(glm::vec3(1, 0, 0), glm::vec3(0, 1e-5f, 0));
+	Error += GLM_CHECK_NEAR(Nudged.z, -1e-5f, 1e-7f);
+
+	// A zero rotation vector leaves the vector unchanged.
+	Error += GLM_CHECK_EQ(glm::rotateScaledAxis(V, glm::vec3(0)), V);
+
+	return Error;
+}
+
 int main()
 {
 	int Error = 0;
@@ -352,6 +376,7 @@ int main()
 	Error += GLM_TEST(test_rotateY());
 	Error += GLM_TEST(test_rotateZ());
 	Error += GLM_TEST(test_orientation());
+	Error += GLM_TEST(test_rotateScaledAxis());
 
 	return GLM_TEST_FINISH(Error);
 }

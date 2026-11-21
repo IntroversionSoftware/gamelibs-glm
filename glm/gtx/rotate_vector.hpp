@@ -108,6 +108,15 @@ namespace glm
 		vec<4, T, Q> const& v,
 		T const& angle);
 
+	//! Rotate a three dimensional vector about the direction of scaledAxis by its length, in
+	//! radians: a rotation vector, as the cross product of two directions gives one. A
+	//! scaledAxis too short to have a direction leaves v unchanged.
+	//! From GLM_GTX_rotate_vector extension.
+	template<typename T, qualifier Q>
+	GLM_FUNC_DECL vec<3, T, Q> rotateScaledAxis(
+		vec<3, T, Q> const& v,
+		vec<3, T, Q> const& scaledAxis);
+
 	//! Build a rotation matrix from a normal and a up vector.
 	//! From GLM_GTX_rotate_vector extension.
 	template<typename T, qualifier Q>
