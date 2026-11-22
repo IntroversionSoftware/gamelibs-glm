@@ -47,6 +47,8 @@ namespace glm
 				T r;
 				T s;
 
+				// Its alignment is declared, not left to the storage type; see storage<L, T, true>.
+				alignas(alignof(typename detail::storage<1, T, detail::is_aligned<Q>::value>::type))
 				typename detail::storage<1, T, detail::is_aligned<Q>::value>::type data;
 /*
 #				if GLM_CONFIG_SWIZZLE == GLM_SWIZZLE_OPERATOR

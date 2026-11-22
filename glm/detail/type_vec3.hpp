@@ -63,6 +63,8 @@ namespace glm
 				struct{ T s, t, p; };
 #				endif
 
+				// Its alignment is declared, not left to the storage type; see storage<L, T, true>.
+				alignas(alignof(typename detail::storage<3, T, detail::is_aligned<Q>::value>::type))
 				typename detail::storage<3, T, detail::is_aligned<Q>::value>::type data;
 
 #				if GLM_CONFIG_SWIZZLE == GLM_SWIZZLE_OPERATOR && GLM_CONFIG_COMPONENT_PROPERTIES == GLM_DISABLE

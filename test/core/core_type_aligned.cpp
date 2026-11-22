@@ -15,7 +15,13 @@ int main()
 #include <glm/glm.hpp>
 
 #if GLM_CONFIG_ALIGNED_GENTYPES == GLM_ENABLE
+#include <glm/gtc/quaternion.hpp>
+#include <array>
 #include <type_traits>
+#include <utility>
+#if GLM_LANG & GLM_LANG_CXX17_FLAG
+#	include <optional>
+#endif
 
 static_assert(sizeof(glm::bvec4) > sizeof(glm::bvec2), "Invalid sizeof");
 static_assert(sizeof(glm::ivec4) > sizeof(glm::uvec2), "Invalid sizeof");
@@ -112,6 +118,38 @@ static int test_vec3_aligned()
 	return Error;
 }
 
+// A type keeps its alignment inside the standard library's types. (Microsoft's standard library
+// defines them under #pragma pack(8), which lowers a member's natural alignment, but not one that is
+// declared; see storage<L, T, true>.)
+template<typename T>
+static int test_aligned_in_std_types()
+{
+	int Error = 0;
+
+	Error += GLM_CHECK_EQ(alignof(std::array<T, 2>), alignof(T));
+	Error += GLM_CHECK_EQ((alignof(std::pair<char, T>)), alignof(T));
+#	if GLM_LANG & GLM_LANG_CXX17_FLAG
+	Error += GLM_CHECK_EQ(alignof(std::optional<T>), alignof(T));
+#	endif
+
+	return Error;
+}
+
+static int test_aligned_in_std_types()
+{
+	int Error = 0;
+
+	Error += test_aligned_in_std_types<glm::vec2>();
+	Error += test_aligned_in_std_types<glm::vec3>();
+	Error += test_aligned_in_std_types<glm::vec4>();
+	Error += test_aligned_in_std_types<glm::ivec4>();
+	Error += test_aligned_in_std_types<glm::dvec4>();
+	Error += test_aligned_in_std_types<glm::quat>();
+	Error += test_aligned_in_std_types<glm::mat4>();
+
+	return Error;
+}
+
 #endif
 
 int main()
@@ -122,6 +160,7 @@ int main()
 		Error += GLM_TEST(test_storage_aligned());
 		Error += GLM_TEST(test_storage_unaligned());
 		Error += GLM_TEST(test_vec3_aligned());
+		Error += GLM_TEST(test_aligned_in_std_types());
 #	endif
 
 	return GLM_TEST_FINISH(Error);

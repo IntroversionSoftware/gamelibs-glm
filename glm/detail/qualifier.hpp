@@ -326,6 +326,15 @@ namespace detail
 	// written comes back as garbage. Clang/LLVM 18-21 and Apple clang from Xcode 16.3 do this; LLVM
 	// 22 fills the lane with undef instead (llvm-project 5378584). Every store here writes all four
 	// lanes, so there is no poison lane to begin with.
+	//
+	// A Clang vector's alignment is a natural one, from its type, not a declared one, and the Microsoft
+	// ABI lowers a member's natural alignment to the #pragma pack in effect, while it never lowers a
+	// declared one (as __m128's __declspec(align(16)) relies on). Its standard library defines
+	// std::array, std::optional, std::pair and the rest under pack(8), so a vector inside one would be
+	// laid out 8-aligned while the code using it assumes its full alignment, with an aligned load or
+	// store that faults. (Declaring the alignment here doesn't help: on a type alias in a template,
+	// Clang keeps the alignment but not that it was declared.) So the vector types declare their
+	// storage member's alignment, alignas(alignof(storage)), which changes nothing elsewhere.
 	template<length_t L, typename T>
 	struct storage<L, T, true>
 	{
